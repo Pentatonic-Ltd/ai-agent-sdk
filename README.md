@@ -1,6 +1,6 @@
 # @pentatonic/ai-events-sdk
 
-LLM observability SDK — track token usage, tool calls, and conversations via [Pentatonic TES](https://pentatonic.com).
+LLM observability SDK — track token usage, tool calls, and conversations via [Pentatonic TES](https://api.pentatonic.com).
 
 Provider-agnostic: automatically wraps OpenAI, Anthropic, and Cloudflare Workers AI clients.
 
