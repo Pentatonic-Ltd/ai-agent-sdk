@@ -160,11 +160,9 @@ For docs, see https://api.pentatonic.com
 
   // Collect info
   const email = await ask("? Email: ");
-  const companyName = await ask("? Company name: ");
+  const clientId = toClientId(await ask("? Client ID: "));
   const password = await askSecret("? Password: ");
   const region = await askChoice("? Region:", ["EU", "US"]);
-
-  const clientId = toClientId(companyName);
 
   // Try login first — account may already be verified from a previous run
   let accessToken = null;
@@ -192,7 +190,7 @@ For docs, see https://api.pentatonic.com
         `${TES_ENDPOINT}/api/enrollment/submit`,
         {
           clientId,
-          companyName,
+          companyName: clientId,
           industryType: "technology",
           authProvider: "native",
           adminEmail: email,
