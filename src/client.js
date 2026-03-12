@@ -1,0 +1,51 @@
+import { Session } from "./session.js";
+import { wrapClient } from "./wrapper.js";
+
+export class TESClient {
+  constructor({ clientId, apiKey, endpoint, captureContent = true, maxContentLength = 4096 }) {
+    if (!clientId) throw new Error("clientId is required");
+    if (!apiKey) throw new Error("apiKey is required");
+    if (!endpoint) throw new Error("endpoint is required");
+
+    const cleanEndpoint = endpoint.replace(/\/$/, "");
+    const isLocalDev =
+      cleanEndpoint.startsWith("http://localhost") ||
+      cleanEndpoint.startsWith("http://127.0.0.1");
+    if (!cleanEndpoint.startsWith("https://") && !isLocalDev) {
+      throw new Error(
+        "endpoint must use https:// (http:// is only allowed for localhost)"
+      );
+    }
+
+    this.clientId = clientId;
+    this.endpoint = cleanEndpoint;
+    this.captureContent = captureContent;
+    this.maxContentLength = maxContentLength;
+
+    // Store apiKey as non-enumerable so it won't appear in
+    // JSON.stringify, console.log, or error reporter serialization.
+    Object.defineProperty(this, "_apiKey", {
+      value: apiKey,
+      enumerable: false,
+      writable: false,
+    });
+  }
+
+  get _config() {
+    return {
+      clientId: this.clientId,
+      apiKey: this._apiKey,
+      endpoint: this.endpoint,
+      captureContent: this.captureContent,
+      maxContentLength: this.maxContentLength,
+    };
+  }
+
+  session(opts) {
+    return new Session(this._config, opts);
+  }
+
+  wrap(openaiClient) {
+    return wrapClient(this._config, openaiClient);
+  }
+}

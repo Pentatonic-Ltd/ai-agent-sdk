@@ -1,0 +1,32 @@
+{
+  "name": "@pentatonic/ai",
+  "version": "0.1.0-beta.1",
+  "description": "LLM observability SDK — track token usage, tool calls, and conversations via Pentatonic TES",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "scripts": {
+    "build": "node build.js",
+    "test": "NODE_OPTIONS='--experimental-vm-modules' jest --config jest.config.cjs",
+    "test:watch": "NODE_OPTIONS='--experimental-vm-modules' jest --config jest.config.cjs --watch",
+    "prepublishOnly": "npm run build && npm test"
+  },
+  "keywords": ["llm", "observability", "ai", "openai", "anthropic", "pentatonic"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Pentatonic-Ltd/ai-events-sdk.git"
+  },
+  "devDependencies": {
+    "esbuild": "^0.20.0",
+    "jest": "^29.7.0",
+    "@jest/globals": "^29.7.0"
+  }
+}

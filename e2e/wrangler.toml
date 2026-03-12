@@ -1,0 +1,11 @@
+name = "pentatonic-ai-e2e"
+main = "worker.js"
+compatibility_date = "2024-09-23"
+
+[ai]
+binding = "AI"
+
+[vars]
+TES_CLIENT_ID = "e2e-test"
+TES_ENDPOINT = "http://localhost:8788"
+# TES_API_KEY must be set via `wrangler secret put TES_API_KEY` or .dev.vars
