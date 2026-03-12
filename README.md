@@ -1,19 +1,19 @@
-# @pentatonic/ai
+# @pentatonic/ai-events-sdk
 
 LLM observability SDK — track token usage, tool calls, and conversations via [Pentatonic TES](https://pentatonic.com).
 
-Provider-agnostic: works with OpenAI, Anthropic, Cloudflare Workers AI, or any OpenAI-compatible API.
+Provider-agnostic: automatically wraps OpenAI, Anthropic, and Cloudflare Workers AI clients.
 
 ## Install
 
 ```bash
-npm install @pentatonic/ai
+npm install @pentatonic/ai-events-sdk
 ```
 
 ## Quick Start
 
 ```js
-import { TESClient } from "@pentatonic/ai";
+import { TESClient } from "@pentatonic/ai-events-sdk";
 
 const tes = new TESClient({
   clientId: "my-app",
@@ -22,21 +22,83 @@ const tes = new TESClient({
 });
 ```
 
-### Option A: Wrap an OpenAI-compatible client (automatic tracking)
+### Wrap any LLM client (automatic tracking)
+
+`tes.wrap()` auto-detects your client and intercepts the right method — no configuration needed.
 
 ```js
 import OpenAI from "openai";
 
 const openai = tes.wrap(new OpenAI());
 
-// Every call is automatically tracked and emitted as a CHAT_TURN event
+// Automatically tracked and emitted as a CHAT_TURN event
 const result = await openai.chat.completions.create({
   model: "gpt-4o",
   messages: [{ role: "user", content: "Hello!" }],
 });
 ```
 
-### Option B: Manual session (full control)
+```js
+import Anthropic from "@anthropic-ai/sdk";
+
+const claude = tes.wrap(new Anthropic());
+
+// Same automatic tracking — messages.create is intercepted
+const result = await claude.messages.create({
+  model: "claude-sonnet-4-6-20250514",
+  max_tokens: 1024,
+  messages: [{ role: "user", content: "Hello!" }],
+});
+```
+
+```js
+// Cloudflare Workers AI binding
+const ai = tes.wrap(env.AI);
+
+// run() is intercepted automatically
+const result = await ai.run("@cf/meta/llama-3.1-8b-instruct", {
+  messages: [{ role: "user", content: "Hello!" }],
+});
+```
+
+### Multi-round sessions
+
+For tool-calling loops or multi-turn conversations, use a session to accumulate usage across rounds:
+
+```js
+const openai = tes.wrap(new OpenAI());
+const session = openai.session({ sessionId: "conv-101" });
+
+// .chat() calls the LLM and records the response automatically
+const r1 = await session.chat({
+  model: "gpt-4o",
+  messages: [{ role: "user", content: "Recommend a shoe" }],
+});
+
+// Handle tool calls, continue the conversation...
+const r2 = await session.chat({
+  model: "gpt-4o",
+  messages: [...messages, { role: "user", content: "In blue?" }],
+});
+
+// Emit once — includes totals from all rounds
+await session.emitChatTurn({
+  userMessage: "In blue?",
+  assistantResponse: r2.choices[0].message.content,
+});
+```
+
+Session method varies by provider:
+
+| Provider | Session call |
+|----------|-------------|
+| OpenAI | `session.chat(params)` |
+| Anthropic | `session.chat(params)` |
+| Workers AI | `session.chat(model, params)` |
+
+### Manual session (full control)
+
+If you don't want to use `tes.wrap()`, create a session directly:
 
 ```js
 const session = tes.session({
@@ -60,60 +122,31 @@ await session.emitChatTurn({
 });
 ```
 
-### Multi-round conversations
-
-```js
-const session = tes.session({ sessionId: "conv-789" });
-
-for (const userMsg of userMessages) {
-  const res = await openai.chat.completions.create({ model: "gpt-4o", messages });
-  session.record(res); // accumulates across rounds
-
-  // If the model called tools, handle them and call again
-  // session.record() tracks each round's tokens and tool calls
-}
-
-// Emit once at the end — includes totals from all rounds
-await session.emitChatTurn({
-  userMessage: userMessages.at(-1),
-  assistantResponse: finalResponse,
-});
-```
-
-### Wrapped session (auto-record per call)
-
-```js
-const ai = tes.wrap(new OpenAI());
-const session = ai.session({ sessionId: "conv-101" });
-
-// .chat() calls the LLM and records the response automatically
-const r1 = await session.chat({
-  model: "gpt-4o",
-  messages: [{ role: "user", content: "Recommend a shoe" }],
-});
-
-const r2 = await session.chat({
-  model: "gpt-4o",
-  messages: [...messages, { role: "user", content: "In blue?" }],
-});
-
-await session.emitChatTurn({
-  userMessage: "In blue?",
-  assistantResponse: r2.choices[0].message.content,
-});
-```
-
 ## API Reference
 
-### `new TESClient({ clientId, apiKey, endpoint })`
+### `new TESClient({ clientId, apiKey, endpoint, captureContent?, maxContentLength? })`
 
-Creates a new client. All three parameters are required.
+Creates a new client.
 
-| Param | Type | Description |
-|-------|------|-------------|
-| `clientId` | `string` | Your application/tenant identifier |
-| `apiKey` | `string` | TES service API key |
-| `endpoint` | `string` | TES instance URL (e.g. `https://tes.example.com`) |
+| Param | Type | Default | Description |
+|-------|------|---------|-------------|
+| `clientId` | `string` | *required* | Your application/tenant identifier |
+| `apiKey` | `string` | *required* | TES service API key |
+| `endpoint` | `string` | *required* | TES instance URL (must be `https://`, except `localhost` for dev) |
+| `captureContent` | `boolean` | `true` | Whether to include message content in events |
+| `maxContentLength` | `number` | `4096` | Truncate content beyond this length |
+
+### `tes.wrap(client)`
+
+Returns a Proxy around any supported LLM client. Auto-detects the provider:
+
+| Client | Detection | Intercepted method |
+|--------|-----------|-------------------|
+| OpenAI | `client.chat.completions.create` | `chat.completions.create()` |
+| Anthropic | `client.messages.create` | `messages.create()` |
+| Workers AI | `client.run` | `run()` |
+
+All other methods/properties pass through unchanged. The wrapped client also exposes `.session(opts)` for multi-round tracking.
 
 ### `tes.session(opts?)`
 
@@ -124,15 +157,9 @@ Returns a `Session` instance.
 | `sessionId` | `string` | `crypto.randomUUID()` | Conversation/session identifier |
 | `metadata` | `object` | `{}` | Extra fields included in every emitted event |
 
-### `tes.wrap(openaiClient)`
-
-Returns a Proxy around an OpenAI-compatible client. Intercepts `chat.completions.create` to auto-track usage. All other methods/properties pass through unchanged.
-
-The wrapped client also exposes `.session(opts)` for multi-round tracking.
-
 ### `session.record(rawResponse)`
 
-Normalizes an LLM response and accumulates token usage, tool calls, and model info. Accepts responses from OpenAI, Anthropic, or Workers AI format. Returns the normalized response.
+Normalizes an LLM response and accumulates token usage, tool calls, and model info. Accepts responses from any supported provider. Returns the normalized response.
 
 ### `session.emitChatTurn({ userMessage, assistantResponse, turnNumber? })`
 
@@ -155,7 +182,7 @@ Returns current accumulated usage: `{ prompt_tokens, completion_tokens, total_to
 Standalone utility to normalize any LLM response into a consistent shape:
 
 ```js
-import { normalizeResponse } from "@pentatonic/ai";
+import { normalizeResponse } from "@pentatonic/ai-events-sdk";
 
 const normalized = normalizeResponse(openaiResponse);
 // { content, model, usage: { prompt_tokens, completion_tokens }, toolCalls: [{ tool, args }] }
@@ -171,21 +198,20 @@ All events are sent to the TES GraphQL API (`emitEvent` mutation) authenticated 
 | `TOOL_USE` | `conversation` | After individual tool invocations |
 | `SESSION_START` | `conversation` | At conversation start (optional) |
 
-## Supported LLM Formats
+## Supported Providers
 
-Response normalization auto-detects the provider format:
+| Provider | Auto-wrap | Manual session | Response normalization |
+|----------|-----------|---------------|----------------------|
+| **OpenAI** (and compatible: Azure, Groq, Together, Mistral) | Yes | Yes | Yes |
+| **Anthropic** | Yes | Yes | Yes |
+| **Cloudflare Workers AI** | Yes | Yes | Yes |
 
-| Provider | Detection | Content field |
-|----------|-----------|---------------|
-| **OpenAI** | `choices[].message` | `choices[0].message.content` |
-| **Anthropic** | `content[]` array with `type` | Text blocks joined |
-| **Workers AI** | `response` string | `response` |
+## Security
 
-## Security Notes
-
-- **API key handling:** The TES API key is sent via `x-service-key` header over HTTPS. Ensure your `endpoint` uses HTTPS in production.
-- **Content transmission:** User messages and assistant responses are sent to TES for observability. Do not use this SDK if your use case prohibits transmitting conversation content to a third-party endpoint.
-- **No runtime dependencies:** Zero external dependencies — only `esbuild` and `jest` in devDependencies.
+- **HTTPS enforced:** The SDK rejects non-HTTPS endpoints (except `localhost` for development)
+- **API key protection:** Stored as a non-enumerable property — won't appear in `JSON.stringify` or error reporters
+- **Content controls:** Set `captureContent: false` to omit message content from events, or use `maxContentLength` to truncate
+- **No runtime dependencies:** Zero external dependencies
 
 ## License
 
