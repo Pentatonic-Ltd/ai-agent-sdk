@@ -3,7 +3,23 @@
 import { createInterface } from "readline";
 import { execFileSync } from "child_process";
 
-const TES_ENDPOINT = "https://api.pentatonic.com";
+const DEFAULT_ENDPOINT = "https://api.pentatonic.com";
+
+function parseArgs() {
+  const args = process.argv.slice(2);
+  const flags = {};
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--endpoint" && args[i + 1]) {
+      flags.endpoint = args[i + 1];
+      i++;
+    } else if (args[i].startsWith("--endpoint=")) {
+      flags.endpoint = args[i].split("=")[1];
+    } else if (!args[i].startsWith("--")) {
+      flags.command = args[i];
+    }
+  }
+  return flags;
+}
 const POLL_INTERVAL_MS = 3000;
 const POLL_TIMEOUT_MS = 300000; // 5 minutes
 
@@ -114,21 +130,27 @@ function toClientId(companyName) {
 }
 
 async function main() {
-  const command = process.argv[2];
+  const flags = parseArgs();
+  const TES_ENDPOINT = flags.endpoint || DEFAULT_ENDPOINT;
 
-  if (command !== "init") {
+  if (flags.command !== "init") {
     console.log(`
 @pentatonic/ai-events-sdk
 
 Usage:
-  npx @pentatonic/ai-events-sdk init    Set up account and install SDK
+  npx @pentatonic/ai-events-sdk init                    Set up account and install SDK
+  npx @pentatonic/ai-events-sdk init --endpoint URL     Use a custom TES endpoint
 
 For docs, see https://api.pentatonic.com
     `);
     process.exit(0);
   }
 
-  console.log("\n  Welcome to Pentatonic AI Events SDK\n");
+  console.log(`\n  Welcome to Pentatonic AI Events SDK`);
+  if (TES_ENDPOINT !== DEFAULT_ENDPOINT) {
+    console.log(`  Using endpoint: ${TES_ENDPOINT}`);
+  }
+  console.log("");
 
   // Collect info
   const email = await ask("? Email: ");
