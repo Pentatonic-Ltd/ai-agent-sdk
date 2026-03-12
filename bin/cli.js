@@ -166,65 +166,95 @@ For docs, see https://api.pentatonic.com
 
   const clientId = toClientId(companyName);
 
-  // Submit enrollment
-  const enrollSpinner = spinner("Creating account...");
+  // Try login first — account may already be verified from a previous run
+  let accessToken = null;
+  const loginSpinner = spinner("Checking for existing account...");
   try {
     const { ok, data } = await httpPost(
-      `${TES_ENDPOINT}/api/enrollment/submit`,
-      {
-        clientId,
-        companyName,
-        industryType: "technology",
-        authProvider: "native",
-        adminEmail: email,
-        adminPassword: password,
-        region: region.toLowerCase(),
-      }
+      `${TES_ENDPOINT}/api/enrollment/login`,
+      { email, password, clientId }
     );
+    if (ok && data.tokens?.accessToken) {
+      accessToken = data.tokens.accessToken;
+      loginSpinner.stop("Account already verified!");
+    } else {
+      loginSpinner.stop("No existing account found.");
+    }
+  } catch {
+    loginSpinner.stop("No existing account found.");
+  }
 
-    if (!ok) {
-      enrollSpinner.fail(data.message || "Enrollment failed");
+  // If not already verified, submit enrollment
+  if (!accessToken) {
+    const enrollSpinner = spinner("Creating account...");
+    try {
+      const { ok, data } = await httpPost(
+        `${TES_ENDPOINT}/api/enrollment/submit`,
+        {
+          clientId,
+          companyName,
+          industryType: "technology",
+          authProvider: "native",
+          adminEmail: email,
+          adminPassword: password,
+          region: region.toLowerCase(),
+        }
+      );
+
+      if (!ok) {
+        const errors = data.errors || {};
+        const isPending =
+          errors.clientId?.includes("already pending") ||
+          errors.adminEmail?.includes("already has a pending");
+
+        if (isPending) {
+          enrollSpinner.stop("Enrollment already pending — waiting for verification.");
+        } else {
+          enrollSpinner.fail(
+            data.message || Object.values(errors).join(", ") || "Enrollment failed"
+          );
+          process.exit(1);
+        }
+      } else {
+        enrollSpinner.stop("Account created! Check your email to verify.");
+      }
+    } catch (err) {
+      enrollSpinner.fail(`Failed to connect: ${err.message}`);
       process.exit(1);
     }
 
-    enrollSpinner.stop("Account created! Check your email to verify.");
-  } catch (err) {
-    enrollSpinner.fail(`Failed to connect: ${err.message}`);
-    process.exit(1);
-  }
+    // Poll for verification
+    console.log("\n  Waiting for email verification...");
+    console.log("  (Check your inbox and click the verification link)\n");
 
-  // Poll for verification
-  console.log("\n  Waiting for email verification...");
-  console.log("  (Check your inbox and click the verification link)\n");
+    const pollSpinner = spinner("Waiting for verification...");
+    const startTime = Date.now();
 
-  const pollSpinner = spinner("Waiting for verification...");
-  const startTime = Date.now();
-  let accessToken = null;
+    while (Date.now() - startTime < POLL_TIMEOUT_MS) {
+      await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS));
 
-  while (Date.now() - startTime < POLL_TIMEOUT_MS) {
-    await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS));
+      try {
+        const { ok, data } = await httpPost(
+          `${TES_ENDPOINT}/api/enrollment/login`,
+          { email, password, clientId }
+        );
 
-    try {
-      const { ok, data } = await httpPost(
-        `${TES_ENDPOINT}/api/enrollment/login`,
-        { email, password, clientId }
-      );
-
-      if (ok && data.tokens?.accessToken) {
-        accessToken = data.tokens.accessToken;
-        pollSpinner.stop("Email verified!");
-        break;
+        if (ok && data.tokens?.accessToken) {
+          accessToken = data.tokens.accessToken;
+          pollSpinner.stop("Email verified!");
+          break;
+        }
+      } catch {
+        // Not verified yet, keep polling
       }
-    } catch {
-      // Not verified yet, keep polling
     }
-  }
 
-  if (!accessToken) {
-    pollSpinner.fail(
-      "Verification timed out. Verify your email and run `npx @pentatonic/ai-events-sdk init` again."
-    );
-    process.exit(1);
+    if (!accessToken) {
+      pollSpinner.fail(
+        "Verification timed out. Run `npx @pentatonic/ai-events-sdk init` again — it will resume where you left off."
+      );
+      process.exit(1);
+    }
   }
 
   // Generate API key
