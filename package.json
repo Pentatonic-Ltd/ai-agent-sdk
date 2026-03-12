@@ -1,5 +1,5 @@
 {
-  "name": "@pentatonic/ai",
+  "name": "@pentatonic/ai-events-sdk",
   "version": "0.1.0-beta.1",
   "description": "LLM observability SDK — track token usage, tool calls, and conversations via Pentatonic TES",
   "type": "module",
