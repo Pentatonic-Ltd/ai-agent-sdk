@@ -11,7 +11,10 @@
       "require": "./dist/index.cjs"
     }
   },
-  "files": ["dist", "README.md", "LICENSE"],
+  "bin": {
+    "ai-events-sdk": "./bin/cli.js"
+  },
+  "files": ["dist", "bin", "README.md", "LICENSE"],
   "scripts": {
     "build": "node build.js",
     "test": "NODE_OPTIONS='--experimental-vm-modules' jest --config jest.config.cjs",

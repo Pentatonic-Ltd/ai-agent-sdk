@@ -4,11 +4,39 @@ LLM observability SDK — track token usage, tool calls, and conversations via [
 
 Provider-agnostic: automatically wraps OpenAI, Anthropic, and Cloudflare Workers AI clients.
 
-## Install
+## Getting Started
+
+### 1. Create an account and get your API key
+
+```bash
+npx @pentatonic/ai-events-sdk init
+```
+
+This will walk you through:
+- Creating a Pentatonic account (email, company name, password)
+- Choosing a data region (EU or US)
+- Email verification
+- Generating your API key
+
+At the end you'll see your credentials:
+
+```
+TES_ENDPOINT=https://api.pentatonic.com
+TES_CLIENT_ID=your-company
+TES_API_KEY=tes_your-company_xxxxx
+```
+
+Add these to your environment (`.env`, secrets manager, etc.) and the CLI will install the SDK for you.
+
+### 2. Or install manually
+
+If you already have an account, install the SDK directly:
 
 ```bash
 npm install @pentatonic/ai-events-sdk
 ```
+
+You can create API keys in the [Pentatonic dashboard](https://api.pentatonic.com).
 
 ## Quick Start
 
@@ -16,9 +44,9 @@ npm install @pentatonic/ai-events-sdk
 import { TESClient } from "@pentatonic/ai-events-sdk";
 
 const tes = new TESClient({
-  clientId: "my-app",
+  clientId: process.env.TES_CLIENT_ID,
   apiKey: process.env.TES_API_KEY,
-  endpoint: "https://your-tes-instance.example.com",
+  endpoint: process.env.TES_ENDPOINT,
 });
 ```
 
