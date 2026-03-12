@@ -160,8 +160,15 @@ function fireAndForgetEmit(clientConfig, messages, result, model) {
     session._model = model;
   }
 
-  const userMsg =
+  const rawContent =
     messages?.filter?.((m) => m.role === "user")?.pop()?.content || "";
+  // Anthropic content can be an array of content blocks — extract text only
+  const userMsg = Array.isArray(rawContent)
+    ? rawContent
+        .filter((b) => b.type === "text")
+        .map((b) => b.text)
+        .join("\n")
+    : rawContent;
   const assistantMsg = normalized.content || "";
 
   session

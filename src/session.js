@@ -9,7 +9,10 @@ function truncate(value, maxLen) {
 
 export class Session {
   constructor(clientConfig, { sessionId, metadata } = {}) {
-    this._config = clientConfig;
+    Object.defineProperty(this, '_config', {
+      value: clientConfig,
+      enumerable: false,
+    });
     this.sessionId = sessionId || crypto.randomUUID();
     this._metadata = metadata || {};
     this._reset();
@@ -91,7 +94,21 @@ export class Session {
   }
 
   async emitToolUse({ tool, args, resultSummary, durationMs, turnNumber }) {
+    const capture = this._config.captureContent !== false;
     const maxLen = this._config.maxContentLength;
+
+    const attributes = {
+      ...this._metadata,
+      source: "pentatonic-ai-sdk",
+      tool,
+      duration_ms: durationMs,
+      turn_number: turnNumber,
+    };
+
+    if (capture) {
+      attributes.args = args;
+      attributes.result_summary = truncate(resultSummary, maxLen);
+    }
 
     // Spread metadata first so SDK-controlled fields always win
     return sendEvent(this._config, {
@@ -99,15 +116,7 @@ export class Session {
       entityType: "conversation",
       data: {
         entity_id: this.sessionId,
-        attributes: {
-          ...this._metadata,
-          source: "pentatonic-ai-sdk",
-          tool,
-          args,
-          result_summary: truncate(resultSummary, maxLen),
-          duration_ms: durationMs,
-          turn_number: turnNumber,
-        },
+        attributes,
       },
     });
   }

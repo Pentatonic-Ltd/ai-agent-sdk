@@ -9,8 +9,8 @@ export class TESClient {
 
     const cleanEndpoint = endpoint.replace(/\/$/, "");
     const isLocalDev =
-      cleanEndpoint.startsWith("http://localhost") ||
-      cleanEndpoint.startsWith("http://127.0.0.1");
+      /^http:\/\/localhost(:\d+)?(\/|$)/.test(cleanEndpoint) ||
+      /^http:\/\/127\.0\.0\.1(:\d+)?(\/|$)/.test(cleanEndpoint);
     if (!cleanEndpoint.startsWith("https://") && !isLocalDev) {
       throw new Error(
         "endpoint must use https:// (http:// is only allowed for localhost)"
