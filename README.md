@@ -1,4 +1,4 @@
-# @pentatonic/ai-events-sdk
+# @pentatonic-ai/agent-events
 
 LLM observability SDK — track token usage, tool calls, and conversations via [Pentatonic TES](https://api.pentatonic.com).
 
@@ -9,7 +9,7 @@ Provider-agnostic: automatically wraps OpenAI, Anthropic, and Cloudflare Workers
 ### 1. Create an account and get your API key
 
 ```bash
-npx @pentatonic/ai-events-sdk init
+npx @pentatonic-ai/agent-events init
 ```
 
 This will walk you through:
@@ -33,7 +33,7 @@ Add these to your environment (`.env`, secrets manager, etc.) and the CLI will i
 If you already have an account, install the SDK directly:
 
 ```bash
-npm install @pentatonic/ai-events-sdk
+npm install @pentatonic-ai/agent-events
 ```
 
 You can create API keys in the [Pentatonic dashboard](https://api.pentatonic.com).
@@ -41,7 +41,7 @@ You can create API keys in the [Pentatonic dashboard](https://api.pentatonic.com
 ## Quick Start
 
 ```js
-import { TESClient } from "@pentatonic/ai-events-sdk";
+import { TESClient } from "@pentatonic-ai/agent-events";
 
 const tes = new TESClient({
   clientId: process.env.TES_CLIENT_ID,
@@ -210,7 +210,7 @@ Returns current accumulated usage: `{ prompt_tokens, completion_tokens, total_to
 Standalone utility to normalize any LLM response into a consistent shape:
 
 ```js
-import { normalizeResponse } from "@pentatonic/ai-events-sdk";
+import { normalizeResponse } from "@pentatonic-ai/agent-events";
 
 const normalized = normalizeResponse(openaiResponse);
 // { content, model, usage: { prompt_tokens, completion_tokens }, toolCalls: [{ tool, args }] }

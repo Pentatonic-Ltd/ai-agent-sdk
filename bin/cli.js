@@ -141,11 +141,11 @@ async function main() {
 
   if (flags.command !== "init") {
     console.log(`
-@pentatonic/ai-events-sdk
+@pentatonic-ai/agent-events
 
 Usage:
-  npx @pentatonic/ai-events-sdk init                    Set up account and install SDK
-  npx @pentatonic/ai-events-sdk init --endpoint URL     Use a custom TES endpoint
+  npx @pentatonic-ai/agent-events init                    Set up account and install SDK
+  npx @pentatonic-ai/agent-events init --endpoint URL     Use a custom TES endpoint
 
 For docs, see https://api.pentatonic.com
     `);
@@ -249,7 +249,7 @@ For docs, see https://api.pentatonic.com
 
     if (!accessToken) {
       pollSpinner.fail(
-        "Verification timed out. Run `npx @pentatonic/ai-events-sdk init` again — it will resume where you left off."
+        "Verification timed out. Run `npx @pentatonic-ai/agent-events init` again — it will resume where you left off."
       );
       process.exit(1);
     }
@@ -293,16 +293,16 @@ For docs, see https://api.pentatonic.com
 
     // Install SDK
     const installSpinner = spinner(
-      "Installing @pentatonic/ai-events-sdk..."
+      "Installing @pentatonic-ai/agent-events..."
     );
     try {
-      execFileSync("npm", ["install", "@pentatonic/ai-events-sdk"], {
+      execFileSync("npm", ["install", "@pentatonic-ai/agent-events"], {
         stdio: "pipe",
       });
-      installSpinner.stop("@pentatonic/ai-events-sdk installed!");
+      installSpinner.stop("@pentatonic-ai/agent-events installed!");
     } catch {
       installSpinner.fail(
-        "Install failed. Run manually: npm install @pentatonic/ai-events-sdk"
+        "Install failed. Run manually: npm install @pentatonic-ai/agent-events"
       );
     }
 
