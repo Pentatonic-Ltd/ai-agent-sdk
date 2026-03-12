@@ -246,8 +246,13 @@ For docs, see https://api.pentatonic.com
     keySpinner.stop("API key generated!");
 
     // Print credentials
+    const clientEndpoint =
+      TES_ENDPOINT === DEFAULT_ENDPOINT
+        ? `https://${clientId}.api.pentatonic.com`
+        : TES_ENDPOINT;
+
     console.log("\n  Add these to your environment:\n");
-    console.log(`  TES_ENDPOINT=${TES_ENDPOINT}`);
+    console.log(`  TES_ENDPOINT=${clientEndpoint}`);
     console.log(`  TES_CLIENT_ID=${clientId}`);
     console.log(`  TES_API_KEY=${apiKey}`);
     console.log("");
