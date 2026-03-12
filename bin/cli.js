@@ -23,7 +23,7 @@ function parseArgs() {
 const POLL_INTERVAL_MS = 3000;
 const POLL_TIMEOUT_MS = 300000; // 5 minutes
 
-const rl = createInterface({ input: process.stdin, output: process.stdout });
+let rl = createInterface({ input: process.stdin, output: process.stdout });
 
 function ask(question) {
   return new Promise((resolve) => rl.question(question, resolve));
@@ -31,18 +31,24 @@ function ask(question) {
 
 function askSecret(question) {
   return new Promise((resolve) => {
+    // Close readline so it stops echoing input
+    rl.close();
+
     process.stdout.write(question);
     const stdin = process.stdin;
-    const wasRaw = stdin.isRaw;
     if (stdin.isTTY) stdin.setRawMode(true);
+    stdin.resume();
 
     let input = "";
     const onData = (ch) => {
       const c = ch.toString();
       if (c === "\n" || c === "\r") {
         stdin.removeListener("data", onData);
-        if (stdin.isTTY) stdin.setRawMode(wasRaw);
+        if (stdin.isTTY) stdin.setRawMode(false);
+        stdin.pause();
         process.stdout.write("\n");
+        // Recreate readline for subsequent prompts
+        rl = createInterface({ input: process.stdin, output: process.stdout });
         resolve(input);
       } else if (c === "\u007f" || c === "\b") {
         if (input.length > 0) {
