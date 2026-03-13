@@ -30,3 +30,4 @@ packages = ["python/pentatonic_agent_events"]
 
 [tool.pytest.ini_options]
 testpaths = ["python/tests"]
+pythonpath = ["python"]
