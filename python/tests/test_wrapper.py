@@ -4,7 +4,7 @@ from pentatonic_agent_events.client import TESClient
 
 
 def _mock_urlopen(captured_requests):
-    def mock_fn(req):
+    def mock_fn(req, **kwargs):
         captured_requests.append(req)
         resp = MagicMock()
         resp.read.return_value = json.dumps({

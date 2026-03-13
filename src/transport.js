@@ -22,8 +22,8 @@ export async function sendEvent({ endpoint, apiKey, clientId, headers }, input, 
     headers: {
       "Content-Type": "application/json",
       "x-client-id": clientId,
-      ...authHeaders,
       ...headers,
+      ...authHeaders,
     },
     body: JSON.stringify({
       query: EMIT_EVENT_MUTATION,

@@ -26,8 +26,8 @@ def send_event(config, event_input):
     headers = {
         "Content-Type": "application/json",
         "x-client-id": client_id,
-        **auth_headers,
         **extra_headers,
+        **auth_headers,
     }
 
     body = json.dumps({
@@ -37,7 +37,7 @@ def send_event(config, event_input):
 
     req = Request(f"{endpoint}/api/graphql", data=body, headers=headers, method="POST")
 
-    with urlopen(req) as resp:
+    with urlopen(req, timeout=10) as resp:
         data = json.loads(resp.read())
 
     if data.get("errors"):

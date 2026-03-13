@@ -152,6 +152,12 @@ For docs, see https://api.pentatonic.com
     process.exit(0);
   }
 
+  const isLocal = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/.test(TES_ENDPOINT);
+  if (!TES_ENDPOINT.startsWith("https://") && !isLocal) {
+    console.error(`\n  Error: endpoint must use https:// (http:// is only allowed for localhost)\n`);
+    process.exit(1);
+  }
+
   console.log(`\n  Welcome to Pentatonic AI Events SDK`);
   if (TES_ENDPOINT !== DEFAULT_ENDPOINT) {
     console.log(`  Using endpoint: ${TES_ENDPOINT}`);
