@@ -152,15 +152,16 @@ await session.emitChatTurn({
 
 ## API Reference
 
-### `new TESClient({ clientId, apiKey, endpoint, captureContent?, maxContentLength? })`
+### `new TESClient({ clientId, apiKey, endpoint, headers?, captureContent?, maxContentLength? })`
 
 Creates a new client.
 
 | Param | Type | Default | Description |
 |-------|------|---------|-------------|
 | `clientId` | `string` | *required* | Your application/tenant identifier |
-| `apiKey` | `string` | *required* | TES service API key |
+| `apiKey` | `string` | *required* | TES service API key (sent as `x-service-key` header) |
 | `endpoint` | `string` | *required* | TES instance URL (must be `https://`, except `localhost` for dev) |
+| `headers` | `object` | `{}` | Additional headers to include in every request |
 | `captureContent` | `boolean` | `true` | Whether to include message content in events |
 | `maxContentLength` | `number` | `4096` | Truncate content beyond this length |
 

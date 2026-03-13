@@ -300,6 +300,31 @@ describe("Session", () => {
     expect(attrs.usage.prompt_tokens).toBe(10);
   });
 
+  it("includes custom headers in requests", async () => {
+    const customTes = new TESClient({
+      clientId: "test-client",
+      apiKey: "tes_sk_test",
+      endpoint: "https://api.test.com",
+      headers: { "X-Custom-Header": "custom-value" },
+    });
+
+    const session = customTes.session({ sessionId: "sess-headers" });
+    session.record({
+      choices: [{ message: { content: "hi" } }],
+      usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 },
+    });
+
+    await session.emitChatTurn({
+      userMessage: "hi",
+      assistantResponse: "hello",
+    });
+
+    const headers = fetchCalls[0].opts.headers;
+    expect(headers["X-Custom-Header"]).toBe("custom-value");
+    expect(headers["x-service-key"]).toBe("tes_sk_test");
+    expect(headers["x-client-id"]).toBe("test-client");
+  });
+
   it("resets state after emitChatTurn", async () => {
     const session = tes.session({ sessionId: "sess-6" });
     session.record({

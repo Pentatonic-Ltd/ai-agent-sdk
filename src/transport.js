@@ -8,7 +8,7 @@ const EMIT_EVENT_MUTATION = `
   }
 `;
 
-export async function sendEvent({ endpoint, apiKey, clientId }, input, fetchFn) {
+export async function sendEvent({ endpoint, apiKey, clientId, headers }, input, fetchFn) {
   const f = fetchFn || globalThis.fetch;
   const response = await f(`${endpoint}/api/graphql`, {
     method: "POST",
@@ -16,6 +16,7 @@ export async function sendEvent({ endpoint, apiKey, clientId }, input, fetchFn) 
       "Content-Type": "application/json",
       "x-service-key": apiKey,
       "x-client-id": clientId,
+      ...headers,
     },
     body: JSON.stringify({
       query: EMIT_EVENT_MUTATION,
