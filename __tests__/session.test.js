@@ -163,7 +163,7 @@ describe("Session", () => {
     expect(call.url).toBe("https://api.test.com/api/graphql");
 
     const headers = call.opts.headers;
-    expect(headers["x-service-key"]).toBe("tes_sk_test");
+    expect(headers["Authorization"]).toBe("Bearer tes_sk_test");
     expect(headers["x-client-id"]).toBe("test-client");
 
     const body = JSON.parse(call.opts.body);
@@ -300,6 +300,29 @@ describe("Session", () => {
     expect(attrs.usage.prompt_tokens).toBe(10);
   });
 
+  it("sends internal service key as x-service-key header", async () => {
+    const internalTes = new TESClient({
+      clientId: "test-client",
+      apiKey: "internal_service_key_abc",
+      endpoint: "https://api.test.com",
+    });
+
+    const session = internalTes.session({ sessionId: "sess-internal" });
+    session.record({
+      choices: [{ message: { content: "hi" } }],
+      usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 },
+    });
+
+    await session.emitChatTurn({
+      userMessage: "hi",
+      assistantResponse: "hello",
+    });
+
+    const headers = fetchCalls[0].opts.headers;
+    expect(headers["x-service-key"]).toBe("internal_service_key_abc");
+    expect(headers["Authorization"]).toBeUndefined();
+  });
+
   it("includes custom headers in requests", async () => {
     const customTes = new TESClient({
       clientId: "test-client",
@@ -321,7 +344,7 @@ describe("Session", () => {
 
     const headers = fetchCalls[0].opts.headers;
     expect(headers["X-Custom-Header"]).toBe("custom-value");
-    expect(headers["x-service-key"]).toBe("tes_sk_test");
+    expect(headers["Authorization"]).toBe("Bearer tes_sk_test");
     expect(headers["x-client-id"]).toBe("test-client");
   });
 
