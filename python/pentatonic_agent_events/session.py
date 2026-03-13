@@ -67,7 +67,13 @@ class Session:
         }
 
         if self._tool_calls:
-            attributes["tool_calls"] = self._tool_calls
+            if capture:
+                attributes["tool_calls"] = self._tool_calls
+            else:
+                attributes["tool_calls"] = [
+                    {k: v for k, v in tc.items() if k != "args"}
+                    for tc in self._tool_calls
+                ]
 
         if capture:
             attributes["user_message"] = _truncate(user_message, max_len)

@@ -92,6 +92,34 @@ describe("tes.wrap() — OpenAI", () => {
     expect(input.data.attributes.usage.prompt_tokens).toBe(50);
   });
 
+  it("includes full messages array in emitted event", async () => {
+    const openai = createMockOpenAI([
+      {
+        choices: [{ message: { content: "Hello!" } }],
+        usage: { prompt_tokens: 50, completion_tokens: 20, total_tokens: 70 },
+        model: "gpt-4o",
+      },
+    ]);
+
+    const ai = tes.wrap(openai);
+    const result = await ai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        { role: "system", content: "You are helpful." },
+        { role: "user", content: "hi" },
+      ],
+    });
+
+    await new Promise((r) => setTimeout(r, 10));
+
+    expect(fetchCalls).toHaveLength(1);
+    const body = JSON.parse(fetchCalls[0].opts.body);
+    const attrs = body.variables.input.data.attributes;
+    expect(attrs.messages).toHaveLength(2);
+    expect(attrs.messages[0]).toEqual({ role: "system", content: "You are helpful." });
+    expect(attrs.messages[1]).toEqual({ role: "user", content: "hi" });
+  });
+
   it("supports multi-round sessions", async () => {
     const openai = createMockOpenAI([
       {

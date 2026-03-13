@@ -58,7 +58,7 @@ export class Session {
     return normalized;
   }
 
-  async emitChatTurn({ userMessage, assistantResponse, turnNumber }) {
+  async emitChatTurn({ userMessage, assistantResponse, turnNumber, messages }) {
     const capture = this._config.captureContent !== false;
     const maxLen = this._config.maxContentLength;
 
@@ -68,12 +68,23 @@ export class Session {
       source: "pentatonic-ai-sdk",
       model: this._model,
       usage: this.totalUsage,
-      tool_calls: this._toolCalls.length ? this._toolCalls : undefined,
+      tool_calls: this._toolCalls.length
+        ? (capture ? this._toolCalls : this._toolCalls.map(({ args, ...rest }) => rest))
+        : undefined,
     };
 
     if (capture) {
       attributes.user_message = truncate(userMessage, maxLen);
       attributes.assistant_response = truncate(assistantResponse, maxLen);
+
+      if (messages) {
+        attributes.messages = messages.map((m) => {
+          if (typeof m.content === "string") {
+            return { ...m, content: truncate(m.content, maxLen) };
+          }
+          return m;
+        });
+      }
     }
 
     if (turnNumber !== undefined) {

@@ -172,6 +172,6 @@ function fireAndForgetEmit(clientConfig, messages, result, model) {
   const assistantMsg = normalized.content || "";
 
   session
-    .emitChatTurn({ userMessage: userMsg, assistantResponse: assistantMsg })
+    .emitChatTurn({ userMessage: userMsg, assistantResponse: assistantMsg, messages })
     .catch((err) => console.error("[pentatonic-ai] emit failed:", err.message));
 }

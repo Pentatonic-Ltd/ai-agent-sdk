@@ -348,6 +348,92 @@ describe("Session", () => {
     expect(headers["x-client-id"]).toBe("test-client");
   });
 
+  it("includes full messages array when provided", async () => {
+    const session = tes.session({ sessionId: "sess-msgs" });
+    session.record({
+      choices: [{ message: { content: "hi" } }],
+      usage: { prompt_tokens: 50, completion_tokens: 10, total_tokens: 60 },
+      model: "gpt-4o",
+    });
+
+    const messages = [
+      { role: "system", content: "You are a helpful assistant." },
+      { role: "user", content: "What is 2+2?" },
+      { role: "assistant", content: "4" },
+      { role: "user", content: "Thanks" },
+    ];
+
+    await session.emitChatTurn({
+      userMessage: "Thanks",
+      assistantResponse: "hi",
+      messages,
+    });
+
+    const body = JSON.parse(fetchCalls[0].opts.body);
+    const attrs = body.variables.input.data.attributes;
+    expect(attrs.messages).toHaveLength(4);
+    expect(attrs.messages[0].role).toBe("system");
+    expect(attrs.messages[0].content).toBe("You are a helpful assistant.");
+    expect(attrs.messages[1].role).toBe("user");
+  });
+
+  it("truncates message content in messages array", async () => {
+    const smallTes = new TESClient({
+      clientId: "test-client",
+      apiKey: "tes_sk_test",
+      endpoint: "https://api.test.com",
+      maxContentLength: 20,
+    });
+
+    const session = smallTes.session({ sessionId: "sess-msgs-trunc" });
+    session.record({
+      choices: [{ message: { content: "hi" } }],
+      usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 },
+    });
+
+    const messages = [
+      { role: "system", content: "A".repeat(100) },
+      { role: "user", content: "short" },
+    ];
+
+    await session.emitChatTurn({
+      userMessage: "short",
+      assistantResponse: "hi",
+      messages,
+    });
+
+    const body = JSON.parse(fetchCalls[0].opts.body);
+    const attrs = body.variables.input.data.attributes;
+    expect(attrs.messages[0].content).toContain("...[truncated]");
+    expect(attrs.messages[0].content.length).toBeLessThanOrEqual(35);
+    expect(attrs.messages[1].content).toBe("short");
+  });
+
+  it("omits messages when captureContent is false", async () => {
+    const noCaptTes = new TESClient({
+      clientId: "test-client",
+      apiKey: "tes_sk_test",
+      endpoint: "https://api.test.com",
+      captureContent: false,
+    });
+
+    const session = noCaptTes.session({ sessionId: "sess-msgs-nocap" });
+    session.record({
+      choices: [{ message: { content: "hi" } }],
+      usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 },
+    });
+
+    await session.emitChatTurn({
+      userMessage: "hi",
+      assistantResponse: "hello",
+      messages: [{ role: "system", content: "secret system prompt" }],
+    });
+
+    const body = JSON.parse(fetchCalls[0].opts.body);
+    const attrs = body.variables.input.data.attributes;
+    expect(attrs.messages).toBeUndefined();
+  });
+
   it("resets state after emitChatTurn", async () => {
     const session = tes.session({ sessionId: "sess-6" });
     session.record({
