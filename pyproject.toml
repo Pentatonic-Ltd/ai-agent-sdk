@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pentatonic-agent-events"
+version = "0.1.0b3"
+description = "LLM observability SDK — track token usage, tool calls, and conversations via Pentatonic TES"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+keywords = ["llm", "observability", "ai", "openai", "anthropic", "pentatonic"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+
+[project.urls]
+Homepage = "https://github.com/Pentatonic-Ltd/ai-events-sdk"
+Repository = "https://github.com/Pentatonic-Ltd/ai-events-sdk"
+
+[tool.hatch.build.targets.wheel]
+packages = ["python/pentatonic_agent_events"]
+
+[tool.pytest.ini_options]
+testpaths = ["python/tests"]
