@@ -37,7 +37,11 @@ function empty() {
 function normalizeOpenAI(raw) {
   const message = raw.choices?.[0]?.message || {};
   const usage = raw.usage || {};
-  const toolCalls = (message.tool_calls || []).map((tc) => ({
+  // Workers AI sometimes puts tool_calls at top level instead of inside message
+  const rawToolCalls = message.tool_calls?.length
+    ? message.tool_calls
+    : raw.tool_calls || [];
+  const toolCalls = rawToolCalls.map((tc) => ({
     tool: tc.function?.name || tc.name,
     args: parseArgs(tc.function?.arguments || tc.arguments),
   }));

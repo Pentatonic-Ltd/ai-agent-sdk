@@ -88,6 +88,48 @@ describe("normalizeResponse", () => {
     expect(result.toolCalls).toEqual([]);
   });
 
+  it("handles Workers AI OpenAI-style with top-level tool_calls", () => {
+    // Workers AI sometimes returns choices[] but puts tool_calls at top level
+    const result = normalizeResponse({
+      choices: [{ message: { content: "" } }],
+      tool_calls: [
+        {
+          function: {
+            name: "search_products",
+            arguments: '{"query":"red shoes"}',
+          },
+        },
+      ],
+      usage: { prompt_tokens: 50, completion_tokens: 10 },
+    });
+
+    expect(result.toolCalls).toHaveLength(1);
+    expect(result.toolCalls[0].tool).toBe("search_products");
+    expect(result.toolCalls[0].args).toEqual({ query: "red shoes" });
+  });
+
+  it("prefers message.tool_calls over top-level tool_calls", () => {
+    const result = normalizeResponse({
+      choices: [
+        {
+          message: {
+            content: "",
+            tool_calls: [
+              { function: { name: "from_message", arguments: "{}" } },
+            ],
+          },
+        },
+      ],
+      tool_calls: [
+        { function: { name: "from_top_level", arguments: "{}" } },
+      ],
+      usage: { prompt_tokens: 10, completion_tokens: 5 },
+    });
+
+    expect(result.toolCalls).toHaveLength(1);
+    expect(result.toolCalls[0].tool).toBe("from_message");
+  });
+
   it("parses stringified tool call arguments", () => {
     const result = normalizeResponse({
       choices: [
