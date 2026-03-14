@@ -71,20 +71,22 @@ tes = TESClient(
 
 ### Wrap any LLM client (automatic tracking)
 
-`tes.wrap()` auto-detects your client and intercepts the right method — no configuration needed.
+`tes.wrap()` auto-detects your client and intercepts every call — each one emits a `CHAT_TURN` event automatically. Pass an optional `sessionId` to link events from the same conversation, and `metadata` to attach custom fields.
 
 #### JavaScript — OpenAI
 
 ```js
 import OpenAI from "openai";
 
-const openai = tes.wrap(new OpenAI());
+const ai = tes.wrap(new OpenAI(), { sessionId: "conv-123", metadata: { userId: "u_1" } });
 
-// Automatically tracked and emitted as a CHAT_TURN event
-const result = await openai.chat.completions.create({
+// Every create() call automatically emits a CHAT_TURN event
+const result = await ai.chat.completions.create({
   model: "gpt-4o",
   messages: [{ role: "user", content: "Hello!" }],
 });
+
+ai.sessionId; // "conv-123" — or auto-generated UUID if not provided
 ```
 
 #### Python — OpenAI
@@ -92,13 +94,15 @@ const result = await openai.chat.completions.create({
 ```python
 from openai import OpenAI
 
-openai = tes.wrap(OpenAI())
+ai = tes.wrap(OpenAI(), session_id="conv-123", metadata={"user_id": "u_1"})
 
-# Automatically tracked and emitted as a CHAT_TURN event
-result = openai.chat.completions.create(
+# Every create() call automatically emits a CHAT_TURN event
+result = ai.chat.completions.create(
     model="gpt-4o",
     messages=[{"role": "user", "content": "Hello!"}],
 )
+
+ai.session_id  # "conv-123" — or auto-generated UUID if not provided
 ```
 
 #### JavaScript — Anthropic
@@ -108,7 +112,6 @@ import Anthropic from "@anthropic-ai/sdk";
 
 const claude = tes.wrap(new Anthropic());
 
-// Same automatic tracking — messages.create is intercepted
 const result = await claude.messages.create({
   model: "claude-sonnet-4-6-20250514",
   max_tokens: 1024,
@@ -134,7 +137,7 @@ result = claude.messages.create(
 
 ```js
 // Cloudflare Workers AI binding
-const ai = tes.wrap(env.AI);
+const ai = tes.wrap(env.AI, { sessionId: sid, metadata: { shop: shopDomain } });
 
 // run() is intercepted automatically
 const result = await ai.run("@cf/meta/llama-3.1-8b-instruct", {
@@ -144,64 +147,53 @@ const result = await ai.run("@cf/meta/llama-3.1-8b-instruct", {
 
 > **Note:** Workers AI is a Cloudflare-specific binding and is only available in JavaScript.
 
-### Multi-round sessions
+### Tool-calling loops
 
-For tool-calling loops or multi-turn conversations, use a session to accumulate usage across rounds:
+For multi-round tool loops, just keep calling the wrapped client. Each `create()`/`run()` call emits its own event, and they're linked by `sessionId`. The dashboard aggregates tokens, tool calls, and turns per session automatically.
 
 #### JavaScript
 
 ```js
-const openai = tes.wrap(new OpenAI());
-const session = openai.session({ sessionId: "conv-101" });
+const ai = tes.wrap(new OpenAI(), { sessionId: "conv-101" });
 
-// .chat() calls the LLM and records the response automatically
-const r1 = await session.chat({
+// Round 1: AI requests a tool call — emits event with tool_calls
+const r1 = await ai.chat.completions.create({
   model: "gpt-4o",
-  messages: [{ role: "user", content: "Recommend a shoe" }],
+  messages: [{ role: "user", content: "Find me running shoes" }],
+  tools: [searchTool],
 });
 
-// Handle tool calls, continue the conversation...
-const r2 = await session.chat({
+// Execute tool, feed results back...
+
+// Round 2: AI responds with final answer — emits another event
+const r2 = await ai.chat.completions.create({
   model: "gpt-4o",
-  messages: [...messages, { role: "user", content: "In blue?" }],
+  messages: [...messages, { role: "tool", content: toolResult }],
 });
 
-// Emit once — includes totals from all rounds
-await session.emitChatTurn({
-  userMessage: "In blue?",
-  assistantResponse: r2.choices[0].message.content,
-});
+// That's it. No manual emit needed. Both events share sessionId "conv-101".
 ```
 
 #### Python
 
 ```python
-openai = tes.wrap(OpenAI())
-session = openai.session(session_id="conv-101")
+ai = tes.wrap(OpenAI(), session_id="conv-101")
 
-r1 = session.chat(
+r1 = ai.chat.completions.create(
     model="gpt-4o",
-    messages=[{"role": "user", "content": "Recommend a shoe"}],
+    messages=[{"role": "user", "content": "Find me running shoes"}],
+    tools=[search_tool],
 )
 
-r2 = session.chat(
+# Execute tool, feed results back...
+
+r2 = ai.chat.completions.create(
     model="gpt-4o",
-    messages=[*messages, {"role": "user", "content": "In blue?"}],
+    messages=[*messages, {"role": "tool", "content": tool_result}],
 )
 
-session.emit_chat_turn(
-    user_message="In blue?",
-    assistant_response=r2["choices"][0]["message"]["content"],
-)
+# No manual emit needed.
 ```
-
-Session method varies by provider:
-
-| Provider | JS session call | Python session call |
-|----------|----------------|---------------------|
-| OpenAI | `session.chat(params)` | `session.chat(**params)` |
-| Anthropic | `session.chat(params)` | `session.chat(**params)` |
-| Workers AI | `session.chat(model, params)` | N/A (JS only) |
 
 ### Manual session (full control)
 
@@ -279,9 +271,28 @@ TESClient(client_id, api_key, endpoint, headers=None, capture_content=True, max_
 | `captureContent` / `capture_content` | `boolean` / `bool` | `true` / `True` | Whether to include message content in events |
 | `maxContentLength` / `max_content_length` | `number` / `int` | `4096` | Truncate content beyond this length |
 
-### `tes.wrap(client)`
+### `tes.wrap(client, opts?)`
 
-Returns a Proxy (JS) or wrapper (Python) around any supported LLM client. Auto-detects the provider:
+Returns a Proxy (JS) or wrapper (Python) around any supported LLM client. Every intercepted call emits a `CHAT_TURN` event automatically.
+
+#### JavaScript
+
+```js
+const ai = tes.wrap(client, { sessionId, metadata });
+```
+
+#### Python
+
+```python
+ai = tes.wrap(client, session_id=None, metadata=None)
+```
+
+| Option (JS / Python) | Type | Default | Description |
+|----------------------|------|---------|-------------|
+| `sessionId` / `session_id` | `string` | `crypto.randomUUID()` / `uuid.uuid4()` | Links events from the same conversation |
+| `metadata` / `metadata` | `object` / `dict` | `{}` | Custom fields included in every emitted event |
+
+Auto-detects the provider:
 
 | Client | Detection | Intercepted method |
 |--------|-----------|-------------------|
@@ -289,7 +300,7 @@ Returns a Proxy (JS) or wrapper (Python) around any supported LLM client. Auto-d
 | Anthropic | `client.messages.create` | `messages.create()` |
 | Workers AI | `client.run` (JS only) | `run()` |
 
-All other methods/properties pass through unchanged. The wrapped client also exposes `.session(opts)` for multi-round tracking.
+All other methods/properties pass through unchanged. The wrapped client exposes `ai.sessionId` (JS) or `ai.session_id` (Python).
 
 ### `tes.session(opts?)`
 
@@ -364,9 +375,9 @@ All events are sent to the TES GraphQL API (`emitEvent` mutation) authenticated 
 
 | Event Type | Entity Type | When |
 |------------|-------------|------|
-| `CHAT_TURN` | `conversation` | After each complete user-assistant exchange |
-| `TOOL_USE` | `conversation` | After individual tool invocations |
-| `SESSION_START` | `conversation` | At conversation start (optional) |
+| `CHAT_TURN` | `conversation` | Every `create()`/`run()` call via `wrap()`, or manually via `session.emitChatTurn()` |
+| `TOOL_USE` | `conversation` | Via `session.emitToolUse()` (manual only) |
+| `SESSION_START` | `conversation` | Via `session.emitSessionStart()` (manual only) |
 
 ## Supported Providers
 

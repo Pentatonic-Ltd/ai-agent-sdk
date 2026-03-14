@@ -133,8 +133,8 @@ async function sendEvent({ endpoint, apiKey, clientId, headers }, input, fetchFn
     headers: {
       "Content-Type": "application/json",
       "x-client-id": clientId,
-      ...authHeaders,
-      ...headers
+      ...headers,
+      ...authHeaders
     },
     body: JSON.stringify({
       query: EMIT_EVENT_MUTATION,
@@ -201,7 +201,7 @@ var Session = class {
     }
     return normalized;
   }
-  async emitChatTurn({ userMessage, assistantResponse, turnNumber }) {
+  async emitChatTurn({ userMessage, assistantResponse, turnNumber, messages }) {
     const capture = this._config.captureContent !== false;
     const maxLen = this._config.maxContentLength;
     const attributes = {
@@ -209,11 +209,19 @@ var Session = class {
       source: "pentatonic-ai-sdk",
       model: this._model,
       usage: this.totalUsage,
-      tool_calls: this._toolCalls.length ? this._toolCalls : void 0
+      tool_calls: this._toolCalls.length ? capture ? this._toolCalls : this._toolCalls.map(({ args, ...rest }) => rest) : void 0
     };
     if (capture) {
       attributes.user_message = truncate(userMessage, maxLen);
       attributes.assistant_response = truncate(assistantResponse, maxLen);
+      if (messages) {
+        attributes.messages = messages.map((m) => {
+          if (typeof m.content === "string") {
+            return { ...m, content: truncate(m.content, maxLen) };
+          }
+          return m;
+        });
+      }
     }
     if (turnNumber !== void 0) {
       attributes.turn_number = turnNumber;
@@ -406,7 +414,7 @@ function fireAndForgetEmit(clientConfig, messages, result, model) {
   const rawContent = messages?.filter?.((m) => m.role === "user")?.pop()?.content || "";
   const userMsg = Array.isArray(rawContent) ? rawContent.filter((b) => b.type === "text").map((b) => b.text).join("\n") : rawContent;
   const assistantMsg = normalized.content || "";
-  session.emitChatTurn({ userMessage: userMsg, assistantResponse: assistantMsg }).catch((err) => console.error("[pentatonic-ai] emit failed:", err.message));
+  session.emitChatTurn({ userMessage: userMsg, assistantResponse: assistantMsg, messages }).catch((err) => console.error("[pentatonic-ai] emit failed:", err.message));
 }
 
 // src/client.js
