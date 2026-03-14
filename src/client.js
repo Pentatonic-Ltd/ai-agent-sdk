@@ -51,7 +51,7 @@ export class TESClient {
     return new Session(this._config, opts);
   }
 
-  wrap(openaiClient) {
-    return wrapClient(this._config, openaiClient);
+  wrap(client, { sessionId, metadata } = {}) {
+    return wrapClient(this._config, client, { sessionId, metadata });
   }
 }

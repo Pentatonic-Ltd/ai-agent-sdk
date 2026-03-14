@@ -90,6 +90,7 @@ describe("tes.wrap() — OpenAI", () => {
     expect(input.eventType).toBe("CHAT_TURN");
     expect(input.data.attributes.model).toBe("gpt-4o");
     expect(input.data.attributes.usage.prompt_tokens).toBe(50);
+    expect(input.data.attributes.usage.ai_rounds).toBe(1);
   });
 
   it("includes full messages array in emitted event", async () => {
@@ -102,7 +103,7 @@ describe("tes.wrap() — OpenAI", () => {
     ]);
 
     const ai = tes.wrap(openai);
-    const result = await ai.chat.completions.create({
+    await ai.chat.completions.create({
       model: "gpt-4o",
       messages: [
         { role: "system", content: "You are helpful." },
@@ -120,15 +121,45 @@ describe("tes.wrap() — OpenAI", () => {
     expect(attrs.messages[1]).toEqual({ role: "user", content: "hi" });
   });
 
-  it("supports multi-round sessions", async () => {
+  it("exposes auto-generated sessionId", () => {
+    const openai = createMockOpenAI([]);
+    const ai = tes.wrap(openai);
+    expect(ai.sessionId).toBeDefined();
+    expect(typeof ai.sessionId).toBe("string");
+    expect(ai.sessionId.length).toBeGreaterThan(0);
+  });
+
+  it("uses custom sessionId when provided", () => {
+    const openai = createMockOpenAI([]);
+    const ai = tes.wrap(openai, { sessionId: "my-session-123" });
+    expect(ai.sessionId).toBe("my-session-123");
+  });
+
+  it("includes metadata in emitted events", async () => {
     const openai = createMockOpenAI([
       {
-        choices: [{
-          message: {
-            content: "",
-            tool_calls: [{ function: { name: "search", arguments: '{"q":"shoes"}' } }],
-          },
-        }],
+        choices: [{ message: { content: "Hello!" } }],
+        usage: { prompt_tokens: 50, completion_tokens: 20, total_tokens: 70 },
+        model: "gpt-4o",
+      },
+    ]);
+
+    const ai = tes.wrap(openai, { metadata: { shop_domain: "test.myshopify.com" } });
+    await ai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [{ role: "user", content: "hi" }],
+    });
+
+    await new Promise((r) => setTimeout(r, 10));
+
+    const attrs = JSON.parse(fetchCalls[0].opts.body).variables.input.data.attributes;
+    expect(attrs.shop_domain).toBe("test.myshopify.com");
+  });
+
+  it("emits one event per call (2 calls → 2 events)", async () => {
+    const openai = createMockOpenAI([
+      {
+        choices: [{ message: { content: "", tool_calls: [{ function: { name: "search", arguments: '{"q":"shoes"}' } }] } }],
         usage: { prompt_tokens: 100, completion_tokens: 20, total_tokens: 120 },
         model: "gpt-4o",
       },
@@ -139,22 +170,36 @@ describe("tes.wrap() — OpenAI", () => {
       },
     ]);
 
-    const ai = tes.wrap(openai);
-    const session = ai.session({ sessionId: "multi-turn" });
-
-    await session.chat({ model: "gpt-4o", messages: [{ role: "user", content: "find shoes" }] });
-    await session.chat({ model: "gpt-4o", messages: [{ role: "user", content: "find shoes" }, { role: "tool", content: "[...]" }] });
-
-    await session.emitChatTurn({
-      userMessage: "find shoes",
-      assistantResponse: "Found shoes!",
+    const ai = tes.wrap(openai, { sessionId: "multi-turn" });
+    await ai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [{ role: "user", content: "find shoes" }],
+    });
+    await ai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [{ role: "user", content: "find shoes" }, { role: "tool", content: "[...]" }],
     });
 
-    expect(fetchCalls).toHaveLength(1);
-    const attrs = JSON.parse(fetchCalls[0].opts.body).variables.input.data.attributes;
-    expect(attrs.usage.prompt_tokens).toBe(300);
-    expect(attrs.usage.ai_rounds).toBe(2);
-    expect(attrs.tool_calls).toHaveLength(1);
+    await new Promise((r) => setTimeout(r, 10));
+
+    expect(fetchCalls).toHaveLength(2);
+
+    // First event: has tool call, 100 prompt tokens
+    const attrs1 = JSON.parse(fetchCalls[0].opts.body).variables.input.data.attributes;
+    expect(attrs1.usage.prompt_tokens).toBe(100);
+    expect(attrs1.usage.ai_rounds).toBe(1);
+    expect(attrs1.tool_calls).toHaveLength(1);
+
+    // Second event: no tool call, 200 prompt tokens
+    const attrs2 = JSON.parse(fetchCalls[1].opts.body).variables.input.data.attributes;
+    expect(attrs2.usage.prompt_tokens).toBe(200);
+    expect(attrs2.usage.ai_rounds).toBe(1);
+
+    // Both share same session ID
+    const sid1 = JSON.parse(fetchCalls[0].opts.body).variables.input.data.entity_id;
+    const sid2 = JSON.parse(fetchCalls[1].opts.body).variables.input.data.entity_id;
+    expect(sid1).toBe("multi-turn");
+    expect(sid2).toBe("multi-turn");
   });
 });
 
@@ -188,8 +233,7 @@ describe("tes.wrap() — Anthropic", () => {
     await new Promise((r) => setTimeout(r, 10));
 
     expect(fetchCalls).toHaveLength(1);
-    const body = JSON.parse(fetchCalls[0].opts.body);
-    const attrs = body.variables.input.data.attributes;
+    const attrs = JSON.parse(fetchCalls[0].opts.body).variables.input.data.attributes;
     expect(attrs.model).toBe("claude-sonnet-4-6-20250514");
     expect(attrs.usage.prompt_tokens).toBe(80);
     expect(attrs.usage.completion_tokens).toBe(25);
@@ -197,7 +241,7 @@ describe("tes.wrap() — Anthropic", () => {
     expect(attrs.assistant_response).toBe("Bonjour!");
   });
 
-  it("handles tool_use blocks", async () => {
+  it("handles tool_use blocks in single event", async () => {
     const anthropic = createMockAnthropic([
       {
         content: [
@@ -207,39 +251,28 @@ describe("tes.wrap() — Anthropic", () => {
         usage: { input_tokens: 100, output_tokens: 40 },
         model: "claude-sonnet-4-6-20250514",
       },
-      {
-        content: [{ type: "text", text: "Found red shoes!" }],
-        usage: { input_tokens: 200, output_tokens: 30 },
-        model: "claude-sonnet-4-6-20250514",
-      },
     ]);
 
     const ai = tes.wrap(anthropic);
-    const session = ai.session({ sessionId: "anth-multi" });
-
-    const r1 = await session.chat({
+    await ai.messages.create({
       model: "claude-sonnet-4-6-20250514",
       messages: [{ role: "user", content: "find shoes" }],
       max_tokens: 200,
     });
-    expect(r1.content[1].name).toBe("search");
 
-    await session.chat({
-      model: "claude-sonnet-4-6-20250514",
-      messages: [{ role: "user", content: "find shoes" }, { role: "assistant", content: r1.content }],
-      max_tokens: 200,
-    });
+    await new Promise((r) => setTimeout(r, 10));
 
-    await session.emitChatTurn({
-      userMessage: "find shoes",
-      assistantResponse: "Found red shoes!",
-    });
-
+    expect(fetchCalls).toHaveLength(1);
     const attrs = JSON.parse(fetchCalls[0].opts.body).variables.input.data.attributes;
-    expect(attrs.usage.prompt_tokens).toBe(300);
-    expect(attrs.usage.ai_rounds).toBe(2);
     expect(attrs.tool_calls).toHaveLength(1);
     expect(attrs.tool_calls[0].tool).toBe("search");
+    expect(attrs.usage.ai_rounds).toBe(1);
+  });
+
+  it("exposes sessionId property", () => {
+    const anthropic = createMockAnthropic([]);
+    const ai = tes.wrap(anthropic, { sessionId: "anth-sess" });
+    expect(ai.sessionId).toBe("anth-sess");
   });
 });
 
@@ -270,7 +303,7 @@ describe("tes.wrap() — Workers AI", () => {
     expect(attrs.assistant_response).toBe("4");
   });
 
-  it("supports multi-round sessions via session.chat()", async () => {
+  it("emits one event per run() call", async () => {
     const ai = createMockWorkersAI([
       {
         response: "",
@@ -283,27 +316,31 @@ describe("tes.wrap() — Workers AI", () => {
       },
     ]);
 
-    const wrapped = tes.wrap(ai);
-    const session = wrapped.session({ sessionId: "wai-multi" });
-
-    await session.chat("@cf/meta/llama-3.1-8b-instruct", {
+    const wrapped = tes.wrap(ai, { sessionId: "wai-multi" });
+    await wrapped.run("@cf/meta/llama-3.1-8b-instruct", {
       messages: [{ role: "user", content: "find item 123" }],
     });
-
-    await session.chat("@cf/meta/llama-3.1-8b-instruct", {
+    await wrapped.run("@cf/meta/llama-3.1-8b-instruct", {
       messages: [{ role: "user", content: "find item 123" }, { role: "tool", content: "{}" }],
     });
 
-    await session.emitChatTurn({
-      userMessage: "find item 123",
-      assistantResponse: "Found it!",
-    });
+    await new Promise((r) => setTimeout(r, 10));
 
-    const attrs = JSON.parse(fetchCalls[0].opts.body).variables.input.data.attributes;
-    expect(attrs.usage.prompt_tokens).toBe(130);
-    expect(attrs.usage.ai_rounds).toBe(2);
-    expect(attrs.tool_calls).toHaveLength(1);
-    expect(attrs.tool_calls[0].tool).toBe("lookup");
+    expect(fetchCalls).toHaveLength(2);
+
+    const attrs1 = JSON.parse(fetchCalls[0].opts.body).variables.input.data.attributes;
+    expect(attrs1.usage.prompt_tokens).toBe(50);
+    expect(attrs1.tool_calls).toHaveLength(1);
+    expect(attrs1.tool_calls[0].tool).toBe("lookup");
+
+    const attrs2 = JSON.parse(fetchCalls[1].opts.body).variables.input.data.attributes;
+    expect(attrs2.usage.prompt_tokens).toBe(80);
+  });
+
+  it("exposes sessionId property", () => {
+    const ai = createMockWorkersAI([]);
+    const wrapped = tes.wrap(ai, { sessionId: "wai-sess" });
+    expect(wrapped.sessionId).toBe("wai-sess");
   });
 });
 
