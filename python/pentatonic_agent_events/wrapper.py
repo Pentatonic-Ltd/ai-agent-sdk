@@ -1,6 +1,7 @@
 import sys
-from .session import Session
+import uuid
 from .normalizer import normalize_response
+from .transport import send_event
 
 
 def detect_client_type(client):
@@ -20,15 +21,17 @@ def detect_client_type(client):
     return "unknown"
 
 
-def wrap_client(config, client):
+def wrap_client(config, client, session_id=None, metadata=None):
     client_type = detect_client_type(client)
+    sid = session_id or str(uuid.uuid4())
+    meta = metadata or {}
 
     if client_type == "openai":
-        return _OpenAIWrapper(config, client)
+        return _OpenAIWrapper(config, client, sid, meta)
     if client_type == "anthropic":
-        return _AnthropicWrapper(config, client)
+        return _AnthropicWrapper(config, client, sid, meta)
     if client_type == "workers-ai":
-        return _WorkersAIWrapper(config, client)
+        return _WorkersAIWrapper(config, client, sid, meta)
 
     raise ValueError(
         "Unsupported client: expected OpenAI (chat.completions.create), "
@@ -36,12 +39,17 @@ def wrap_client(config, client):
     )
 
 
-def _fire_and_forget_emit(config, messages, result, model=None):
-    session = Session(config)
-    normalized = session.record(result)
+def _truncate(value, max_len):
+    if not value or not max_len or not isinstance(value, str):
+        return value
+    if len(value) <= max_len:
+        return value
+    return value[:max_len] + "...[truncated]"
 
-    if model and not normalized["model"]:
-        session._model = model
+
+def _emit_event(config, session_id, metadata, messages, normalized, model=None):
+    capture = config.get("capture_content", True) is not False
+    max_len = config.get("max_content_length")
 
     raw_content = ""
     if isinstance(messages, list):
@@ -58,21 +66,62 @@ def _fire_and_forget_emit(config, messages, result, model=None):
 
     assistant_msg = normalized["content"] or ""
 
+    attributes = {
+        **metadata,
+        "source": "pentatonic-ai-sdk",
+        "model": model or normalized["model"],
+        "usage": {
+            "prompt_tokens": normalized["usage"]["prompt_tokens"],
+            "completion_tokens": normalized["usage"]["completion_tokens"],
+            "total_tokens": normalized["usage"]["prompt_tokens"] + normalized["usage"]["completion_tokens"],
+            "ai_rounds": 1,
+        },
+    }
+
+    if normalized["tool_calls"]:
+        if capture:
+            attributes["tool_calls"] = [{**tc, "round": 0} for tc in normalized["tool_calls"]]
+        else:
+            attributes["tool_calls"] = [
+                {k: v for k, v in {**tc, "round": 0}.items() if k != "args"}
+                for tc in normalized["tool_calls"]
+            ]
+
+    if capture:
+        attributes["user_message"] = _truncate(user_msg, max_len)
+        attributes["assistant_response"] = _truncate(assistant_msg, max_len)
+
+        if messages:
+            attributes["messages"] = [
+                {**m, "content": _truncate(m["content"], max_len)}
+                if isinstance(m.get("content"), str) else m
+                for m in messages
+            ]
+
     try:
-        session.emit_chat_turn(user_message=user_msg, assistant_response=assistant_msg, messages=messages)
+        send_event(config, {
+            "eventType": "CHAT_TURN",
+            "entityType": "conversation",
+            "data": {
+                "entity_id": session_id,
+                "attributes": attributes,
+            },
+        })
     except Exception as e:
         print(f"[pentatonic-ai] emit failed: {e}", file=sys.stderr)
 
 
 class _WrappedOpenAICompletions:
-    def __init__(self, config, completions, client):
+    def __init__(self, config, completions, session_id, metadata):
         self._config = config
         self._completions = completions
-        self._client = client
+        self._session_id = session_id
+        self._metadata = metadata
 
     def create(self, **kwargs):
         result = self._completions.create(**kwargs)
-        _fire_and_forget_emit(self._config, kwargs.get("messages"), result)
+        normalized = normalize_response(result)
+        _emit_event(self._config, self._session_id, self._metadata, kwargs.get("messages"), normalized)
         return result
 
     def __getattr__(self, name):
@@ -80,11 +129,10 @@ class _WrappedOpenAICompletions:
 
 
 class _WrappedOpenAIChat:
-    def __init__(self, config, chat, client):
+    def __init__(self, config, chat, session_id, metadata):
         self._config = config
         self._chat = chat
-        self._client = client
-        self.completions = _WrappedOpenAICompletions(config, chat.completions, client)
+        self.completions = _WrappedOpenAICompletions(config, chat.completions, session_id, metadata)
 
     def __getattr__(self, name):
         if name == "completions":
@@ -93,13 +141,16 @@ class _WrappedOpenAIChat:
 
 
 class _OpenAIWrapper:
-    def __init__(self, config, client):
+    def __init__(self, config, client, session_id, metadata):
         self._config = config
         self._client = client
-        self.chat = _WrappedOpenAIChat(config, client.chat, client)
+        self._session_id = session_id
+        self._metadata = metadata
+        self.chat = _WrappedOpenAIChat(config, client.chat, session_id, metadata)
 
-    def session(self, session_id=None, metadata=None):
-        return _OpenAISession(self._config, self._client, session_id=session_id, metadata=metadata)
+    @property
+    def session_id(self):
+        return self._session_id
 
     def __getattr__(self, name):
         if name == "chat":
@@ -107,26 +158,17 @@ class _OpenAIWrapper:
         return getattr(self._client, name)
 
 
-class _OpenAISession(Session):
-    def __init__(self, config, client, session_id=None, metadata=None):
-        super().__init__(config, session_id=session_id, metadata=metadata)
-        self._client = client
-
-    def chat(self, **kwargs):
-        result = self._client.chat.completions.create(**kwargs)
-        self.record(result)
-        return result
-
-
 class _WrappedAnthropicMessages:
-    def __init__(self, config, messages, client):
+    def __init__(self, config, messages, session_id, metadata):
         self._config = config
         self._messages = messages
-        self._client = client
+        self._session_id = session_id
+        self._metadata = metadata
 
     def create(self, **kwargs):
         result = self._messages.create(**kwargs)
-        _fire_and_forget_emit(self._config, kwargs.get("messages"), result)
+        normalized = normalize_response(result)
+        _emit_event(self._config, self._session_id, self._metadata, kwargs.get("messages"), normalized)
         return result
 
     def __getattr__(self, name):
@@ -134,13 +176,16 @@ class _WrappedAnthropicMessages:
 
 
 class _AnthropicWrapper:
-    def __init__(self, config, client):
+    def __init__(self, config, client, session_id, metadata):
         self._config = config
         self._client = client
-        self.messages = _WrappedAnthropicMessages(config, client.messages, client)
+        self._session_id = session_id
+        self._metadata = metadata
+        self.messages = _WrappedAnthropicMessages(config, client.messages, session_id, metadata)
 
-    def session(self, session_id=None, metadata=None):
-        return _AnthropicSession(self._config, self._client, session_id=session_id, metadata=metadata)
+    @property
+    def session_id(self):
+        return self._session_id
 
     def __getattr__(self, name):
         if name == "messages":
@@ -148,41 +193,23 @@ class _AnthropicWrapper:
         return getattr(self._client, name)
 
 
-class _AnthropicSession(Session):
-    def __init__(self, config, client, session_id=None, metadata=None):
-        super().__init__(config, session_id=session_id, metadata=metadata)
-        self._client = client
-
-    def chat(self, **kwargs):
-        result = self._client.messages.create(**kwargs)
-        self.record(result)
-        return result
-
-
 class _WorkersAIWrapper:
-    def __init__(self, config, ai_binding):
+    def __init__(self, config, ai_binding, session_id, metadata):
         self._config = config
         self._ai = ai_binding
+        self._session_id = session_id
+        self._metadata = metadata
+
+    @property
+    def session_id(self):
+        return self._session_id
 
     def run(self, model, params=None, **kwargs):
         result = self._ai.run(model, params, **kwargs)
         messages = params.get("messages") if isinstance(params, dict) else None
-        _fire_and_forget_emit(self._config, messages, result, model=model)
+        normalized = normalize_response(result)
+        _emit_event(self._config, self._session_id, self._metadata, messages, normalized, model=model)
         return result
-
-    def session(self, session_id=None, metadata=None):
-        return _WorkersAISession(self._config, self._ai, session_id=session_id, metadata=metadata)
 
     def __getattr__(self, name):
         return getattr(self._ai, name)
-
-
-class _WorkersAISession(Session):
-    def __init__(self, config, ai_binding, session_id=None, metadata=None):
-        super().__init__(config, session_id=session_id, metadata=metadata)
-        self._ai = ai_binding
-
-    def chat(self, model, params=None, **kwargs):
-        result = self._ai.run(model, params, **kwargs)
-        self.record(result)
-        return result

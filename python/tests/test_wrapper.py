@@ -101,6 +101,7 @@ class TestWrapOpenAI:
         attrs = body["variables"]["input"]["data"]["attributes"]
         assert attrs["model"] == "gpt-4o"
         assert attrs["usage"]["prompt_tokens"] == 50
+        assert attrs["usage"]["ai_rounds"] == 1
 
     def test_includes_messages_in_emitted_event(self):
         requests = []
@@ -111,7 +112,7 @@ class TestWrapOpenAI:
         }])
         ai = tes.wrap(openai)
         with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
-            result = ai.chat.completions.create(
+            ai.chat.completions.create(
                 model="gpt-4o",
                 messages=[
                     {"role": "system", "content": "You are helpful."},
@@ -124,7 +125,35 @@ class TestWrapOpenAI:
         assert attrs["messages"][0] == {"role": "system", "content": "You are helpful."}
         assert attrs["messages"][1] == {"role": "user", "content": "hi"}
 
-    def test_session_multi_round(self):
+    def test_exposes_auto_generated_session_id(self):
+        openai = MockOpenAI([])
+        ai = tes.wrap(openai)
+        assert ai.session_id is not None
+        assert isinstance(ai.session_id, str)
+        assert len(ai.session_id) > 0
+
+    def test_uses_custom_session_id(self):
+        openai = MockOpenAI([])
+        ai = tes.wrap(openai, session_id="my-session-123")
+        assert ai.session_id == "my-session-123"
+
+    def test_includes_metadata_in_events(self):
+        requests = []
+        openai = MockOpenAI([{
+            "choices": [{"message": {"content": "Hello!"}}],
+            "usage": {"prompt_tokens": 50, "completion_tokens": 20, "total_tokens": 70},
+            "model": "gpt-4o",
+        }])
+        ai = tes.wrap(openai, metadata={"shop_domain": "test.myshopify.com"})
+        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+            ai.chat.completions.create(
+                model="gpt-4o",
+                messages=[{"role": "user", "content": "hi"}],
+            )
+        attrs = json.loads(requests[0].data)["variables"]["input"]["data"]["attributes"]
+        assert attrs["shop_domain"] == "test.myshopify.com"
+
+    def test_emits_one_event_per_call(self):
         requests = []
         openai = MockOpenAI([
             {
@@ -138,17 +167,31 @@ class TestWrapOpenAI:
                 "model": "gpt-4o",
             },
         ])
-        ai = tes.wrap(openai)
-        session = ai.session(session_id="multi-turn")
-        session.chat(model="gpt-4o", messages=[{"role": "user", "content": "find shoes"}])
-        session.chat(model="gpt-4o", messages=[{"role": "user", "content": "find shoes"}, {"role": "tool", "content": "[...]"}])
+        ai = tes.wrap(openai, session_id="multi-turn")
         with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
-            session.emit_chat_turn(user_message="find shoes", assistant_response="Found shoes!")
-        assert len(requests) == 1
-        attrs = json.loads(requests[0].data)["variables"]["input"]["data"]["attributes"]
-        assert attrs["usage"]["prompt_tokens"] == 300
-        assert attrs["usage"]["ai_rounds"] == 2
-        assert len(attrs["tool_calls"]) == 1
+            ai.chat.completions.create(
+                model="gpt-4o",
+                messages=[{"role": "user", "content": "find shoes"}],
+            )
+            ai.chat.completions.create(
+                model="gpt-4o",
+                messages=[{"role": "user", "content": "find shoes"}, {"role": "tool", "content": "[...]"}],
+            )
+        assert len(requests) == 2
+
+        attrs1 = json.loads(requests[0].data)["variables"]["input"]["data"]["attributes"]
+        assert attrs1["usage"]["prompt_tokens"] == 100
+        assert attrs1["usage"]["ai_rounds"] == 1
+        assert len(attrs1["tool_calls"]) == 1
+
+        attrs2 = json.loads(requests[1].data)["variables"]["input"]["data"]["attributes"]
+        assert attrs2["usage"]["prompt_tokens"] == 200
+        assert attrs2["usage"]["ai_rounds"] == 1
+
+        sid1 = json.loads(requests[0].data)["variables"]["input"]["data"]["entity_id"]
+        sid2 = json.loads(requests[1].data)["variables"]["input"]["data"]["entity_id"]
+        assert sid1 == "multi-turn"
+        assert sid2 == "multi-turn"
 
 
 class TestWrapAnthropic:
@@ -180,34 +223,33 @@ class TestWrapAnthropic:
         assert attrs["user_message"] == "Say hello in French"
         assert attrs["assistant_response"] == "Bonjour!"
 
-    def test_session_with_tool_use(self):
+    def test_handles_tool_use_in_single_event(self):
         requests = []
-        anthropic = MockAnthropic([
-            {
-                "content": [
-                    {"type": "text", "text": "Let me search."},
-                    {"type": "tool_use", "id": "tu_1", "name": "search", "input": {"query": "shoes"}},
-                ],
-                "usage": {"input_tokens": 100, "output_tokens": 40},
-                "model": "claude-sonnet-4-6-20250514",
-            },
-            {
-                "content": [{"type": "text", "text": "Found red shoes!"}],
-                "usage": {"input_tokens": 200, "output_tokens": 30},
-                "model": "claude-sonnet-4-6-20250514",
-            },
-        ])
+        anthropic = MockAnthropic([{
+            "content": [
+                {"type": "text", "text": "Let me search."},
+                {"type": "tool_use", "id": "tu_1", "name": "search", "input": {"query": "shoes"}},
+            ],
+            "usage": {"input_tokens": 100, "output_tokens": 40},
+            "model": "claude-sonnet-4-6-20250514",
+        }])
         ai = tes.wrap(anthropic)
-        session = ai.session(session_id="anth-multi")
-        session.chat(model="claude-sonnet-4-6-20250514", messages=[{"role": "user", "content": "find shoes"}], max_tokens=200)
-        session.chat(model="claude-sonnet-4-6-20250514", messages=[{"role": "user", "content": "find shoes"}], max_tokens=200)
         with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
-            session.emit_chat_turn(user_message="find shoes", assistant_response="Found red shoes!")
+            ai.messages.create(
+                model="claude-sonnet-4-6-20250514",
+                messages=[{"role": "user", "content": "find shoes"}],
+                max_tokens=200,
+            )
+        assert len(requests) == 1
         attrs = json.loads(requests[0].data)["variables"]["input"]["data"]["attributes"]
-        assert attrs["usage"]["prompt_tokens"] == 300
-        assert attrs["usage"]["ai_rounds"] == 2
         assert len(attrs["tool_calls"]) == 1
         assert attrs["tool_calls"][0]["tool"] == "search"
+        assert attrs["usage"]["ai_rounds"] == 1
+
+    def test_exposes_session_id(self):
+        anthropic = MockAnthropic([])
+        ai = tes.wrap(anthropic, session_id="anth-sess")
+        assert ai.session_id == "anth-sess"
 
 
 class TestWrapWorkersAI:
@@ -230,7 +272,7 @@ class TestWrapWorkersAI:
         assert attrs["user_message"] == "What is 2+2?"
         assert attrs["assistant_response"] == "4"
 
-    def test_session_multi_round(self):
+    def test_emits_one_event_per_run(self):
         requests = []
         ai = MockWorkersAI([
             {
@@ -243,17 +285,28 @@ class TestWrapWorkersAI:
                 "usage": {"prompt_tokens": 80, "completion_tokens": 15},
             },
         ])
-        wrapped = tes.wrap(ai)
-        session = wrapped.session(session_id="wai-multi")
-        session.chat("@cf/meta/llama-3.1-8b-instruct", {"messages": [{"role": "user", "content": "find item 123"}]})
-        session.chat("@cf/meta/llama-3.1-8b-instruct", {"messages": [{"role": "user", "content": "find item 123"}, {"role": "tool", "content": "{}"}]})
+        wrapped = tes.wrap(ai, session_id="wai-multi")
         with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
-            session.emit_chat_turn(user_message="find item 123", assistant_response="Found it!")
-        attrs = json.loads(requests[0].data)["variables"]["input"]["data"]["attributes"]
-        assert attrs["usage"]["prompt_tokens"] == 130
-        assert attrs["usage"]["ai_rounds"] == 2
-        assert len(attrs["tool_calls"]) == 1
-        assert attrs["tool_calls"][0]["tool"] == "lookup"
+            wrapped.run("@cf/meta/llama-3.1-8b-instruct", {
+                "messages": [{"role": "user", "content": "find item 123"}],
+            })
+            wrapped.run("@cf/meta/llama-3.1-8b-instruct", {
+                "messages": [{"role": "user", "content": "find item 123"}, {"role": "tool", "content": "{}"}],
+            })
+        assert len(requests) == 2
+
+        attrs1 = json.loads(requests[0].data)["variables"]["input"]["data"]["attributes"]
+        assert attrs1["usage"]["prompt_tokens"] == 50
+        assert len(attrs1["tool_calls"]) == 1
+        assert attrs1["tool_calls"][0]["tool"] == "lookup"
+
+        attrs2 = json.loads(requests[1].data)["variables"]["input"]["data"]["attributes"]
+        assert attrs2["usage"]["prompt_tokens"] == 80
+
+    def test_exposes_session_id(self):
+        ai = MockWorkersAI([])
+        wrapped = tes.wrap(ai, session_id="wai-sess")
+        assert wrapped.session_id == "wai-sess"
 
 
 class TestWrapUnsupported:
