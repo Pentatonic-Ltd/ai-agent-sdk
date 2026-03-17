@@ -1,5 +1,6 @@
+import { Session } from "./session.js";
 import { normalizeResponse } from "./normalizer.js";
-import { sendEvent } from "./transport.js";
+import { rewriteUrls } from "./tracking.js";
 
 /**
  * Detect the client type by duck-typing its shape.
@@ -12,16 +13,27 @@ function detectClientType(client) {
 }
 
 /**
- * Wrap any supported LLM client with automatic per-call event emission.
+ * Wrap any supported LLM client with automatic usage tracking.
+ * Auto-detects OpenAI, Anthropic, and Workers AI clients.
  */
-export function wrapClient(clientConfig, client, { sessionId, metadata } = {}) {
-  const type = detectClientType(client);
-  const sid = sessionId || crypto.randomUUID();
-  const meta = metadata || {};
+export function wrapClient(clientConfig, client, sessionOpts = {}) {
+  // Resolve sessionId once so all calls share the same session
+  sessionOpts._resolvedSessionId =
+    sessionOpts.sessionId || crypto.randomUUID();
 
-  if (type === "openai") return wrapOpenAI(clientConfig, client, sid, meta);
-  if (type === "anthropic") return wrapAnthropic(clientConfig, client, sid, meta);
-  if (type === "workers-ai") return wrapWorkersAI(clientConfig, client, sid, meta);
+  // Shared session accumulates usage and tool calls across rounds
+  sessionOpts._session = new Session(clientConfig, {
+    sessionId: sessionOpts._resolvedSessionId,
+    metadata: sessionOpts.metadata,
+  });
+
+  const type = detectClientType(client);
+
+  if (type === "openai") return wrapOpenAI(clientConfig, client, sessionOpts);
+  if (type === "anthropic")
+    return wrapAnthropic(clientConfig, client, sessionOpts);
+  if (type === "workers-ai")
+    return wrapWorkersAI(clientConfig, client, sessionOpts);
 
   throw new Error(
     "Unsupported client: expected OpenAI (chat.completions.create), " +
@@ -29,99 +41,58 @@ export function wrapClient(clientConfig, client, { sessionId, metadata } = {}) {
   );
 }
 
-// --- Shared emit ---
-
-function emitEvent(clientConfig, sessionId, metadata, messages, normalized, model) {
-  const capture = clientConfig.captureContent !== false;
-  const maxLen = clientConfig.maxContentLength;
-
-  const rawContent =
-    messages?.filter?.((m) => m.role === "user")?.pop()?.content || "";
-  const userMsg = Array.isArray(rawContent)
-    ? rawContent
-        .filter((b) => b.type === "text")
-        .map((b) => b.text)
-        .join("\n")
-    : rawContent;
-  const assistantMsg = normalized.content || "";
-
-  const attributes = {
-    ...metadata,
-    source: "pentatonic-ai-sdk",
-    model: model || normalized.model,
-    usage: {
-      prompt_tokens: normalized.usage.prompt_tokens,
-      completion_tokens: normalized.usage.completion_tokens,
-      total_tokens: normalized.usage.prompt_tokens + normalized.usage.completion_tokens,
-      ai_rounds: 1,
-    },
-  };
-
-  if (normalized.toolCalls.length) {
-    attributes.tool_calls = capture
-      ? normalized.toolCalls.map((tc) => ({ ...tc, round: 0 }))
-      : normalized.toolCalls.map(({ args, ...rest }) => ({ ...rest, round: 0 }));
-  }
-
-  if (capture) {
-    attributes.user_message = _truncate(userMsg, maxLen);
-    attributes.assistant_response = _truncate(assistantMsg, maxLen);
-
-    if (messages) {
-      attributes.messages = messages.map((m) => {
-        if (typeof m.content === "string") {
-          return { ...m, content: _truncate(m.content, maxLen) };
-        }
-        return m;
-      });
-    }
-  }
-
-  sendEvent(clientConfig, {
-    eventType: "CHAT_TURN",
-    entityType: "conversation",
-    data: {
-      entity_id: sessionId,
-      attributes,
-    },
-  }).catch((err) => console.error("[pentatonic-ai] emit failed:", err.message));
-}
-
-function _truncate(value, maxLen) {
-  if (!value || !maxLen || typeof value !== "string") return value;
-  if (value.length <= maxLen) return value;
-  return value.slice(0, maxLen) + "...[truncated]";
-}
-
 // --- OpenAI ---
 
-function wrapOpenAI(config, client, sessionId, metadata) {
+function wrapOpenAI(clientConfig, client, sessionOpts) {
   return new Proxy(client, {
     get(target, prop) {
-      if (prop === "chat") return wrapOpenAIChat(config, target.chat, sessionId, metadata);
-      if (prop === "sessionId") return sessionId;
+      if (prop === "chat")
+        return wrapOpenAIChat(clientConfig, target.chat, target, sessionOpts);
+      if (prop === "sessionId") return sessionOpts._resolvedSessionId;
+      if (prop === "tesSession") return sessionOpts._session;
+      if (prop === "session")
+        return (opts) => new OpenAISession(clientConfig, target, opts);
       return target[prop];
     },
   });
 }
 
-function wrapOpenAIChat(config, chat, sessionId, metadata) {
+function wrapOpenAIChat(clientConfig, chat, client, sessionOpts) {
   return new Proxy(chat, {
     get(target, prop) {
-      if (prop === "completions") return wrapOpenAICompletions(config, target.completions, sessionId, metadata);
+      if (prop === "completions")
+        return wrapOpenAICompletions(
+          clientConfig,
+          target.completions,
+          client,
+          sessionOpts
+        );
       return target[prop];
     },
   });
 }
 
-function wrapOpenAICompletions(config, completions, sessionId, metadata) {
+function wrapOpenAICompletions(clientConfig, completions, client, sessionOpts) {
   return new Proxy(completions, {
     get(target, prop) {
       if (prop === "create") {
         return async (params) => {
           const result = await target.create(params);
-          const normalized = normalizeResponse(result);
-          emitEvent(config, sessionId, metadata, params.messages, normalized);
+          const content = result.choices?.[0]?.message?.content;
+          if (content) {
+            result.choices[0].message.content = await rewriteUrls(
+              content,
+              clientConfig,
+              sessionOpts._resolvedSessionId,
+              sessionOpts.metadata
+            );
+          }
+          fireAndForgetEmit(
+            clientConfig,
+            sessionOpts,
+            params.messages,
+            result
+          );
           return result;
         };
       }
@@ -130,26 +101,64 @@ function wrapOpenAICompletions(config, completions, sessionId, metadata) {
   });
 }
 
+class OpenAISession extends Session {
+  constructor(clientConfig, client, opts) {
+    super(clientConfig, opts);
+    this._client = client;
+  }
+
+  async chat(params) {
+    const result = await this._client.chat.completions.create(params);
+    this.record(result);
+    return result;
+  }
+}
+
 // --- Anthropic ---
 
-function wrapAnthropic(config, client, sessionId, metadata) {
+function wrapAnthropic(clientConfig, client, sessionOpts) {
   return new Proxy(client, {
     get(target, prop) {
-      if (prop === "messages") return wrapAnthropicMessages(config, target.messages, sessionId, metadata);
-      if (prop === "sessionId") return sessionId;
+      if (prop === "messages")
+        return wrapAnthropicMessages(
+          clientConfig,
+          target.messages,
+          target,
+          sessionOpts
+        );
+      if (prop === "sessionId") return sessionOpts._resolvedSessionId;
+      if (prop === "tesSession") return sessionOpts._session;
+      if (prop === "session")
+        return (opts) => new AnthropicSession(clientConfig, target, opts);
       return target[prop];
     },
   });
 }
 
-function wrapAnthropicMessages(config, messages, sessionId, metadata) {
+function wrapAnthropicMessages(clientConfig, messages, client, sessionOpts) {
   return new Proxy(messages, {
     get(target, prop) {
       if (prop === "create") {
         return async (params) => {
           const result = await target.create(params);
-          const normalized = normalizeResponse(result);
-          emitEvent(config, sessionId, metadata, params.messages, normalized);
+          if (Array.isArray(result.content)) {
+            for (const block of result.content) {
+              if (block.type === "text" && block.text) {
+                block.text = await rewriteUrls(
+                  block.text,
+                  clientConfig,
+                  sessionOpts._resolvedSessionId,
+                  sessionOpts.metadata
+                );
+              }
+            }
+          }
+          fireAndForgetEmit(
+            clientConfig,
+            sessionOpts,
+            params.messages,
+            result
+          );
           return result;
         };
       }
@@ -158,21 +167,157 @@ function wrapAnthropicMessages(config, messages, sessionId, metadata) {
   });
 }
 
+class AnthropicSession extends Session {
+  constructor(clientConfig, client, opts) {
+    super(clientConfig, opts);
+    this._client = client;
+  }
+
+  async chat(params) {
+    const result = await this._client.messages.create(params);
+    this.record(result);
+    return result;
+  }
+}
+
 // --- Workers AI ---
 
-function wrapWorkersAI(config, aiBinding, sessionId, metadata) {
+function wrapWorkersAI(clientConfig, aiBinding, sessionOpts) {
   return new Proxy(aiBinding, {
     get(target, prop) {
       if (prop === "run") {
         return async (model, params, ...rest) => {
           const result = await target.run(model, params, ...rest);
-          const normalized = normalizeResponse(result);
-          emitEvent(config, sessionId, metadata, params?.messages, normalized, model);
+          if (result.response) {
+            result.response = await rewriteUrls(
+              result.response,
+              clientConfig,
+              sessionOpts._resolvedSessionId,
+              sessionOpts.metadata
+            );
+          }
+          fireAndForgetEmit(
+            clientConfig,
+            sessionOpts,
+            params?.messages,
+            result,
+            model
+          );
           return result;
         };
       }
-      if (prop === "sessionId") return sessionId;
+      if (prop === "sessionId") return sessionOpts._resolvedSessionId;
+      if (prop === "tesSession") return sessionOpts._session;
+      if (prop === "session")
+        return (opts) => new WorkersAISession(clientConfig, target, opts);
       return target[prop];
     },
   });
+}
+
+class WorkersAISession extends Session {
+  constructor(clientConfig, aiBinding, opts) {
+    super(clientConfig, opts);
+    this._ai = aiBinding;
+  }
+
+  async chat(model, params, ...rest) {
+    const result = await this._ai.run(model, params, ...rest);
+    this.record(result);
+    return result;
+  }
+}
+
+// --- Shared ---
+
+/**
+ * Extract tool results from the messages array and attach them to recorded
+ * tool calls in the session. Messages contain {role:"tool", content, tool_call_id}
+ * entries after the app executes tools and feeds results back to the AI.
+ */
+function extractToolResults(session, messages) {
+  if (!messages?.length || !session._toolCalls.length) return;
+
+  // Build map: tool_call_id -> tool name from assistant messages
+  const idToName = new Map();
+  for (const msg of messages) {
+    if (msg.role === "assistant" && msg.tool_calls) {
+      for (const tc of msg.tool_calls) {
+        const id = tc.id || tc.tool_call_id;
+        const name = tc.function?.name || tc.name;
+        if (id && name) idToName.set(id, name);
+      }
+    }
+  }
+
+  // Attach results to session tool calls
+  for (const msg of messages) {
+    if (msg.role !== "tool" || !msg.content) continue;
+
+    const callId = msg.tool_call_id;
+    const toolName = callId ? idToName.get(callId) : null;
+
+    // Find matching tool call in session (by name, without a result yet)
+    for (const tc of session._toolCalls) {
+      if (tc.result) continue; // already has a result
+      if (toolName && tc.tool !== toolName) continue;
+
+      // Parse JSON content if possible, otherwise store as string
+      try {
+        const parsed = JSON.parse(msg.content);
+        // Summarise arrays (e.g. product lists) to avoid bloating the event
+        if (Array.isArray(parsed)) {
+          tc.result = { count: parsed.length, sample: parsed.slice(0, 3) };
+        } else {
+          tc.result = parsed;
+        }
+      } catch {
+        tc.result = msg.content;
+      }
+      break;
+    }
+  }
+}
+
+function fireAndForgetEmit(clientConfig, sessionOpts, messages, result, model) {
+  const session = sessionOpts._session;
+  const normalized = session.record(result);
+
+  // Extract tool results from the messages array.
+  extractToolResults(session, messages);
+
+  // Capture system prompt from messages (first system message, only once)
+  if (!session._systemPrompt && messages?.length) {
+    const systemMsg = messages.find((m) => m.role === "system");
+    if (systemMsg?.content) {
+      session._systemPrompt = systemMsg.content;
+    }
+  }
+
+  // If Workers AI didn't include model in the response, use the one passed to run()
+  if (model && !normalized.model) {
+    session._model = model;
+  }
+
+  // When autoEmit is disabled, the caller controls event emission.
+  // The wrapper still tracks usage/tool calls via session.record() above.
+  if (sessionOpts.autoEmit === false) {
+    return;
+  }
+
+  // Accumulate tool-call rounds without emitting — only emit when there's
+  // actual text content (the final response in a multi-round tool loop).
+  // This ensures a single CHAT_TURN event per conversation turn with all
+  // accumulated tool calls and usage included.
+  if (!normalized.content && normalized.toolCalls.length > 0) {
+    return;
+  }
+
+  const userMsg =
+    messages?.filter?.((m) => m.role === "user")?.pop()?.content || "";
+  const assistantMsg = normalized.content || "";
+
+  session
+    .emitChatTurn({ userMessage: userMsg, assistantResponse: assistantMsg })
+    .catch((err) => console.error("[pentatonic-ai] emit failed:", err.message));
 }

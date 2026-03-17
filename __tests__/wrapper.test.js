@@ -28,7 +28,8 @@ function createMockOpenAI(responses) {
   return {
     chat: {
       completions: {
-        create: async () => responses[callIndex++] || responses[responses.length - 1],
+        create: async () =>
+          responses[callIndex++] || responses[responses.length - 1],
       },
     },
     models: {
@@ -41,7 +42,8 @@ function createMockAnthropic(responses) {
   let callIndex = 0;
   return {
     messages: {
-      create: async () => responses[callIndex++] || responses[responses.length - 1],
+      create: async () =>
+        responses[callIndex++] || responses[responses.length - 1],
     },
     models: {
       list: async () => ({ data: [{ id: "claude-sonnet-4-6-20250514" }] }),
@@ -93,34 +95,6 @@ describe("tes.wrap() — OpenAI", () => {
     expect(input.data.attributes.usage.ai_rounds).toBe(1);
   });
 
-  it("includes full messages array in emitted event", async () => {
-    const openai = createMockOpenAI([
-      {
-        choices: [{ message: { content: "Hello!" } }],
-        usage: { prompt_tokens: 50, completion_tokens: 20, total_tokens: 70 },
-        model: "gpt-4o",
-      },
-    ]);
-
-    const ai = tes.wrap(openai);
-    await ai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        { role: "system", content: "You are helpful." },
-        { role: "user", content: "hi" },
-      ],
-    });
-
-    await new Promise((r) => setTimeout(r, 10));
-
-    expect(fetchCalls).toHaveLength(1);
-    const body = JSON.parse(fetchCalls[0].opts.body);
-    const attrs = body.variables.input.data.attributes;
-    expect(attrs.messages).toHaveLength(2);
-    expect(attrs.messages[0]).toEqual({ role: "system", content: "You are helpful." });
-    expect(attrs.messages[1]).toEqual({ role: "user", content: "hi" });
-  });
-
   it("exposes auto-generated sessionId", () => {
     const openai = createMockOpenAI([]);
     const ai = tes.wrap(openai);
@@ -156,7 +130,58 @@ describe("tes.wrap() — OpenAI", () => {
     expect(attrs.shop_domain).toBe("test.myshopify.com");
   });
 
-  it("emits one event per call (2 calls → 2 events)", async () => {
+  it("supports multi-round sessions via session.chat()", async () => {
+    const openai = createMockOpenAI([
+      {
+        choices: [
+          {
+            message: {
+              content: "",
+              tool_calls: [
+                { function: { name: "search", arguments: '{"q":"shoes"}' } },
+              ],
+            },
+          },
+        ],
+        usage: { prompt_tokens: 100, completion_tokens: 20, total_tokens: 120 },
+        model: "gpt-4o",
+      },
+      {
+        choices: [{ message: { content: "Found shoes!" } }],
+        usage: { prompt_tokens: 200, completion_tokens: 40, total_tokens: 240 },
+        model: "gpt-4o",
+      },
+    ]);
+
+    const ai = tes.wrap(openai);
+    const session = ai.session({ sessionId: "multi-turn" });
+
+    await session.chat({
+      model: "gpt-4o",
+      messages: [{ role: "user", content: "find shoes" }],
+    });
+    await session.chat({
+      model: "gpt-4o",
+      messages: [
+        { role: "user", content: "find shoes" },
+        { role: "tool", content: "[...]" },
+      ],
+    });
+
+    await session.emitChatTurn({
+      userMessage: "find shoes",
+      assistantResponse: "Found shoes!",
+    });
+
+    expect(fetchCalls).toHaveLength(1);
+    const attrs = JSON.parse(fetchCalls[0].opts.body).variables.input.data
+      .attributes;
+    expect(attrs.usage.prompt_tokens).toBe(300);
+    expect(attrs.usage.ai_rounds).toBe(2);
+    expect(attrs.tool_calls).toHaveLength(1);
+  });
+
+  it("accumulates tool calls and emits only on final text response", async () => {
     const openai = createMockOpenAI([
       {
         choices: [{ message: { content: "", tool_calls: [{ function: { name: "search", arguments: '{"q":"shoes"}' } }] } }],
@@ -171,35 +196,27 @@ describe("tes.wrap() — OpenAI", () => {
     ]);
 
     const ai = tes.wrap(openai, { sessionId: "multi-turn" });
+
+    // First call: tool call only, no content — should NOT emit
     await ai.chat.completions.create({
       model: "gpt-4o",
       messages: [{ role: "user", content: "find shoes" }],
     });
+    await new Promise((r) => setTimeout(r, 10));
+    expect(fetchCalls).toHaveLength(0);
+
+    // Second call: final text response — should emit with accumulated data
     await ai.chat.completions.create({
       model: "gpt-4o",
       messages: [{ role: "user", content: "find shoes" }, { role: "tool", content: "[...]" }],
     });
-
     await new Promise((r) => setTimeout(r, 10));
+    expect(fetchCalls).toHaveLength(1);
 
-    expect(fetchCalls).toHaveLength(2);
-
-    // First event: has tool call, 100 prompt tokens
-    const attrs1 = JSON.parse(fetchCalls[0].opts.body).variables.input.data.attributes;
-    expect(attrs1.usage.prompt_tokens).toBe(100);
-    expect(attrs1.usage.ai_rounds).toBe(1);
-    expect(attrs1.tool_calls).toHaveLength(1);
-
-    // Second event: no tool call, 200 prompt tokens
-    const attrs2 = JSON.parse(fetchCalls[1].opts.body).variables.input.data.attributes;
-    expect(attrs2.usage.prompt_tokens).toBe(200);
-    expect(attrs2.usage.ai_rounds).toBe(1);
-
-    // Both share same session ID
-    const sid1 = JSON.parse(fetchCalls[0].opts.body).variables.input.data.entity_id;
-    const sid2 = JSON.parse(fetchCalls[1].opts.body).variables.input.data.entity_id;
-    expect(sid1).toBe("multi-turn");
-    expect(sid2).toBe("multi-turn");
+    const attrs = JSON.parse(fetchCalls[0].opts.body).variables.input.data.attributes;
+    expect(attrs.usage.prompt_tokens).toBe(300);
+    expect(attrs.usage.ai_rounds).toBe(2);
+    expect(attrs.tool_calls).toHaveLength(1);
   });
 });
 
@@ -233,7 +250,8 @@ describe("tes.wrap() — Anthropic", () => {
     await new Promise((r) => setTimeout(r, 10));
 
     expect(fetchCalls).toHaveLength(1);
-    const attrs = JSON.parse(fetchCalls[0].opts.body).variables.input.data.attributes;
+    const body = JSON.parse(fetchCalls[0].opts.body);
+    const attrs = body.variables.input.data.attributes;
     expect(attrs.model).toBe("claude-sonnet-4-6-20250514");
     expect(attrs.usage.prompt_tokens).toBe(80);
     expect(attrs.usage.completion_tokens).toBe(25);
@@ -241,32 +259,58 @@ describe("tes.wrap() — Anthropic", () => {
     expect(attrs.assistant_response).toBe("Bonjour!");
   });
 
-  it("handles tool_use blocks in single event", async () => {
+  it("handles tool_use blocks via session.chat()", async () => {
     const anthropic = createMockAnthropic([
       {
         content: [
           { type: "text", text: "Let me search." },
-          { type: "tool_use", id: "tu_1", name: "search", input: { query: "shoes" } },
+          {
+            type: "tool_use",
+            id: "tu_1",
+            name: "search",
+            input: { query: "shoes" },
+          },
         ],
         usage: { input_tokens: 100, output_tokens: 40 },
+        model: "claude-sonnet-4-6-20250514",
+      },
+      {
+        content: [{ type: "text", text: "Found red shoes!" }],
+        usage: { input_tokens: 200, output_tokens: 30 },
         model: "claude-sonnet-4-6-20250514",
       },
     ]);
 
     const ai = tes.wrap(anthropic);
-    await ai.messages.create({
+    const session = ai.session({ sessionId: "anth-multi" });
+
+    const r1 = await session.chat({
       model: "claude-sonnet-4-6-20250514",
       messages: [{ role: "user", content: "find shoes" }],
       max_tokens: 200,
     });
+    expect(r1.content[1].name).toBe("search");
 
-    await new Promise((r) => setTimeout(r, 10));
+    await session.chat({
+      model: "claude-sonnet-4-6-20250514",
+      messages: [
+        { role: "user", content: "find shoes" },
+        { role: "assistant", content: r1.content },
+      ],
+      max_tokens: 200,
+    });
 
-    expect(fetchCalls).toHaveLength(1);
-    const attrs = JSON.parse(fetchCalls[0].opts.body).variables.input.data.attributes;
+    await session.emitChatTurn({
+      userMessage: "find shoes",
+      assistantResponse: "Found red shoes!",
+    });
+
+    const attrs = JSON.parse(fetchCalls[0].opts.body).variables.input.data
+      .attributes;
+    expect(attrs.usage.prompt_tokens).toBe(300);
+    expect(attrs.usage.ai_rounds).toBe(2);
     expect(attrs.tool_calls).toHaveLength(1);
     expect(attrs.tool_calls[0].tool).toBe("search");
-    expect(attrs.usage.ai_rounds).toBe(1);
   });
 
   it("exposes sessionId property", () => {
@@ -296,14 +340,15 @@ describe("tes.wrap() — Workers AI", () => {
     await new Promise((r) => setTimeout(r, 10));
 
     expect(fetchCalls).toHaveLength(1);
-    const attrs = JSON.parse(fetchCalls[0].opts.body).variables.input.data.attributes;
+    const attrs = JSON.parse(fetchCalls[0].opts.body).variables.input.data
+      .attributes;
     expect(attrs.model).toBe("@cf/meta/llama-3.1-8b-instruct");
     expect(attrs.usage.prompt_tokens).toBe(30);
     expect(attrs.user_message).toBe("What is 2+2?");
     expect(attrs.assistant_response).toBe("4");
   });
 
-  it("emits one event per run() call", async () => {
+  it("supports multi-round sessions via session.chat()", async () => {
     const ai = createMockWorkersAI([
       {
         response: "",
@@ -316,31 +361,275 @@ describe("tes.wrap() — Workers AI", () => {
       },
     ]);
 
-    const wrapped = tes.wrap(ai, { sessionId: "wai-multi" });
-    await wrapped.run("@cf/meta/llama-3.1-8b-instruct", {
+    const wrapped = tes.wrap(ai);
+    const session = wrapped.session({ sessionId: "wai-multi" });
+
+    await session.chat("@cf/meta/llama-3.1-8b-instruct", {
       messages: [{ role: "user", content: "find item 123" }],
     });
-    await wrapped.run("@cf/meta/llama-3.1-8b-instruct", {
-      messages: [{ role: "user", content: "find item 123" }, { role: "tool", content: "{}" }],
+
+    await session.chat("@cf/meta/llama-3.1-8b-instruct", {
+      messages: [
+        { role: "user", content: "find item 123" },
+        { role: "tool", content: "{}" },
+      ],
     });
 
-    await new Promise((r) => setTimeout(r, 10));
+    await session.emitChatTurn({
+      userMessage: "find item 123",
+      assistantResponse: "Found it!",
+    });
 
-    expect(fetchCalls).toHaveLength(2);
-
-    const attrs1 = JSON.parse(fetchCalls[0].opts.body).variables.input.data.attributes;
-    expect(attrs1.usage.prompt_tokens).toBe(50);
-    expect(attrs1.tool_calls).toHaveLength(1);
-    expect(attrs1.tool_calls[0].tool).toBe("lookup");
-
-    const attrs2 = JSON.parse(fetchCalls[1].opts.body).variables.input.data.attributes;
-    expect(attrs2.usage.prompt_tokens).toBe(80);
+    const attrs = JSON.parse(fetchCalls[0].opts.body).variables.input.data
+      .attributes;
+    expect(attrs.usage.prompt_tokens).toBe(130);
+    expect(attrs.usage.ai_rounds).toBe(2);
+    expect(attrs.tool_calls).toHaveLength(1);
+    expect(attrs.tool_calls[0].tool).toBe("lookup");
   });
 
   it("exposes sessionId property", () => {
     const ai = createMockWorkersAI([]);
     const wrapped = tes.wrap(ai, { sessionId: "wai-sess" });
     expect(wrapped.sessionId).toBe("wai-sess");
+  });
+});
+
+// --- Session options ---
+
+describe("tes.wrap() — session options", () => {
+  it("uses provided sessionId for all emitted events", async () => {
+    const ai = createMockWorkersAI([
+      {
+        response: "hi",
+        usage: { prompt_tokens: 10, completion_tokens: 5 },
+      },
+      {
+        response: "bye",
+        usage: { prompt_tokens: 10, completion_tokens: 5 },
+      },
+    ]);
+
+    const wrapped = tes.wrap(ai, { sessionId: "my-session-42" });
+    await wrapped.run("@cf/meta/llama-3.1-8b-instruct", {
+      messages: [{ role: "user", content: "hi" }],
+    });
+    await wrapped.run("@cf/meta/llama-3.1-8b-instruct", {
+      messages: [{ role: "user", content: "bye" }],
+    });
+
+    await new Promise((r) => setTimeout(r, 10));
+
+    // With session accumulation, both calls go through the same session.
+    // The first call emits (has text content), session resets, second also emits.
+    expect(fetchCalls).toHaveLength(2);
+    const id1 = JSON.parse(fetchCalls[0].opts.body).variables.input.data
+      .entity_id;
+    const id2 = JSON.parse(fetchCalls[1].opts.body).variables.input.data
+      .entity_id;
+    expect(id1).toBe("my-session-42");
+    expect(id2).toBe("my-session-42");
+  });
+
+  it("exposes sessionId property on wrapped client", () => {
+    const ai = createMockWorkersAI([]);
+    const wrapped = tes.wrap(ai, { sessionId: "exposed-id" });
+    expect(wrapped.sessionId).toBe("exposed-id");
+  });
+
+  it("exposes tesSession property on wrapped client", () => {
+    const ai = createMockWorkersAI([]);
+    const wrapped = tes.wrap(ai, { sessionId: "sess-test" });
+    expect(wrapped.tesSession).toBeDefined();
+    expect(wrapped.tesSession.sessionId).toBe("sess-test");
+  });
+
+  it("auto-generates sessionId when not provided", () => {
+    const ai = createMockWorkersAI([]);
+    const wrapped = tes.wrap(ai);
+    expect(wrapped.sessionId).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+    );
+  });
+
+  it("includes metadata in emitted events", async () => {
+    const ai = createMockWorkersAI([
+      {
+        response: "hi",
+        usage: { prompt_tokens: 10, completion_tokens: 5 },
+      },
+    ]);
+
+    const wrapped = tes.wrap(ai, {
+      sessionId: "meta-test",
+      metadata: { shop_domain: "test.myshopify.com" },
+    });
+    await wrapped.run("@cf/meta/llama-3.1-8b-instruct", {
+      messages: [{ role: "user", content: "hi" }],
+    });
+
+    await new Promise((r) => setTimeout(r, 10));
+
+    const attrs = JSON.parse(fetchCalls[0].opts.body).variables.input.data
+      .attributes;
+    expect(attrs.shop_domain).toBe("test.myshopify.com");
+  });
+
+  it("respects autoEmit = false (no automatic emission)", async () => {
+    const openai = createMockOpenAI([
+      {
+        choices: [{ message: { content: "Hello!" } }],
+        usage: { prompt_tokens: 50, completion_tokens: 20, total_tokens: 70 },
+        model: "gpt-4o",
+      },
+    ]);
+
+    const ai = tes.wrap(openai, { sessionId: "no-emit", autoEmit: false });
+    await ai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [{ role: "user", content: "hi" }],
+    });
+
+    await new Promise((r) => setTimeout(r, 10));
+
+    // autoEmit=false means no automatic emission, but session still tracks
+    expect(fetchCalls).toHaveLength(0);
+    expect(ai.tesSession.totalUsage.prompt_tokens).toBe(50);
+  });
+});
+
+// --- URL rewriting ---
+
+describe("tes.wrap() — URL rewriting", () => {
+  it("rewrites URLs in OpenAI response content", async () => {
+    const openai = createMockOpenAI([
+      {
+        choices: [
+          {
+            message: {
+              content:
+                "Check out https://store.com/shoes for great deals!",
+            },
+          },
+        ],
+        usage: { prompt_tokens: 50, completion_tokens: 20, total_tokens: 70 },
+        model: "gpt-4o",
+      },
+    ]);
+
+    const ai = tes.wrap(openai, { sessionId: "url-test-openai" });
+    const result = await ai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [{ role: "user", content: "recommend shoes" }],
+    });
+
+    expect(result.choices[0].message.content).not.toContain(
+      "https://store.com/shoes"
+    );
+    expect(result.choices[0].message.content).toContain(
+      "https://api.test.com/r/"
+    );
+  });
+
+  it("rewrites URLs in Anthropic response content", async () => {
+    const anthropic = createMockAnthropic([
+      {
+        content: [
+          { type: "text", text: "Visit https://store.com/shoes today!" },
+        ],
+        usage: { input_tokens: 80, output_tokens: 25 },
+        model: "claude-sonnet-4-6-20250514",
+      },
+    ]);
+
+    const ai = tes.wrap(anthropic, { sessionId: "url-test-anthropic" });
+    const result = await ai.messages.create({
+      model: "claude-sonnet-4-6-20250514",
+      messages: [{ role: "user", content: "recommend shoes" }],
+      max_tokens: 100,
+    });
+
+    expect(result.content[0].text).not.toContain("https://store.com/shoes");
+    expect(result.content[0].text).toContain("https://api.test.com/r/");
+  });
+
+  it("rewrites URLs in Workers AI response", async () => {
+    const ai = createMockWorkersAI([
+      {
+        response: "Try https://store.com/shoes for options.",
+        usage: { prompt_tokens: 30, completion_tokens: 10 },
+      },
+    ]);
+
+    const wrapped = tes.wrap(ai, { sessionId: "url-test-workers" });
+    const result = await wrapped.run("@cf/meta/llama-3.1-8b-instruct", {
+      messages: [{ role: "user", content: "recommend shoes" }],
+    });
+
+    expect(result.response).not.toContain("https://store.com/shoes");
+    expect(result.response).toContain("https://api.test.com/r/");
+  });
+
+  it("does not rewrite responses with no URLs", async () => {
+    const openai = createMockOpenAI([
+      {
+        choices: [
+          { message: { content: "I recommend checking a local store." } },
+        ],
+        usage: { prompt_tokens: 50, completion_tokens: 20, total_tokens: 70 },
+        model: "gpt-4o",
+      },
+    ]);
+
+    const ai = tes.wrap(openai, { sessionId: "url-test-no-urls" });
+    const result = await ai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [{ role: "user", content: "recommend shoes" }],
+    });
+
+    expect(result.choices[0].message.content).toBe(
+      "I recommend checking a local store."
+    );
+  });
+});
+
+// --- Integration: SDK -> TES roundtrip ---
+
+describe("tes.wrap() — SDK-to-TES roundtrip", () => {
+  it("produces URLs that can be verified by the redirect endpoint", async () => {
+    const { verifyPayload } = await import("../src/tracking.js");
+
+    const ai = createMockWorkersAI([
+      {
+        response: "See https://store.com/shoes",
+        usage: { prompt_tokens: 10, completion_tokens: 5 },
+      },
+    ]);
+
+    const wrapped = tes.wrap(ai);
+    const result = await wrapped.run("@cf/meta/llama-3.1-8b-instruct", {
+      messages: [{ role: "user", content: "shoes" }],
+    });
+
+    // Extract the redirect URL from the rewritten response
+    const match = result.response.match(
+      /https:\/\/api\.test\.com\/r\/([^?]+)\?sig=(.+)/
+    );
+    expect(match).not.toBeNull();
+
+    const [, encoded, sig] = match;
+    // Decode the payload
+    const json = atob(encoded.replace(/-/g, "+").replace(/_/g, "/"));
+    const payload = JSON.parse(json);
+
+    // Verify using the same key the TESClient was configured with
+    const valid = await verifyPayload("tes_sk_test", payload, sig);
+    expect(valid).toBe(true);
+
+    // Check payload fields
+    expect(payload.u).toBe("https://store.com/shoes");
+    expect(payload.e).toBe("LINK_CLICK");
+    expect(payload.c).toBe("test-client");
   });
 });
 

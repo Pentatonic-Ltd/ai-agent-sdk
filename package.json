@@ -1,6 +1,6 @@
 {
   "name": "@pentatonic-ai/agent-events",
-  "version": "0.2.0-beta.1",
+  "version": "0.3.0-beta.1",
   "description": "LLM observability SDK — track token usage, tool calls, and conversations via Pentatonic TES",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -14,7 +14,14 @@
   "bin": {
     "agent-events": "./bin/cli.js"
   },
-  "files": ["dist", "src", "bin", "build.js", "README.md", "LICENSE"],
+  "files": [
+    "dist",
+    "src",
+    "bin",
+    "build.js",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "prepare": "node build.js",
     "build": "node build.js",
@@ -22,7 +29,14 @@
     "test:watch": "NODE_OPTIONS='--experimental-vm-modules' jest --config jest.config.cjs --watch",
     "prepublishOnly": "npm run build && npm test"
   },
-  "keywords": ["llm", "observability", "ai", "openai", "anthropic", "pentatonic"],
+  "keywords": [
+    "llm",
+    "observability",
+    "ai",
+    "openai",
+    "anthropic",
+    "pentatonic"
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",

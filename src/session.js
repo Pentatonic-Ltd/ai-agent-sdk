@@ -1,5 +1,6 @@
 import { normalizeResponse } from "./normalizer.js";
 import { sendEvent } from "./transport.js";
+import { buildTrackUrl } from "./tracking.js";
 
 function truncate(value, maxLen) {
   if (!value || !maxLen || typeof value !== "string") return value;
@@ -24,6 +25,7 @@ export class Session {
     this._rounds = 0;
     this._toolCalls = [];
     this._model = null;
+    this._systemPrompt = null;
   }
 
   get totalUsage() {
@@ -58,6 +60,19 @@ export class Session {
     return normalized;
   }
 
+  /**
+   * Attach a result summary to the most recent tool call matching `toolName`.
+   * Call this after executing a tool to include results in the emitted event.
+   */
+  recordToolResult(toolName, result) {
+    for (let i = this._toolCalls.length - 1; i >= 0; i--) {
+      if (this._toolCalls[i].tool === toolName && !this._toolCalls[i].result) {
+        this._toolCalls[i].result = result;
+        return;
+      }
+    }
+  }
+
   async emitChatTurn({ userMessage, assistantResponse, turnNumber, messages }) {
     const capture = this._config.captureContent !== false;
     const maxLen = this._config.maxContentLength;
@@ -76,6 +91,9 @@ export class Session {
     if (capture) {
       attributes.user_message = truncate(userMessage, maxLen);
       attributes.assistant_response = truncate(assistantResponse, maxLen);
+      if (this._systemPrompt) {
+        attributes.system_prompt = truncate(this._systemPrompt, maxLen);
+      }
 
       if (messages) {
         attributes.messages = messages.map((m) => {
@@ -130,6 +148,21 @@ export class Session {
         attributes,
       },
     });
+  }
+
+  async trackUrl(url, { eventType, attributes } = {}) {
+    const payload = {
+      u: url,
+      s: this.sessionId,
+      c: this._config.clientId,
+      t: Math.floor(Date.now() / 1000),
+      e: eventType || "LINK_CLICK",
+    };
+    const meta = { ...this._metadata, ...attributes };
+    if (Object.keys(meta).length) {
+      payload.a = meta;
+    }
+    return buildTrackUrl(this._config.endpoint, this._config.apiKey, payload);
   }
 
   async emitSessionStart() {

@@ -124,6 +124,74 @@ async function sendEvent({ endpoint, apiKey, clientId, headers }, input, fetchFn
   return json.data.emitEvent;
 }
 
+// src/tracking.js
+var encoder = new TextEncoder();
+function toBase64Url(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++)
+    binary += String.fromCharCode(bytes[i]);
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+async function signPayload(secret, payload) {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const data = encoder.encode(JSON.stringify(payload));
+  const sig = await crypto.subtle.sign("HMAC", key, data);
+  return toBase64Url(sig);
+}
+async function verifyPayload(secret, payload, signature) {
+  const expected = await signPayload(secret, payload);
+  return expected === signature;
+}
+async function buildTrackUrl(endpoint, apiKey, payload) {
+  const p = { ...payload };
+  if (!p.e)
+    p.e = "LINK_CLICK";
+  const encoded = toBase64Url(encoder.encode(JSON.stringify(p)));
+  const sig = await signPayload(apiKey, p);
+  return `${endpoint}/r/${encoded}?sig=${sig}`;
+}
+var URL_RE = /https?:\/\/[^\s"'<>)\]]+/g;
+async function rewriteUrls(text, config, sessionId, metadata) {
+  if (!text)
+    return text;
+  const redirectPrefix = `${config.endpoint}/r/`;
+  const matches = [...text.matchAll(URL_RE)];
+  if (matches.length === 0)
+    return text;
+  const replacements = /* @__PURE__ */ new Map();
+  for (const m of matches) {
+    const originalUrl = m[0];
+    if (originalUrl.startsWith(redirectPrefix))
+      continue;
+    if (replacements.has(originalUrl))
+      continue;
+    const payload = {
+      u: originalUrl,
+      s: sessionId,
+      c: config.clientId,
+      t: Math.floor(Date.now() / 1e3)
+    };
+    if (metadata && Object.keys(metadata).length > 0) {
+      payload.a = metadata;
+    }
+    const trackUrl = await buildTrackUrl(config.endpoint, config.apiKey, payload);
+    replacements.set(originalUrl, trackUrl);
+  }
+  let result = text;
+  const sorted = [...replacements.entries()].sort((a, b) => b[0].length - a[0].length);
+  for (const [original, tracked] of sorted) {
+    result = result.split(original).join(tracked);
+  }
+  return result;
+}
+
 // src/session.js
 function truncate(value, maxLen) {
   if (!value || !maxLen || typeof value !== "string")
@@ -148,6 +216,7 @@ var Session = class {
     this._rounds = 0;
     this._toolCalls = [];
     this._model = null;
+    this._systemPrompt = null;
   }
   get totalUsage() {
     return {
@@ -174,6 +243,18 @@ var Session = class {
     }
     return normalized;
   }
+  /**
+   * Attach a result summary to the most recent tool call matching `toolName`.
+   * Call this after executing a tool to include results in the emitted event.
+   */
+  recordToolResult(toolName, result) {
+    for (let i = this._toolCalls.length - 1; i >= 0; i--) {
+      if (this._toolCalls[i].tool === toolName && !this._toolCalls[i].result) {
+        this._toolCalls[i].result = result;
+        return;
+      }
+    }
+  }
   async emitChatTurn({ userMessage, assistantResponse, turnNumber, messages }) {
     const capture = this._config.captureContent !== false;
     const maxLen = this._config.maxContentLength;
@@ -187,6 +268,9 @@ var Session = class {
     if (capture) {
       attributes.user_message = truncate(userMessage, maxLen);
       attributes.assistant_response = truncate(assistantResponse, maxLen);
+      if (this._systemPrompt) {
+        attributes.system_prompt = truncate(this._systemPrompt, maxLen);
+      }
       if (messages) {
         attributes.messages = messages.map((m) => {
           if (typeof m.content === "string") {
@@ -233,6 +317,20 @@ var Session = class {
       }
     });
   }
+  async trackUrl(url, { eventType, attributes } = {}) {
+    const payload = {
+      u: url,
+      s: this.sessionId,
+      c: this._config.clientId,
+      t: Math.floor(Date.now() / 1e3),
+      e: eventType || "LINK_CLICK"
+    };
+    const meta = { ...this._metadata, ...attributes };
+    if (Object.keys(meta).length) {
+      payload.a = meta;
+    }
+    return buildTrackUrl(this._config.endpoint, this._config.apiKey, payload);
+  }
   async emitSessionStart() {
     return sendEvent(this._config, {
       eventType: "SESSION_START",
@@ -258,45 +356,73 @@ function detectClientType(client) {
     return "workers-ai";
   return "unknown";
 }
-function wrapClient(clientConfig, client) {
+function wrapClient(clientConfig, client, sessionOpts = {}) {
+  sessionOpts._resolvedSessionId = sessionOpts.sessionId || crypto.randomUUID();
+  sessionOpts._session = new Session(clientConfig, {
+    sessionId: sessionOpts._resolvedSessionId,
+    metadata: sessionOpts.metadata
+  });
   const type = detectClientType(client);
   if (type === "openai")
-    return wrapOpenAI(clientConfig, client);
+    return wrapOpenAI(clientConfig, client, sessionOpts);
   if (type === "anthropic")
-    return wrapAnthropic(clientConfig, client);
+    return wrapAnthropic(clientConfig, client, sessionOpts);
   if (type === "workers-ai")
-    return wrapWorkersAI(clientConfig, client);
+    return wrapWorkersAI(clientConfig, client, sessionOpts);
   throw new Error(
     "Unsupported client: expected OpenAI (chat.completions.create), Anthropic (messages.create), or Workers AI (run) client"
   );
 }
-function wrapOpenAI(clientConfig, client) {
+function wrapOpenAI(clientConfig, client, sessionOpts) {
   return new Proxy(client, {
     get(target, prop) {
       if (prop === "chat")
-        return wrapOpenAIChat(clientConfig, target.chat, target);
+        return wrapOpenAIChat(clientConfig, target.chat, target, sessionOpts);
+      if (prop === "sessionId")
+        return sessionOpts._resolvedSessionId;
+      if (prop === "tesSession")
+        return sessionOpts._session;
       if (prop === "session")
         return (opts) => new OpenAISession(clientConfig, target, opts);
       return target[prop];
     }
   });
 }
-function wrapOpenAIChat(clientConfig, chat, client) {
+function wrapOpenAIChat(clientConfig, chat, client, sessionOpts) {
   return new Proxy(chat, {
     get(target, prop) {
       if (prop === "completions")
-        return wrapOpenAICompletions(clientConfig, target.completions, client);
+        return wrapOpenAICompletions(
+          clientConfig,
+          target.completions,
+          client,
+          sessionOpts
+        );
       return target[prop];
     }
   });
 }
-function wrapOpenAICompletions(clientConfig, completions, client) {
+function wrapOpenAICompletions(clientConfig, completions, client, sessionOpts) {
   return new Proxy(completions, {
     get(target, prop) {
       if (prop === "create") {
         return async (params) => {
           const result = await target.create(params);
-          fireAndForgetEmit(clientConfig, params.messages, result);
+          const content = result.choices?.[0]?.message?.content;
+          if (content) {
+            result.choices[0].message.content = await rewriteUrls(
+              content,
+              clientConfig,
+              sessionOpts._resolvedSessionId,
+              sessionOpts.metadata
+            );
+          }
+          fireAndForgetEmit(
+            clientConfig,
+            sessionOpts,
+            params.messages,
+            result
+          );
           return result;
         };
       }
@@ -315,24 +441,50 @@ var OpenAISession = class extends Session {
     return result;
   }
 };
-function wrapAnthropic(clientConfig, client) {
+function wrapAnthropic(clientConfig, client, sessionOpts) {
   return new Proxy(client, {
     get(target, prop) {
       if (prop === "messages")
-        return wrapAnthropicMessages(clientConfig, target.messages, target);
+        return wrapAnthropicMessages(
+          clientConfig,
+          target.messages,
+          target,
+          sessionOpts
+        );
+      if (prop === "sessionId")
+        return sessionOpts._resolvedSessionId;
+      if (prop === "tesSession")
+        return sessionOpts._session;
       if (prop === "session")
         return (opts) => new AnthropicSession(clientConfig, target, opts);
       return target[prop];
     }
   });
 }
-function wrapAnthropicMessages(clientConfig, messages, client) {
+function wrapAnthropicMessages(clientConfig, messages, client, sessionOpts) {
   return new Proxy(messages, {
     get(target, prop) {
       if (prop === "create") {
         return async (params) => {
           const result = await target.create(params);
-          fireAndForgetEmit(clientConfig, params.messages, result);
+          if (Array.isArray(result.content)) {
+            for (const block of result.content) {
+              if (block.type === "text" && block.text) {
+                block.text = await rewriteUrls(
+                  block.text,
+                  clientConfig,
+                  sessionOpts._resolvedSessionId,
+                  sessionOpts.metadata
+                );
+              }
+            }
+          }
+          fireAndForgetEmit(
+            clientConfig,
+            sessionOpts,
+            params.messages,
+            result
+          );
           return result;
         };
       }
@@ -351,16 +503,34 @@ var AnthropicSession = class extends Session {
     return result;
   }
 };
-function wrapWorkersAI(clientConfig, aiBinding) {
+function wrapWorkersAI(clientConfig, aiBinding, sessionOpts) {
   return new Proxy(aiBinding, {
     get(target, prop) {
       if (prop === "run") {
         return async (model, params, ...rest) => {
           const result = await target.run(model, params, ...rest);
-          fireAndForgetEmit(clientConfig, params?.messages, result, model);
+          if (result.response) {
+            result.response = await rewriteUrls(
+              result.response,
+              clientConfig,
+              sessionOpts._resolvedSessionId,
+              sessionOpts.metadata
+            );
+          }
+          fireAndForgetEmit(
+            clientConfig,
+            sessionOpts,
+            params?.messages,
+            result,
+            model
+          );
           return result;
         };
       }
+      if (prop === "sessionId")
+        return sessionOpts._resolvedSessionId;
+      if (prop === "tesSession")
+        return sessionOpts._session;
       if (prop === "session")
         return (opts) => new WorkersAISession(clientConfig, target, opts);
       return target[prop];
@@ -378,16 +548,66 @@ var WorkersAISession = class extends Session {
     return result;
   }
 };
-function fireAndForgetEmit(clientConfig, messages, result, model) {
-  const session = new Session(clientConfig);
+function extractToolResults(session, messages) {
+  if (!messages?.length || !session._toolCalls.length)
+    return;
+  const idToName = /* @__PURE__ */ new Map();
+  for (const msg of messages) {
+    if (msg.role === "assistant" && msg.tool_calls) {
+      for (const tc of msg.tool_calls) {
+        const id = tc.id || tc.tool_call_id;
+        const name = tc.function?.name || tc.name;
+        if (id && name)
+          idToName.set(id, name);
+      }
+    }
+  }
+  for (const msg of messages) {
+    if (msg.role !== "tool" || !msg.content)
+      continue;
+    const callId = msg.tool_call_id;
+    const toolName = callId ? idToName.get(callId) : null;
+    for (const tc of session._toolCalls) {
+      if (tc.result)
+        continue;
+      if (toolName && tc.tool !== toolName)
+        continue;
+      try {
+        const parsed = JSON.parse(msg.content);
+        if (Array.isArray(parsed)) {
+          tc.result = { count: parsed.length, sample: parsed.slice(0, 3) };
+        } else {
+          tc.result = parsed;
+        }
+      } catch {
+        tc.result = msg.content;
+      }
+      break;
+    }
+  }
+}
+function fireAndForgetEmit(clientConfig, sessionOpts, messages, result, model) {
+  const session = sessionOpts._session;
   const normalized = session.record(result);
+  extractToolResults(session, messages);
+  if (!session._systemPrompt && messages?.length) {
+    const systemMsg = messages.find((m) => m.role === "system");
+    if (systemMsg?.content) {
+      session._systemPrompt = systemMsg.content;
+    }
+  }
   if (model && !normalized.model) {
     session._model = model;
   }
-  const rawContent = messages?.filter?.((m) => m.role === "user")?.pop()?.content || "";
-  const userMsg = Array.isArray(rawContent) ? rawContent.filter((b) => b.type === "text").map((b) => b.text).join("\n") : rawContent;
+  if (sessionOpts.autoEmit === false) {
+    return;
+  }
+  if (!normalized.content && normalized.toolCalls.length > 0) {
+    return;
+  }
+  const userMsg = messages?.filter?.((m) => m.role === "user")?.pop()?.content || "";
   const assistantMsg = normalized.content || "";
-  session.emitChatTurn({ userMessage: userMsg, assistantResponse: assistantMsg, messages }).catch((err) => console.error("[pentatonic-ai] emit failed:", err.message));
+  session.emitChatTurn({ userMessage: userMsg, assistantResponse: assistantMsg }).catch((err) => console.error("[pentatonic-ai] emit failed:", err.message));
 }
 
 // src/client.js
@@ -434,12 +654,16 @@ var TESClient = class {
   session(opts) {
     return new Session(this._config, opts);
   }
-  wrap(openaiClient) {
-    return wrapClient(this._config, openaiClient);
+  wrap(client, { sessionId, metadata, autoEmit = true } = {}) {
+    return wrapClient(this._config, client, { sessionId, metadata, autoEmit });
   }
 };
 export {
   Session,
   TESClient,
-  normalizeResponse
+  buildTrackUrl,
+  normalizeResponse,
+  rewriteUrls,
+  signPayload,
+  verifyPayload
 };

@@ -450,4 +450,201 @@ describe("Session", () => {
     expect(session.totalUsage.ai_rounds).toBe(0);
     expect(session.toolCalls).toEqual([]);
   });
+
+  it("includes system_prompt in emitted event when captured", async () => {
+    const session = tes.session({ sessionId: "sess-sysprompt" });
+    session._systemPrompt = "You are a helpful shopping assistant.";
+    session.record({
+      choices: [{ message: { content: "hi" } }],
+      usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 },
+      model: "gpt-4o",
+    });
+
+    await session.emitChatTurn({
+      userMessage: "hi",
+      assistantResponse: "hello",
+    });
+
+    const body = JSON.parse(fetchCalls[0].opts.body);
+    const attrs = body.variables.input.data.attributes;
+    expect(attrs.system_prompt).toBe("You are a helpful shopping assistant.");
+  });
+
+  it("omits system_prompt when captureContent is false", async () => {
+    const noCaptTes = new TESClient({
+      clientId: "test-client",
+      apiKey: "tes_sk_test",
+      endpoint: "https://api.test.com",
+      captureContent: false,
+    });
+
+    const session = noCaptTes.session({ sessionId: "sess-sysprompt-nocap" });
+    session._systemPrompt = "secret system prompt";
+    session.record({
+      choices: [{ message: { content: "hi" } }],
+      usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 },
+    });
+
+    await session.emitChatTurn({
+      userMessage: "hi",
+      assistantResponse: "hello",
+    });
+
+    const body = JSON.parse(fetchCalls[0].opts.body);
+    const attrs = body.variables.input.data.attributes;
+    expect(attrs.system_prompt).toBeUndefined();
+  });
+});
+
+describe("Session.recordToolResult", () => {
+  const tes = new TESClient({
+    clientId: "test-client",
+    apiKey: "tes_sk_test",
+    endpoint: "https://api.test.com",
+  });
+
+  it("attaches result to the most recent matching tool call", () => {
+    const session = tes.session({ sessionId: "sess-tr-1" });
+    session.record({
+      choices: [
+        {
+          message: {
+            content: "",
+            tool_calls: [
+              { function: { name: "search", arguments: '{"q":"shoes"}' } },
+            ],
+          },
+        },
+      ],
+      usage: { prompt_tokens: 50, completion_tokens: 10, total_tokens: 60 },
+    });
+
+    session.recordToolResult("search", { count: 5, items: ["shoe1", "shoe2"] });
+
+    expect(session.toolCalls[0].result).toEqual({ count: 5, items: ["shoe1", "shoe2"] });
+  });
+
+  it("does not overwrite existing results", () => {
+    const session = tes.session({ sessionId: "sess-tr-2" });
+    session.record({
+      choices: [
+        {
+          message: {
+            content: "",
+            tool_calls: [
+              { function: { name: "search", arguments: '{"q":"a"}' } },
+              { function: { name: "search", arguments: '{"q":"b"}' } },
+            ],
+          },
+        },
+      ],
+      usage: { prompt_tokens: 50, completion_tokens: 10, total_tokens: 60 },
+    });
+
+    session.recordToolResult("search", { result: "first" });
+    session.recordToolResult("search", { result: "second" });
+
+    // recordToolResult scans from end, so first call matches toolCalls[1],
+    // second call matches toolCalls[0] (the remaining unmatched one)
+    expect(session.toolCalls[0].result).toEqual({ result: "second" });
+    expect(session.toolCalls[1].result).toEqual({ result: "first" });
+  });
+
+  it("is a no-op when no matching tool call exists", () => {
+    const session = tes.session({ sessionId: "sess-tr-3" });
+    session.record({
+      choices: [
+        {
+          message: {
+            content: "",
+            tool_calls: [
+              { function: { name: "search", arguments: '{"q":"shoes"}' } },
+            ],
+          },
+        },
+      ],
+      usage: { prompt_tokens: 50, completion_tokens: 10, total_tokens: 60 },
+    });
+
+    session.recordToolResult("nonexistent", { result: "data" });
+
+    expect(session.toolCalls[0].result).toBeUndefined();
+  });
+});
+
+describe("Session.trackUrl", () => {
+  const tes = new TESClient({
+    clientId: "test-client",
+    apiKey: "tes_sk_test",
+    endpoint: "https://api.test.com",
+  });
+
+  function decodePayload(url) {
+    const match = url.match(/\/r\/([^?]+)/);
+    let b64 = match[1].replace(/-/g, "+").replace(/_/g, "/");
+    while (b64.length % 4) b64 += "=";
+    return JSON.parse(atob(b64));
+  }
+
+  it("returns a tracked redirect URL containing the endpoint", async () => {
+    const session = tes.session({ sessionId: "sess-track-1" });
+    const result = await session.trackUrl("https://example.com");
+    expect(result).toContain("https://api.test.com/r/");
+    expect(result).toMatch(/\?sig=[A-Za-z0-9_-]+$/);
+  });
+
+  it("payload contains the session's sessionId and clientId", async () => {
+    const session = tes.session({ sessionId: "sess-abc" });
+    const result = await session.trackUrl("https://example.com");
+    const payload = decodePayload(result);
+
+    expect(payload.s).toBe("sess-abc");
+    expect(payload.c).toBe("test-client");
+    expect(payload.u).toBe("https://example.com");
+    expect(typeof payload.t).toBe("number");
+  });
+
+  it("includes custom eventType and attributes in the payload", async () => {
+    const session = tes.session({ sessionId: "sess-track-2" });
+    const result = await session.trackUrl("https://example.com", {
+      eventType: "PRODUCT_CLICK",
+      attributes: { product_id: "prod-99" },
+    });
+    const payload = decodePayload(result);
+
+    expect(payload.e).toBe("PRODUCT_CLICK");
+    expect(payload.a).toEqual(expect.objectContaining({ product_id: "prod-99" }));
+  });
+
+  it("defaults eventType to LINK_CLICK", async () => {
+    const session = tes.session({ sessionId: "sess-track-3" });
+    const result = await session.trackUrl("https://example.com");
+    const payload = decodePayload(result);
+
+    expect(payload.e).toBe("LINK_CLICK");
+  });
+
+  it("includes session metadata in attributes", async () => {
+    const session = tes.session({
+      sessionId: "sess-track-4",
+      metadata: { source: "chat", user_tier: "premium" },
+    });
+    const result = await session.trackUrl("https://example.com");
+    const payload = decodePayload(result);
+
+    expect(payload.a).toEqual(expect.objectContaining({ source: "chat", user_tier: "premium" }));
+  });
+
+  it("merges session metadata with call-time attributes", async () => {
+    const session = tes.session({
+      sessionId: "sess-track-5",
+      metadata: { source: "chat" },
+    });
+    const result = await session.trackUrl("https://example.com", {
+      attributes: { product_id: "prod-1" },
+    });
+    const payload = decodePayload(result);
+
+    expect(payload.a).toEqual(expect.objectContaining({ source: "chat", product_id: "prod-1" }));
+  });
 });
