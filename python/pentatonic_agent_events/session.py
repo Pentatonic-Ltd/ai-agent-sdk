@@ -1,6 +1,9 @@
 import uuid
 from .normalizer import normalize_response
+from .tracking import build_track_url
 from .transport import send_event
+import math
+import time
 
 
 def _truncate(value, max_len):
@@ -24,6 +27,7 @@ class Session:
         self._rounds = 0
         self._tool_calls = []
         self._model = None
+        self._system_prompt = None
 
     @property
     def total_usage(self):
@@ -54,6 +58,28 @@ class Session:
 
         return normalized
 
+    def record_tool_result(self, tool_name, result):
+        """Attach a result summary to the most recent tool call matching tool_name."""
+        for i in range(len(self._tool_calls) - 1, -1, -1):
+            tc = self._tool_calls[i]
+            if tc.get("tool") == tool_name and not tc.get("result"):
+                tc["result"] = result
+                return
+
+    def track_url(self, url, event_type="LINK_CLICK", attributes=None):
+        """Build a tracked redirect URL for the given URL."""
+        payload = {
+            "u": url,
+            "s": self.session_id,
+            "c": self._config.get("client_id", ""),
+            "t": math.floor(time.time()),
+            "e": event_type,
+        }
+        meta = {**self._metadata, **(attributes or {})}
+        if meta:
+            payload["a"] = meta
+        return build_track_url(self._config.get("endpoint", ""), self._config.get("api_key", ""), payload)
+
     def emit_chat_turn(self, user_message=None, assistant_response=None, turn_number=None, messages=None):
         capture = self._config.get("capture_content", True) is not False
         max_len = self._config.get("max_content_length")
@@ -78,6 +104,9 @@ class Session:
         if capture:
             attributes["user_message"] = _truncate(user_message, max_len)
             attributes["assistant_response"] = _truncate(assistant_response, max_len)
+
+            if self._system_prompt:
+                attributes["system_prompt"] = _truncate(self._system_prompt, max_len)
 
             if messages:
                 attributes["messages"] = [

@@ -1,6 +1,9 @@
+import json
 import sys
 import uuid
 from .normalizer import normalize_response
+from .session import Session
+from .tracking import rewrite_urls
 from .transport import send_event
 
 
@@ -21,17 +24,26 @@ def detect_client_type(client):
     return "unknown"
 
 
-def wrap_client(config, client, session_id=None, metadata=None):
+def wrap_client(config, client, session_id=None, metadata=None, auto_emit=True):
     client_type = detect_client_type(client)
     sid = session_id or str(uuid.uuid4())
     meta = metadata or {}
 
+    # Shared session accumulates usage and tool calls across rounds
+    session = Session(config, session_id=sid, metadata=meta)
+
+    opts = {
+        "session": session,
+        "auto_emit": auto_emit,
+        "metadata": meta,
+    }
+
     if client_type == "openai":
-        return _OpenAIWrapper(config, client, sid, meta)
+        return _OpenAIWrapper(config, client, opts)
     if client_type == "anthropic":
-        return _AnthropicWrapper(config, client, sid, meta)
+        return _AnthropicWrapper(config, client, opts)
     if client_type == "workers-ai":
-        return _WorkersAIWrapper(config, client, sid, meta)
+        return _WorkersAIWrapper(config, client, opts)
 
     raise ValueError(
         "Unsupported client: expected OpenAI (chat.completions.create), "
@@ -47,9 +59,87 @@ def _truncate(value, max_len):
     return value[:max_len] + "...[truncated]"
 
 
-def _emit_event(config, session_id, metadata, messages, normalized, model=None):
-    capture = config.get("capture_content", True) is not False
-    max_len = config.get("max_content_length")
+def _extract_tool_results(session, messages):
+    """
+    Extract tool results from the messages array and attach them to recorded
+    tool calls in the session. Messages contain {role:"tool", content, tool_call_id}
+    entries after the app executes tools and feeds results back to the AI.
+    """
+    if not messages or not session._tool_calls:
+        return
+
+    # Build map: tool_call_id -> tool name from assistant messages
+    id_to_name = {}
+    for msg in messages:
+        if not isinstance(msg, dict):
+            continue
+        if msg.get("role") == "assistant" and msg.get("tool_calls"):
+            for tc in msg["tool_calls"]:
+                tc_id = tc.get("id") or tc.get("tool_call_id")
+                name = None
+                if isinstance(tc.get("function"), dict):
+                    name = tc["function"].get("name")
+                if not name:
+                    name = tc.get("name")
+                if tc_id and name:
+                    id_to_name[tc_id] = name
+
+    # Attach results to session tool calls
+    for msg in messages:
+        if not isinstance(msg, dict):
+            continue
+        if msg.get("role") != "tool" or not msg.get("content"):
+            continue
+
+        call_id = msg.get("tool_call_id")
+        tool_name = id_to_name.get(call_id) if call_id else None
+
+        # Find matching tool call in session (by name, without a result yet)
+        for tc in session._tool_calls:
+            if tc.get("result"):
+                continue
+            if tool_name and tc.get("tool") != tool_name:
+                continue
+
+            # Parse JSON content if possible, otherwise store as string
+            try:
+                parsed = json.loads(msg["content"])
+                if isinstance(parsed, list):
+                    tc["result"] = {"count": len(parsed), "sample": parsed[:3]}
+                else:
+                    tc["result"] = parsed
+            except (json.JSONDecodeError, TypeError, ValueError):
+                tc["result"] = msg["content"]
+            break
+
+
+def _fire_and_forget_emit(config, opts, messages, result, model=None):
+    session = opts["session"]
+    normalized = session.record(result)
+
+    # Extract tool results from the messages array
+    _extract_tool_results(session, messages)
+
+    # Capture system prompt from messages (first system message, only once)
+    if not session._system_prompt and messages:
+        for msg in (messages if isinstance(messages, list) else []):
+            if isinstance(msg, dict) and msg.get("role") == "system" and msg.get("content"):
+                session._system_prompt = msg["content"]
+                break
+
+    # If Workers AI didn't include model in the response, use the one passed to run()
+    if model and not normalized.get("model"):
+        session._model = model
+
+    # When auto_emit is disabled, the caller controls event emission.
+    # The wrapper still tracks usage/tool calls via session.record() above.
+    if opts.get("auto_emit") is False:
+        return
+
+    # Accumulate tool-call rounds without emitting — only emit when there's
+    # actual text content (the final response in a multi-round tool loop).
+    if not normalized.get("content") and normalized.get("tool_calls"):
+        return
 
     raw_content = ""
     if isinstance(messages, list):
@@ -64,64 +154,40 @@ def _emit_event(config, session_id, metadata, messages, normalized, model=None):
     else:
         user_msg = raw_content
 
-    assistant_msg = normalized["content"] or ""
-
-    attributes = {
-        **metadata,
-        "source": "pentatonic-ai-sdk",
-        "model": model or normalized["model"],
-        "usage": {
-            "prompt_tokens": normalized["usage"]["prompt_tokens"],
-            "completion_tokens": normalized["usage"]["completion_tokens"],
-            "total_tokens": normalized["usage"]["prompt_tokens"] + normalized["usage"]["completion_tokens"],
-            "ai_rounds": 1,
-        },
-    }
-
-    if normalized["tool_calls"]:
-        if capture:
-            attributes["tool_calls"] = [{**tc, "round": 0} for tc in normalized["tool_calls"]]
-        else:
-            attributes["tool_calls"] = [
-                {k: v for k, v in {**tc, "round": 0}.items() if k != "args"}
-                for tc in normalized["tool_calls"]
-            ]
-
-    if capture:
-        attributes["user_message"] = _truncate(user_msg, max_len)
-        attributes["assistant_response"] = _truncate(assistant_msg, max_len)
-
-        if messages:
-            attributes["messages"] = [
-                {**m, "content": _truncate(m["content"], max_len)}
-                if isinstance(m.get("content"), str) else m
-                for m in messages
-            ]
+    assistant_msg = normalized.get("content") or ""
 
     try:
-        send_event(config, {
-            "eventType": "CHAT_TURN",
-            "entityType": "conversation",
-            "data": {
-                "entity_id": session_id,
-                "attributes": attributes,
-            },
-        })
+        session.emit_chat_turn(
+            user_message=user_msg,
+            assistant_response=assistant_msg,
+        )
     except Exception as e:
         print(f"[pentatonic-ai] emit failed: {e}", file=sys.stderr)
 
 
 class _WrappedOpenAICompletions:
-    def __init__(self, config, completions, session_id, metadata):
+    def __init__(self, config, completions, opts):
         self._config = config
         self._completions = completions
-        self._session_id = session_id
-        self._metadata = metadata
+        self._opts = opts
 
     def create(self, **kwargs):
         result = self._completions.create(**kwargs)
-        normalized = normalize_response(result)
-        _emit_event(self._config, self._session_id, self._metadata, kwargs.get("messages"), normalized)
+
+        # URL rewriting on text content
+        session = self._opts["session"]
+        if isinstance(result, dict):
+            choices = result.get("choices") or []
+            if choices:
+                msg = choices[0].get("message") or {}
+                content = msg.get("content")
+                if content:
+                    msg["content"] = rewrite_urls(
+                        content, self._config,
+                        session.session_id, self._opts.get("metadata"),
+                    )
+
+        _fire_and_forget_emit(self._config, self._opts, kwargs.get("messages"), result)
         return result
 
     def __getattr__(self, name):
@@ -129,10 +195,10 @@ class _WrappedOpenAICompletions:
 
 
 class _WrappedOpenAIChat:
-    def __init__(self, config, chat, session_id, metadata):
+    def __init__(self, config, chat, opts):
         self._config = config
         self._chat = chat
-        self.completions = _WrappedOpenAICompletions(config, chat.completions, session_id, metadata)
+        self.completions = _WrappedOpenAICompletions(config, chat.completions, opts)
 
     def __getattr__(self, name):
         if name == "completions":
@@ -141,16 +207,19 @@ class _WrappedOpenAIChat:
 
 
 class _OpenAIWrapper:
-    def __init__(self, config, client, session_id, metadata):
+    def __init__(self, config, client, opts):
         self._config = config
         self._client = client
-        self._session_id = session_id
-        self._metadata = metadata
-        self.chat = _WrappedOpenAIChat(config, client.chat, session_id, metadata)
+        self._opts = opts
+        self.chat = _WrappedOpenAIChat(config, client.chat, opts)
 
     @property
     def session_id(self):
-        return self._session_id
+        return self._opts["session"].session_id
+
+    @property
+    def tes_session(self):
+        return self._opts["session"]
 
     def __getattr__(self, name):
         if name == "chat":
@@ -159,16 +228,25 @@ class _OpenAIWrapper:
 
 
 class _WrappedAnthropicMessages:
-    def __init__(self, config, messages, session_id, metadata):
+    def __init__(self, config, messages, opts):
         self._config = config
         self._messages = messages
-        self._session_id = session_id
-        self._metadata = metadata
+        self._opts = opts
 
     def create(self, **kwargs):
         result = self._messages.create(**kwargs)
-        normalized = normalize_response(result)
-        _emit_event(self._config, self._session_id, self._metadata, kwargs.get("messages"), normalized)
+
+        # URL rewriting on text content blocks
+        session = self._opts["session"]
+        if isinstance(result, dict) and isinstance(result.get("content"), list):
+            for block in result["content"]:
+                if isinstance(block, dict) and block.get("type") == "text" and block.get("text"):
+                    block["text"] = rewrite_urls(
+                        block["text"], self._config,
+                        session.session_id, self._opts.get("metadata"),
+                    )
+
+        _fire_and_forget_emit(self._config, self._opts, kwargs.get("messages"), result)
         return result
 
     def __getattr__(self, name):
@@ -176,16 +254,19 @@ class _WrappedAnthropicMessages:
 
 
 class _AnthropicWrapper:
-    def __init__(self, config, client, session_id, metadata):
+    def __init__(self, config, client, opts):
         self._config = config
         self._client = client
-        self._session_id = session_id
-        self._metadata = metadata
-        self.messages = _WrappedAnthropicMessages(config, client.messages, session_id, metadata)
+        self._opts = opts
+        self.messages = _WrappedAnthropicMessages(config, client.messages, opts)
 
     @property
     def session_id(self):
-        return self._session_id
+        return self._opts["session"].session_id
+
+    @property
+    def tes_session(self):
+        return self._opts["session"]
 
     def __getattr__(self, name):
         if name == "messages":
@@ -194,21 +275,32 @@ class _AnthropicWrapper:
 
 
 class _WorkersAIWrapper:
-    def __init__(self, config, ai_binding, session_id, metadata):
+    def __init__(self, config, ai_binding, opts):
         self._config = config
         self._ai = ai_binding
-        self._session_id = session_id
-        self._metadata = metadata
+        self._opts = opts
 
     @property
     def session_id(self):
-        return self._session_id
+        return self._opts["session"].session_id
+
+    @property
+    def tes_session(self):
+        return self._opts["session"]
 
     def run(self, model, params=None, **kwargs):
         result = self._ai.run(model, params, **kwargs)
+
+        # URL rewriting on response text
+        session = self._opts["session"]
+        if isinstance(result, dict) and result.get("response"):
+            result["response"] = rewrite_urls(
+                result["response"], self._config,
+                session.session_id, self._opts.get("metadata"),
+            )
+
         messages = params.get("messages") if isinstance(params, dict) else None
-        normalized = normalize_response(result)
-        _emit_event(self._config, self._session_id, self._metadata, messages, normalized, model=model)
+        _fire_and_forget_emit(self._config, self._opts, messages, result, model=model)
         return result
 
     def __getattr__(self, name):

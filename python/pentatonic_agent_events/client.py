@@ -41,8 +41,8 @@ class TESClient:
     def session(self, session_id=None, metadata=None):
         return Session(self._config, session_id=session_id, metadata=metadata)
 
-    def wrap(self, client, session_id=None, metadata=None):
-        return wrap_client(self._config, client, session_id=session_id, metadata=metadata)
+    def wrap(self, client, session_id=None, metadata=None, auto_emit=True):
+        return wrap_client(self._config, client, session_id=session_id, metadata=metadata, auto_emit=auto_emit)
 
     def __repr__(self):
         return f"TESClient(client_id={self.client_id!r}, endpoint={self.endpoint!r})"
