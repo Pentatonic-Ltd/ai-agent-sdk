@@ -607,7 +607,10 @@ function fireAndForgetEmit(clientConfig, sessionOpts, messages, result, model) {
   }
   const userMsg = messages?.filter?.((m) => m.role === "user")?.pop()?.content || "";
   const assistantMsg = normalized.content || "";
-  session.emitChatTurn({ userMessage: userMsg, assistantResponse: assistantMsg }).catch((err) => console.error("[pentatonic-ai] emit failed:", err.message));
+  const emitPromise = session.emitChatTurn({ userMessage: userMsg, assistantResponse: assistantMsg }).catch((err) => console.error("[pentatonic-ai] emit failed:", err.message));
+  if (typeof sessionOpts.waitUntil === "function") {
+    sessionOpts.waitUntil(emitPromise);
+  }
 }
 
 // src/client.js
@@ -654,8 +657,8 @@ var TESClient = class {
   session(opts) {
     return new Session(this._config, opts);
   }
-  wrap(client, { sessionId, metadata, autoEmit = true } = {}) {
-    return wrapClient(this._config, client, { sessionId, metadata, autoEmit });
+  wrap(client, { sessionId, metadata, autoEmit = true, waitUntil } = {}) {
+    return wrapClient(this._config, client, { sessionId, metadata, autoEmit, waitUntil });
   }
 };
 export {

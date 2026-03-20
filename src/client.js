@@ -51,7 +51,7 @@ export class TESClient {
     return new Session(this._config, opts);
   }
 
-  wrap(client, { sessionId, metadata, autoEmit = true } = {}) {
-    return wrapClient(this._config, client, { sessionId, metadata, autoEmit });
+  wrap(client, { sessionId, metadata, autoEmit = true, waitUntil } = {}) {
+    return wrapClient(this._config, client, { sessionId, metadata, autoEmit, waitUntil });
   }
 }

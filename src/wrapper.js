@@ -317,7 +317,13 @@ function fireAndForgetEmit(clientConfig, sessionOpts, messages, result, model) {
     messages?.filter?.((m) => m.role === "user")?.pop()?.content || "";
   const assistantMsg = normalized.content || "";
 
-  session
+  const emitPromise = session
     .emitChatTurn({ userMessage: userMsg, assistantResponse: assistantMsg })
     .catch((err) => console.error("[pentatonic-ai] emit failed:", err.message));
+
+  // On Cloudflare Workers, the runtime terminates after the response is sent.
+  // waitUntil keeps the Worker alive for background work like event emission.
+  if (typeof sessionOpts.waitUntil === "function") {
+    sessionOpts.waitUntil(emitPromise);
+  }
 }
