@@ -1,6 +1,6 @@
 {
   "name": "@pentatonic-ai/agent-events",
-  "version": "0.3.0-beta.1",
+  "version": "0.3.0-beta.2",
   "description": "LLM observability SDK — track token usage, tool calls, and conversations via Pentatonic TES",
   "type": "module",
   "main": "./dist/index.cjs",
