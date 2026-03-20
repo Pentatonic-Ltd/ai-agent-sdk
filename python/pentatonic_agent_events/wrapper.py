@@ -24,7 +24,7 @@ def detect_client_type(client):
     return "unknown"
 
 
-def wrap_client(config, client, session_id=None, metadata=None, auto_emit=True):
+def wrap_client(config, client, session_id=None, metadata=None, auto_emit=True, wait_until=None):
     client_type = detect_client_type(client)
     sid = session_id or str(uuid.uuid4())
     meta = metadata or {}
@@ -36,6 +36,7 @@ def wrap_client(config, client, session_id=None, metadata=None, auto_emit=True):
         "session": session,
         "auto_emit": auto_emit,
         "metadata": meta,
+        "wait_until": wait_until,
     }
 
     if client_type == "openai":
@@ -156,13 +157,22 @@ def _fire_and_forget_emit(config, opts, messages, result, model=None):
 
     assistant_msg = normalized.get("content") or ""
 
-    try:
-        session.emit_chat_turn(
-            user_message=user_msg,
-            assistant_response=assistant_msg,
-        )
-    except Exception as e:
-        print(f"[pentatonic-ai] emit failed: {e}", file=sys.stderr)
+    def _do_emit():
+        try:
+            session.emit_chat_turn(
+                user_message=user_msg,
+                assistant_response=assistant_msg,
+            )
+        except Exception as e:
+            print(f"[pentatonic-ai] emit failed: {e}", file=sys.stderr)
+
+    wait_until = opts.get("wait_until")
+    if callable(wait_until):
+        # On runtimes that terminate early (e.g., serverless), wait_until
+        # keeps the process alive for background work.
+        wait_until(_do_emit)
+    else:
+        _do_emit()
 
 
 class _WrappedOpenAICompletions:
