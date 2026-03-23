@@ -2,7 +2,7 @@ import { Session } from "./session.js";
 import { wrapClient } from "./wrapper.js";
 
 export class TESClient {
-  constructor({ clientId, apiKey, endpoint, headers, captureContent = true, maxContentLength = 4096 }) {
+  constructor({ clientId, apiKey, endpoint, headers, userId, captureContent = true, maxContentLength = 4096 }) {
     if (!clientId) throw new Error("clientId is required");
     if (!apiKey) throw new Error("apiKey is required");
     if (!endpoint) throw new Error("endpoint is required");
@@ -19,6 +19,7 @@ export class TESClient {
 
     this.clientId = clientId;
     this.endpoint = cleanEndpoint;
+    this.userId = userId || null;
     this.captureContent = captureContent;
     this.maxContentLength = maxContentLength;
 
@@ -42,6 +43,7 @@ export class TESClient {
       apiKey: this._apiKey,
       endpoint: this.endpoint,
       headers: this._headers,
+      userId: this.userId,
       captureContent: this.captureContent,
       maxContentLength: this.maxContentLength,
     };
@@ -51,7 +53,8 @@ export class TESClient {
     return new Session(this._config, opts);
   }
 
-  wrap(client, { sessionId, metadata, autoEmit = true, waitUntil } = {}) {
-    return wrapClient(this._config, client, { sessionId, metadata, autoEmit, waitUntil });
+  wrap(client, { sessionId, userId, metadata, autoEmit = true, waitUntil } = {}) {
+    const config = userId ? { ...this._config, userId } : this._config;
+    return wrapClient(config, client, { sessionId, metadata, autoEmit, waitUntil });
   }
 }

@@ -8,7 +8,7 @@ const EMIT_EVENT_MUTATION = `
   }
 `;
 
-export async function sendEvent({ endpoint, apiKey, clientId, headers }, input, fetchFn) {
+export async function sendEvent({ endpoint, apiKey, clientId, userId, headers }, input, fetchFn) {
   const f = fetchFn || globalThis.fetch;
 
   // tes_ prefixed tokens are API tokens — send as Authorization: Bearer
@@ -27,7 +27,11 @@ export async function sendEvent({ endpoint, apiKey, clientId, headers }, input, 
     },
     body: JSON.stringify({
       query: EMIT_EVENT_MUTATION,
-      variables: { input },
+      variables: {
+        input: userId
+          ? { ...input, data: { ...input.data, attributes: { ...input.data?.attributes, userId } } }
+          : input,
+      },
     }),
   });
 

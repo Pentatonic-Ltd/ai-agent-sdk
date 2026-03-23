@@ -30,6 +30,16 @@ def send_event(config, event_input):
         **auth_headers,
     }
 
+    user_id = config.get("user_id")
+    if user_id:
+        event_input = {
+            **event_input,
+            "data": {
+                **event_input.get("data", {}),
+                "attributes": {**event_input.get("data", {}).get("attributes", {}), "userId": user_id},
+            },
+        }
+
     body = json.dumps({
         "query": EMIT_EVENT_MUTATION,
         "variables": {"input": event_input},

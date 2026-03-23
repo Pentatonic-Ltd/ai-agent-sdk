@@ -4,7 +4,7 @@ from .wrapper import wrap_client
 
 
 class TESClient:
-    def __init__(self, client_id, api_key, endpoint, headers=None, capture_content=True, max_content_length=4096):
+    def __init__(self, client_id, api_key, endpoint, headers=None, user_id=None, capture_content=True, max_content_length=4096):
         if not client_id:
             raise ValueError("client_id is required")
         if not api_key:
@@ -22,6 +22,7 @@ class TESClient:
 
         self.client_id = client_id
         self.endpoint = clean_endpoint
+        self.user_id = user_id
         self.capture_content = capture_content
         self.max_content_length = max_content_length
         self._api_key = api_key
@@ -34,6 +35,7 @@ class TESClient:
             "api_key": self._api_key,
             "endpoint": self.endpoint,
             "headers": self._headers,
+            "user_id": self.user_id,
             "capture_content": self.capture_content,
             "max_content_length": self.max_content_length,
         }
@@ -41,8 +43,9 @@ class TESClient:
     def session(self, session_id=None, metadata=None):
         return Session(self._config, session_id=session_id, metadata=metadata)
 
-    def wrap(self, client, session_id=None, metadata=None, auto_emit=True, wait_until=None):
-        return wrap_client(self._config, client, session_id=session_id, metadata=metadata, auto_emit=auto_emit, wait_until=wait_until)
+    def wrap(self, client, session_id=None, user_id=None, metadata=None, auto_emit=True, wait_until=None):
+        config = {**self._config, "user_id": user_id} if user_id else self._config
+        return wrap_client(config, client, session_id=session_id, metadata=metadata, auto_emit=auto_emit, wait_until=wait_until)
 
     def __repr__(self):
         return f"TESClient(client_id={self.client_id!r}, endpoint={self.endpoint!r})"
