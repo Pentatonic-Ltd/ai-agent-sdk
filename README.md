@@ -253,13 +253,13 @@ Creates a new client.
 #### JavaScript
 
 ```js
-new TESClient({ clientId, apiKey, endpoint, headers?, captureContent?, maxContentLength? })
+new TESClient({ clientId, apiKey, endpoint, headers?, userId?, captureContent?, maxContentLength? })
 ```
 
 #### Python
 
 ```python
-TESClient(client_id, api_key, endpoint, headers=None, capture_content=True, max_content_length=4096)
+TESClient(client_id, api_key, endpoint, headers=None, user_id=None, capture_content=True, max_content_length=4096)
 ```
 
 | Param (JS / Python) | Type | Default | Description |
@@ -268,6 +268,7 @@ TESClient(client_id, api_key, endpoint, headers=None, capture_content=True, max_
 | `apiKey` / `api_key` | `string` | *required* | TES service API key (sent as `x-service-key` header) |
 | `endpoint` / `endpoint` | `string` | *required* | TES instance URL (must be `https://`, except `localhost` for dev) |
 | `headers` / `headers` | `object` / `dict` | `{}` | Additional headers to include in every request |
+| `userId` / `user_id` | `string` | `null` / `None` | Optional user identifier — included as `data.attributes.userId` on every event. Enables user-scoped memory and attribution. |
 | `captureContent` / `capture_content` | `boolean` / `bool` | `true` / `True` | Whether to include message content in events |
 | `maxContentLength` / `max_content_length` | `number` / `int` | `4096` | Truncate content beyond this length |
 
@@ -278,18 +279,19 @@ Returns a Proxy (JS) or wrapper (Python) around any supported LLM client. Every 
 #### JavaScript
 
 ```js
-const ai = tes.wrap(client, { sessionId, metadata });
+const ai = tes.wrap(client, { sessionId, userId, metadata });
 ```
 
 #### Python
 
 ```python
-ai = tes.wrap(client, session_id=None, metadata=None)
+ai = tes.wrap(client, session_id=None, user_id=None, metadata=None)
 ```
 
 | Option (JS / Python) | Type | Default | Description |
 |----------------------|------|---------|-------------|
 | `sessionId` / `session_id` | `string` | `crypto.randomUUID()` / `uuid.uuid4()` | Links events from the same conversation |
+| `userId` / `user_id` | `string` | Inherits from client | Override the user identifier for this wrapped instance |
 | `metadata` / `metadata` | `object` / `dict` | `{}` | Custom fields included in every emitted event |
 
 Auto-detects the provider:
