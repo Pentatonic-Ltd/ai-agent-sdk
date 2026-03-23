@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pentatonic-agent-events"
-version = "0.3.0b2"
+version = "0.3.0b3"
 description = "LLM observability SDK — track token usage, tool calls, and conversations via Pentatonic TES"
 readme = "README.md"
 license = "MIT"
