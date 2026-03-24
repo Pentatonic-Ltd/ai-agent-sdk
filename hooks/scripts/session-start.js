@@ -10,8 +10,15 @@ import { join } from "path";
 import { homedir } from "os";
 
 function loadConfig() {
-  const configPath = join(homedir(), ".claude", "tes-memory.local.md");
-  if (!existsSync(configPath)) return null;
+  const candidates = [
+    join(homedir(), ".claude", "tes-memory.local.md"),
+    join(homedir(), ".claude-pentatonic", "tes-memory.local.md"),
+  ];
+  if (process.env.CLAUDE_CONFIG_DIR) {
+    candidates.unshift(join(process.env.CLAUDE_CONFIG_DIR, "tes-memory.local.md"));
+  }
+  const configPath = candidates.find((p) => existsSync(p));
+  if (!configPath) return null;
 
   const content = readFileSync(configPath, "utf-8");
   const match = content.match(/^---\n([\s\S]*?)\n---/);

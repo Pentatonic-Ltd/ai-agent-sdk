@@ -20,8 +20,17 @@ import { homedir } from "os";
 // --- Config ---
 
 function loadConfig() {
-  const configPath = join(homedir(), ".claude", "tes-memory.local.md");
-  if (!existsSync(configPath)) {
+  // Check common Claude Code config locations (supports aliased installs)
+  const candidates = [
+    join(homedir(), ".claude", "tes-memory.local.md"),
+    join(homedir(), ".claude-pentatonic", "tes-memory.local.md"),
+  ];
+  // Also check CLAUDE_CONFIG_DIR env var if set
+  if (process.env.CLAUDE_CONFIG_DIR) {
+    candidates.unshift(join(process.env.CLAUDE_CONFIG_DIR, "tes-memory.local.md"));
+  }
+  const configPath = candidates.find((p) => existsSync(p));
+  if (!configPath) {
     return null;
   }
 
