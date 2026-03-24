@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "tes-memory": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/servers/tes-memory.js"]
+    }
+  }
+}

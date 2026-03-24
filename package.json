@@ -43,10 +43,11 @@
     "url": "https://github.com/Pentatonic-Ltd/ai-events-sdk.git"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1",
     "esbuild": "^0.20.0"
   },
   "devDependencies": {
-    "jest": "^29.7.0",
-    "@jest/globals": "^29.7.0"
+    "@jest/globals": "^29.7.0",
+    "jest": "^29.7.0"
   }
 }
