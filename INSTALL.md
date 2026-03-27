@@ -2,31 +2,36 @@
 
 Shared team memory + automatic conversation tracking for Claude Code. Every session and conversation turn is captured as TES events.
 
-## Install (2 minutes)
+## Install via Marketplace
 
-### 1. Clone the plugin
+### 1. Add the marketplace
 
-```bash
-git clone https://github.com/Pentatonic-Ltd/ai-events-sdk.git ~/.claude-plugins/tes-memory
+In Claude Code, run:
+
+```
+/plugin marketplace add Pentatonic-Ltd/ai-agent-sdk
 ```
 
-### 2. Start Claude Code with the plugin
+### 2. Install the plugin
 
-```bash
-claude --plugin-dir ~/.claude-plugins/tes-memory
+```
+/plugin install tes-memory@pentatonic-ai
 ```
 
 ### 3. Create your account
 
 Run `/tes-memory:tes-setup` inside Claude Code. This will guide you through creating a TES account and generating API credentials.
 
-### 4. Restart Claude Code with the plugin flag
-
-```bash
-claude --plugin-dir ~/.claude-plugins/tes-memory
-```
+### 4. Restart Claude Code
 
 The plugin will start tracking automatically.
+
+## Alternative: Manual Install
+
+```bash
+git clone https://github.com/Pentatonic-Ltd/ai-agent-sdk.git ~/.claude-plugins/tes-memory
+claude --plugin-dir ~/.claude-plugins/tes-memory
+```
 
 ## What it does
 
@@ -48,10 +53,12 @@ Sessions emit `SESSION_START` and `SESSION_END` events with summaries (total tur
 
 ## Updating
 
+Marketplace plugins update automatically. For manual installs:
+
 ```bash
 cd ~/.claude-plugins/tes-memory && git pull
 ```
 
 ## Feedback
 
-Report issues or ideas via [GitHub Issues](https://github.com/Pentatonic-Ltd/ai-events-sdk/issues).
+Report issues or ideas via [GitHub Issues](https://github.com/Pentatonic-Ltd/ai-agent-sdk/issues).

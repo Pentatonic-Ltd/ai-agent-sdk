@@ -12,7 +12,7 @@ Run the interactive setup to create a Pentatonic TES account and configure this 
 1. Run the TES init command to create an account and get credentials:
 
 ```bash
-npx @pentatonic-ai/agent-events init
+npx @pentatonic/ai-agent-sdk init
 ```
 
 2. After completing the setup, you'll receive credentials like:

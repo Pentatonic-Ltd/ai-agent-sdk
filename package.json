@@ -1,5 +1,5 @@
 {
-  "name": "@pentatonic-ai/agent-events",
+  "name": "@pentatonic/ai-agent-sdk",
   "version": "0.3.0-beta.3",
   "description": "LLM observability SDK — track token usage, tool calls, and conversations via Pentatonic TES",
   "type": "module",
@@ -12,7 +12,7 @@
     }
   },
   "bin": {
-    "agent-events": "./bin/cli.js"
+    "ai-agent-sdk": "./bin/cli.js"
   },
   "files": [
     "dist",
@@ -40,7 +40,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Pentatonic-Ltd/ai-events-sdk.git"
+    "url": "https://github.com/Pentatonic-Ltd/ai-agent-sdk.git"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.27.1",

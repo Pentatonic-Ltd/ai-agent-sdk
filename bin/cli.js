@@ -141,11 +141,11 @@ async function main() {
 
   if (flags.command !== "init") {
     console.log(`
-@pentatonic-ai/agent-events
+@pentatonic/ai-agent-sdk
 
 Usage:
-  npx @pentatonic-ai/agent-events init                    Set up account and install SDK
-  npx @pentatonic-ai/agent-events init --endpoint URL     Use a custom TES endpoint
+  npx @pentatonic/ai-agent-sdk init                    Set up account and install SDK
+  npx @pentatonic/ai-agent-sdk init --endpoint URL     Use a custom TES endpoint
 
 For docs, see https://api.pentatonic.com
     `);
@@ -255,7 +255,7 @@ For docs, see https://api.pentatonic.com
 
     if (!accessToken) {
       pollSpinner.fail(
-        "Verification timed out. Run `npx @pentatonic-ai/agent-events init` again — it will resume where you left off."
+        "Verification timed out. Run `npx @pentatonic/ai-agent-sdk init` again — it will resume where you left off."
       );
       process.exit(1);
     }
@@ -299,18 +299,18 @@ For docs, see https://api.pentatonic.com
 
     // Install SDK
     const installChoice = await askChoice("Install SDK:", [
-      "npm install @pentatonic-ai/agent-events",
+      "npm install @pentatonic/ai-agent-sdk",
       "pip install pentatonic-agent-events",
       "Skip — I'll install manually",
     ]);
 
     if (installChoice.startsWith("npm")) {
-      const installSpinner = spinner("Installing @pentatonic-ai/agent-events...");
+      const installSpinner = spinner("Installing @pentatonic/ai-agent-sdk...");
       try {
-        execFileSync("npm", ["install", "@pentatonic-ai/agent-events"], { stdio: "pipe" });
-        installSpinner.stop("@pentatonic-ai/agent-events installed!");
+        execFileSync("npm", ["install", "@pentatonic/ai-agent-sdk"], { stdio: "pipe" });
+        installSpinner.stop("@pentatonic/ai-agent-sdk installed!");
       } catch {
-        installSpinner.fail("Install failed. Run manually: npm install @pentatonic-ai/agent-events");
+        installSpinner.fail("Install failed. Run manually: npm install @pentatonic/ai-agent-sdk");
       }
     } else if (installChoice.startsWith("pip")) {
       const installSpinner = spinner("Installing pentatonic-agent-events...");
@@ -322,7 +322,7 @@ For docs, see https://api.pentatonic.com
       }
     } else {
       console.log("\n  Install later with:");
-      console.log("    npm install @pentatonic-ai/agent-events");
+      console.log("    npm install @pentatonic/ai-agent-sdk");
       console.log("    pip install pentatonic-agent-events");
     }
 

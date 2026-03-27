@@ -1,0 +1,22 @@
+{
+  "name": "pentatonic-ai",
+  "owner": {
+    "name": "Pentatonic",
+    "email": "engineering@pentatonic.com"
+  },
+  "metadata": {
+    "description": "AI agent observability and shared memory plugins by Pentatonic",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "tes-memory",
+      "source": ".",
+      "description": "Shared team memory powered by Pentatonic TES — search past conversations, store knowledge, track AI usage",
+      "version": "0.1.0",
+      "author": {
+        "name": "Pentatonic"
+      }
+    }
+  ]
+}

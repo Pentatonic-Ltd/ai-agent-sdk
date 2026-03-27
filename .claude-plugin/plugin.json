@@ -6,7 +6,7 @@
     "name": "Pentatonic",
     "url": "https://pentatonic.com"
   },
-  "repository": "https://github.com/Pentatonic-Ltd/ai-events-sdk",
+  "repository": "https://github.com/Pentatonic-Ltd/ai-agent-sdk",
   "license": "MIT",
   "keywords": ["memory", "knowledge-base", "observability", "tes"]
 }

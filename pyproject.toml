@@ -22,8 +22,8 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/Pentatonic-Ltd/ai-events-sdk"
-Repository = "https://github.com/Pentatonic-Ltd/ai-events-sdk"
+Homepage = "https://github.com/Pentatonic-Ltd/ai-agent-sdk"
+Repository = "https://github.com/Pentatonic-Ltd/ai-agent-sdk"
 
 [tool.hatch.build.targets.wheel]
 packages = ["python/pentatonic_agent_events"]
