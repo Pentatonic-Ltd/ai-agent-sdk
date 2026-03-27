@@ -210,9 +210,18 @@ For docs, see https://api.pentatonic.com
         const isPending =
           errors.clientId?.includes("already pending") ||
           errors.adminEmail?.includes("already has a pending");
+        const isAlreadyRegistered =
+          errors.clientId?.includes("already registered");
 
         if (isPending) {
           enrollSpinner.stop("Enrollment already pending — waiting for verification.");
+        } else if (isAlreadyRegistered) {
+          enrollSpinner.fail(
+            "This client ID is already registered.\n" +
+            "  If you belong to this organization, ask your admin to invite you.\n" +
+            "  Then run this command again — it will log you in automatically."
+          );
+          process.exit(1);
         } else {
           enrollSpinner.fail(
             data.message || Object.values(errors).join(", ") || "Enrollment failed"
