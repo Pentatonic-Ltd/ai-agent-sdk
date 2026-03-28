@@ -1,7 +1,7 @@
 {
   "name": "@pentatonic/ai-agent-sdk",
   "version": "0.3.0-beta.3",
-  "description": "LLM observability SDK — track token usage, tool calls, and conversations via Pentatonic TES",
+  "description": "TES SDK — LLM observability and lifecycle tracking via Pentatonic Thing Event System. Track token usage, tool calls, and conversations. Manage things through event-sourced lifecycle stages with AI enrichment and vector search.",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -30,14 +30,25 @@
     "prepublishOnly": "npm run build && npm test"
   },
   "keywords": [
+    "tes",
+    "thing-event-system",
+    "pentatonic",
     "llm",
     "observability",
     "ai",
     "openai",
     "anthropic",
-    "pentatonic"
+    "product-lifecycle",
+    "event-sourcing",
+    "circular-commerce",
+    "agentic-commerce",
+    "vector-search",
+    "graphql",
+    "mcp",
+    "model-context-protocol"
   ],
   "license": "MIT",
+  "homepage": "https://thingeventsystem.ai",
   "repository": {
     "type": "git",
     "url": "https://github.com/Pentatonic-Ltd/ai-agent-sdk.git"
