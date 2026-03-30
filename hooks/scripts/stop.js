@@ -4,6 +4,7 @@
  * Stop hook — emits CHAT_TURN event with accumulated turn data.
  */
 
+import { readFileSync } from "fs";
 import {
   loadConfig,
   emitModuleEvent,
@@ -26,6 +27,34 @@ async function main() {
   const turnNumber = state.turn_number || 0;
   const durationMs = state.turn_start ? Date.now() - state.turn_start : undefined;
 
+  // Extract token usage from transcript (last API response entry)
+  let usage = undefined;
+  let model = undefined;
+  if (input.transcript_path) {
+    try {
+      const transcript = readFileSync(input.transcript_path, "utf-8");
+      const lines = transcript.trim().split("\n");
+      // Walk backwards to find the last assistant message with usage
+      for (let i = lines.length - 1; i >= Math.max(0, lines.length - 20); i--) {
+        try {
+          const entry = JSON.parse(lines[i]);
+          if (entry.type === "assistant" && entry.message?.usage) {
+            usage = {
+              input_tokens: entry.message.usage.input_tokens,
+              output_tokens: entry.message.usage.output_tokens,
+            };
+            model = entry.message.model;
+            break;
+          }
+        } catch {
+          // Skip malformed lines
+        }
+      }
+    } catch {
+      // Transcript not readable — non-fatal
+    }
+  }
+
   try {
     await emitModuleEvent(config, "conversation-analytics", "CHAT_TURN", sessionId, {
       turn_number: turnNumber,
@@ -34,6 +63,8 @@ async function main() {
       tool_calls: state.tool_calls.length ? state.tool_calls : undefined,
       duration_ms: durationMs,
       cwd: input.cwd,
+      usage,
+      model,
     });
   } catch {
     // Non-fatal

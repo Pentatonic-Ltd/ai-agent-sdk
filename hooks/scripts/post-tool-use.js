@@ -13,9 +13,19 @@ function main() {
 
   const state = readTurnState(sessionId);
 
+  // Build a descriptive tool summary
+  const toolInput = input.tool_input || {};
+  const description =
+    toolInput.description ||
+    toolInput.file_path ||
+    toolInput.pattern ||
+    toolInput.command?.substring(0, 200) ||
+    undefined;
+
   state.tool_calls.push({
     tool: input.tool_name,
-    input: input.tool_input,
+    description,
+    input: toolInput,
     tool_use_id: input.tool_use_id,
   });
 
