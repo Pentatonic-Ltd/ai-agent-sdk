@@ -1,6 +1,6 @@
 import json
 import base64
-from pentatonic_agent_events.tracking import (
+from pentatonic_ai_agent_sdk.tracking import (
     sign_payload,
     verify_payload,
     build_track_url,

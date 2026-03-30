@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "pentatonic-agent-events"
+name = "pentatonic-ai-agent-sdk"
 version = "0.3.0b3"
 description = "TES SDK — LLM observability and lifecycle tracking via Pentatonic Thing Event System. Track token usage, tool calls, and conversations. Manage things through event-sourced lifecycle stages with AI enrichment and vector search."
 readme = "README.md"
@@ -45,8 +45,11 @@ Repository = "https://github.com/Pentatonic-Ltd/ai-agent-sdk"
 Issues = "https://github.com/Pentatonic-Ltd/ai-agent-sdk/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["python/pentatonic_agent_events"]
+packages = ["python/pentatonic_ai_agent_sdk"]
 
 [tool.pytest.ini_options]
 testpaths = ["python/tests"]
 pythonpath = ["python"]
+
+[tool.hatch.build.targets.sdist]
+include = ["python/pentatonic_ai_agent_sdk"]

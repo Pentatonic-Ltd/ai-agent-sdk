@@ -1,4 +1,4 @@
-from pentatonic_agent_events.normalizer import normalize_response
+from pentatonic_ai_agent_sdk.normalizer import normalize_response
 
 
 class TestNormalizeOpenAI:

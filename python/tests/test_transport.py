@@ -1,6 +1,6 @@
 import json
 from unittest.mock import patch, MagicMock
-from pentatonic_agent_events.transport import send_event
+from pentatonic_ai_agent_sdk.transport import send_event
 
 
 def _mock_response(data, status=200):
@@ -29,7 +29,7 @@ class TestSendEvent:
             "data": {"emitEvent": {"success": True, "eventId": "evt-1", "message": None}}
         })
 
-        with patch("pentatonic_agent_events.transport.urlopen", return_value=mock_resp) as mock_urlopen:
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", return_value=mock_resp) as mock_urlopen:
             result = send_event(config, event_input)
 
         assert result == {"success": True, "eventId": "evt-1", "message": None}
@@ -56,7 +56,7 @@ class TestSendEvent:
             "data": {"emitEvent": {"success": True, "eventId": "evt-2", "message": None}}
         })
 
-        with patch("pentatonic_agent_events.transport.urlopen", return_value=mock_resp) as mock_urlopen:
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", return_value=mock_resp) as mock_urlopen:
             send_event(config, {"eventType": "TEST"})
 
         req = mock_urlopen.call_args[0][0]
@@ -74,7 +74,7 @@ class TestSendEvent:
             "data": {"emitEvent": {"success": True, "eventId": "evt-3", "message": None}}
         })
 
-        with patch("pentatonic_agent_events.transport.urlopen", return_value=mock_resp) as mock_urlopen:
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", return_value=mock_resp) as mock_urlopen:
             send_event(config, {"eventType": "TEST"})
 
         req = mock_urlopen.call_args[0][0]
@@ -91,7 +91,7 @@ class TestSendEvent:
         from urllib.error import HTTPError
         import io
 
-        with patch("pentatonic_agent_events.transport.urlopen") as mock_urlopen:
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen") as mock_urlopen:
             mock_urlopen.side_effect = HTTPError(
                 "https://api.test.com/api/graphql", 500, "Internal Server Error",
                 {}, io.BytesIO(b"error")
@@ -113,7 +113,7 @@ class TestSendEvent:
             "errors": [{"message": "Invalid input"}]
         })
 
-        with patch("pentatonic_agent_events.transport.urlopen", return_value=mock_resp):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", return_value=mock_resp):
             try:
                 send_event(config, {"eventType": "TEST"})
                 assert False, "Should have raised"
