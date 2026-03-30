@@ -39,9 +39,12 @@ async function main() {
         try {
           const entry = JSON.parse(lines[i]);
           if (entry.type === "assistant" && entry.message?.usage) {
+            const u = entry.message.usage;
             usage = {
-              input_tokens: entry.message.usage.input_tokens,
-              output_tokens: entry.message.usage.output_tokens,
+              input_tokens: u.input_tokens || 0,
+              output_tokens: u.output_tokens || 0,
+              cache_read_input_tokens: u.cache_read_input_tokens || 0,
+              cache_creation_input_tokens: u.cache_creation_input_tokens || 0,
             };
             model = entry.message.model;
             break;
