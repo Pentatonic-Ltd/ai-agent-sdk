@@ -1,8 +1,16 @@
 # @pentatonic/ai-agent-sdk
 
-LLM observability SDK — track token usage, tool calls, and conversations via [Pentatonic TES](https://api.pentatonic.com).
+[![npm](https://img.shields.io/npm/v/@pentatonic/ai-agent-sdk)](https://www.npmjs.com/package/@pentatonic/ai-agent-sdk)
+[![PyPI](https://img.shields.io/pypi/v/pentatonic-agent-events)](https://pypi.org/project/pentatonic-agent-events/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-Provider-agnostic: automatically wraps OpenAI, Anthropic, and Cloudflare Workers AI clients. Available for both **JavaScript** and **Python**.
+The official SDK for [Thing Event System (TES)](https://thingeventsystem.ai) — the system of record for things that evolve over time.
+
+This SDK connects your AI agents to TES, recording every LLM call, tool use, and conversation as an immutable event. Every event is automatically enriched, embedded, and searchable — giving your agents persistent memory, full audit trails, and observability across sessions.
+
+Provider-agnostic: automatically wraps **OpenAI**, **Anthropic**, and **Cloudflare Workers AI** clients. Available for both **JavaScript** and **Python**. Zero runtime dependencies.
+
+> **Also available as:** `@pentatonic-ai/agent-events` (npm) / `pentatonic-agent-events` (PyPI)
 
 ## Getting Started
 
@@ -395,6 +403,24 @@ All events are sent to the TES GraphQL API (`emitEvent` mutation) authenticated 
 - **API key protection:** Stored as a non-enumerable property (JS) or private attribute (Python) — won't appear in `JSON.stringify`, `repr()`, or error reporters
 - **Content controls:** Set `captureContent: false` (JS) or `capture_content=False` (Python) to omit message content from events, or use `maxContentLength` / `max_content_length` to truncate
 - **No runtime dependencies:** Both the JavaScript and Python SDKs have zero external runtime dependencies
+
+## Part of the TES Platform
+
+This SDK is one component of the [Thing Event System](https://thingeventsystem.ai) — an event-sourced platform for tracking things through their complete lifecycle with AI enrichment and vector search.
+
+- [Agent Memory](https://thingeventsystem.ai/products/agent-memory) — 7-layer persistent memory for AI agents, built on the TES event spine
+- [Bias Evolution](https://thingeventsystem.ai/products/bias-evolution) — Self-evolving bias detection using evolutionary algorithms
+- [MCP Integration](https://thingeventsystem.ai/docs) — Connect TES to Claude, GPT, and other AI assistants via Model Context Protocol
+
+## Links
+
+- [TES Website](https://thingeventsystem.ai)
+- [Documentation](https://thingeventsystem.ai/docs)
+- [GraphQL Playground](https://thingeventsystem.ai/graphql)
+- [npm package](https://www.npmjs.com/package/@pentatonic/ai-agent-sdk)
+- [PyPI package](https://pypi.org/project/pentatonic-agent-events/)
+- [Discord](https://discord.gg/QZJe9FtkWj)
+- [Pentatonic](https://pentatonic.com)
 
 ## License
 
