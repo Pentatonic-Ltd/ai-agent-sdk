@@ -6,12 +6,17 @@
   </picture>
 </p>
 
-<h3 align="center">AI Agent SDK</h3>
+[![npm](https://img.shields.io/npm/v/@pentatonic/ai-agent-sdk)](https://www.npmjs.com/package/@pentatonic/ai-agent-sdk)
+[![PyPI](https://img.shields.io/pypi/v/pentatonic-agent-events)](https://pypi.org/project/pentatonic-agent-events/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-<p align="center">
-  Observability, memory, and analytics for LLM applications.<br>
-  Provider-agnostic. JavaScript &amp; Python.
-</p>
+The official SDK for [Thing Event System (TES)](https://thingeventsystem.ai) — the system of record for things that evolve over time.
+
+This SDK connects your AI agents to TES, recording every LLM call, tool use, and conversation as an immutable event. Every event is automatically enriched, embedded, and searchable — giving your agents persistent memory, full audit trails, and observability across sessions.
+
+Provider-agnostic: automatically wraps **OpenAI**, **Anthropic**, and **Cloudflare Workers AI** clients. Available for both **JavaScript** and **Python**. Zero runtime dependencies.
+
+> **Also available as:** `@pentatonic-ai/agent-events` (npm) / `pentatonic-agent-events` (PyPI)
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@pentatonic-ai/ai-agent-sdk"><img src="https://img.shields.io/npm/v/@pentatonic-ai/ai-agent-sdk?style=flat-square&color=00fba9&label=npm" alt="npm"></a>
@@ -257,6 +262,24 @@ Events flow through a queue-based pipeline. Each module processes events indepen
 - **Conversation Analytics** -- session metrics, search attribution, dead-end detection
 - **Bias Pattern Evolution** -- Bayesian pattern detection across your event stream
 - **Predictive Modelling** -- demand forecasts and supply network analytics
+
+## Part of the TES Platform
+
+This SDK is one component of the [Thing Event System](https://thingeventsystem.ai) — an event-sourced platform for tracking things through their complete lifecycle with AI enrichment and vector search.
+
+- [Agent Memory](https://thingeventsystem.ai/products/agent-memory) — 7-layer persistent memory for AI agents, built on the TES event spine
+- [Bias Evolution](https://thingeventsystem.ai/products/bias-evolution) — Self-evolving bias detection using evolutionary algorithms
+- [MCP Integration](https://thingeventsystem.ai/docs) — Connect TES to Claude, GPT, and other AI assistants via Model Context Protocol
+
+## Links
+
+- [TES Website](https://thingeventsystem.ai)
+- [Documentation](https://thingeventsystem.ai/docs)
+- [GraphQL Playground](https://thingeventsystem.ai/graphql)
+- [npm package](https://www.npmjs.com/package/@pentatonic/ai-agent-sdk)
+- [PyPI package](https://pypi.org/project/pentatonic-agent-events/)
+- [Discord](https://discord.gg/QZJe9FtkWj)
+- [Pentatonic](https://pentatonic.com)
 
 ## License
 

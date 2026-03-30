@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pentatonic-ai-agent-sdk"
-version = "0.3.0"
-description = "AI Agent SDK — observability, memory, and analytics for LLM applications. Provider-agnostic. Tracks token usage, tool calls, conversations, and enables shared team memory."
+version = "0.3.0b3"
+description = "TES SDK — LLM observability and lifecycle tracking via Pentatonic Thing Event System. Track token usage, tool calls, and conversations. Manage things through event-sourced lifecycle stages with AI enrichment and vector search."
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.9"
@@ -39,8 +39,8 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://api.pentatonic.com"
-Documentation = "https://github.com/Pentatonic-Ltd/ai-agent-sdk#readme"
+Homepage = "https://thingeventsystem.ai"
+Documentation = "https://thingeventsystem.ai/docs"
 Repository = "https://github.com/Pentatonic-Ltd/ai-agent-sdk"
 Issues = "https://github.com/Pentatonic-Ltd/ai-agent-sdk/issues"
 
