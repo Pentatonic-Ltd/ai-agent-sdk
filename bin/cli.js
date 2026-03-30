@@ -330,7 +330,7 @@ For docs, see https://api.pentatonic.com
     // Install SDK
     const installChoice = await askChoice("Install SDK:", [
       "npm install @pentatonic-ai/ai-agent-sdk",
-      "pip install pentatonic-agent-events",
+      "pip install pentatonic-ai-agent-sdk",
       "Skip — I'll install manually",
     ]);
 
@@ -343,17 +343,17 @@ For docs, see https://api.pentatonic.com
         installSpinner.fail("Install failed. Run manually: npm install @pentatonic-ai/ai-agent-sdk");
       }
     } else if (installChoice.startsWith("pip")) {
-      const installSpinner = spinner("Installing pentatonic-agent-events...");
+      const installSpinner = spinner("Installing pentatonic-ai-agent-sdk...");
       try {
-        execFileSync("pip", ["install", "pentatonic-agent-events"], { stdio: "pipe" });
-        installSpinner.stop("pentatonic-agent-events installed!");
+        execFileSync("pip", ["install", "pentatonic-ai-agent-sdk"], { stdio: "pipe" });
+        installSpinner.stop("pentatonic-ai-agent-sdk installed!");
       } catch {
-        installSpinner.fail("Install failed. Run manually: pip install pentatonic-agent-events");
+        installSpinner.fail("Install failed. Run manually: pip install pentatonic-ai-agent-sdk");
       }
     } else {
       console.log("\n  Install later with:");
       console.log("    npm install @pentatonic-ai/ai-agent-sdk");
-      console.log("    pip install pentatonic-agent-events");
+      console.log("    pip install pentatonic-ai-agent-sdk");
     }
 
     console.log("  You're ready! See docs at https://api.pentatonic.com\n");
