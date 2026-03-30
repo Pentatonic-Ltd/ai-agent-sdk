@@ -1,6 +1,6 @@
 import json
 from unittest.mock import patch, MagicMock
-from pentatonic_agent_events.client import TESClient
+from pentatonic_ai_agent_sdk.client import TESClient
 
 
 def _mock_urlopen(captured_requests):
@@ -90,7 +90,7 @@ class TestWrapOpenAI:
             "model": "gpt-4o",
         }])
         ai = tes.wrap(openai)
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             result = ai.chat.completions.create(
                 model="gpt-4o",
                 messages=[{"role": "user", "content": "hi"}],
@@ -111,7 +111,7 @@ class TestWrapOpenAI:
             "model": "gpt-4o",
         }])
         ai = tes.wrap(openai)
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             ai.chat.completions.create(
                 model="gpt-4o",
                 messages=[
@@ -141,7 +141,7 @@ class TestWrapOpenAI:
             "model": "gpt-4o",
         }])
         ai = tes.wrap(openai, metadata={"shop_domain": "test.myshopify.com"})
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             ai.chat.completions.create(
                 model="gpt-4o",
                 messages=[{"role": "user", "content": "hi"}],
@@ -165,7 +165,7 @@ class TestWrapOpenAI:
             },
         ])
         ai = tes.wrap(openai, session_id="multi-turn")
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             # First call: tool call only -> should NOT emit
             ai.chat.completions.create(
                 model="gpt-4o",
@@ -201,7 +201,7 @@ class TestWrapOpenAI:
             "model": "gpt-4o",
         }])
         ai = tes.wrap(openai, auto_emit=False)
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             ai.chat.completions.create(
                 model="gpt-4o",
                 messages=[{"role": "user", "content": "hi"}],
@@ -218,7 +218,7 @@ class TestWrapOpenAI:
             "model": "gpt-4o",
         }])
         ai = tes.wrap(openai)
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             ai.chat.completions.create(
                 model="gpt-4o",
                 messages=[
@@ -237,7 +237,7 @@ class TestWrapOpenAI:
             "model": "gpt-4o",
         }])
         ai = tes.wrap(openai)
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             result = ai.chat.completions.create(
                 model="gpt-4o",
                 messages=[{"role": "user", "content": "find shoes"}],
@@ -262,7 +262,7 @@ class TestWrapAnthropic:
             "model": "claude-sonnet-4-6-20250514",
         }])
         ai = tes.wrap(anthropic)
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             result = ai.messages.create(
                 model="claude-sonnet-4-6-20250514",
                 messages=[{"role": "user", "content": "Say hello in French"}],
@@ -287,7 +287,7 @@ class TestWrapAnthropic:
             "model": "claude-sonnet-4-6-20250514",
         }])
         ai = tes.wrap(anthropic)
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             ai.messages.create(
                 model="claude-sonnet-4-6-20250514",
                 messages=[{"role": "user", "content": "find shoes"}],
@@ -318,7 +318,7 @@ class TestWrapAnthropic:
             "model": "claude-sonnet-4-6-20250514",
         }])
         ai = tes.wrap(anthropic)
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             result = ai.messages.create(
                 model="claude-sonnet-4-6-20250514",
                 messages=[{"role": "user", "content": "find deals"}],
@@ -336,7 +336,7 @@ class TestWrapWorkersAI:
             "usage": {"prompt_tokens": 30, "completion_tokens": 5},
         }])
         wrapped = tes.wrap(ai)
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             result = wrapped.run("@cf/meta/llama-3.1-8b-instruct", {
                 "messages": [{"role": "user", "content": "What is 2+2?"}],
             })
@@ -362,7 +362,7 @@ class TestWrapWorkersAI:
             },
         ])
         wrapped = tes.wrap(ai, session_id="wai-multi")
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             wrapped.run("@cf/meta/llama-3.1-8b-instruct", {
                 "messages": [{"role": "user", "content": "find item 123"}],
             })
@@ -395,7 +395,7 @@ class TestWrapWorkersAI:
             "usage": {"prompt_tokens": 30, "completion_tokens": 5},
         }])
         wrapped = tes.wrap(ai)
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             result = wrapped.run("@cf/meta/llama-3.1-8b-instruct", {
                 "messages": [{"role": "user", "content": "find item"}],
             })
@@ -419,7 +419,7 @@ class TestExtractToolResults:
             },
         ])
         ai = tes.wrap(openai, session_id="tool-results")
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             # First call: tool call only
             ai.chat.completions.create(
                 model="gpt-4o",
@@ -453,7 +453,7 @@ class TestExtractToolResults:
             },
         ])
         ai = tes.wrap(openai, session_id="array-results")
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             ai.chat.completions.create(
                 model="gpt-4o",
                 messages=[{"role": "user", "content": "list items"}],

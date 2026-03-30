@@ -1,5 +1,5 @@
 import pytest
-from pentatonic_agent_events.client import TESClient
+from pentatonic_ai_agent_sdk.client import TESClient
 
 
 class TestTESClientConstructor:

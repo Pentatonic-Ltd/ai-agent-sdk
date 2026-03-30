@@ -1,6 +1,6 @@
 import json
 from unittest.mock import patch, MagicMock
-from pentatonic_agent_events.session import Session
+from pentatonic_ai_agent_sdk.session import Session
 
 
 def _mock_urlopen(captured_requests):
@@ -72,7 +72,7 @@ class TestSessionEmitChatTurn:
             "usage": {"prompt_tokens": 100, "completion_tokens": 40, "total_tokens": 140},
             "model": "gpt-4o",
         })
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             session.emit_chat_turn(user_message="find shoes", assistant_response="Here you go!")
         assert len(requests) == 1
         req = requests[0]
@@ -99,7 +99,7 @@ class TestSessionEmitChatTurn:
             "choices": [{"message": {"content": "hi"}}],
             "usage": {"prompt_tokens": 50, "completion_tokens": 10, "total_tokens": 60},
         })
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             session.emit_chat_turn(user_message="hi", assistant_response="hello")
         assert session.total_usage["prompt_tokens"] == 0
         assert session.total_usage["ai_rounds"] == 0
@@ -113,7 +113,7 @@ class TestSessionEmitChatTurn:
             "usage": {"prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15},
             "model": "gpt-4o",
         })
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             session.emit_chat_turn(user_message="real message", assistant_response="real response")
         body = json.loads(requests[0].data)
         attrs = body["variables"]["input"]["data"]["attributes"]
@@ -129,7 +129,7 @@ class TestSessionEmitChatTurn:
             "choices": [{"message": {"content": "hi"}}],
             "usage": {"prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15},
         })
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             session.emit_chat_turn(user_message="A" * 100, assistant_response="B" * 100)
         body = json.loads(requests[0].data)
         attrs = body["variables"]["input"]["data"]["attributes"]
@@ -145,7 +145,7 @@ class TestSessionEmitChatTurn:
             "choices": [{"message": {"content": "secret"}}],
             "usage": {"prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15},
         })
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             session.emit_chat_turn(user_message="secret question", assistant_response="secret answer")
         body = json.loads(requests[0].data)
         attrs = body["variables"]["input"]["data"]["attributes"]
@@ -167,7 +167,7 @@ class TestSessionEmitChatTurn:
             {"role": "assistant", "content": "4"},
             {"role": "user", "content": "Thanks"},
         ]
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             session.emit_chat_turn(user_message="Thanks", assistant_response="hi", messages=messages)
         body = json.loads(requests[0].data)
         attrs = body["variables"]["input"]["data"]["attributes"]
@@ -187,7 +187,7 @@ class TestSessionEmitChatTurn:
             {"role": "system", "content": "A" * 100},
             {"role": "user", "content": "short"},
         ]
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             session.emit_chat_turn(user_message="short", assistant_response="hi", messages=messages)
         body = json.loads(requests[0].data)
         attrs = body["variables"]["input"]["data"]["attributes"]
@@ -203,7 +203,7 @@ class TestSessionEmitChatTurn:
             "choices": [{"message": {"content": "hi"}}],
             "usage": {"prompt_tokens": 10, "completion_tokens": 5, "total_tokens": 15},
         })
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             session.emit_chat_turn(user_message="hi", assistant_response="hello", messages=[{"role": "system", "content": "secret"}])
         body = json.loads(requests[0].data)
         attrs = body["variables"]["input"]["data"]["attributes"]
@@ -214,7 +214,7 @@ class TestSessionEmitToolUse:
     def test_emits_tool_use_event(self):
         requests = []
         session = Session(CONFIG, session_id="sess-4")
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             session.emit_tool_use(tool="search_products", args={"query": "red shoes"}, result_summary={"count": 12}, duration_ms=340, turn_number=1)
         body = json.loads(requests[0].data)
         event_input = body["variables"]["input"]
@@ -227,7 +227,7 @@ class TestSessionEmitSessionStart:
     def test_emits_session_start_event(self):
         requests = []
         session = Session(CONFIG, session_id="sess-5", metadata={"shop_domain": "test.myshopify.com"})
-        with patch("pentatonic_agent_events.transport.urlopen", side_effect=_mock_urlopen(requests)):
+        with patch("pentatonic_ai_agent_sdk.transport.urlopen", side_effect=_mock_urlopen(requests)):
             session.emit_session_start()
         body = json.loads(requests[0].data)
         event_input = body["variables"]["input"]
