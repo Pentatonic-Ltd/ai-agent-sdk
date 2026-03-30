@@ -1,36 +1,53 @@
-# @pentatonic-ai/ai-agent-sdk
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Pentatonic-Ltd/ai-agent-sdk/main/.github/logo-light.svg">
+    <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Pentatonic-Ltd/ai-agent-sdk/main/.github/logo-dark.svg">
+    <img alt="Pentatonic" src="https://raw.githubusercontent.com/Pentatonic-Ltd/ai-agent-sdk/main/.github/logo-dark.svg" width="200">
+  </picture>
+</p>
 
-LLM observability SDK — track token usage, tool calls, and conversations via [Pentatonic TES](https://api.pentatonic.com).
+<h3 align="center">AI Agent SDK</h3>
 
-Provider-agnostic: automatically wraps OpenAI, Anthropic, and Cloudflare Workers AI clients. Available for both **JavaScript** and **Python**.
+<p align="center">
+  Observability, memory, and analytics for LLM applications.<br>
+  Provider-agnostic. JavaScript &amp; Python.
+</p>
 
-## Getting Started
+<p align="center">
+  <a href="https://www.npmjs.com/package/@pentatonic-ai/ai-agent-sdk"><img src="https://img.shields.io/npm/v/@pentatonic-ai/ai-agent-sdk?style=flat-square&color=00fba9&label=npm" alt="npm"></a>
+  <a href="https://pypi.org/project/pentatonic-ai-agent-sdk/"><img src="https://img.shields.io/pypi/v/pentatonic-ai-agent-sdk?style=flat-square&color=00fba9&label=pypi" alt="PyPI"></a>
+  <a href="https://github.com/Pentatonic-Ltd/ai-agent-sdk/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Pentatonic-Ltd/ai-agent-sdk?style=flat-square&color=333" alt="License"></a>
+</p>
 
-### 1. Create an account and get your API key
+---
+
+## Overview
+
+The Pentatonic AI Agent SDK instruments your LLM applications with zero-config observability. Wrap any OpenAI, Anthropic, or Cloudflare Workers AI client and get:
+
+- **Conversation tracking** -- every LLM call emits structured events (token usage, tool calls, model, latency)
+- **Shared memory** -- semantic search across your team's AI interactions
+- **Session analytics** -- conversation flows, dead-end detection, search-to-click metrics
+- **Pattern detection** -- Bayesian analysis of recurring behaviors across your event stream
+- **Claude Code plugin** -- automatic tracking for Claude Code sessions via hooks
+
+## Quick Start
+
+### 1. Create an account
 
 ```bash
 npx @pentatonic-ai/ai-agent-sdk init
 ```
 
-This will walk you through:
-- Creating a Pentatonic account (email, company name, password)
-- Choosing a data region (EU or US)
-- Email verification
-- Generating your API key
-
-At the end you'll see your credentials:
+This walks you through account creation, email verification, and API key generation. You'll get:
 
 ```
-TES_ENDPOINT=https://api.pentatonic.com
+TES_ENDPOINT=https://your-company.api.pentatonic.com
 TES_CLIENT_ID=your-company
 TES_API_KEY=tes_your-company_xxxxx
 ```
 
-Add these to your environment (`.env`, secrets manager, etc.) and the CLI will install the SDK for you.
-
-### 2. Or install manually
-
-If you already have an account, install the SDK directly:
+### 2. Install
 
 ```bash
 npm install @pentatonic-ai/ai-agent-sdk
@@ -40,11 +57,9 @@ npm install @pentatonic-ai/ai-agent-sdk
 pip install pentatonic-ai-agent-sdk
 ```
 
-You can create API keys in the [Pentatonic dashboard](https://api.pentatonic.com).
+### 3. Wrap your LLM client
 
-## Quick Start
-
-#### JavaScript
+**JavaScript**
 
 ```js
 import { TESClient } from "@pentatonic-ai/ai-agent-sdk";
@@ -54,109 +69,53 @@ const tes = new TESClient({
   apiKey: process.env.TES_API_KEY,
   endpoint: process.env.TES_ENDPOINT,
 });
+
+// Auto-instruments every create() call
+const ai = tes.wrap(new OpenAI(), { sessionId: "conv-123" });
+const result = await ai.chat.completions.create({
+  model: "gpt-4o",
+  messages: [{ role: "user", content: "Hello!" }],
+});
 ```
 
-#### Python
+**Python**
 
 ```python
 from pentatonic_agent_events import TESClient
-import os
 
 tes = TESClient(
     client_id=os.environ["TES_CLIENT_ID"],
     api_key=os.environ["TES_API_KEY"],
     endpoint=os.environ["TES_ENDPOINT"],
 )
-```
 
-### Wrap any LLM client (automatic tracking)
-
-`tes.wrap()` auto-detects your client and intercepts every call — each one emits a `CHAT_TURN` event automatically. Pass an optional `sessionId` to link events from the same conversation, and `metadata` to attach custom fields.
-
-#### JavaScript — OpenAI
-
-```js
-import OpenAI from "openai";
-
-const ai = tes.wrap(new OpenAI(), { sessionId: "conv-123", metadata: { userId: "u_1" } });
-
-// Every create() call automatically emits a CHAT_TURN event
-const result = await ai.chat.completions.create({
-  model: "gpt-4o",
-  messages: [{ role: "user", content: "Hello!" }],
-});
-
-ai.sessionId; // "conv-123" — or auto-generated UUID if not provided
-```
-
-#### Python — OpenAI
-
-```python
-from openai import OpenAI
-
-ai = tes.wrap(OpenAI(), session_id="conv-123", metadata={"user_id": "u_1"})
-
-# Every create() call automatically emits a CHAT_TURN event
+ai = tes.wrap(OpenAI(), session_id="conv-123")
 result = ai.chat.completions.create(
     model="gpt-4o",
     messages=[{"role": "user", "content": "Hello!"}],
 )
-
-ai.session_id  # "conv-123" — or auto-generated UUID if not provided
 ```
 
-#### JavaScript — Anthropic
+That's it. Every call emits a `CHAT_TURN` event with token usage, tool calls, and model info.
 
-```js
-import Anthropic from "@anthropic-ai/sdk";
+## Supported Providers
 
-const claude = tes.wrap(new Anthropic());
+| Provider | Detection | Intercepted Method |
+|----------|-----------|-------------------|
+| OpenAI | `client.chat.completions.create` | `chat.completions.create()` |
+| Anthropic | `client.messages.create` | `messages.create()` |
+| Workers AI | `client.run` (JS only) | `run()` |
 
-const result = await claude.messages.create({
-  model: "claude-sonnet-4-6-20250514",
-  max_tokens: 1024,
-  messages: [{ role: "user", content: "Hello!" }],
-});
-```
+All other methods pass through unchanged.
 
-#### Python — Anthropic
+## Tool-Calling Loops
 
-```python
-from anthropic import Anthropic
-
-claude = tes.wrap(Anthropic())
-
-result = claude.messages.create(
-    model="claude-sonnet-4-6-20250514",
-    max_tokens=1024,
-    messages=[{"role": "user", "content": "Hello!"}],
-)
-```
-
-#### JavaScript — Cloudflare Workers AI
-
-```js
-// Cloudflare Workers AI binding
-const ai = tes.wrap(env.AI, { sessionId: sid, metadata: { shop: shopDomain } });
-
-// run() is intercepted automatically
-const result = await ai.run("@cf/meta/llama-3.1-8b-instruct", {
-  messages: [{ role: "user", content: "Hello!" }],
-});
-```
-
-> **Note:** Workers AI is a Cloudflare-specific binding and is only available in JavaScript.
-
-### Tool-calling loops
-
-For multi-round tool loops, just keep calling the wrapped client. Each `create()`/`run()` call emits its own event, and they're linked by `sessionId`. The dashboard aggregates tokens, tool calls, and turns per session automatically.
-
-#### JavaScript
+For multi-round tool loops, just keep calling the wrapped client. Each call emits its own event, linked by `sessionId`:
 
 ```js
 const ai = tes.wrap(new OpenAI(), { sessionId: "conv-101" });
 
-// Round 1: AI requests a tool call — emits event with tool_calls
+// Round 1: AI requests a tool call
 const r1 = await ai.chat.completions.create({
   model: "gpt-4o",
   messages: [{ role: "user", content: "Find me running shoes" }],
@@ -165,236 +124,139 @@ const r1 = await ai.chat.completions.create({
 
 // Execute tool, feed results back...
 
-// Round 2: AI responds with final answer — emits another event
+// Round 2: AI responds with final answer
 const r2 = await ai.chat.completions.create({
   model: "gpt-4o",
   messages: [...messages, { role: "tool", content: toolResult }],
 });
 
-// That's it. No manual emit needed. Both events share sessionId "conv-101".
+// No manual emit needed. Both events share sessionId "conv-101".
 ```
 
-#### Python
+## Manual Session Control
 
-```python
-ai = tes.wrap(OpenAI(), session_id="conv-101")
-
-r1 = ai.chat.completions.create(
-    model="gpt-4o",
-    messages=[{"role": "user", "content": "Find me running shoes"}],
-    tools=[search_tool],
-)
-
-# Execute tool, feed results back...
-
-r2 = ai.chat.completions.create(
-    model="gpt-4o",
-    messages=[*messages, {"role": "tool", "content": tool_result}],
-)
-
-# No manual emit needed.
-```
-
-### Manual session (full control)
-
-If you don't want to use `tes.wrap()`, create a session directly:
-
-#### JavaScript
+If you need full control over when events are emitted:
 
 ```js
-const session = tes.session({
-  sessionId: "conv-123",
-  metadata: { userId: "u_456" },
-});
+const session = tes.session({ sessionId: "conv-123" });
 
-// Call your LLM however you like
 const response = await openai.chat.completions.create({
   model: "gpt-4o",
   messages: [{ role: "user", content: "What is 2+2?" }],
 });
 
-// Record the response (accumulates tokens, tool calls, model)
 session.record(response);
-
-// Emit when the turn is complete
 await session.emitChatTurn({
   userMessage: "What is 2+2?",
   assistantResponse: response.choices[0].message.content,
 });
 ```
 
-#### Python
+## Claude Code Plugin
 
-```python
-session = tes.session(
-    session_id="conv-123",
-    metadata={"user_id": "u_456"},
-)
+Track every Claude Code conversation automatically with shared team memory.
 
-response = openai.chat.completions.create(
-    model="gpt-4o",
-    messages=[{"role": "user", "content": "What is 2+2?"}],
-)
+### Install via marketplace
 
-session.record(response)
-
-session.emit_chat_turn(
-    user_message="What is 2+2?",
-    assistant_response=response["choices"][0]["message"]["content"],
-)
 ```
+/plugin marketplace add Pentatonic-Ltd/ai-agent-sdk
+```
+
+```
+/plugin install tes-memory@pentatonic-ai
+```
+
+### Set up your account
+
+```
+/tes-memory:tes-setup
+```
+
+This runs the SDK init, creates your account, and configures the plugin credentials.
+
+### Or install manually
+
+```bash
+git clone https://github.com/Pentatonic-Ltd/ai-agent-sdk.git ~/.claude-plugins/tes-memory
+claude --plugin-dir ~/.claude-plugins/tes-memory
+```
+
+### What it tracks
+
+- **Every conversation turn** -- user messages, assistant responses, tool calls, duration
+- **Session lifecycle** -- start/end events with total turns and tool usage stats
+- **Shared memory** -- `search_memories` and `store_memory` MCP tools for team knowledge
+- **Per-module security** -- events scoped to specific modules with permission checks
 
 ## API Reference
 
-### `TESClient`
+### `TESClient(config)`
 
-Creates a new client.
-
-#### JavaScript
-
-```js
-new TESClient({ clientId, apiKey, endpoint, headers?, userId?, captureContent?, maxContentLength? })
-```
-
-#### Python
-
-```python
-TESClient(client_id, api_key, endpoint, headers=None, user_id=None, capture_content=True, max_content_length=4096)
-```
-
-| Param (JS / Python) | Type | Default | Description |
-|----------------------|------|---------|-------------|
-| `clientId` / `client_id` | `string` | *required* | Your application/tenant identifier |
-| `apiKey` / `api_key` | `string` | *required* | TES service API key (sent as `x-service-key` header) |
-| `endpoint` / `endpoint` | `string` | *required* | TES instance URL (must be `https://`, except `localhost` for dev) |
-| `headers` / `headers` | `object` / `dict` | `{}` | Additional headers to include in every request |
-| `userId` / `user_id` | `string` | `null` / `None` | Optional user identifier — included as `data.attributes.userId` on every event. Enables user-scoped memory and attribution. |
-| `captureContent` / `capture_content` | `boolean` / `bool` | `true` / `True` | Whether to include message content in events |
-| `maxContentLength` / `max_content_length` | `number` / `int` | `4096` | Truncate content beyond this length |
+| Param | Type | Default | Description |
+|-------|------|---------|-------------|
+| `clientId` | `string` | required | Your tenant identifier |
+| `apiKey` | `string` | required | TES API key |
+| `endpoint` | `string` | required | TES instance URL |
+| `userId` | `string` | `null` | User identifier for attribution |
+| `captureContent` | `boolean` | `true` | Include message content in events |
+| `maxContentLength` | `number` | `4096` | Truncate content beyond this length |
 
 ### `tes.wrap(client, opts?)`
 
-Returns a Proxy (JS) or wrapper (Python) around any supported LLM client. Every intercepted call emits a `CHAT_TURN` event automatically.
+Returns an instrumented proxy. Every intercepted call emits a `CHAT_TURN` event.
 
-#### JavaScript
-
-```js
-const ai = tes.wrap(client, { sessionId, userId, metadata });
-```
-
-#### Python
-
-```python
-ai = tes.wrap(client, session_id=None, user_id=None, metadata=None)
-```
-
-| Option (JS / Python) | Type | Default | Description |
-|----------------------|------|---------|-------------|
-| `sessionId` / `session_id` | `string` | `crypto.randomUUID()` / `uuid.uuid4()` | Links events from the same conversation |
-| `userId` / `user_id` | `string` | Inherits from client | Override the user identifier for this wrapped instance |
-| `metadata` / `metadata` | `object` / `dict` | `{}` | Custom fields included in every emitted event |
-
-Auto-detects the provider:
-
-| Client | Detection | Intercepted method |
-|--------|-----------|-------------------|
-| OpenAI | `client.chat.completions.create` | `chat.completions.create()` |
-| Anthropic | `client.messages.create` | `messages.create()` |
-| Workers AI | `client.run` (JS only) | `run()` |
-
-All other methods/properties pass through unchanged. The wrapped client exposes `ai.sessionId` (JS) or `ai.session_id` (Python).
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `sessionId` | `string` | auto-generated UUID | Links events from the same conversation |
+| `metadata` | `object` | `{}` | Custom fields on every event |
 
 ### `tes.session(opts?)`
 
-Returns a `Session` instance.
+Returns a `Session` for manual event emission.
 
-| Option (JS / Python) | Type | Default | Description |
-|----------------------|------|---------|-------------|
-| `sessionId` / `session_id` | `string` | `crypto.randomUUID()` / `uuid.uuid4()` | Conversation/session identifier |
-| `metadata` / `metadata` | `object` / `dict` | `{}` | Extra fields included in every emitted event |
+### `session.record(response)`
 
-### `session.record(rawResponse)`
+Normalizes an LLM response and accumulates token usage and tool calls.
 
-Normalizes an LLM response and accumulates token usage, tool calls, and model info. Accepts responses from any supported provider. Returns the normalized response.
+### `session.emitChatTurn({ userMessage, assistantResponse, turnNumber? })`
 
-### `session.emitChatTurn()` / `session.emit_chat_turn()`
+Emits a `CHAT_TURN` event with accumulated data, then resets.
 
-Sends a `CHAT_TURN` event to TES with accumulated usage data, then resets counters.
+### `session.emitToolUse({ tool, args, resultSummary?, durationMs? })`
 
-| Param (JS / Python) | Type | Description |
-|---------------------|------|-------------|
-| `userMessage` / `user_message` | `string` | The user's message |
-| `assistantResponse` / `assistant_response` | `string` | The assistant's response |
-| `turnNumber` / `turn_number` | `number` / `int` | Optional turn number |
+Emits a `TOOL_USE` event for individual tool invocations.
 
-### `session.emitToolUse()` / `session.emit_tool_use()`
+### `session.emitSessionStart()`
 
-Sends a `TOOL_USE` event for individual tool invocations.
+Emits a `SESSION_START` event.
 
-| Param (JS / Python) | Type | Description |
-|---------------------|------|-------------|
-| `tool` / `tool` | `string` | Tool name |
-| `args` / `args` | `object` / `dict` | Tool arguments |
-| `resultSummary` / `result_summary` | `string` | Optional result summary |
-| `durationMs` / `duration_ms` | `number` / `int` | Optional duration in milliseconds |
-| `turnNumber` / `turn_number` | `number` / `int` | Optional turn number |
+### `normalizeResponse(raw)`
 
-### `session.emitSessionStart()` / `session.emit_session_start()`
-
-Sends a `SESSION_START` event.
-
-### `session.totalUsage` / `session.total_usage`
-
-Returns current accumulated usage: `{ prompt_tokens, completion_tokens, total_tokens, ai_rounds }`.
-
-### `normalizeResponse(raw)` / `normalize_response(raw)`
-
-Standalone utility to normalize any LLM response into a consistent shape:
-
-#### JavaScript
+Standalone utility to normalize any LLM response:
 
 ```js
 import { normalizeResponse } from "@pentatonic-ai/ai-agent-sdk";
 
-const normalized = normalizeResponse(openaiResponse);
-// { content, model, usage: { prompt_tokens, completion_tokens }, toolCalls: [{ tool, args }] }
+const { content, model, usage, toolCalls } = normalizeResponse(openaiResponse);
 ```
 
-#### Python
+## Architecture
 
-```python
-from pentatonic_agent_events import normalize_response
-
-normalized = normalize_response(openai_response)
-# { "content", "model", "usage": { "prompt_tokens", "completion_tokens" }, "tool_calls": [{ "tool", "args" }] }
+```
+Your App --> SDK (wrap/session) --> TES API --> Event Queue
+                                                   |
+                                    +--------------+--------------+
+                                    |              |              |
+                                 Storage      Deep Memory    Analytics
+                                (Postgres)   (Embeddings)   (Patterns)
 ```
 
-> **Note:** In Python, the normalized response uses `tool_calls` (snake_case) instead of `toolCalls` (camelCase).
-
-## Events Emitted
-
-All events are sent to the TES GraphQL API (`emitEvent` mutation) authenticated via `x-service-key` and `x-client-id` headers.
-
-| Event Type | Entity Type | When |
-|------------|-------------|------|
-| `CHAT_TURN` | `conversation` | Every `create()`/`run()` call via `wrap()`, or manually via `session.emitChatTurn()` |
-| `TOOL_USE` | `conversation` | Via `session.emitToolUse()` (manual only) |
-| `SESSION_START` | `conversation` | Via `session.emitSessionStart()` (manual only) |
-
-## Supported Providers
-
-| Provider | Auto-wrap | Manual session | Response normalization |
-|----------|-----------|---------------|----------------------|
-| **OpenAI** (and compatible: Azure, Groq, Together, Mistral) | JS + Python | JS + Python | JS + Python |
-| **Anthropic** | JS + Python | JS + Python | JS + Python |
-| **Cloudflare Workers AI** | JS only | JS only | JS + Python |
-
-## Security
-
-- **HTTPS enforced:** The SDK rejects non-HTTPS endpoints (except `localhost` for development)
-- **API key protection:** Stored as a non-enumerable property (JS) or private attribute (Python) — won't appear in `JSON.stringify`, `repr()`, or error reporters
-- **Content controls:** Set `captureContent: false` (JS) or `capture_content=False` (Python) to omit message content from events, or use `maxContentLength` / `max_content_length` to truncate
-- **No runtime dependencies:** Both the JavaScript and Python SDKs have zero external runtime dependencies
+Events flow through a queue-based pipeline. Each module processes events independently:
+- **Event Storage** -- append-only event log + entity projections
+- **Deep Memory** -- extracts memories, generates embeddings, enables semantic search
+- **Conversation Analytics** -- session metrics, search attribution, dead-end detection
+- **Bias Pattern Evolution** -- Bayesian pattern detection across your event stream
+- **Predictive Modelling** -- demand forecasts and supply network analytics
 
 ## License
 
