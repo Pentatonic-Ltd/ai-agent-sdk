@@ -7,7 +7,7 @@
 
 import { loadConfig, emitModuleEvent, writeTurnState, readStdin } from "./shared.js";
 
-async function fetchRecentMemories(config) {
+async function searchRelatedMemories(config, query) {
   const headers = {
     "Content-Type": "application/json",
     "x-client-id": config.tes_client_id,
@@ -23,18 +23,18 @@ async function fetchRecentMemories(config) {
     method: "POST",
     headers,
     body: JSON.stringify({
-      query: `query($clientId: String!) {
-        memories(clientId: $clientId, limit: 15) {
-          id content user_id created_at
+      query: `query($clientId: String!, $query: String!) {
+        semanticSearchMemories(clientId: $clientId, query: $query, limit: 10, minScore: 0.3) {
+          id content similarity created_at
         }
       }`,
-      variables: { clientId: config.tes_client_id },
+      variables: { clientId: config.tes_client_id, query },
     }),
   });
 
   if (!response.ok) return [];
   const json = await response.json();
-  return json.data?.memories || [];
+  return json.data?.semanticSearchMemories || [];
 }
 
 async function main() {
@@ -59,19 +59,28 @@ async function main() {
     model: input.model,
   }).catch(() => {});
 
-  // Fetch recent memories and inject as context
+  // Search for memories related to the current project
   try {
-    const memories = await fetchRecentMemories(config);
-    if (memories.length > 0) {
-      const memoryText = memories
-        .map((m) => `- ${m.content}`)
-        .join("\n");
+    // Build search query from project directory name and context
+    const cwd = input.cwd || "";
+    const projectName = cwd.split("/").filter(Boolean).pop() || "";
+    const query = [projectName, cwd].filter(Boolean).join(" ");
 
-      // Output context that Claude will see at session start
-      const output = JSON.stringify({
-        additionalContext: `[TES Memory] Recent team knowledge (${memories.length} memories):\n${memoryText}`,
-      });
-      process.stdout.write(output);
+    if (query) {
+      const memories = await searchRelatedMemories(config, query);
+      if (memories.length > 0) {
+        const memoryText = memories
+          .map(
+            (m) =>
+              `- [${Math.round(m.similarity * 100)}%] ${m.content}`
+          )
+          .join("\n");
+
+        const output = JSON.stringify({
+          additionalContext: `[TES Memory] Related knowledge for this project (${memories.length} matches):\n${memoryText}`,
+        });
+        process.stdout.write(output);
+      }
     }
   } catch {
     // Non-fatal — session starts without memory context
