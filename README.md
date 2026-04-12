@@ -10,7 +10,7 @@
 
 <p align="center">
   Observability, memory, and analytics for LLM applications.<br>
-  Provider-agnostic. JavaScript &amp; Python.
+  Run locally or use hosted TES. JavaScript &amp; Python.
 </p>
 
 <p align="center">
@@ -21,17 +21,88 @@
 
 ---
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Local Memory (self-hosted)](#local-memory-self-hosted)
+- [Hosted TES](#hosted-tes)
+- [Claude Code Plugin](#claude-code-plugin)
+- [SDK: Wrap Your LLM Client](#sdk-wrap-your-llm-client)
+- [Supported Providers](#supported-providers)
+- [API Reference](#api-reference)
+- [Architecture](#architecture)
+
 ## Overview
 
-The Pentatonic AI Agent SDK instruments your LLM applications with zero-config observability. Wrap any OpenAI, Anthropic, or Cloudflare Workers AI client and get:
+Two ways to use the SDK:
 
-- **Conversation tracking** -- every LLM call emits structured events (token usage, tool calls, model, latency)
-- **Shared memory** -- semantic search across your team's AI interactions
-- **Session analytics** -- conversation flows, dead-end detection, search-to-click metrics
-- **Pattern detection** -- Bayesian analysis of recurring behaviors across your event stream
-- **Claude Code plugin** -- automatic tracking for Claude Code sessions via hooks
+**Local Memory** -- Run a fully private memory system on your own machine. PostgreSQL + pgvector + Ollama in Docker. No API keys, no cloud. Your agent gets persistent, searchable memory backed by multi-signal retrieval and HyDE query expansion.
 
-## Quick Start
+**Hosted TES** -- Connect to Pentatonic's Thing Event System for production-grade observability, higher-dimensional embeddings, conversation analytics, and team-wide shared memory.
+
+Both paths use the same Claude Code plugin. The hooks auto-search on every prompt and auto-store every conversation turn.
+
+## Local Memory (self-hosted)
+
+Run the full memory stack locally. Requires Docker and ~4GB disk for models.
+
+### 1. Set up
+
+```bash
+npx @pentatonic-ai/ai-agent-sdk memory
+```
+
+This starts PostgreSQL + pgvector, Ollama, and the memory server. It pulls embedding and chat models, and writes the local config.
+
+### 2. Install the Claude Code plugin
+
+```
+/plugin marketplace add Pentatonic-Ltd/ai-agent-sdk
+```
+
+```
+/plugin install tes-memory@pentatonic-ai
+```
+
+That's it. The plugin hooks automatically search memories on every prompt and store every conversation turn. Fully local, fully private.
+
+### What you get
+
+- **Automatic memory** -- every conversation turn is stored with embeddings and HyDE query expansion
+- **Semantic search** -- multi-signal retrieval combining vector similarity, BM25 full-text, recency decay, and access frequency
+- **Memory layers** -- episodic (recent), semantic (consolidated), procedural (how-to), working (temporary)
+- **Decay and consolidation** -- memories fade over time; frequently accessed ones get promoted
+
+### Change models
+
+```bash
+EMBEDDING_MODEL=mxbai-embed-large LLM_MODEL=qwen2.5:7b npx @pentatonic-ai/ai-agent-sdk memory
+```
+
+### Raspberry Pi
+
+Pi 5 with 8GB RAM runs the full stack. `nomic-embed-text` (~300MB) + `llama3.2:3b` (~2GB) leaves plenty of headroom.
+
+### Use as a library
+
+```javascript
+import { createMemorySystem } from '@pentatonic/memory';
+
+const memory = createMemorySystem({
+  db: pgPool,
+  embedding: { url: 'http://localhost:11434/v1', model: 'nomic-embed-text' },
+  llm: { url: 'http://localhost:11434/v1', model: 'llama3.2:3b' },
+});
+
+await memory.migrate();
+await memory.ensureLayers('my-app');
+await memory.ingest('User prefers dark mode', { clientId: 'my-app' });
+const results = await memory.search('preferences', { clientId: 'my-app' });
+```
+
+## Hosted TES
+
+Connect to Pentatonic's hosted infrastructure for production use.
 
 ### 1. Create an account
 
@@ -57,7 +128,48 @@ npm install @pentatonic-ai/ai-agent-sdk
 pip install pentatonic-ai-agent-sdk
 ```
 
-### 3. Wrap your LLM client
+### What you get (in addition to local features)
+
+- **Higher-dimensional embeddings** -- NV-Embed-v2 (4096d) for better retrieval accuracy
+- **Conversation analytics** -- session metrics, search attribution, dead-end detection
+- **Team-wide shared memory** -- semantic search across your team's AI interactions
+- **Admin dashboard** -- visualize conversations, token usage, and memory explorer
+- **Multi-tenancy** -- isolated databases per client
+
+## Claude Code Plugin
+
+Works with both local and hosted setups. Install once, switch modes via config.
+
+### Install via marketplace
+
+```
+/plugin marketplace add Pentatonic-Ltd/ai-agent-sdk
+```
+
+```
+/plugin install tes-memory@pentatonic-ai
+```
+
+### Set up
+
+For hosted TES:
+```
+/tes-memory:tes-setup
+```
+
+For local memory:
+```bash
+npx @pentatonic-ai/ai-agent-sdk memory
+```
+
+### What it tracks
+
+- **Every conversation turn** -- user messages, assistant responses, tool calls, duration
+- **Automatic memory search** -- relevant memories injected as context on every prompt
+- **Automatic memory storage** -- every turn stored with embeddings and HyDE queries
+- **Token usage** -- input, output, cache read, cache creation tokens per turn
+
+## SDK: Wrap Your LLM Client
 
 **JavaScript**
 
@@ -70,7 +182,6 @@ const tes = new TESClient({
   endpoint: process.env.TES_ENDPOINT,
 });
 
-// Auto-instruments every create() call
 const ai = tes.wrap(new OpenAI(), { sessionId: "conv-123" });
 const result = await ai.chat.completions.create({
   model: "gpt-4o",
@@ -96,8 +207,6 @@ result = ai.chat.completions.create(
 )
 ```
 
-That's it. Every call emits a `CHAT_TURN` event with token usage, tool calls, and model info.
-
 ## Supported Providers
 
 | Provider | Detection | Intercepted Method |
@@ -107,86 +216,6 @@ That's it. Every call emits a `CHAT_TURN` event with token usage, tool calls, an
 | Workers AI | `client.run` (JS only) | `run()` |
 
 All other methods pass through unchanged.
-
-## Tool-Calling Loops
-
-For multi-round tool loops, just keep calling the wrapped client. Each call emits its own event, linked by `sessionId`:
-
-```js
-const ai = tes.wrap(new OpenAI(), { sessionId: "conv-101" });
-
-// Round 1: AI requests a tool call
-const r1 = await ai.chat.completions.create({
-  model: "gpt-4o",
-  messages: [{ role: "user", content: "Find me running shoes" }],
-  tools: [searchTool],
-});
-
-// Execute tool, feed results back...
-
-// Round 2: AI responds with final answer
-const r2 = await ai.chat.completions.create({
-  model: "gpt-4o",
-  messages: [...messages, { role: "tool", content: toolResult }],
-});
-
-// No manual emit needed. Both events share sessionId "conv-101".
-```
-
-## Manual Session Control
-
-If you need full control over when events are emitted:
-
-```js
-const session = tes.session({ sessionId: "conv-123" });
-
-const response = await openai.chat.completions.create({
-  model: "gpt-4o",
-  messages: [{ role: "user", content: "What is 2+2?" }],
-});
-
-session.record(response);
-await session.emitChatTurn({
-  userMessage: "What is 2+2?",
-  assistantResponse: response.choices[0].message.content,
-});
-```
-
-## Claude Code Plugin
-
-Track every Claude Code conversation automatically with shared team memory.
-
-### Install via marketplace
-
-```
-/plugin marketplace add Pentatonic-Ltd/ai-agent-sdk
-```
-
-```
-/plugin install tes-memory@pentatonic-ai
-```
-
-### Set up your account
-
-```
-/tes-memory:tes-setup
-```
-
-This runs the SDK init, creates your account, and configures the plugin credentials.
-
-### Or install manually
-
-```bash
-git clone https://github.com/Pentatonic-Ltd/ai-agent-sdk.git ~/.claude-plugins/tes-memory
-claude --plugin-dir ~/.claude-plugins/tes-memory
-```
-
-### What it tracks
-
-- **Every conversation turn** -- user messages, assistant responses, tool calls, duration
-- **Session lifecycle** -- start/end events with total turns and tool usage stats
-- **Shared memory** -- `search_memories` and `store_memory` MCP tools for team knowledge
-- **Per-module security** -- events scoped to specific modules with permission checks
 
 ## API Reference
 
@@ -214,21 +243,9 @@ Returns an instrumented proxy. Every intercepted call emits a `CHAT_TURN` event.
 
 Returns a `Session` for manual event emission.
 
-### `session.record(response)`
-
-Normalizes an LLM response and accumulates token usage and tool calls.
-
 ### `session.emitChatTurn({ userMessage, assistantResponse, turnNumber? })`
 
 Emits a `CHAT_TURN` event with accumulated data, then resets.
-
-### `session.emitToolUse({ tool, args, resultSummary?, durationMs? })`
-
-Emits a `TOOL_USE` event for individual tool invocations.
-
-### `session.emitSessionStart()`
-
-Emits a `SESSION_START` event.
 
 ### `normalizeResponse(raw)`
 
@@ -243,20 +260,22 @@ const { content, model, usage, toolCalls } = normalizeResponse(openaiResponse);
 ## Architecture
 
 ```
-Your App --> SDK (wrap/session) --> TES API --> Event Queue
-                                                   |
-                                    +--------------+--------------+
-                                    |              |              |
-                                 Storage      Deep Memory    Analytics
-                                (Postgres)   (Embeddings)   (Patterns)
+                    +-----------------------+
+                    |   Claude Code Plugin  |
+                    |   (hooks: auto-search |
+                    |    + auto-store)      |
+                    +-----------+-----------+
+                                |
+                    +-----------+-----------+
+                    |                       |
+              Local Memory            Hosted TES
+              (Docker)                (Cloud)
+                    |                       |
+         +----+----+----+          +---+----+---+
+         |    |    |    |          |   |    |   |
+        PG  Ollama MCP HTTP      PG  R2  Queue Workers
+        pgvector        API     pgvector       Modules
 ```
-
-Events flow through a queue-based pipeline. Each module processes events independently:
-- **Event Storage** -- append-only event log + entity projections
-- **Deep Memory** -- extracts memories, generates embeddings, enables semantic search
-- **Conversation Analytics** -- session metrics, search attribution, dead-end detection
-- **Bias Pattern Evolution** -- Bayesian pattern detection across your event stream
-- **Predictive Modelling** -- demand forecasts and supply network analytics
 
 ## License
 
