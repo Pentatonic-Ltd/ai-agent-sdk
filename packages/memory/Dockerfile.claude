@@ -1,0 +1,45 @@
+FROM node:22-slim
+
+ARG AGENT=claude
+
+RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+
+# Install agent CLI (claude or openclaw)
+RUN if [ "$AGENT" = "openclaw" ]; then \
+      npm install -g openclaw; \
+    else \
+      npm install -g @anthropic-ai/claude-code; \
+    fi
+
+# Copy memory package
+WORKDIR /app
+COPY package.json .
+RUN npm install
+COPY . .
+
+# Pre-configure MCP for both agents (same format)
+RUN mkdir -p /root/.claude /root/.openclaw && \
+    echo '{ \
+  "mcpServers": { \
+    "pentatonic-memory": { \
+      "command": "node", \
+      "args": ["/app/src/server.js"], \
+      "env": { \
+        "DATABASE_URL": "postgres://memory:memory@postgres:5432/memory", \
+        "EMBEDDING_URL": "http://ollama:11434/v1", \
+        "EMBEDDING_MODEL": "nomic-embed-text", \
+        "LLM_URL": "http://ollama:11434/v1", \
+        "LLM_MODEL": "llama3.2:3b", \
+        "CLIENT_ID": "default" \
+      } \
+    } \
+  } \
+}' | tee /root/.claude/settings.json > /root/.openclaw/openclaw.json
+
+WORKDIR /workspace
+
+# Add CLAUDE.md to workspace so Claude uses MCP memory tools
+COPY CLAUDE.md /workspace/CLAUDE.md
+
+# Default to whichever agent was installed
+CMD if [ -x "$(command -v openclaw)" ]; then openclaw; else claude; fi

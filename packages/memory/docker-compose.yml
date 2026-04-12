@@ -1,0 +1,45 @@
+services:
+  agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.claude
+      args:
+        AGENT: ${AGENT:-claude}
+    stdin_open: true
+    tty: true
+    volumes:
+      - agent-config:/root/.claude
+      - agent-config:/root/.openclaw
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: memory
+      POSTGRES_USER: memory
+      POSTGRES_PASSWORD: memory
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U memory"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11435:11434"
+    volumes:
+      - ollama:/root/.ollama
+
+volumes:
+  pgdata:
+  ollama:
+  agent-config:
