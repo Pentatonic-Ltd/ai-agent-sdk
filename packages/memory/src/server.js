@@ -208,10 +208,56 @@ async function main() {
     }
   );
 
-  // --- Start ---
+  // --- HTTP API (for hooks) ---
 
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
+  const PORT = parseInt(process.env.PORT || "3333");
+
+  const httpServer = await import("http").then((http) =>
+    http.createServer(async (req, res) => {
+      const url = new URL(req.url, `http://localhost:${PORT}`);
+      const body = await new Promise((resolve) => {
+        let data = "";
+        req.on("data", (chunk) => (data += chunk));
+        req.on("end", () => {
+          try { resolve(JSON.parse(data)); } catch { resolve({}); }
+        });
+      });
+
+      res.setHeader("Content-Type", "application/json");
+
+      if (url.pathname === "/search" && req.method === "POST") {
+        const results = await memory.search(body.query || "", {
+          clientId: CLIENT_ID,
+          limit: body.limit || 5,
+          minScore: body.min_score || 0.3,
+        });
+        res.end(JSON.stringify({ results }));
+      } else if (url.pathname === "/store" && req.method === "POST") {
+        const result = await memory.ingest(body.content || "", {
+          clientId: CLIENT_ID,
+          metadata: body.metadata || {},
+        });
+        res.end(JSON.stringify(result));
+      } else if (url.pathname === "/health") {
+        res.end(JSON.stringify({ status: "ok", client: CLIENT_ID }));
+      } else {
+        res.statusCode = 404;
+        res.end(JSON.stringify({ error: "not found" }));
+      }
+    })
+  );
+
+  httpServer.listen(PORT, () => {
+    process.stderr.write(`[memory-server] HTTP API on port ${PORT}\n`);
+  });
+
+  // --- MCP (for direct agent connection) ---
+
+  if (process.stdin.isTTY === false) {
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
+  }
+
   process.stderr.write(`[memory-server] Running with CLIENT_ID=${CLIENT_ID}\n`);
 }
 
