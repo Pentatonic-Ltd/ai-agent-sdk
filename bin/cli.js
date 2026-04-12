@@ -2,6 +2,9 @@
 
 import { createInterface } from "readline";
 import { execFileSync } from "child_process";
+import { existsSync, mkdirSync, writeFileSync } from "fs";
+import { join } from "path";
+import { homedir } from "os";
 
 const DEFAULT_ENDPOINT = "https://api.pentatonic.com";
 
@@ -135,16 +138,115 @@ function toClientId(companyName) {
     .replace(/^-|-$/g, "");
 }
 
+async function setupLocalMemory() {
+  console.log(`\n  @pentatonic/memory — Local Setup\n`);
+
+  // Check Docker
+  try {
+    execFileSync("docker", ["info"], { stdio: "pipe" });
+  } catch {
+    console.error("  Error: Docker is required. Install it from https://docker.com\n");
+    process.exit(1);
+  }
+
+  const memoryDir = new URL("../packages/memory", import.meta.url).pathname;
+
+  // Start infrastructure
+  const infraSpinner = spinner("Starting PostgreSQL + Ollama...");
+  try {
+    execFileSync("docker", ["compose", "up", "-d", "postgres", "ollama"], {
+      cwd: memoryDir,
+      stdio: "pipe",
+    });
+    infraSpinner.stop("PostgreSQL + Ollama running!");
+  } catch (err) {
+    infraSpinner.fail(`Failed to start: ${err.message}`);
+    process.exit(1);
+  }
+
+  // Pull models
+  const embModel = process.env.EMBEDDING_MODEL || "nomic-embed-text";
+  const llmModel = process.env.LLM_MODEL || "llama3.2:3b";
+
+  const embSpinner = spinner(`Pulling ${embModel}...`);
+  try {
+    execFileSync("docker", ["compose", "exec", "ollama", "ollama", "pull", embModel], {
+      cwd: memoryDir,
+      stdio: "pipe",
+    });
+    embSpinner.stop(`${embModel} ready!`);
+  } catch {
+    embSpinner.fail(`Failed to pull ${embModel}. Run manually: docker compose exec ollama ollama pull ${embModel}`);
+  }
+
+  const llmSpinner = spinner(`Pulling ${llmModel}...`);
+  try {
+    execFileSync("docker", ["compose", "exec", "ollama", "ollama", "pull", llmModel], {
+      cwd: memoryDir,
+      stdio: "pipe",
+    });
+    llmSpinner.stop(`${llmModel} ready!`);
+  } catch {
+    llmSpinner.fail(`Failed to pull ${llmModel}. Run manually: docker compose exec ollama ollama pull ${llmModel}`);
+  }
+
+  // Write local config
+  const configDir = join(homedir(), ".claude-pentatonic");
+  if (!existsSync(configDir)) {
+    mkdirSync(configDir, { recursive: true });
+  }
+
+  const configPath = join(configDir, "tes-memory.local.md");
+  writeFileSync(
+    configPath,
+    `---
+mode: local
+memory_url: http://localhost:3333
+---
+`
+  );
+
+  console.log(`\n  Config written to ${configPath}`);
+
+  // Start memory server
+  console.log("\n  Starting memory server...");
+  const serverPath = join(memoryDir, "src", "server.js");
+
+  console.log(`
+  Memory server: http://localhost:3333
+
+  To connect Claude Code:
+    claude mcp add pentatonic-memory \\
+      -e DATABASE_URL=postgres://memory:memory@localhost:5433/memory \\
+      -e EMBEDDING_URL=http://localhost:11435/v1 \\
+      -e EMBEDDING_MODEL=${embModel} \\
+      -e LLM_URL=http://localhost:11435/v1 \\
+      -e LLM_MODEL=${llmModel} \\
+      -- node ${serverPath}
+
+  Hooks are auto-configured to use local memory.
+  You're ready!
+`);
+
+  rl.close();
+}
+
 async function main() {
   const flags = parseArgs();
   const TES_ENDPOINT = flags.endpoint || DEFAULT_ENDPOINT;
+
+  if (flags.command === "memory") {
+    await setupLocalMemory();
+    return;
+  }
 
   if (flags.command !== "init") {
     console.log(`
 @pentatonic-ai/ai-agent-sdk
 
 Usage:
-  npx @pentatonic-ai/ai-agent-sdk init                    Set up account and install SDK
+  npx @pentatonic-ai/ai-agent-sdk init                    Set up hosted TES account
+  npx @pentatonic-ai/ai-agent-sdk memory                  Set up local memory stack
   npx @pentatonic-ai/ai-agent-sdk init --endpoint URL     Use a custom TES endpoint
 
 For docs, see https://api.pentatonic.com
