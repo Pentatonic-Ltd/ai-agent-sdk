@@ -208,12 +208,14 @@ memory_url: http://localhost:3333
 
   console.log(`\n  Config written to ${configPath}`);
 
+  const sdkDir = new URL("..", import.meta.url).pathname;
+
   console.log(`
   Memory server: http://localhost:3333
   Hooks are auto-configured to use local memory.
 
-  Install the plugin (if not already installed):
-    claude plugin add pentatonic-ai/ai-agent-sdk
+  Install the plugin in Claude Code:
+    /plugin add ${sdkDir}
 
   You're ready! Every prompt auto-searches memory,
   every turn auto-stores. No MCP setup needed.
