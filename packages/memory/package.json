@@ -9,7 +9,9 @@
   },
   "exports": {
     ".": "./src/index.js",
-    "./server": "./src/server.js"
+    "./server": "./src/server.js",
+    "./openclaw": "./src/openclaw/index.js",
+    "./openclaw/context-engine": "./src/openclaw/context-engine.js"
   },
   "scripts": {
     "start": "node src/server.js",
