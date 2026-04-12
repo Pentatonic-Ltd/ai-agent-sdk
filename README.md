@@ -58,9 +58,6 @@ This starts PostgreSQL + pgvector, Ollama, and the memory server. It pulls embed
 
 ```
 /plugin marketplace add Pentatonic-Ltd/ai-agent-sdk
-```
-
-```
 /plugin install tes-memory@pentatonic-ai
 ```
 
@@ -144,9 +141,6 @@ Works with both local and hosted setups. Install once, switch modes via config.
 
 ```
 /plugin marketplace add Pentatonic-Ltd/ai-agent-sdk
-```
-
-```
 /plugin install tes-memory@pentatonic-ai
 ```
 

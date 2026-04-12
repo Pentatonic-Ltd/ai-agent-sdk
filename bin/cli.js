@@ -215,7 +215,8 @@ memory_url: http://localhost:3333
   Hooks are auto-configured to use local memory.
 
   Install the plugin in Claude Code:
-    /plugin add ${sdkDir}
+    /plugin marketplace add Pentatonic-Ltd/ai-agent-sdk
+    /plugin install tes-memory@pentatonic-ai
 
   You're ready! Every prompt auto-searches memory,
   every turn auto-stores. No MCP setup needed.
