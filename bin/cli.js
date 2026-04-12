@@ -151,14 +151,14 @@ async function setupLocalMemory() {
 
   const memoryDir = new URL("../packages/memory", import.meta.url).pathname;
 
-  // Start infrastructure
-  const infraSpinner = spinner("Starting PostgreSQL + Ollama...");
+  // Start infrastructure + memory server
+  const infraSpinner = spinner("Starting memory server + PostgreSQL + Ollama...");
   try {
-    execFileSync("docker", ["compose", "up", "-d", "postgres", "ollama"], {
+    execFileSync("docker", ["compose", "up", "-d", "memory", "postgres", "ollama"], {
       cwd: memoryDir,
       stdio: "pipe",
     });
-    infraSpinner.stop("PostgreSQL + Ollama running!");
+    infraSpinner.stop("Memory stack running!");
   } catch (err) {
     infraSpinner.fail(`Failed to start: ${err.message}`);
     process.exit(1);
@@ -208,24 +208,15 @@ memory_url: http://localhost:3333
 
   console.log(`\n  Config written to ${configPath}`);
 
-  // Start memory server
-  console.log("\n  Starting memory server...");
-  const serverPath = join(memoryDir, "src", "server.js");
-
   console.log(`
   Memory server: http://localhost:3333
-
-  To connect Claude Code:
-    claude mcp add pentatonic-memory \\
-      -e DATABASE_URL=postgres://memory:memory@localhost:5433/memory \\
-      -e EMBEDDING_URL=http://localhost:11435/v1 \\
-      -e EMBEDDING_MODEL=${embModel} \\
-      -e LLM_URL=http://localhost:11435/v1 \\
-      -e LLM_MODEL=${llmModel} \\
-      -- node ${serverPath}
-
   Hooks are auto-configured to use local memory.
-  You're ready!
+
+  Install the plugin (if not already installed):
+    claude plugin add pentatonic-ai/ai-agent-sdk
+
+  You're ready! Every prompt auto-searches memory,
+  every turn auto-stores. No MCP setup needed.
 `);
 
   rl.close();

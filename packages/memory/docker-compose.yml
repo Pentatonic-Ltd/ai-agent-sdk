@@ -1,20 +1,22 @@
 services:
-  agent:
-    build:
-      context: .
-      dockerfile: Dockerfile.claude
-      args:
-        AGENT: ${AGENT:-claude}
-    stdin_open: true
-    tty: true
-    volumes:
-      - agent-config:/root/.claude
-      - agent-config:/root/.openclaw
+  memory:
+    build: .
+    ports:
+      - "${PORT:-3333}:3333"
+    environment:
+      - DATABASE_URL=postgres://memory:memory@postgres:5432/memory
+      - EMBEDDING_URL=http://ollama:11434/v1
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-nomic-embed-text}
+      - LLM_URL=http://ollama:11434/v1
+      - LLM_MODEL=${LLM_MODEL:-llama3.2:3b}
+      - CLIENT_ID=${CLIENT_ID:-default}
+      - PORT=3333
     depends_on:
       postgres:
         condition: service_healthy
       ollama:
         condition: service_started
+    restart: unless-stopped
 
   postgres:
     image: pgvector/pgvector:pg16
@@ -38,6 +40,25 @@ services:
       - "11435:11434"
     volumes:
       - ollama:/root/.ollama
+
+  # For testing: Claude Code or OpenClaw inside the container
+  agent:
+    build:
+      context: .
+      dockerfile: Dockerfile.claude
+      args:
+        AGENT: ${AGENT:-claude}
+    stdin_open: true
+    tty: true
+    profiles: ["testing"]
+    volumes:
+      - agent-config:/root/.claude
+      - agent-config:/root/.openclaw
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_started
 
 volumes:
   pgdata:
