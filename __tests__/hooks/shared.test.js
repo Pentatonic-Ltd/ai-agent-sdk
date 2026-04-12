@@ -193,11 +193,10 @@ describe("emitModuleEvent", () => {
     expect(headers["x-client-id"]).toBe("test-client");
   });
 
-  it("throws on non-ok response", async () => {
+  it("returns null on non-ok response", async () => {
     globalThis.fetch = async () => ({ ok: false, status: 403 });
 
-    await expect(
-      emitModuleEvent(config, "conversation-analytics", "TEST", "sess-1", {})
-    ).rejects.toThrow("TES API error: 403");
+    const result = await emitModuleEvent(config, "conversation-analytics", "TEST", "sess-1", {});
+    expect(result).toBeNull();
   });
 });
