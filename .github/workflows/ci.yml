@@ -69,3 +69,46 @@ jobs:
       - name: Validate plugin structure
         run: |
           NODE_OPTIONS='--experimental-vm-modules' npx jest --config jest.config.cjs __tests__/plugin.test.js __tests__/build.test.js
+
+  memory-e2e:
+    name: Memory System E2E
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Start PostgreSQL with pgvector
+        run: docker compose -f e2e/memory/docker-compose.test.yml up -d --wait
+
+      - name: Run memory E2E tests
+        run: |
+          NODE_OPTIONS='--experimental-vm-modules' npx jest --config jest.config.cjs e2e/memory/memory.e2e.test.js --testTimeout=60000
+        env:
+          DATABASE_URL: postgres://memory_test:memory_test@localhost:5435/memory_test
+
+      - name: Stop PostgreSQL
+        if: always()
+        run: docker compose -f e2e/memory/docker-compose.test.yml down
+
+  memory-contract:
+    name: Memory API Contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Run contract tests
+        run: |
+          NODE_OPTIONS='--experimental-vm-modules' npx jest --config jest.config.cjs packages/memory/src/__tests__/api-contract.test.js
