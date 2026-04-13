@@ -1,7 +1,7 @@
 {
   "name": "tes-memory",
-  "version": "0.3.0",
-  "description": "Shared team memory powered by Pentatonic TES — search past conversations, store knowledge, track AI usage",
+  "version": "0.4.0",
+  "description": "AI agent memory — local or hosted. Persistent, searchable memory with multi-signal retrieval and HyDE query expansion",
   "author": {
     "name": "Pentatonic",
     "url": "https://pentatonic.com"
