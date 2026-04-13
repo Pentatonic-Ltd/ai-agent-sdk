@@ -5,22 +5,26 @@
  * in a schema_migrations table.
  */
 
-import { readFileSync, readdirSync } from "fs";
-import { resolve, dirname } from "path";
-import { fileURLToPath } from "url";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const MIGRATIONS_DIR = resolve(__dirname, "../migrations");
-
 /**
  * Apply all pending database migrations.
+ *
+ * Note: This function uses Node.js fs/path APIs and will not work in
+ * Cloudflare Workers. TES uses its own migration system instead.
  *
  * @param {Function} db - Database query function: (sql, params) => {rows}
  * @param {object} [opts]
  * @param {Function} [opts.logger] - Optional logger
+ * @param {string} [opts.migrationsDir] - Override migrations directory
  * @returns {Promise<{applied: string[], total: number}>}
  */
 export async function migrate(db, opts = {}) {
+  const { readFileSync, readdirSync } = await import("fs");
+  const { resolve, dirname } = await import("path");
+  const { fileURLToPath } = await import("url");
+
+  const migrationsDir =
+    opts.migrationsDir ||
+    resolve(dirname(fileURLToPath(import.meta.url)), "../migrations");
   const log = opts.logger || (() => {});
 
   // Ensure migrations tracking table exists
@@ -40,7 +44,7 @@ export async function migrate(db, opts = {}) {
   const appliedSet = new Set((applied.rows || []).map((r) => r.name));
 
   // Read migration files
-  const files = readdirSync(MIGRATIONS_DIR)
+  const files = readdirSync(migrationsDir)
     .filter((f) => f.endsWith(".sql"))
     .sort();
 
@@ -49,7 +53,7 @@ export async function migrate(db, opts = {}) {
   for (const file of files) {
     if (appliedSet.has(file)) continue;
 
-    const sql = readFileSync(resolve(MIGRATIONS_DIR, file), "utf-8");
+    const sql = readFileSync(resolve(migrationsDir, file), "utf-8");
     log(`Applying migration: ${file}`);
 
     await db(sql, []);
