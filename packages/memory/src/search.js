@@ -174,6 +174,6 @@ function mapRow(row) {
       : null,
     created_at: row.created_at ? new Date(row.created_at).toISOString() : null,
     updated_at: row.updated_at ? new Date(row.updated_at).toISOString() : null,
-    similarity: row.final_score ? parseFloat(row.final_score) : undefined,
+    similarity: parseFloat(row.final_score || row.confidence || 0),
   };
 }
