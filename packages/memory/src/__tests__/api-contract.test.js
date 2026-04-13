@@ -1,7 +1,7 @@
 /**
  * API Contract Tests
  *
- * These tests verify that the public API surface of @pentatonic/memory
+ * These tests verify that the public API surface of the memory system
  * remains stable. TES (Thing Event System) depends on this exact interface.
  *
  * DO NOT modify these tests to make them pass after changing the API.

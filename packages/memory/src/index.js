@@ -1,12 +1,12 @@
 /**
- * @pentatonic/memory
+ * @pentatonic-ai/ai-agent-sdk/memory
  *
  * Multi-signal memory system with HyDE query expansion.
  * Ingest, search, decay, and consolidate memories using
  * PostgreSQL + pgvector + any OpenAI-compatible LLM/embedding endpoint.
  *
  * @example
- * import { createMemorySystem } from '@pentatonic/memory';
+ * import { createMemorySystem } from '@pentatonic-ai/ai-agent-sdk/memory';
  *
  * const memory = createMemorySystem({
  *   db: pgPool,
@@ -120,7 +120,7 @@ function normalizeDb(db, schema) {
   }
 
   throw new Error(
-    "@pentatonic/memory: db must be a query function (sql, params) => {rows} or a pg.Pool/Client"
+    "memory system: db must be a query function (sql, params) => {rows} or a pg.Pool/Client"
   );
 }
 

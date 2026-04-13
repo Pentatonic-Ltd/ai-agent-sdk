@@ -83,7 +83,7 @@ Pi 5 with 8GB RAM runs the full stack. `nomic-embed-text` (~300MB) + `llama3.2:3
 ### Use as a library
 
 ```javascript
-import { createMemorySystem } from '@pentatonic/memory';
+import { createMemorySystem } from '@pentatonic-ai/ai-agent-sdk/memory';
 
 const memory = createMemorySystem({
   db: pgPool,

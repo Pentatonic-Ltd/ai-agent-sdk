@@ -4,7 +4,7 @@
  * UserPromptSubmit hook — searches for related memories
  * and injects them as context for the current prompt.
  *
- * Works with both hosted TES and local @pentatonic/memory.
+ * Works with both hosted TES and local memory system.
  */
 
 import {

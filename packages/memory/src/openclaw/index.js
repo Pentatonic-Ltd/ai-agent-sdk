@@ -1,5 +1,5 @@
 /**
- * OpenClaw plugin entry point for @pentatonic/memory.
+ * OpenClaw plugin entry point for the memory system.
  *
  * Registers as a context-engine plugin with memory search/store tools.
  * Every message is ingested automatically, every prompt gets relevant

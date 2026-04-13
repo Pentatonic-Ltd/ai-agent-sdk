@@ -9,7 +9,10 @@
     ".": {
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
-    }
+    },
+    "./memory": "./packages/memory/src/index.js",
+    "./memory/server": "./packages/memory/src/server.js",
+    "./memory/openclaw": "./packages/memory/src/openclaw/index.js"
   },
   "bin": {
     "ai-agent-sdk": "./bin/cli.js"
@@ -18,6 +21,7 @@
     "dist",
     "src",
     "bin",
+    "packages/memory",
     "build.js",
     "README.md",
     "LICENSE"

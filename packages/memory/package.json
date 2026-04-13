@@ -1,25 +1,10 @@
 {
-  "name": "@pentatonic/memory",
-  "version": "0.1.0",
-  "description": "Multi-signal memory system with HyDE query expansion — ingest, search, decay, and consolidate memories using PostgreSQL + pgvector. Includes MCP server for Claude Code / OpenClaw.",
-  "main": "src/index.js",
+  "private": true,
+  "name": "memory",
+  "description": "Memory subsystem — imported via @pentatonic-ai/ai-agent-sdk/memory",
   "type": "module",
-  "bin": {
-    "memory-server": "src/server.js"
-  },
-  "exports": {
-    ".": "./src/index.js",
-    "./server": "./src/server.js",
-    "./openclaw": "./src/openclaw/index.js",
-    "./openclaw/context-engine": "./src/openclaw/context-engine.js"
-  },
-  "scripts": {
-    "start": "node src/server.js",
-    "test": "node --experimental-vm-modules ../../node_modules/.bin/jest --no-coverage"
-  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
     "pg": "^8.13.0"
-  },
-  "license": "MIT"
+  }
 }

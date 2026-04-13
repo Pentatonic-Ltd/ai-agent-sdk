@@ -10,7 +10,7 @@
  */
 
 /**
- * Create a ContextEngine implementation backed by @pentatonic/memory.
+ * Create a ContextEngine implementation backed by the memory system.
  *
  * @param {object} memory - createMemorySystem() instance
  * @param {object} [opts]

@@ -1,4 +1,4 @@
-# @pentatonic/memory
+# Memory System
 
 Self-hosted memory system for AI agents. Give Claude Code or OpenClaw persistent, searchable memory backed by PostgreSQL, pgvector, and Ollama. Fully local — no API keys, no cloud dependencies.
 
@@ -48,7 +48,7 @@ claude mcp add pentatonic-memory \
   -e EMBEDDING_MODEL=nomic-embed-text \
   -e LLM_URL=http://localhost:11434/v1 \
   -e LLM_MODEL=llama3.2:3b \
-  -- npx @pentatonic/memory-server
+  -- npx @pentatonic-ai/ai-agent-sdk/memory/server
 ```
 
 Or if you cloned the repo:
@@ -72,7 +72,7 @@ Add to `~/.openclaw/openclaw.json`:
   "mcpServers": {
     "pentatonic-memory": {
       "command": "npx",
-      "args": ["@pentatonic/memory-server"],
+      "args": ["@pentatonic-ai/ai-agent-sdk/memory/server"],
       "env": {
         "DATABASE_URL": "postgres://memory:memory@localhost:5432/memory",
         "EMBEDDING_URL": "http://localhost:11434/v1",
@@ -85,7 +85,7 @@ Add to `~/.openclaw/openclaw.json`:
 }
 ```
 
-Or if you cloned the repo, replace `"command": "npx", "args": ["@pentatonic/memory-server"]` with `"command": "node", "args": ["/path/to/memory/src/server.js"]`.
+Or if you cloned the repo, replace `"command": "npx", "args": ["@pentatonic-ai/ai-agent-sdk/memory/server"]` with `"command": "node", "args": ["/path/to/memory/src/server.js"]`.
 
 ### 3. Use it
 
@@ -177,7 +177,7 @@ docker compose exec ollama ollama pull qwen2.5:7b
 If you want to integrate memory into your own application:
 
 ```javascript
-import { createMemorySystem } from '@pentatonic/memory';
+import { createMemorySystem } from '@pentatonic-ai/ai-agent-sdk/memory';
 import pg from 'pg';
 
 const memory = createMemorySystem({

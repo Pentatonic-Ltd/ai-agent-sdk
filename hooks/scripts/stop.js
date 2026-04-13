@@ -4,7 +4,7 @@
  * Stop hook — stores the conversation turn as a memory and emits
  * analytics events (hosted mode only).
  *
- * Works with both hosted TES and local @pentatonic/memory.
+ * Works with both hosted TES and local memory system.
  */
 
 import { readFileSync } from "fs";

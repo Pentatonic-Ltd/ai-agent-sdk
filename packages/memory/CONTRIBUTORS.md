@@ -1,8 +1,8 @@
-# Contributing to @pentatonic/memory
+# Contributing to the Memory System
 
 ## TES Compatibility
 
-This package is consumed by [TES (Thing Event System)](https://github.com/Pentatonic-Ltd/thing-event-system) in production. TES imports from `@pentatonic/memory` and injects its own database connections and AI endpoints. **Breaking the API contract breaks TES for all hosted clients.**
+This package is consumed by [TES (Thing Event System)](https://github.com/Pentatonic-Ltd/thing-event-system) in production. TES imports from `@pentatonic-ai/ai-agent-sdk/memory` and injects its own database connections and AI endpoints. **Breaking the API contract breaks TES for all hosted clients.**
 
 ### API Contract
 
@@ -48,9 +48,9 @@ All three fields must be supported. Values are 0-1 floats.
 These are used by TES for advanced/direct usage:
 
 ```javascript
-import { createMemorySystem, createAIClient } from '@pentatonic/memory';
-import { search, textSearch } from '@pentatonic/memory/search';   // not currently used, but reserved
-import { ingest } from '@pentatonic/memory/ingest';                // not currently used, but reserved
+import { createMemorySystem, createAIClient } from '@pentatonic-ai/ai-agent-sdk/memory';
+import { search, textSearch } from '@pentatonic-ai/ai-agent-sdk/memory/search';   // not currently used, but reserved
+import { ingest } from '@pentatonic-ai/ai-agent-sdk/memory/ingest';                // not currently used, but reserved
 ```
 
 #### Database Schema

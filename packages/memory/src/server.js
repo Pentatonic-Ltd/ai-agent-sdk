@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
 /**
- * @pentatonic/memory-server
+ * the memory server
  *
  * MCP server that exposes search_memories, store_memory, and list_memories
- * tools backed by @pentatonic/memory + PostgreSQL + pgvector.
+ * tools backed by the memory system + PostgreSQL + pgvector.
  *
  * Environment variables:
  *   DATABASE_URL     — PostgreSQL connection string (required)

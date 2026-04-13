@@ -4,7 +4,7 @@
  *
  * Supports two modes:
  *   - "hosted" — calls TES GraphQL (existing behavior)
- *   - "local"  — calls @pentatonic/memory directly via HTTP
+ *   - "local"  — calls the memory system directly via HTTP
  */
 
 import { readFileSync, writeFileSync, existsSync, unlinkSync, mkdirSync } from "fs";

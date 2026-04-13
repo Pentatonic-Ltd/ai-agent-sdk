@@ -139,7 +139,7 @@ function toClientId(companyName) {
 }
 
 async function setupLocalMemory() {
-  console.log(`\n  @pentatonic/memory — Local Setup\n`);
+  console.log(`\n  Local Memory Setup\n`);
 
   // Check Docker
   try {
