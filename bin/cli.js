@@ -190,13 +190,27 @@ async function setupLocalMemory() {
     llmSpinner.fail(`Failed to pull ${llmModel}. Run manually: docker compose exec ollama ollama pull ${llmModel}`);
   }
 
-  // Write local config
+  // Write local config (warn if hosted config exists)
   const configDir = join(homedir(), ".claude-pentatonic");
   if (!existsSync(configDir)) {
     mkdirSync(configDir, { recursive: true });
   }
 
   const configPath = join(configDir, "tes-memory.local.md");
+  if (existsSync(configPath)) {
+    const existing = readFileSync(configPath, "utf-8");
+    if (existing.includes("tes_endpoint") && !existing.includes("mode: local")) {
+      console.log("\n  ⚠ Hosted TES config detected. Switching to local mode will");
+      console.log("  disable hosted memory. To restore, run: npx @pentatonic-ai/ai-agent-sdk init\n");
+      const confirm = await ask("  Switch to local mode? (y/n): ");
+      if (confirm.toLowerCase() !== "y") {
+        console.log("  Cancelled. Hosted config unchanged.\n");
+        rl.close();
+        return;
+      }
+    }
+  }
+
   writeFileSync(
     configPath,
     `---
