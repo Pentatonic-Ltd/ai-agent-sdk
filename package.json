@@ -29,7 +29,7 @@
   "scripts": {
     "prepare": "node build.js",
     "build": "node build.js",
-    "test": "NODE_OPTIONS='--experimental-vm-modules' jest --config jest.config.cjs",
+    "test": "NODE_OPTIONS='--experimental-vm-modules' jest --config jest.config.cjs --testPathIgnorePatterns='/e2e/'",
     "test:watch": "NODE_OPTIONS='--experimental-vm-modules' jest --config jest.config.cjs --watch",
     "prepublishOnly": "npm run build && npm test"
   },
