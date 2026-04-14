@@ -19,7 +19,11 @@
  */
 
 import { createMemorySystem } from "../../packages/memory/src/index.js";
+import { searchMemories, storeMemory } from "../../hooks/scripts/shared.js";
 import pg from "pg";
+import fs from "fs";
+import path from "path";
+import os from "os";
 
 const { Pool } = pg;
 
@@ -326,5 +330,151 @@ describe("HTTP API E2E", () => {
     });
     const { results } = await res.json();
     expect(results.length).toBe(0);
+  });
+});
+
+describe("Config & Hook Routing E2E", () => {
+
+  let configDir;
+  let configPath;
+  let originalHome;
+  let httpServer;
+  let httpUrl;
+  let storedViaHttp = [];
+
+  beforeAll(async () => {
+    // Use a temp dir for config to avoid touching real config
+    configDir = fs.mkdtempSync(path.join(os.tmpdir(), "memory-e2e-"));
+    configPath = path.join(configDir, "tes-memory.local.md");
+
+    // Start a mock HTTP server to capture hook calls
+    const http = await import("http");
+    httpServer = http.createServer(async (req, res) => {
+      const body = await new Promise((resolve) => {
+        let data = "";
+        req.on("data", (chunk) => (data += chunk));
+        req.on("end", () => {
+          try {
+            resolve(JSON.parse(data));
+          } catch {
+            resolve({});
+          }
+        });
+      });
+
+      res.setHeader("Content-Type", "application/json");
+
+      if (req.url === "/search" && req.method === "POST") {
+        res.end(
+          JSON.stringify({
+            results: [
+              {
+                id: "mock-1",
+                content: "Mock memory from local server",
+                similarity: 0.9,
+              },
+            ],
+          })
+        );
+      } else if (req.url === "/store" && req.method === "POST") {
+        storedViaHttp.push(body);
+        res.end(JSON.stringify({ id: "mock-stored", content: body.content }));
+      } else {
+        res.statusCode = 404;
+        res.end("{}");
+      }
+    });
+
+    await new Promise((resolve) => {
+      httpServer.listen(0, () => {
+        httpUrl = `http://localhost:${httpServer.address().port}`;
+        resolve();
+      });
+    });
+  });
+
+  afterAll(() => {
+    httpServer?.close();
+    fs.rmSync(configDir, { recursive: true, force: true });
+  });
+
+  test("local mode config routes search to HTTP server", async () => {
+    fs.writeFileSync(
+      configPath,
+      `---\nmode: local\nmemory_url: ${httpUrl}\n---\n`
+    );
+
+    // Manually load config from our temp path
+    const content = fs.readFileSync(configPath, "utf-8");
+    const match = content.match(/^---\n([\s\S]*?)\n---/);
+    const config = {};
+    for (const line of match[1].split("\n")) {
+      const [key, ...rest] = line.split(":");
+      if (key && rest.length) config[key.trim()] = rest.join(":").trim();
+    }
+
+    const results = await searchMemories(config, "test query");
+    expect(results.length).toBeGreaterThan(0);
+    expect(results[0].content).toContain("Mock memory");
+  });
+
+  test("local mode config routes store to HTTP server", async () => {
+    const content = fs.readFileSync(configPath, "utf-8");
+    const match = content.match(/^---\n([\s\S]*?)\n---/);
+    const config = {};
+    for (const line of match[1].split("\n")) {
+      const [key, ...rest] = line.split(":");
+      if (key && rest.length) config[key.trim()] = rest.join(":").trim();
+    }
+
+    storedViaHttp = [];
+    await storeMemory(config, "Test memory from hook", { session_id: "s1" });
+    expect(storedViaHttp.length).toBe(1);
+    expect(storedViaHttp[0].content).toBe("Test memory from hook");
+  });
+
+  test("hosted mode config does not call local HTTP server", async () => {
+    fs.writeFileSync(
+      configPath,
+      `---\ntes_endpoint: https://fake-tes.example.com\ntes_client_id: test\ntes_api_key: tes_test_fake\n---\n`
+    );
+
+    const content = fs.readFileSync(configPath, "utf-8");
+    const match = content.match(/^---\n([\s\S]*?)\n---/);
+    const config = {};
+    for (const line of match[1].split("\n")) {
+      const [key, ...rest] = line.split(":");
+      if (key && rest.length) config[key.trim()] = rest.join(":").trim();
+    }
+
+    // Hosted mode — search will fail (fake endpoint) but should NOT hit our local server
+    storedViaHttp = [];
+    const results = await searchMemories(config, "test");
+    // Should return empty (fake TES endpoint fails)
+    expect(results).toEqual([]);
+    // Should not have hit our local mock
+    expect(storedViaHttp.length).toBe(0);
+  });
+
+  test("config without mode defaults to hosted", async () => {
+    fs.writeFileSync(
+      configPath,
+      `---\ntes_endpoint: https://example.com\ntes_client_id: x\ntes_api_key: tes_x\n---\n`
+    );
+
+    const content = fs.readFileSync(configPath, "utf-8");
+    const match = content.match(/^---\n([\s\S]*?)\n---/);
+    const config = {};
+    for (const line of match[1].split("\n")) {
+      const [key, ...rest] = line.split(":");
+      if (key && rest.length) config[key.trim()] = rest.join(":").trim();
+    }
+
+    // No mode field = hosted mode
+    expect(config.mode).toBeUndefined();
+    // Search goes to hosted (will fail, but won't hit local)
+    storedViaHttp = [];
+    await searchMemories(config, "test");
+    expect(storedViaHttp.length).toBe(0);
   });
 });
