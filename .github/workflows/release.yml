@@ -23,7 +23,7 @@ jobs:
 
       - run: npm ci
       - run: npm run build
-      - run: npm test
+      - run: NODE_OPTIONS='--experimental-vm-modules' npx jest --config jest.config.cjs --testPathIgnorePatterns='/e2e/'
 
       - name: Publish
         run: npm publish --access public

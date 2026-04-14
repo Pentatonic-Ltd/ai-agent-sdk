@@ -28,7 +28,7 @@ jobs:
         run: npm run build
 
       - name: Test
-        run: npm test
+        run: NODE_OPTIONS='--experimental-vm-modules' npx jest --config jest.config.cjs --testPathIgnorePatterns='/e2e/'
 
   test-python:
     name: Python Tests (Python ${{ matrix.python-version }})
