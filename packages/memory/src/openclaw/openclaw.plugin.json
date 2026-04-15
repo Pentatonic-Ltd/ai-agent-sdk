@@ -1,0 +1,55 @@
+{
+  "id": "pentatonic-memory",
+  "name": "Pentatonic Memory",
+  "description": "Persistent, searchable memory with multi-signal retrieval and HyDE query expansion. Stores every conversation turn, injects relevant memories before each prompt, and consolidates knowledge over time.",
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "database_url": {
+        "type": "string",
+        "description": "PostgreSQL connection string (default: postgres://memory:memory@localhost:5433/memory)"
+      },
+      "embedding_url": {
+        "type": "string",
+        "description": "OpenAI-compatible embeddings endpoint (default: http://localhost:11435/v1)"
+      },
+      "embedding_model": {
+        "type": "string",
+        "description": "Embedding model name (default: nomic-embed-text)"
+      },
+      "llm_url": {
+        "type": "string",
+        "description": "OpenAI-compatible chat endpoint for HyDE (default: http://localhost:11435/v1)"
+      },
+      "llm_model": {
+        "type": "string",
+        "description": "Chat model name for HyDE query expansion (default: llama3.2:3b)"
+      },
+      "client_id": {
+        "type": "string",
+        "description": "Client ID for memory scoping (default: default)"
+      },
+      "search_limit": {
+        "type": "number",
+        "description": "Max memories to inject per prompt (default: 5)"
+      },
+      "min_score": {
+        "type": "number",
+        "description": "Minimum relevance threshold 0-1 (default: 0.3)"
+      },
+      "tes_endpoint": {
+        "type": "string",
+        "description": "TES API endpoint for hosted mode (omit for local mode)"
+      },
+      "tes_api_key": {
+        "type": "string",
+        "description": "TES API key for hosted mode (omit for local mode)"
+      },
+      "tes_client_id": {
+        "type": "string",
+        "description": "TES client ID for hosted mode (omit for local mode)"
+      }
+    },
+    "additionalProperties": false
+  }
+}
