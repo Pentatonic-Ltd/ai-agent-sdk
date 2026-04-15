@@ -237,7 +237,6 @@ export default {
   id: "pentatonic-memory",
   name: "Pentatonic Memory",
   description: "Persistent, searchable memory with multi-signal retrieval and HyDE query expansion",
-  kind: "context-engine",
 
   register(api) {
     const config = api.config || {};
@@ -245,100 +244,15 @@ export default {
     const baseUrl = config.memory_url || "http://localhost:3333";
     const log = (msg) => process.stderr.write(`[pentatonic-memory] ${msg}\n`);
 
-    // --- Setup tool (always registered) ---
-
-    api.registerTool({
-      name: "pentatonic_memory_setup",
-      description: `Guide the user through setting up Pentatonic Memory.
-
-Two modes:
-1. "local" — fully private, Docker-based (PostgreSQL + pgvector + Ollama). No cloud.
-2. "hosted" — Pentatonic TES cloud. Team-wide shared memory, analytics, higher-dimensional embeddings.
-
-Call this to get instructions for the user's chosen mode.`,
-      parameters: {
-        type: "object",
-        properties: {
-          mode: { type: "string", enum: ["local", "hosted"], description: "Which mode the user wants" },
-        },
-        required: ["mode"],
-      },
-      async execute({ mode }) {
-        if (mode === "local") {
-          return `## Local Memory Setup
-
-Run in terminal:
-\`\`\`
-npx @pentatonic-ai/ai-agent-sdk memory
-\`\`\`
-
-This starts PostgreSQL + pgvector, Ollama, and the memory server via Docker.
-
-Then add to openclaw.json:
-\`\`\`json
-{
-  "plugins": {
-    "slots": { "contextEngine": "pentatonic-memory" },
-    "entries": {
-      "pentatonic-memory": {
-        "enabled": true,
-        "config": { "memory_url": "http://localhost:3333" }
-      }
-    }
-  }
-}
-\`\`\`
-
-Restart OpenClaw to activate.`;
-        }
-        return `## Hosted TES Setup
-
-Run in terminal:
-\`\`\`
-npx @pentatonic-ai/ai-agent-sdk init
-\`\`\`
-
-This creates a TES account and generates API credentials.
-
-Then add to openclaw.json:
-\`\`\`json
-{
-  "plugins": {
-    "slots": { "contextEngine": "pentatonic-memory" },
-    "entries": {
-      "pentatonic-memory": {
-        "enabled": true,
-        "config": {
-          "tes_endpoint": "https://your-company.api.pentatonic.com",
-          "tes_client_id": "your-company",
-          "tes_api_key": "tes_your-company_xxxxx"
-        }
-      }
-    }
-  }
-}
-\`\`\`
-
-Restart OpenClaw to activate.`;
-      },
-    });
-
-    // --- Mode-specific registration ---
+    // --- Always register tools ---
 
     if (hosted) {
+      // Hosted mode tools
       log("Hosted mode — routing through TES");
-
-      api.registerContextEngine("pentatonic-memory", () =>
-        createHostedContextEngine(config, {
-          searchLimit: config.search_limit || 5,
-          minScore: config.min_score || 0.3,
-          logger: log,
-        })
-      );
 
       api.registerTool({
         name: "memory_search",
-        description: "Search memories for relevant context.",
+        description: "Search memories for relevant context. Use when you need to recall past conversations, decisions, or knowledge.",
         parameters: {
           type: "object",
           properties: {
@@ -354,7 +268,7 @@ Restart OpenClaw to activate.`;
 
       api.registerTool({
         name: "memory_store",
-        description: "Explicitly store something important.",
+        description: "Explicitly store something important. Use for decisions, solutions, or facts worth remembering.",
         parameters: {
           type: "object",
           properties: { content: { type: "string", description: "What to remember" } },
@@ -365,61 +279,68 @@ Restart OpenClaw to activate.`;
           return result ? "Memory stored." : "Failed to store memory.";
         },
       });
+
+      // Register context engine for hosted
+      api.registerContextEngine("pentatonic-memory", () =>
+        createHostedContextEngine(config, {
+          searchLimit: config.search_limit || 5,
+          minScore: config.min_score || 0.3,
+          logger: log,
+        })
+      );
+
+      log("Plugin registered (hosted)");
     } else {
-      // Local mode — HTTP to memory server
-      const isConfigured = config.memory_url || config.database_url;
+      // Local mode tools — always point at baseUrl
+      log(`Local mode — ${baseUrl}`);
 
-      if (isConfigured) {
-        log(`Local mode — ${baseUrl}`);
-
-        // Check if server is reachable on startup
-        localHealth(baseUrl).then((ok) => {
-          if (!ok) log(`Warning: memory server not reachable at ${baseUrl}. Is Docker running?`);
-        });
-
-        api.registerContextEngine("pentatonic-memory", () =>
-          createLocalContextEngine(baseUrl, {
-            searchLimit: config.search_limit || 5,
-            minScore: config.min_score || 0.3,
-            logger: log,
-          })
-        );
-
-        api.registerTool({
-          name: "memory_search",
-          description: "Search memories for relevant context.",
-          parameters: {
-            type: "object",
-            properties: {
-              query: { type: "string", description: "What to search for" },
-              limit: { type: "number", description: "Max results (default 5)" },
-            },
-            required: ["query"],
+      api.registerTool({
+        name: "memory_search",
+        description: "Search memories for relevant context. Use when you need to recall past conversations, decisions, or knowledge.",
+        parameters: {
+          type: "object",
+          properties: {
+            query: { type: "string", description: "What to search for" },
+            limit: { type: "number", description: "Max results (default 5)" },
           },
-          async execute({ query, limit }) {
-            return formatResults(await localSearch(baseUrl, query, limit || 5, 0.3));
-          },
-        });
+          required: ["query"],
+        },
+        async execute({ query, limit }) {
+          return formatResults(await localSearch(baseUrl, query, limit || 5, 0.3));
+        },
+      });
 
-        api.registerTool({
-          name: "memory_store",
-          description: "Explicitly store something important.",
-          parameters: {
-            type: "object",
-            properties: { content: { type: "string", description: "What to remember" } },
-            required: ["content"],
-          },
-          async execute({ content }) {
-            const result = await localStore(baseUrl, content, { source: "openclaw-tool" });
-            return result ? `Stored: ${result.id}` : "Failed to store memory.";
-          },
-        });
-      } else {
-        log("No config — setup tool available. Tell OpenClaw: 'set up pentatonic memory'");
-      }
+      api.registerTool({
+        name: "memory_store",
+        description: "Explicitly store something important. Use for decisions, solutions, or facts worth remembering.",
+        parameters: {
+          type: "object",
+          properties: { content: { type: "string", description: "What to remember" } },
+          required: ["content"],
+        },
+        async execute({ content }) {
+          const result = await localStore(baseUrl, content, { source: "openclaw-tool" });
+          return result ? `Stored: ${result.id}` : "Failed to store memory.";
+        },
+      });
+
+      // Auto-detect: check if local memory server is running, register context engine if so
+      localHealth(baseUrl).then((ok) => {
+        if (ok) {
+          api.registerContextEngine("pentatonic-memory", () =>
+            createLocalContextEngine(baseUrl, {
+              searchLimit: config.search_limit || 5,
+              minScore: config.min_score || 0.3,
+              logger: log,
+            })
+          );
+          log("Memory server detected — context engine registered");
+        } else {
+          log(`Memory server not reachable at ${baseUrl} — tools available, no auto-ingest/assemble`);
+        }
+      });
+
+      log("Plugin registered (local)");
     }
-
-    const mode = hosted ? "hosted" : (config.memory_url || config.database_url) ? "local" : "unconfigured";
-    log(`Plugin registered (${mode})`);
   },
 };
