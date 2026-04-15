@@ -1,0 +1,69 @@
+{
+  "id": "pentatonic-memory",
+  "name": "Pentatonic Memory",
+  "description": "Persistent, searchable memory with multi-signal retrieval and HyDE query expansion. Local (Docker + Ollama) or hosted (Pentatonic TES).",
+  "version": "0.4.4",
+  "kind": "context-engine",
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "mode": {
+        "type": "string",
+        "enum": ["local", "hosted"],
+        "default": "local",
+        "description": "Local (Docker + Ollama) or hosted (Pentatonic TES)"
+      },
+      "database_url": {
+        "type": "string",
+        "description": "PostgreSQL connection string (local mode)"
+      },
+      "embedding_url": {
+        "type": "string",
+        "description": "OpenAI-compatible embeddings endpoint (local mode)"
+      },
+      "embedding_model": {
+        "type": "string",
+        "default": "nomic-embed-text"
+      },
+      "llm_url": {
+        "type": "string",
+        "description": "OpenAI-compatible chat endpoint for HyDE (local mode)"
+      },
+      "llm_model": {
+        "type": "string",
+        "default": "llama3.2:3b"
+      },
+      "tes_endpoint": {
+        "type": "string",
+        "description": "TES API endpoint (hosted mode)"
+      },
+      "tes_client_id": {
+        "type": "string",
+        "description": "TES client ID (hosted mode)"
+      },
+      "tes_api_key": {
+        "type": "string",
+        "description": "TES API key (hosted mode)"
+      },
+      "client_id": {
+        "type": "string",
+        "default": "default",
+        "description": "Memory namespace"
+      },
+      "search_limit": {
+        "type": "number",
+        "default": 5,
+        "description": "Memories to inject per prompt"
+      },
+      "min_score": {
+        "type": "number",
+        "default": 0.3,
+        "description": "Minimum relevance threshold"
+      }
+    }
+  },
+  "setup": {
+    "description": "Set up persistent memory — local (Docker + Ollama, fully private) or hosted (Pentatonic TES, team-wide)."
+  }
+}

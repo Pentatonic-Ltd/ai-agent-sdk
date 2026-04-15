@@ -1,0 +1,30 @@
+{
+  "name": "@pentatonic-ai/openclaw-memory",
+  "version": "0.4.4",
+  "description": "Pentatonic Memory plugin for OpenClaw — persistent, searchable memory with multi-signal retrieval and HyDE query expansion",
+  "type": "module",
+  "main": "index.js",
+  "openclaw": {
+    "extensions": [
+      {
+        "id": "pentatonic-memory",
+        "entrypoint": "./index.js"
+      }
+    ],
+    "install": {
+      "npmSpec": "@pentatonic-ai/openclaw-memory",
+      "minHostVersion": ">=2026.3.7"
+    }
+  },
+  "dependencies": {
+    "@pentatonic-ai/ai-agent-sdk": "^0.4.4",
+    "pg": "^8.13.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Pentatonic-Ltd/ai-agent-sdk.git",
+    "directory": "packages/memory/openclaw-plugin"
+  },
+  "keywords": ["openclaw", "plugin", "memory", "context-engine", "pentatonic", "tes"]
+}
