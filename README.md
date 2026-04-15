@@ -171,7 +171,7 @@ Works with both local and hosted setups. Just tell OpenClaw to set it up.
 ### Install
 
 ```bash
-openclaw plugins install -l ./packages/memory/src/openclaw
+openclaw plugins install @pentatonic-ai/ai-agent-sdk
 ```
 
 ### Set up

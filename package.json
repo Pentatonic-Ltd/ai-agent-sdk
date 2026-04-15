@@ -51,6 +51,9 @@
     "mcp",
     "model-context-protocol"
   ],
+  "openclaw": {
+    "extensions": ["./packages/memory/src/openclaw/index.js"]
+  },
   "license": "MIT",
   "homepage": "https://thingeventsystem.ai",
   "repository": {

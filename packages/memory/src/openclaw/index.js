@@ -6,7 +6,7 @@
  *   - Hosted: routes through TES GraphQL API
  *
  * Install:
- *   openclaw plugins install -l ./packages/memory/src/openclaw
+ *   openclaw plugins install @pentatonic-ai/ai-agent-sdk
  *
  * Config in openclaw.json:
  * {
