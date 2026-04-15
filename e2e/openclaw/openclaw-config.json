@@ -1,0 +1,16 @@
+{
+  "plugins": {
+    "allow": ["pentatonic-memory"],
+    "slots": {
+      "contextEngine": "pentatonic-memory"
+    },
+    "entries": {
+      "pentatonic-memory": {
+        "enabled": true,
+        "config": {
+          "memory_url": "http://memory-server:3333"
+        }
+      }
+    }
+  }
+}

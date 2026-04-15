@@ -96,6 +96,46 @@ jobs:
         if: always()
         run: docker compose -f e2e/memory/docker-compose.test.yml down
 
+  openclaw-e2e:
+    name: OpenClaw Plugin E2E
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Start memory stack
+        run: docker compose -f e2e/openclaw/docker-compose.test.yml up -d postgres memory-server ollama --wait
+        timeout-minutes: 5
+
+      - name: Wait for memory server
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:3334/health > /dev/null 2>&1; then
+              echo "Memory server ready"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Memory server not ready after 60s"
+          exit 1
+
+      - name: Run OpenClaw plugin E2E tests
+        run: |
+          NODE_OPTIONS='--experimental-vm-modules' npx jest --config jest.config.cjs e2e/openclaw/openclaw.e2e.test.js --testTimeout=60000
+        env:
+          MEMORY_SERVER_URL: http://localhost:3334
+          DATABASE_URL: postgres://memory_test:memory_test@localhost:5435/memory_test
+
+      - name: Stop services
+        if: always()
+        run: docker compose -f e2e/openclaw/docker-compose.test.yml down
+
   memory-contract:
     name: Memory API Contract
     runs-on: ubuntu-latest

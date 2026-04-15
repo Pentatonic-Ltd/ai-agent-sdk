@@ -1,0 +1,60 @@
+name: openclaw-e2e
+
+services:
+  # --- Memory backend ---
+  postgres:
+    image: pgvector/pgvector:pg16
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_DB: memory_test
+      POSTGRES_USER: memory_test
+      POSTGRES_PASSWORD: memory_test
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U memory_test"]
+      interval: 2s
+      timeout: 3s
+      retries: 10
+
+  memory-server:
+    build:
+      context: ../../packages/memory
+    environment:
+      DATABASE_URL: postgres://memory_test:memory_test@postgres:5432/memory_test
+      EMBEDDING_URL: http://ollama:11434/v1
+      EMBEDDING_MODEL: nomic-embed-text
+      LLM_URL: http://ollama:11434/v1
+      LLM_MODEL: llama3.2:3b
+      CLIENT_ID: e2e-test
+      PORT: "3333"
+    ports:
+      - "3334:3333"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+
+  ollama:
+    image: ollama/ollama
+    volumes:
+      - ollama-data:/root/.ollama
+
+  # --- OpenClaw gateway ---
+  openclaw:
+    image: ghcr.io/openclaw/openclaw:latest
+    environment:
+      - OPENCLAW_EXTENSIONS=@pentatonic-ai/openclaw-memory-plugin
+    volumes:
+      - openclaw-config:/home/node/.openclaw
+      - ./openclaw-config.json:/home/node/.openclaw/openclaw.json:ro
+      - ./plugin-override:/home/node/.openclaw/extensions/pentatonic-memory:ro
+    ports:
+      - "18789:18789"
+    depends_on:
+      memory-server:
+        condition: service_started
+
+volumes:
+  ollama-data:
+  openclaw-config:
