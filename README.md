@@ -27,6 +27,7 @@
 - [Local Memory (self-hosted)](#local-memory-self-hosted)
 - [Hosted TES](#hosted-tes)
 - [Claude Code Plugin](#claude-code-plugin)
+- [OpenClaw Plugin](#openclaw-plugin)
 - [SDK: Wrap Your LLM Client](#sdk-wrap-your-llm-client)
 - [Supported Providers](#supported-providers)
 - [API Reference](#api-reference)
@@ -40,7 +41,7 @@ Two ways to use the SDK:
 
 **Hosted TES** -- Connect to Pentatonic's Thing Event System for production-grade observability, higher-dimensional embeddings, conversation analytics, and team-wide shared memory.
 
-Both paths use the same Claude Code plugin. The hooks auto-search on every prompt and auto-store every conversation turn.
+Both paths work with Claude Code and OpenClaw. The plugins auto-search on every prompt and auto-store every conversation turn.
 
 ## Local Memory (self-hosted)
 
@@ -163,6 +164,79 @@ npx @pentatonic-ai/ai-agent-sdk memory
 - **Automatic memory storage** -- every turn stored with embeddings and HyDE queries
 - **Token usage** -- input, output, cache read, cache creation tokens per turn
 
+## OpenClaw Plugin
+
+Works with both local and hosted setups. Just tell OpenClaw to set it up.
+
+### Install
+
+```bash
+openclaw plugins install -l ./packages/memory/src/openclaw
+```
+
+### Set up
+
+Tell OpenClaw:
+
+```
+Set up pentatonic memory
+```
+
+The agent will ask whether you want **local** (private, Docker-based) or **hosted** (Pentatonic TES cloud), then walk you through the rest. For hosted mode, it handles account creation, email verification, and API key generation conversationally.
+
+Or use the CLI directly:
+
+```bash
+openclaw pentatonic-memory local
+```
+
+### What it does
+
+OpenClaw's context engine hooks fire on every lifecycle event:
+
+- **Ingest** -- every user and assistant message is stored with embeddings and HyDE query expansion
+- **Assemble** -- relevant memories are injected as system prompt context before every model run
+- **Compact** -- decay cycle runs when the context window fills
+- **After turn** -- high-access memories get consolidated to the semantic layer
+
+Plus agent-callable tools: `memory_search`, `memory_store`, `memory_layers`.
+
+### Configuration
+
+After setup, config lives in `~/.openclaw/pentatonic-memory.json`. To switch modes, run setup again or edit directly.
+
+You can also configure via `openclaw.json`:
+
+```json
+{
+  "plugins": {
+    "slots": { "contextEngine": "pentatonic-memory" },
+    "entries": {
+      "pentatonic-memory": {
+        "enabled": true,
+        "config": {
+          "database_url": "postgres://memory:memory@localhost:5433/memory",
+          "embedding_url": "http://localhost:11435/v1",
+          "embedding_model": "nomic-embed-text",
+          "llm_url": "http://localhost:11435/v1",
+          "llm_model": "llama3.2:3b"
+        }
+      }
+    }
+  }
+}
+```
+
+For hosted mode, replace the config block with:
+
+```json
+{
+  "tes_endpoint": "https://your-company.api.pentatonic.com",
+  "tes_client_id": "your-company",
+  "tes_api_key": "tes_your-company_xxxxx"
+}
+```
+
 ## SDK: Wrap Your LLM Client
 
 **JavaScript**
@@ -254,21 +328,24 @@ const { content, model, usage, toolCalls } = normalizeResponse(openaiResponse);
 ## Architecture
 
 ```
-                    +-----------------------+
-                    |   Claude Code Plugin  |
-                    |   (hooks: auto-search |
-                    |    + auto-store)      |
-                    +-----------+-----------+
-                                |
-                    +-----------+-----------+
-                    |                       |
-              Local Memory            Hosted TES
-              (Docker)                (Cloud)
-                    |                       |
-         +----+----+----+          +---+----+---+
-         |    |    |    |          |   |    |   |
-        PG  Ollama MCP HTTP      PG  R2  Queue Workers
-        pgvector        API     pgvector       Modules
+        +-------------------+     +-------------------+
+        | Claude Code Plugin|     |  OpenClaw Plugin   |
+        | (hooks: auto-     |     | (context engine:   |
+        |  search + store)  |     |  ingest, assemble, |
+        +--------+----------+     |  compact, tools)   |
+                 |                +--------+----------+
+                 |                         |
+                 +------------+------------+
+                              |
+                  +-----------+-----------+
+                  |                       |
+            Local Memory            Hosted TES
+            (Docker)                (Cloud)
+                  |                       |
+       +----+----+----+          +---+----+---+
+       |    |    |    |          |   |    |   |
+      PG  Ollama MCP HTTP      PG  R2  Queue Workers
+      pgvector        API     pgvector       Modules
 ```
 
 ## License

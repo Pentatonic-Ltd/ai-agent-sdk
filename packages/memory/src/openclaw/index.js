@@ -36,6 +36,10 @@
  */
 
 import pg from "pg";
+import { execFileSync } from "child_process";
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from "fs";
+import { join } from "path";
+import { homedir } from "os";
 import { createMemorySystem } from "../index.js";
 import { createContextEngine } from "./context-engine.js";
 
@@ -262,6 +266,216 @@ function emitTelemetry(mode) {
   }).catch(() => {});
 }
 
+// --- Setup helpers ---
+
+function getConfigPath() {
+  const candidates = [
+    join(homedir(), ".openclaw", "pentatonic-memory.json"),
+    join(homedir(), ".claude-pentatonic", "tes-memory.local.md"),
+    join(homedir(), ".claude", "tes-memory.local.md"),
+  ];
+  return candidates.find((p) => existsSync(p)) || candidates[0];
+}
+
+function writeOpenClawConfig(mode, settings) {
+  const configDir = join(homedir(), ".openclaw");
+  if (!existsSync(configDir)) mkdirSync(configDir, { recursive: true });
+
+  const configPath = join(configDir, "pentatonic-memory.json");
+  writeFileSync(configPath, JSON.stringify({ mode, ...settings }, null, 2));
+  return configPath;
+}
+
+async function runLocalSetup() {
+  // Check Docker
+  try {
+    execFileSync("docker", ["info"], { stdio: "pipe" });
+  } catch {
+    return { success: false, error: "Docker is required but not running. Install from https://docker.com" };
+  }
+
+  // Find the memory package directory
+  let memoryDir;
+  try {
+    const pkgRoot = new URL("../../..", import.meta.url).pathname;
+    memoryDir = existsSync(join(pkgRoot, "docker-compose.yml"))
+      ? pkgRoot
+      : null;
+  } catch { memoryDir = null; }
+
+  if (!memoryDir) {
+    // Fallback: try via npm package location
+    try {
+      const resolved = new URL("../../../../packages/memory", import.meta.url).pathname;
+      if (existsSync(join(resolved, "docker-compose.yml"))) memoryDir = resolved;
+    } catch { /* */ }
+  }
+
+  if (!memoryDir) {
+    return {
+      success: false,
+      error: "Could not find memory package. Run: npx @pentatonic-ai/ai-agent-sdk memory",
+    };
+  }
+
+  // Start Docker stack
+  try {
+    execFileSync("docker", ["compose", "up", "-d", "memory", "postgres", "ollama"], {
+      cwd: memoryDir,
+      stdio: "pipe",
+    });
+  } catch (err) {
+    return { success: false, error: `Docker compose failed: ${err.message}` };
+  }
+
+  // Pull models
+  const embModel = process.env.EMBEDDING_MODEL || "nomic-embed-text";
+  const llmModel = process.env.LLM_MODEL || "llama3.2:3b";
+  const pulled = [];
+  for (const model of [embModel, llmModel]) {
+    try {
+      execFileSync("docker", ["compose", "exec", "ollama", "ollama", "pull", model], {
+        cwd: memoryDir,
+        stdio: "pipe",
+      });
+      pulled.push(model);
+    } catch { /* non-fatal */ }
+  }
+
+  const configPath = writeOpenClawConfig("local", {
+    memory_url: "http://localhost:3333",
+  });
+
+  return {
+    success: true,
+    mode: "local",
+    configPath,
+    models: pulled,
+    message: "Local memory stack running. PostgreSQL + pgvector + Ollama + memory server started.",
+  };
+}
+
+async function runHostedSetup(email, clientId, password, region) {
+  const endpoint = "https://api.pentatonic.com";
+
+  // Try login first
+  let accessToken = null;
+  try {
+    const res = await fetch(`${endpoint}/api/enrollment/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, clientId }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.tokens?.accessToken) accessToken = data.tokens.accessToken;
+    }
+  } catch { /* */ }
+
+  // If not logged in, enroll
+  if (!accessToken) {
+    try {
+      const res = await fetch(`${endpoint}/api/enrollment/submit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          clientId,
+          companyName: clientId,
+          industryType: "technology",
+          authProvider: "native",
+          adminEmail: email,
+          adminPassword: password,
+          region: (region || "eu").toLowerCase(),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        const errors = data.errors || {};
+        if (errors.clientId?.includes("already registered")) {
+          return { success: false, error: "Client ID already registered. Ask your admin to invite you, then run setup again." };
+        }
+        return { success: false, error: data.message || Object.values(errors).join(", ") || "Enrollment failed" };
+      }
+    } catch (err) {
+      return { success: false, error: `Failed to connect: ${err.message}` };
+    }
+
+    // Poll for verification (up to 5 minutes)
+    const start = Date.now();
+    while (Date.now() - start < 300000) {
+      await new Promise((r) => setTimeout(r, 3000));
+      try {
+        const res = await fetch(`${endpoint}/api/enrollment/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password, clientId }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.tokens?.accessToken) {
+            accessToken = data.tokens.accessToken;
+            break;
+          }
+        }
+      } catch { /* keep polling */ }
+    }
+
+    if (!accessToken) {
+      return { success: false, error: "Email verification timed out. Check your inbox and run setup again — it will resume." };
+    }
+  }
+
+  // Get API key
+  let apiKey;
+  try {
+    const tokenRes = await fetch(`${endpoint}/api/enrollment/service-token?client_id=${clientId}`);
+    if (tokenRes.ok) {
+      const tokenData = await tokenRes.json();
+      if (tokenData.token) apiKey = tokenData.token;
+    }
+  } catch { /* */ }
+
+  if (!apiKey) {
+    try {
+      const res = await fetch(`${endpoint}/api/graphql`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          query: `mutation CreateApiToken($clientId: String!, $input: CreateApiTokenInput!) {
+            createClientApiToken(clientId: $clientId, input: $input) { success plainTextToken }
+          }`,
+          variables: { clientId, input: { name: "openclaw-plugin", role: "agent-events" } },
+        }),
+      });
+      const data = await res.json();
+      apiKey = data.data?.createClientApiToken?.plainTextToken;
+    } catch { /* */ }
+  }
+
+  if (!apiKey) {
+    return { success: false, error: "Account verified but failed to generate API key. Run setup again." };
+  }
+
+  const clientEndpoint = `https://${clientId}.api.pentatonic.com`;
+  const configPath = writeOpenClawConfig("hosted", {
+    tes_endpoint: clientEndpoint,
+    tes_client_id: clientId,
+    tes_api_key: apiKey,
+  });
+
+  return {
+    success: true,
+    mode: "hosted",
+    configPath,
+    endpoint: clientEndpoint,
+    clientId,
+    message: "TES account ready. Memory will be stored and searched via Pentatonic cloud.",
+  };
+}
+
 // --- Plugin entry ---
 
 export default {
@@ -278,6 +492,97 @@ export default {
       process.stderr.write(`[pentatonic-memory] ${msg}\n`);
 
     emitTelemetry(hosted ? "hosted" : "local");
+
+    // --- Setup tool (always registered) ---
+
+    api.registerTool({
+      name: "pentatonic_memory_setup",
+      description: `Set up Pentatonic Memory for this user. Call this when the user wants to set up memory, or when the plugin has no config yet.
+
+Two modes available:
+1. "local" — fully private, runs on user's machine via Docker (PostgreSQL + pgvector + Ollama). No cloud, no API keys. Requires Docker.
+2. "hosted" — production-grade via Pentatonic TES cloud. Higher-dimensional embeddings, team-wide shared memory, analytics dashboard. Requires account creation.
+
+For local mode: call with action="setup_local". No other params needed.
+For hosted mode: ask the user for their email, a client ID (company name), password, and region (EU or US), then call with action="setup_hosted" and those params.
+
+If the user hasn't decided, explain both options and ask which they prefer.`,
+      parameters: {
+        type: "object",
+        properties: {
+          action: {
+            type: "string",
+            enum: ["setup_local", "setup_hosted"],
+            description: "Which setup to run",
+          },
+          email: { type: "string", description: "User email (hosted only)" },
+          client_id: { type: "string", description: "Company/org identifier (hosted only)" },
+          password: { type: "string", description: "Account password (hosted only)" },
+          region: { type: "string", enum: ["EU", "US"], description: "Data region (hosted only)" },
+        },
+        required: ["action"],
+      },
+      async execute({ action, email, client_id, password, region }) {
+        if (action === "setup_local") {
+          return JSON.stringify(await runLocalSetup());
+        }
+        if (action === "setup_hosted") {
+          if (!email || !client_id || !password) {
+            return JSON.stringify({
+              success: false,
+              error: "Missing required fields: email, client_id, and password are all required for hosted setup.",
+            });
+          }
+          return JSON.stringify(await runHostedSetup(email, client_id, password, region));
+        }
+        return JSON.stringify({ success: false, error: "Unknown action" });
+      },
+    });
+
+    // --- CLI subcommand ---
+
+    if (api.registerCli) {
+      api.registerCli(
+        async ({ program }) => {
+          program
+            .command("pentatonic-memory")
+            .description("Set up Pentatonic Memory (local or hosted)")
+            .argument("[mode]", "Setup mode: local or hosted")
+            .action(async (mode) => {
+              if (mode === "local") {
+                console.log("\nSetting up local memory stack...\n");
+                const result = await runLocalSetup();
+                if (result.success) {
+                  console.log(`✓ ${result.message}`);
+                  console.log(`  Config: ${result.configPath}`);
+                  console.log(`  Models: ${result.models.join(", ")}\n`);
+                  console.log("Restart OpenClaw to activate the context engine.\n");
+                } else {
+                  console.error(`✗ ${result.error}\n`);
+                  process.exit(1);
+                }
+              } else if (mode === "hosted") {
+                console.log("\nHosted setup — use the interactive agent instead:");
+                console.log('  Tell OpenClaw: "set up pentatonic memory"\n');
+              } else {
+                console.log("\nPentatonic Memory Setup\n");
+                console.log("  openclaw pentatonic-memory local    Set up local memory (Docker)");
+                console.log("  openclaw pentatonic-memory hosted   Set up hosted TES (cloud)\n");
+                console.log('Or just tell OpenClaw: "set up pentatonic memory"\n');
+              }
+            });
+        },
+        {
+          descriptors: [
+            {
+              name: "pentatonic-memory",
+              description: "Set up Pentatonic Memory (local Docker stack or hosted TES cloud)",
+              hasSubcommands: false,
+            },
+          ],
+        }
+      );
+    }
 
     if (hosted) {
       // --- Hosted mode: TES GraphQL ---
