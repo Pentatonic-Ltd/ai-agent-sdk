@@ -1,12 +1,11 @@
 import json
 from urllib.request import Request, urlopen
 
-EMIT_EVENT_MUTATION = """
-  mutation EmitEvent($input: EventInput!) {
-    emitEvent(input: $input) {
+CREATE_MODULE_EVENT_MUTATION = """
+  mutation CreateModuleEvent($moduleId: String!, $input: ModuleEventInput!) {
+    createModuleEvent(moduleId: $moduleId, input: $input) {
       success
       eventId
-      message
     }
   }
 """
@@ -31,18 +30,30 @@ def send_event(config, event_input):
     }
 
     user_id = config.get("user_id")
+    attributes = event_input.get("data", {}).get("attributes", {})
     if user_id:
-        event_input = {
-            **event_input,
-            "data": {
-                **event_input.get("data", {}),
-                "attributes": {**event_input.get("data", {}).get("attributes", {}), "userId": user_id},
+        attributes = {**attributes, "userId": user_id}
+
+    # Route to the correct module based on event type
+    event_type = event_input.get("eventType", "")
+    module_id = "conversation-analytics"
+    if event_type in ("STORE_MEMORY", "SESSION_START", "SESSION_END"):
+        module_id = "deep-memory"
+
+    module_input = {
+        "eventType": event_type,
+        "data": {
+            "entity_id": event_input.get("data", {}).get("entity_id", event_input.get("entityId", "")),
+            "attributes": {
+                **attributes,
+                "clientId": client_id,
             },
-        }
+        },
+    }
 
     body = json.dumps({
-        "query": EMIT_EVENT_MUTATION,
-        "variables": {"input": event_input},
+        "query": CREATE_MODULE_EVENT_MUTATION,
+        "variables": {"moduleId": module_id, "input": module_input},
     }).encode()
 
     req = Request(f"{endpoint}/api/graphql", data=body, headers=headers, method="POST")
@@ -53,4 +64,4 @@ def send_event(config, event_input):
     if data.get("errors"):
         raise RuntimeError(f"TES GraphQL error: {data['errors'][0]['message']}")
 
-    return data["data"]["emitEvent"]
+    return data["data"]["createModuleEvent"]

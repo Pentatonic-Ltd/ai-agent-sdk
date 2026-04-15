@@ -8,7 +8,7 @@ def _mock_urlopen(captured_requests):
         captured_requests.append(req)
         resp = MagicMock()
         resp.read.return_value = json.dumps({
-            "data": {"emitEvent": {"success": True, "eventId": "evt-123", "message": None}}
+            "data": {"createModuleEvent": {"success": True, "eventId": "evt-123"}}
         }).encode()
         resp.__enter__ = MagicMock(return_value=resp)
         resp.__exit__ = MagicMock(return_value=False)

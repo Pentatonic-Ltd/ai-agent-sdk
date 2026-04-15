@@ -16,7 +16,7 @@ describe("sendEvent", () => {
       return {
         ok: true,
         json: async () => ({
-          data: { emitEvent: { success: true, eventId: "evt-1" } },
+          data: { createModuleEvent: { success: true, eventId: "evt-1" } },
         }),
       };
     };
@@ -35,7 +35,7 @@ describe("sendEvent", () => {
       return {
         ok: true,
         json: async () => ({
-          data: { emitEvent: { success: true, eventId: "evt-1" } },
+          data: { createModuleEvent: { success: true, eventId: "evt-1" } },
         }),
       };
     };
@@ -57,7 +57,7 @@ describe("sendEvent", () => {
       return {
         ok: true,
         json: async () => ({
-          data: { emitEvent: { success: true, eventId: "evt-1" } },
+          data: { createModuleEvent: { success: true, eventId: "evt-1" } },
         }),
       };
     };
@@ -79,7 +79,7 @@ describe("sendEvent", () => {
       return {
         ok: true,
         json: async () => ({
-          data: { emitEvent: { success: true, eventId: "evt-1" } },
+          data: { createModuleEvent: { success: true, eventId: "evt-1" } },
         }),
       };
     };
@@ -96,7 +96,7 @@ describe("sendEvent", () => {
       return {
         ok: true,
         json: async () => ({
-          data: { emitEvent: { success: true, eventId: "evt-1" } },
+          data: { createModuleEvent: { success: true, eventId: "evt-1" } },
         }),
       };
     };
@@ -117,7 +117,7 @@ describe("sendEvent", () => {
       return {
         ok: true,
         json: async () => ({
-          data: { emitEvent: { success: true, eventId: "evt-1" } },
+          data: { createModuleEvent: { success: true, eventId: "evt-1" } },
         }),
       };
     };
@@ -140,7 +140,7 @@ describe("sendEvent", () => {
       return {
         ok: true,
         json: async () => ({
-          data: { emitEvent: { success: true, eventId: "evt-1" } },
+          data: { createModuleEvent: { success: true, eventId: "evt-1" } },
         }),
       };
     };
@@ -175,17 +175,17 @@ describe("sendEvent", () => {
     ).rejects.toThrow("TES GraphQL error: Permission denied");
   });
 
-  it("returns emitEvent data on success", async () => {
+  it("returns createModuleEvent data on success", async () => {
     const mockFetch = async () => ({
       ok: true,
       json: async () => ({
-        data: { emitEvent: { success: true, eventId: "evt-99", message: "ok" } },
+        data: { createModuleEvent: { success: true, eventId: "evt-99" } },
       }),
     });
 
     const result = await sendEvent(baseConfig, { eventType: "TEST", data: {} }, mockFetch);
 
-    expect(result).toEqual({ success: true, eventId: "evt-99", message: "ok" });
+    expect(result).toEqual({ success: true, eventId: "evt-99" });
   });
 
   it("sends correct GraphQL mutation shape", async () => {
@@ -195,7 +195,7 @@ describe("sendEvent", () => {
       return {
         ok: true,
         json: async () => ({
-          data: { emitEvent: { success: true, eventId: "evt-1" } },
+          data: { createModuleEvent: { success: true, eventId: "evt-1" } },
         }),
       };
     };
@@ -212,10 +212,9 @@ describe("sendEvent", () => {
     await sendEvent(baseConfig, input, mockFetch);
 
     const body = JSON.parse(captured.opts.body);
-    expect(body.query).toContain("mutation EmitEvent");
-    expect(body.query).toContain("emitEvent(input: $input)");
+    expect(body.query).toContain("createModuleEvent");
+    expect(body.variables.moduleId).toBe("conversation-analytics");
     expect(body.variables.input.eventType).toBe("CHAT_TURN");
-    expect(body.variables.input.entityType).toBe("conversation");
     expect(body.variables.input.data.entity_id).toBe("sess-1");
   });
 });

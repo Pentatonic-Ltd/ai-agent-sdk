@@ -1,21 +1,41 @@
-const EMIT_EVENT_MUTATION = `
-  mutation EmitEvent($input: EventInput!) {
-    emitEvent(input: $input) {
+const CREATE_MODULE_EVENT_MUTATION = `
+  mutation CreateModuleEvent($moduleId: String!, $input: ModuleEventInput!) {
+    createModuleEvent(moduleId: $moduleId, input: $input) {
       success
       eventId
-      message
     }
   }
 `;
 
+// Route event types to the correct module
+function getModuleId(eventType) {
+  if (["STORE_MEMORY", "SESSION_START", "SESSION_END"].includes(eventType)) {
+    return "deep-memory";
+  }
+  return "conversation-analytics";
+}
+
 export async function sendEvent({ endpoint, apiKey, clientId, userId, headers }, input, fetchFn) {
   const f = fetchFn || globalThis.fetch;
 
-  // tes_ prefixed tokens are API tokens — send as Authorization: Bearer
-  // Other tokens (internal service keys) go as x-service-key
   const authHeaders = apiKey.startsWith("tes_")
     ? { Authorization: `Bearer ${apiKey}` }
     : { "x-service-key": apiKey };
+
+  const moduleId = getModuleId(input.eventType);
+  const attributes = {
+    ...input.data?.attributes,
+    clientId,
+    ...(userId ? { userId } : {}),
+  };
+
+  const moduleInput = {
+    eventType: input.eventType,
+    data: {
+      entity_id: input.data?.entity_id || input.entityId || "",
+      attributes,
+    },
+  };
 
   const response = await f(`${endpoint}/api/graphql`, {
     method: "POST",
@@ -26,12 +46,8 @@ export async function sendEvent({ endpoint, apiKey, clientId, userId, headers },
       ...authHeaders,
     },
     body: JSON.stringify({
-      query: EMIT_EVENT_MUTATION,
-      variables: {
-        input: userId
-          ? { ...input, data: { ...input.data, attributes: { ...input.data?.attributes, userId } } }
-          : input,
-      },
+      query: CREATE_MODULE_EVENT_MUTATION,
+      variables: { moduleId, input: moduleInput },
     }),
   });
 
@@ -44,5 +60,5 @@ export async function sendEvent({ endpoint, apiKey, clientId, userId, headers },
     throw new Error(`TES GraphQL error: ${json.errors[0].message}`);
   }
 
-  return json.data.emitEvent;
+  return json.data.createModuleEvent;
 }

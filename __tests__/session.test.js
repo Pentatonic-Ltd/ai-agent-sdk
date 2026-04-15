@@ -8,7 +8,7 @@ globalThis.fetch = async (url, opts) => {
     ok: true,
     json: async () => ({
       data: {
-        emitEvent: { success: true, eventId: "evt-123" },
+        createModuleEvent: { success: true, eventId: "evt-123" },
       },
     }),
   };
@@ -167,11 +167,11 @@ describe("Session", () => {
     expect(headers["x-client-id"]).toBe("test-client");
 
     const body = JSON.parse(call.opts.body);
-    expect(body.query).toContain("emitEvent");
+    expect(body.query).toContain("createModuleEvent");
 
     const input = body.variables.input;
     expect(input.eventType).toBe("CHAT_TURN");
-    expect(input.entityType).toBe("conversation");
+    expect(body.variables.moduleId).toBe("conversation-analytics");
     expect(input.data.entity_id).toBe("sess-3");
     expect(input.data.attributes.user_message).toBe("find shoes");
     expect(input.data.attributes.model).toBe("gpt-4o");
