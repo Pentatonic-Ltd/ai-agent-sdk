@@ -419,6 +419,7 @@ Restart OpenClaw to activate.`;
       }
     }
 
-    log(`Plugin registered (${hosted ? "hosted" : isConfigured ? "local" : "unconfigured"})`);
+    const mode = hosted ? "hosted" : (config.memory_url || config.database_url) ? "local" : "unconfigured";
+    log(`Plugin registered (${mode})`);
   },
 };
