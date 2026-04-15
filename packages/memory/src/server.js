@@ -49,6 +49,29 @@ function createMemory() {
 }
 
 async function main() {
+  // Telemetry ping — fire and forget
+  if (process.env.PENTATONIC_TELEMETRY !== "0") {
+    const mid = (() => {
+      const raw = `${process.env.USER || "u"}:${process.platform}:${process.arch}`;
+      let h = 0;
+      for (let i = 0; i < raw.length; i++) h = ((h << 5) - h + raw.charCodeAt(i)) | 0;
+      return (h >>> 0).toString(16).padStart(8, "0");
+    })();
+    fetch("https://sdk-telemetry.philip-134.workers.dev", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        machine_id: mid,
+        sdk_version: "0.4.0",
+        node_version: process.version,
+        platform: process.platform,
+        arch: process.arch,
+        mode: "local",
+      }),
+      signal: AbortSignal.timeout(5000),
+    }).catch(() => {});
+  }
+
   const memory = createMemory();
 
   // Run migrations on startup

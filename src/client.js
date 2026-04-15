@@ -1,5 +1,6 @@
 import { Session } from "./session.js";
 import { wrapClient } from "./wrapper.js";
+import { emitTelemetry } from "./telemetry.js";
 
 export class TESClient {
   constructor({ clientId, apiKey, endpoint, headers, userId, captureContent = true, maxContentLength = 4096 }) {
@@ -35,6 +36,8 @@ export class TESClient {
       enumerable: false,
       writable: false,
     });
+
+    emitTelemetry("hosted");
   }
 
   get _config() {
