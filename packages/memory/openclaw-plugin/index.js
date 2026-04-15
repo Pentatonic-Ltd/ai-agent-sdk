@@ -9,7 +9,7 @@
  *   compact  — decay cycle on context overflow
  *   afterTurn — consolidation check
  *
- * Plus agent-callable tools: memory_search, memory_store, memory_status, pentatonic_memory_setup
+ * Plus agent-callable tools: pentatonic_memory_search, pentatonic_memory_store, pentatonic_memory_status, pentatonic_memory_setup
  *
  * Two modes:
  *   - Local: HTTP calls to the memory server (localhost:3333)
@@ -366,7 +366,7 @@ export default {
     // --- Tools ---
 
     api.registerTool({
-      name: "memory_search",
+      name: "pentatonic_memory_search",
       description: "Search memories for relevant context. Use when you need to recall past conversations, decisions, or knowledge.",
       parameters: {
         type: "object",
@@ -383,7 +383,7 @@ export default {
     });
 
     api.registerTool({
-      name: "memory_store",
+      name: "pentatonic_memory_store",
       description: "Explicitly store something important. Use for decisions, solutions, or facts worth remembering.",
       parameters: {
         type: "object",
@@ -401,7 +401,7 @@ export default {
     });
 
     api.registerTool({
-      name: "memory_status",
+      name: "pentatonic_memory_status",
       description: "Check the status of the Pentatonic Memory system. Shows mode, backend health, and session stats.",
       parameters: { type: "object", properties: {} },
       async execute() {
