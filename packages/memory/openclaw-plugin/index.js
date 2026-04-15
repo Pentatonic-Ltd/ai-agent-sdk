@@ -42,6 +42,7 @@ const stats = {
   lastAssembleCount: 0,
   backendReachable: null,
   mode: "unknown",
+  setupPrompted: false,
 };
 
 // --- Local mode: HTTP to memory server ---
@@ -306,6 +307,30 @@ export default {
       async assemble({ sessionId, messages }) {
         const lastUserMsg = [...messages].reverse().find((m) => m.role === "user" || m.type === "user");
         if (!lastUserMsg?.content) return { messages, estimatedTokens: 0 };
+
+        // First interaction: check if backend is reachable, prompt setup if not
+        if (!stats.setupPrompted && stats.backendReachable === null) {
+          if (!hosted) await localHealth(baseUrl);
+        }
+
+        if (!stats.setupPrompted && stats.backendReachable === false) {
+          stats.setupPrompted = true;
+          const setupPrompt = [
+            "[Pentatonic Memory] The memory system is installed but not connected to a backend yet.",
+            "",
+            "Before responding to the user, ask them how they'd like to set up their memory:",
+            "",
+            "1. **Local** (self-hosted) — Fully private, runs on this machine via Docker. Requires Docker installed.",
+            "   Use the pentatonic_memory_setup tool with action 'check_local' to verify.",
+            "",
+            "2. **Hosted** (Pentatonic TES cloud) — Team-wide shared memory, analytics dashboard, higher-dimensional embeddings.",
+            "   Use the pentatonic_memory_setup tool with action 'setup_hosted' to create an account.",
+            "",
+            "Ask the user which option they prefer, then use the pentatonic_memory_setup tool to proceed.",
+          ].join("\n");
+          return { messages, estimatedTokens: Math.ceil(setupPrompt.length / 4), systemPromptAddition: setupPrompt };
+        }
+
         try {
           const results = await search(lastUserMsg.content, searchLimit, minScore);
           if (!results.length) {
