@@ -237,110 +237,99 @@ export default {
   id: "pentatonic-memory",
   name: "Pentatonic Memory",
   description: "Persistent, searchable memory with multi-signal retrieval and HyDE query expansion",
+  kind: "context-engine",
 
   register(api) {
     const config = api.config || {};
     const hosted = !!(config.tes_endpoint && config.tes_api_key);
     const baseUrl = config.memory_url || "http://localhost:3333";
+    const searchLimit = config.search_limit || 5;
+    const minScore = config.min_score || 0.3;
     const log = (msg) => process.stderr.write(`[pentatonic-memory] ${msg}\n`);
 
-    // --- Always register tools ---
+    // Unified search/store that routes to local or hosted
+    const search = hosted
+      ? (query, limit, score) => hostedSearch(config, query, limit, score)
+      : (query, limit, score) => localSearch(baseUrl, query, limit, score);
 
-    if (hosted) {
-      // Hosted mode tools
-      log("Hosted mode — routing through TES");
+    const store = hosted
+      ? (content, metadata) => hostedStore(config, content, metadata)
+      : (content, metadata) => localStore(baseUrl, content, metadata);
 
-      api.registerTool({
-        name: "memory_search",
-        description: "Search memories for relevant context. Use when you need to recall past conversations, decisions, or knowledge.",
-        parameters: {
-          type: "object",
-          properties: {
-            query: { type: "string", description: "What to search for" },
-            limit: { type: "number", description: "Max results (default 5)" },
-          },
-          required: ["query"],
-        },
-        async execute({ query, limit }) {
-          return formatResults(await hostedSearch(config, query, limit || 5, 0.3));
-        },
-      });
+    // --- Context engine: always registered, proxies to backend ---
+    // Methods return graceful empty results if backend is unavailable.
 
-      api.registerTool({
-        name: "memory_store",
-        description: "Explicitly store something important. Use for decisions, solutions, or facts worth remembering.",
-        parameters: {
-          type: "object",
-          properties: { content: { type: "string", description: "What to remember" } },
-          required: ["content"],
-        },
-        async execute({ content }) {
-          const result = await hostedStore(config, content, { source: "openclaw-tool" });
-          return result ? "Memory stored." : "Failed to store memory.";
-        },
-      });
+    api.registerContextEngine("pentatonic-memory", () => ({
+      info: {
+        id: "pentatonic-memory",
+        name: `Pentatonic Memory (${hosted ? "Hosted" : "Local"})`,
+        ownsCompaction: false,
+      },
 
-      // Register context engine for hosted
-      api.registerContextEngine("pentatonic-memory", () =>
-        createHostedContextEngine(config, {
-          searchLimit: config.search_limit || 5,
-          minScore: config.min_score || 0.3,
-          logger: log,
-        })
-      );
-
-      log("Plugin registered (hosted)");
-    } else {
-      // Local mode tools — always point at baseUrl
-      log(`Local mode — ${baseUrl}`);
-
-      api.registerTool({
-        name: "memory_search",
-        description: "Search memories for relevant context. Use when you need to recall past conversations, decisions, or knowledge.",
-        parameters: {
-          type: "object",
-          properties: {
-            query: { type: "string", description: "What to search for" },
-            limit: { type: "number", description: "Max results (default 5)" },
-          },
-          required: ["query"],
-        },
-        async execute({ query, limit }) {
-          return formatResults(await localSearch(baseUrl, query, limit || 5, 0.3));
-        },
-      });
-
-      api.registerTool({
-        name: "memory_store",
-        description: "Explicitly store something important. Use for decisions, solutions, or facts worth remembering.",
-        parameters: {
-          type: "object",
-          properties: { content: { type: "string", description: "What to remember" } },
-          required: ["content"],
-        },
-        async execute({ content }) {
-          const result = await localStore(baseUrl, content, { source: "openclaw-tool" });
-          return result ? `Stored: ${result.id}` : "Failed to store memory.";
-        },
-      });
-
-      // Auto-detect: check if local memory server is running, register context engine if so
-      localHealth(baseUrl).then((ok) => {
-        if (ok) {
-          api.registerContextEngine("pentatonic-memory", () =>
-            createLocalContextEngine(baseUrl, {
-              searchLimit: config.search_limit || 5,
-              minScore: config.min_score || 0.3,
-              logger: log,
-            })
-          );
-          log("Memory server detected — context engine registered");
-        } else {
-          log(`Memory server not reachable at ${baseUrl} — tools available, no auto-ingest/assemble`);
+      async ingest({ sessionId, message }) {
+        if (!message?.content) return { ingested: false };
+        const role = message.role || message.type;
+        if (role !== "user" && role !== "assistant") return { ingested: false };
+        try {
+          await store(message.content, { session_id: sessionId, role });
+          return { ingested: true };
+        } catch {
+          return { ingested: false };
         }
-      });
+      },
 
-      log("Plugin registered (local)");
-    }
+      async assemble({ sessionId, messages }) {
+        const lastUserMsg = [...messages].reverse().find((m) => m.role === "user" || m.type === "user");
+        if (!lastUserMsg?.content) return { messages, estimatedTokens: 0 };
+        try {
+          const results = await search(lastUserMsg.content, searchLimit, minScore);
+          if (!results.length) return { messages, estimatedTokens: 0 };
+          const memoryText = results
+            .map((m) => `- [${Math.round((m.similarity || 0) * 100)}%] ${m.content}`)
+            .join("\n");
+          const addition = `[Memory] Relevant context from past conversations:\n${memoryText}`;
+          return { messages, estimatedTokens: Math.ceil(addition.length / 4), systemPromptAddition: addition };
+        } catch {
+          return { messages, estimatedTokens: 0 };
+        }
+      },
+
+      async compact() { return { ok: true, compacted: false }; },
+      async afterTurn() {},
+    }));
+
+    // --- Tools: agent-driven search and store ---
+
+    api.registerTool({
+      name: "memory_search",
+      description: "Search memories for relevant context. Use when you need to recall past conversations, decisions, or knowledge.",
+      parameters: {
+        type: "object",
+        properties: {
+          query: { type: "string", description: "What to search for" },
+          limit: { type: "number", description: "Max results (default 5)" },
+        },
+        required: ["query"],
+      },
+      async execute({ query, limit }) {
+        return formatResults(await search(query, limit || 5, 0.3));
+      },
+    });
+
+    api.registerTool({
+      name: "memory_store",
+      description: "Explicitly store something important. Use for decisions, solutions, or facts worth remembering.",
+      parameters: {
+        type: "object",
+        properties: { content: { type: "string", description: "What to remember" } },
+        required: ["content"],
+      },
+      async execute({ content }) {
+        const result = await store(content, { source: "openclaw-tool" });
+        return result ? "Memory stored." : "Failed to store memory.";
+      },
+    });
+
+    log(`Plugin registered (${hosted ? "hosted" : "local"} — ${hosted ? config.tes_endpoint : baseUrl})`);
   },
 };
