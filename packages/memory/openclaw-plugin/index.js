@@ -1,7 +1,7 @@
 /**
  * Pentatonic Memory — OpenClaw Context Engine Plugin
  *
- * Install: openclaw plugins install @pentatonic-ai/openclaw-memory
+ * Install: openclaw plugins install @pentatonic-ai/openclaw-memory-plugin
  *
  * Provides persistent, searchable memory via the ContextEngine lifecycle:
  *   ingest   — every message stored with embedding + HyDE

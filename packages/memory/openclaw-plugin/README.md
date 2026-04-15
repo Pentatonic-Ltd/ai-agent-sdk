@@ -1,11 +1,11 @@
-# @pentatonic-ai/openclaw-memory
+# @pentatonic-ai/openclaw-memory-plugin
 
 Persistent, searchable memory for OpenClaw. Local (Docker + Ollama) or hosted (Pentatonic TES).
 
 ## Install
 
 ```bash
-openclaw plugins install @pentatonic-ai/openclaw-memory
+openclaw plugins install @pentatonic-ai/openclaw-memory-plugin
 ```
 
 ## Setup
