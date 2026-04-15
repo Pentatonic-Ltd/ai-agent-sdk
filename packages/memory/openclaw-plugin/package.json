@@ -16,10 +16,7 @@
       "minHostVersion": ">=2026.3.7"
     }
   },
-  "dependencies": {
-    "@pentatonic-ai/ai-agent-sdk": "^0.4.4",
-    "pg": "^8.13.0"
-  },
+  "dependencies": {},
   "license": "MIT",
   "repository": {
     "type": "git",
