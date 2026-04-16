@@ -332,6 +332,12 @@ export default {
           return null;
         }
 
+        // Log every message's role + preview so we can see exactly what OpenClaw passes
+        messages.forEach((m, i) => {
+          const preview = (getTextContent(m) || "").substring(0, 80).replace(/\n/g, " ");
+          log(`assemble: msg[${i}] role=${m.role || m.type} preview="${preview}"`);
+        });
+
         // Find the last real user message — skip OpenClaw's internal metadata prompts
         const reversed = [...messages].reverse();
         let lastUserText = null;
