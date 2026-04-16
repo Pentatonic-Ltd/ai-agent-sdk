@@ -339,8 +339,16 @@ export default {
           if (m.role !== "user" && m.type !== "user") continue;
           const text = getTextContent(m);
           if (!text) continue;
-          // Skip OpenClaw system-generated metadata messages
-          if (text.startsWith("Conversation info") || text.startsWith("[System]") || text.startsWith("System:")) continue;
+          // Skip OpenClaw system-generated prompts — they have no structural marker,
+          // so we match by known prefixes.
+          const trimmed = text.trim();
+          if (
+            trimmed.startsWith("Conversation info") ||
+            trimmed.startsWith("Note: The previous agent run") ||
+            trimmed.startsWith("(untrusted metadata)") ||
+            trimmed.startsWith("[System]") ||
+            trimmed.startsWith("System:")
+          ) continue;
           lastUserText = text;
           break;
         }
