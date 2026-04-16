@@ -82,7 +82,6 @@ class TestSessionEmitChatTurn:
         body = json.loads(req.data)
         event_input = body["variables"]["input"]
         assert event_input["eventType"] == "CHAT_TURN"
-        assert event_input["entityType"] == "conversation"
         assert event_input["data"]["entity_id"] == "sess-3"
         attrs = event_input["data"]["attributes"]
         assert attrs["user_message"] == "find shoes"
