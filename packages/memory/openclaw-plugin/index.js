@@ -338,26 +338,59 @@ export default {
           log(`assemble: msg[${i}] role=${m.role || m.type} preview="${preview}"`);
         });
 
-        // Find the last real user message — skip OpenClaw's internal metadata prompts
+        // OpenClaw wraps real user messages in "Conversation info" JSON envelopes.
+        // Extract the actual user text from the embedded JSON.
+        function extractUserText(text) {
+          if (!text) return null;
+          const trimmed = text.trim();
+
+          // Pure system prompts — skip entirely
+          if (
+            trimmed.startsWith("Note: The previous agent run") ||
+            trimmed.startsWith("System (untrusted)") ||
+            trimmed.startsWith("[System]") ||
+            trimmed.startsWith("System:")
+          ) return null;
+
+          // "Conversation info" envelope — extract the "text" field from the JSON
+          if (trimmed.startsWith("Conversation info") || trimmed.startsWith("(untrusted metadata)")) {
+            const jsonMatch = trimmed.match(/```json\s*([\s\S]*?)\s*```/);
+            if (jsonMatch) {
+              try {
+                const data = JSON.parse(jsonMatch[1]);
+                return data.text || data.message || data.content || null;
+              } catch { return null; }
+            }
+            return null;
+          }
+
+          // "[Queued messages]" envelope — extract embedded user messages
+          if (trimmed.startsWith("[Queued messages")) {
+            const jsonMatches = [...trimmed.matchAll(/```json\s*([\s\S]*?)\s*```/g)];
+            for (const match of jsonMatches.reverse()) {
+              try {
+                const data = JSON.parse(match[1]);
+                const inner = data.text || data.message || data.content;
+                if (inner) return inner;
+              } catch { /* continue */ }
+            }
+            return null;
+          }
+
+          return trimmed;
+        }
+
         const reversed = [...messages].reverse();
         let lastUserText = null;
         for (const m of reversed) {
           if (m.role !== "user" && m.type !== "user") continue;
           const text = getTextContent(m);
-          if (!text) continue;
-          // Skip OpenClaw system-generated prompts — they have no structural marker,
-          // so we match by known prefixes.
-          const trimmed = text.trim();
-          if (
-            trimmed.startsWith("Conversation info") ||
-            trimmed.startsWith("Note: The previous agent run") ||
-            trimmed.startsWith("(untrusted metadata)") ||
-            trimmed.startsWith("[Queued messages") ||
-            trimmed.startsWith("[System]") ||
-            trimmed.startsWith("System:")
-          ) continue;
-          lastUserText = text;
-          break;
+          const extracted = extractUserText(text);
+          if (extracted) {
+            lastUserText = extracted;
+            log(`assemble: extracted user text: "${extracted.substring(0, 80)}"`);
+            break;
+          }
         }
         if (!lastUserText) {
           // Log previews of all user messages so we can spot new internal prompt prefixes
