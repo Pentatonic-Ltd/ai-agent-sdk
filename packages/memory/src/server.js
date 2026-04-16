@@ -25,6 +25,14 @@ import { createMemorySystem } from "./index.js";
 
 const { Pool } = pg;
 
+// Prevent unhandled rejections from killing the process
+process.on("uncaughtException", (err) => {
+  process.stderr.write(`[memory-server] Uncaught: ${err.message}\n`);
+});
+process.on("unhandledRejection", (err) => {
+  process.stderr.write(`[memory-server] Unhandled rejection: ${err?.message || err}\n`);
+});
+
 const CLIENT_ID = process.env.CLIENT_ID || "default";
 
 function createMemory() {
@@ -250,25 +258,19 @@ async function main() {
 
       if (url.pathname === "/search" && req.method === "POST") {
         try {
-          const results = await memory.search(body.query || "", {
+          // Use text search by default (fast, no external dependencies).
+          // Vector search available via ?mode=vector if embeddings are working.
+          const useVector = url.searchParams.get("mode") === "vector";
+          const searchFn = useVector ? memory.search : memory.textSearch;
+          const results = await searchFn(body.query || "", {
             clientId: CLIENT_ID,
             limit: body.limit || 5,
             minScore: body.min_score || 0.3,
           });
           res.end(JSON.stringify({ results }));
         } catch (err) {
-          process.stderr.write(`[memory-server] Search error: ${err.message}\n`);
-          // Fall back to text search
-          try {
-            const results = await memory.textSearch(body.query || "", {
-              clientId: CLIENT_ID,
-              limit: body.limit || 5,
-            });
-            res.end(JSON.stringify({ results }));
-          } catch (err2) {
-            process.stderr.write(`[memory-server] Text search also failed: ${err2.message}\n`);
-            res.end(JSON.stringify({ results: [], error: err2.message }));
-          }
+          process.stderr.write(`[memory-server] Search error: ${err.message}\n${err.stack}\n`);
+          res.end(JSON.stringify({ results: [], error: err.message }));
         }
       } else if (url.pathname === "/store" && req.method === "POST") {
         try {
