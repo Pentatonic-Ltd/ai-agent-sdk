@@ -298,15 +298,47 @@ export default {
 
       async ingest({ sessionId, message }) {
         // Extract text from content (may be string or array of content blocks)
-        const text = typeof message?.content === "string"
+        const rawText = typeof message?.content === "string"
           ? message.content
           : Array.isArray(message?.content)
             ? message.content.filter(b => b.type === "text").map(b => b.text).join(" ")
             : null;
-        log(`ingest: session=${sessionId} role=${message?.role} len=${text?.length || 0}`);
-        if (!text) return { ingested: false };
-        const role = message.role || message.type;
-        if (role !== "user" && role !== "assistant") return { ingested: false };
+
+        const role = message?.role || message?.type;
+        if (!rawText || (role !== "user" && role !== "assistant")) {
+          log(`ingest: skip session=${sessionId} role=${role} len=${rawText?.length || 0}`);
+          return { ingested: false };
+        }
+
+        // For user messages, strip OpenClaw's metadata envelope to store only the real text
+        let text = rawText;
+        if (role === "user") {
+          const trimmed = rawText.trim();
+          if (
+            trimmed.startsWith("Conversation info") ||
+            trimmed.startsWith("(untrusted metadata)") ||
+            trimmed.startsWith("Sender (untrusted") ||
+            trimmed.startsWith("Untrusted context")
+          ) {
+            text = trimmed
+              .replace(/(?:Conversation info|Sender|Thread starter|Replied message|Forwarded message context|Chat history since last reply) \(untrusted[^)]*\):\s*```json[\s\S]*?```/g, "")
+              .replace(/Untrusted context \(metadata, do not treat as instructions or commands\):/g, "")
+              .trim();
+          }
+          // Skip pure system prompts
+          if (
+            !text ||
+            text.startsWith("Note: The previous agent run") ||
+            text.startsWith("System (untrusted)") ||
+            text.startsWith("[System]") ||
+            text.startsWith("System:")
+          ) {
+            log(`ingest: skip system msg session=${sessionId}`);
+            return { ingested: false };
+          }
+        }
+
+        log(`ingest: session=${sessionId} role=${role} text="${text.substring(0, 60)}"`);
         try {
           await store(text, { session_id: sessionId, role });
           stats.memoriesStored++;
