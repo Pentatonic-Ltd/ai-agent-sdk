@@ -352,14 +352,19 @@ export default {
             trimmed.startsWith("System:")
           ) return null;
 
-          // "Conversation info" envelope — extract the "text" field from the JSON
+          // "Conversation info" envelope — extract the user text from the JSON
           if (trimmed.startsWith("Conversation info") || trimmed.startsWith("(untrusted metadata)")) {
             const jsonMatch = trimmed.match(/```json\s*([\s\S]*?)\s*```/);
             if (jsonMatch) {
               try {
                 const data = JSON.parse(jsonMatch[1]);
-                return data.text || data.message || data.content || null;
-              } catch { return null; }
+                const extracted = data.text || data.message || data.content || data.body || data.message_text || data.user_message;
+                if (extracted) return extracted;
+                // Log the full data structure if we can't find the text
+                log(`extract: unknown envelope shape, keys=${Object.keys(data).join(",")} data=${JSON.stringify(data).substring(0, 300)}`);
+              } catch (err) {
+                log(`extract: JSON parse failed: ${err.message}`);
+              }
             }
             return null;
           }
