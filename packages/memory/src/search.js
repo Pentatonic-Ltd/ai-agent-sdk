@@ -33,6 +33,23 @@ export async function search(db, ai, query, opts = {}) {
   const threshold = opts.minScore ?? 0.5;
   const w = { ...DEFAULT_WEIGHTS, ...opts.weights };
 
+  // Check if vector column exists (migration 002 may not have run)
+  let hasVectorCol = true;
+  try {
+    const colCheck = await db(
+      `SELECT 1 FROM information_schema.columns
+       WHERE table_name = 'memory_nodes' AND column_name = 'embedding_vec' LIMIT 1`,
+      []
+    );
+    hasVectorCol = (colCheck.rows || []).length > 0;
+  } catch {
+    hasVectorCol = false;
+  }
+
+  if (!hasVectorCol) {
+    return textSearch(db, query, opts);
+  }
+
   // Generate query embedding
   const embResult = await ai.embed(query, "query");
   if (!embResult?.embedding) {
