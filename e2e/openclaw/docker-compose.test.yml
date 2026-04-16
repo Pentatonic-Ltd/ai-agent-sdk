@@ -1,7 +1,6 @@
 name: openclaw-e2e
 
 services:
-  # --- Memory backend ---
   postgres:
     image: pgvector/pgvector:pg16
     ports:
@@ -40,15 +39,14 @@ services:
     volumes:
       - ollama-data:/root/.ollama
 
-  # --- OpenClaw gateway ---
   openclaw:
     image: ghcr.io/openclaw/openclaw:latest
     environment:
-      - OPENCLAW_EXTENSIONS=@pentatonic-ai/openclaw-memory-plugin
+      - OPENCLAW_EXTENSIONS=
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
     volumes:
-      - openclaw-config:/home/node/.openclaw
-      - ./openclaw-config.json:/home/node/.openclaw/openclaw.json:ro
-      - ./plugin-override:/home/node/.openclaw/extensions/pentatonic-memory:ro
+      - ./openclaw-home:/home/node/.openclaw
+      - ./plugin-override:/home/node/.openclaw/extensions/pentatonic-memory
     ports:
       - "18789:18789"
     depends_on:
@@ -57,4 +55,3 @@ services:
 
 volumes:
   ollama-data:
-  openclaw-config:
