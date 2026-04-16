@@ -50,10 +50,14 @@ export async function search(db, ai, query, opts = {}) {
     return textSearch(db, query, opts);
   }
 
-  // Generate query embedding
-  const embResult = await ai.embed(query, "query");
+  // Generate query embedding — fall back to text search if embedding fails
+  let embResult;
+  try {
+    embResult = await ai.embed(query, "query");
+  } catch {
+    return textSearch(db, query, opts);
+  }
   if (!embResult?.embedding) {
-    // Fall back to text-only search
     return textSearch(db, query, opts);
   }
 

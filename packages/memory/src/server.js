@@ -249,18 +249,39 @@ async function main() {
       res.setHeader("Content-Type", "application/json");
 
       if (url.pathname === "/search" && req.method === "POST") {
-        const results = await memory.search(body.query || "", {
-          clientId: CLIENT_ID,
-          limit: body.limit || 5,
-          minScore: body.min_score || 0.3,
-        });
-        res.end(JSON.stringify({ results }));
+        try {
+          const results = await memory.search(body.query || "", {
+            clientId: CLIENT_ID,
+            limit: body.limit || 5,
+            minScore: body.min_score || 0.3,
+          });
+          res.end(JSON.stringify({ results }));
+        } catch (err) {
+          process.stderr.write(`[memory-server] Search error: ${err.message}\n`);
+          // Fall back to text search
+          try {
+            const results = await memory.textSearch(body.query || "", {
+              clientId: CLIENT_ID,
+              limit: body.limit || 5,
+            });
+            res.end(JSON.stringify({ results }));
+          } catch (err2) {
+            process.stderr.write(`[memory-server] Text search also failed: ${err2.message}\n`);
+            res.end(JSON.stringify({ results: [], error: err2.message }));
+          }
+        }
       } else if (url.pathname === "/store" && req.method === "POST") {
-        const result = await memory.ingest(body.content || "", {
-          clientId: CLIENT_ID,
-          metadata: body.metadata || {},
-        });
-        res.end(JSON.stringify(result));
+        try {
+          const result = await memory.ingest(body.content || "", {
+            clientId: CLIENT_ID,
+            metadata: body.metadata || {},
+          });
+          res.end(JSON.stringify(result));
+        } catch (err) {
+          process.stderr.write(`[memory-server] Store error: ${err.message}\n`);
+          res.statusCode = 500;
+          res.end(JSON.stringify({ error: err.message }));
+        }
       } else if (url.pathname === "/health") {
         res.end(JSON.stringify({ status: "ok", client: CLIENT_ID }));
       } else {
