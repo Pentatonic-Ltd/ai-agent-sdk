@@ -125,7 +125,7 @@ describe("OpenClaw Plugin (via memory server API)", () => {
     const res = await fetch(`${MEMORY_SERVER}/search`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query: "what language for microservice", limit: 5, min_score: 0.1 }),
+      body: JSON.stringify({ query: "Rust microservice", limit: 5, min_score: 0.1 }),
     });
     expect(res.ok).toBe(true);
     const { results } = await res.json();
