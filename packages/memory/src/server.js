@@ -82,8 +82,40 @@ async function main() {
 
   const memory = createMemory();
 
+  // Enable pgvector before migrations (so migration 002 can create the vector column)
+  const setupPool = new Pool({ connectionString: process.env.DATABASE_URL });
+  try {
+    await setupPool.query("CREATE EXTENSION IF NOT EXISTS vector");
+    process.stderr.write("[memory-server] pgvector extension enabled\n");
+  } catch (err) {
+    process.stderr.write(`[memory-server] pgvector not available: ${err.message}\n`);
+  }
+
   // Run migrations on startup
   await memory.migrate();
+
+  // Fix: if migration 002 ran without pgvector, the vector column is missing.
+  // Re-apply it now that the extension is enabled.
+  try {
+    const colCheck = await setupPool.query(
+      `SELECT 1 FROM information_schema.columns
+       WHERE table_name = 'memory_nodes' AND column_name = 'embedding_vec' LIMIT 1`
+    );
+    if (colCheck.rows.length === 0) {
+      process.stderr.write("[memory-server] embedding_vec column missing — re-applying migration 002\n");
+      const { readFileSync } = await import("fs");
+      const { resolve, dirname } = await import("path");
+      const { fileURLToPath } = await import("url");
+      const migrationPath = resolve(dirname(fileURLToPath(import.meta.url)), "../migrations/002-vector-index.sql");
+      const sql = readFileSync(migrationPath, "utf-8");
+      await setupPool.query(sql);
+      process.stderr.write("[memory-server] embedding_vec column created\n");
+    }
+  } catch (err) {
+    process.stderr.write(`[memory-server] Vector column repair skipped: ${err.message}\n`);
+  }
+  await setupPool.end();
+
   await memory.ensureLayers(CLIENT_ID);
 
   const server = new McpServer({
