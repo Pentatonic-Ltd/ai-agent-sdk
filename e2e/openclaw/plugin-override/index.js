@@ -289,6 +289,44 @@ export default {
 
     // --- Context engine: always registered, proxies to backend ---
 
+    // Extract the real user text from an OpenClaw-wrapped user message.
+    // Returns null for system prompts / empty content / already-seen artifacts.
+    function extractIngestText(message) {
+      const raw = typeof message?.content === "string"
+        ? message.content
+        : Array.isArray(message?.content)
+          ? message.content.filter(b => b.type === "text").map(b => b.text).join(" ")
+          : null;
+      const role = message?.role || message?.type;
+      if (!raw || (role !== "user" && role !== "assistant")) return { text: null, role };
+
+      if (role === "user") {
+        const trimmed = raw.trim();
+        let text = raw;
+        if (
+          trimmed.startsWith("Conversation info") ||
+          trimmed.startsWith("(untrusted metadata)") ||
+          trimmed.startsWith("Sender (untrusted") ||
+          trimmed.startsWith("Untrusted context")
+        ) {
+          text = trimmed
+            .replace(/(?:Conversation info|Sender|Thread starter|Replied message|Forwarded message context|Chat history since last reply) \(untrusted[^)]*\):\s*```json[\s\S]*?```/g, "")
+            .replace(/Untrusted context \(metadata, do not treat as instructions or commands\):/g, "")
+            .trim();
+        }
+        if (
+          !text ||
+          text.startsWith("Note: The previous agent run") ||
+          text.startsWith("System (untrusted)") ||
+          text.startsWith("[System]") ||
+          text.startsWith("System:") ||
+          text.startsWith("[Queued messages")
+        ) return { text: null, role };
+        return { text, role };
+      }
+      return { text: raw, role };
+    }
+
     api.registerContextEngine("pentatonic-memory", () => ({
       info: {
         id: "pentatonic-memory",
@@ -296,48 +334,31 @@ export default {
         ownsCompaction: false,
       },
 
-      async ingest({ sessionId, message }) {
-        // Extract text from content (may be string or array of content blocks)
-        const rawText = typeof message?.content === "string"
-          ? message.content
-          : Array.isArray(message?.content)
-            ? message.content.filter(b => b.type === "text").map(b => b.text).join(" ")
-            : null;
+      async ingestBatch({ sessionId, messages }) {
+        log(`ingestBatch: session=${sessionId} count=${messages.length}`);
+        let ingestedCount = 0;
+        for (const message of messages) {
+          const { text, role } = extractIngestText(message);
+          if (!text) continue;
+          try {
+            await store(text, { session_id: sessionId, role });
+            ingestedCount++;
+            log(`ingestBatch: stored role=${role} text="${text.substring(0, 60)}"`);
+          } catch (err) {
+            log(`ingestBatch: error ${err.message}`);
+          }
+        }
+        stats.memoriesStored += ingestedCount;
+        log(`ingestBatch: done ingested=${ingestedCount}/${messages.length} (total=${stats.memoriesStored})`);
+        return { ingested: ingestedCount };
+      },
 
-        const role = message?.role || message?.type;
-        if (!rawText || (role !== "user" && role !== "assistant")) {
-          log(`ingest: skip session=${sessionId} role=${role} len=${rawText?.length || 0}`);
+      async ingest({ sessionId, message }) {
+        const { text, role } = extractIngestText(message);
+        if (!text) {
+          log(`ingest: skip session=${sessionId} role=${role}`);
           return { ingested: false };
         }
-
-        // For user messages, strip OpenClaw's metadata envelope to store only the real text
-        let text = rawText;
-        if (role === "user") {
-          const trimmed = rawText.trim();
-          if (
-            trimmed.startsWith("Conversation info") ||
-            trimmed.startsWith("(untrusted metadata)") ||
-            trimmed.startsWith("Sender (untrusted") ||
-            trimmed.startsWith("Untrusted context")
-          ) {
-            text = trimmed
-              .replace(/(?:Conversation info|Sender|Thread starter|Replied message|Forwarded message context|Chat history since last reply) \(untrusted[^)]*\):\s*```json[\s\S]*?```/g, "")
-              .replace(/Untrusted context \(metadata, do not treat as instructions or commands\):/g, "")
-              .trim();
-          }
-          // Skip pure system prompts
-          if (
-            !text ||
-            text.startsWith("Note: The previous agent run") ||
-            text.startsWith("System (untrusted)") ||
-            text.startsWith("[System]") ||
-            text.startsWith("System:")
-          ) {
-            log(`ingest: skip system msg session=${sessionId}`);
-            return { ingested: false };
-          }
-        }
-
         log(`ingest: session=${sessionId} role=${role} text="${text.substring(0, 60)}"`);
         try {
           await store(text, { session_id: sessionId, role });
