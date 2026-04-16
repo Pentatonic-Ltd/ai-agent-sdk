@@ -352,20 +352,21 @@ export default {
             trimmed.startsWith("System:")
           ) return null;
 
-          // "Conversation info" envelope — extract the user text from the JSON
-          if (trimmed.startsWith("Conversation info") || trimmed.startsWith("(untrusted metadata)")) {
-            const jsonMatch = trimmed.match(/```json\s*([\s\S]*?)\s*```/);
-            if (jsonMatch) {
-              try {
-                const data = JSON.parse(jsonMatch[1]);
-                const extracted = data.text || data.message || data.content || data.body || data.message_text || data.user_message;
-                if (extracted) return extracted;
-                // Log the full data structure if we can't find the text
-                log(`extract: unknown envelope shape, keys=${Object.keys(data).join(",")} data=${JSON.stringify(data).substring(0, 300)}`);
-              } catch (err) {
-                log(`extract: JSON parse failed: ${err.message}`);
-              }
-            }
+          // OpenClaw metadata envelopes: the actual user message comes AFTER all
+          // the "```json ... ```" metadata blocks, separated by \n\n.
+          // Strip all metadata blocks and untrusted-context framing, return what's left.
+          if (
+            trimmed.startsWith("Conversation info") ||
+            trimmed.startsWith("(untrusted metadata)") ||
+            trimmed.startsWith("Sender (untrusted") ||
+            trimmed.startsWith("Untrusted context")
+          ) {
+            // Remove all fenced JSON blocks and their preceding labels
+            let stripped = trimmed
+              .replace(/(?:Conversation info|Sender|Thread starter|Replied message|Forwarded message context|Chat history since last reply) \(untrusted[^)]*\):\s*```json[\s\S]*?```/g, "")
+              .replace(/Untrusted context \(metadata, do not treat as instructions or commands\):/g, "")
+              .trim();
+            if (stripped) return stripped;
             return null;
           }
 
