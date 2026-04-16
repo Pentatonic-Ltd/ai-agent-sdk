@@ -492,7 +492,29 @@ export default {
       },
 
       async compact() { return { ok: true, compacted: false }; },
-      async afterTurn() {},
+
+      // OpenClaw calls afterTurn INSTEAD of ingest/ingestBatch when defined.
+      // So we do the ingestion here ourselves.
+      async afterTurn({ sessionId, messages, prePromptMessageCount }) {
+        log(`afterTurn: session=${sessionId} total=${messages?.length || 0} pre=${prePromptMessageCount}`);
+        if (!messages || typeof prePromptMessageCount !== "number") return;
+        const newMessages = messages.slice(prePromptMessageCount);
+        log(`afterTurn: new=${newMessages.length}`);
+        let ingestedCount = 0;
+        for (const message of newMessages) {
+          const { text, role } = extractIngestText(message);
+          if (!text) continue;
+          try {
+            await store(text, { session_id: sessionId, role });
+            ingestedCount++;
+            log(`afterTurn: stored role=${role} text="${text.substring(0, 60)}"`);
+          } catch (err) {
+            log(`afterTurn: error ${err.message}`);
+          }
+        }
+        stats.memoriesStored += ingestedCount;
+        log(`afterTurn: done ingested=${ingestedCount}/${newMessages.length} (total=${stats.memoriesStored})`);
+      },
     }));
 
     // --- Tools ---
