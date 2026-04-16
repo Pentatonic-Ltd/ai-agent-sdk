@@ -332,9 +332,19 @@ export default {
           return null;
         }
 
-        const lastUserMsg = [...messages].reverse().find((m) => m.role === "user" || m.type === "user");
-        const lastUserText = getTextContent(lastUserMsg);
-        if (!lastUserText) { log("assemble: no user text found"); return { messages, estimatedTokens: 0 }; }
+        // Find the last real user message — skip OpenClaw's internal metadata prompts
+        const reversed = [...messages].reverse();
+        let lastUserText = null;
+        for (const m of reversed) {
+          if (m.role !== "user" && m.type !== "user") continue;
+          const text = getTextContent(m);
+          if (!text) continue;
+          // Skip OpenClaw system-generated metadata messages
+          if (text.startsWith("Conversation info") || text.startsWith("[System]") || text.startsWith("System:")) continue;
+          lastUserText = text;
+          break;
+        }
+        if (!lastUserText) { log("assemble: no real user message found"); return { messages, estimatedTokens: 0 }; }
 
         try {
           log(`assemble: searching for "${lastUserText.substring(0, 50)}" at ${baseUrl}`);
