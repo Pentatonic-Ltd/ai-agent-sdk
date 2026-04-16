@@ -285,7 +285,49 @@ async function main() {
           res.end(JSON.stringify({ error: err.message }));
         }
       } else if (url.pathname === "/health") {
-        res.end(JSON.stringify({ status: "ok", client: CLIENT_ID }));
+        const health = {
+          status: "ok",
+          client: CLIENT_ID,
+          version: "0.4.7",
+          search: "text",
+          db: false,
+          ollama: false,
+          vector: false,
+        };
+
+        // Check DB
+        try {
+          const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+          await pool.query("SELECT 1");
+          health.db = true;
+          // Check vector column
+          const vecCheck = await pool.query(
+            `SELECT 1 FROM information_schema.columns WHERE table_name = 'memory_nodes' AND column_name = 'embedding_vec' LIMIT 1`
+          );
+          health.vector = (vecCheck.rows || []).length > 0;
+          // Check memory count
+          try {
+            const countRes = await pool.query(
+              "SELECT COUNT(*)::int as cnt FROM memory_nodes WHERE client_id = $1", [CLIENT_ID]
+            );
+            health.memories = countRes.rows[0].cnt;
+          } catch { /* table may not exist yet */ }
+          await pool.end();
+        } catch { /* db not reachable */ }
+
+        // Check Ollama
+        try {
+          const ollamaRes = await fetch(
+            `${process.env.EMBEDDING_URL || "http://localhost:11434/v1"}/models`,
+            { signal: AbortSignal.timeout(3000) }
+          );
+          if (ollamaRes.ok) {
+            health.ollama = true;
+            health.search = health.vector ? "vector+text" : "text";
+          }
+        } catch { /* ollama not reachable */ }
+
+        res.end(JSON.stringify(health));
       } else {
         res.statusCode = 404;
         res.end(JSON.stringify({ error: "not found" }));
