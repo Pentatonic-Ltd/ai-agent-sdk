@@ -55,12 +55,13 @@ async function localSearch(baseUrl, query, limit = 5, minScore = 0.3) {
       body: JSON.stringify({ query, limit, min_score: minScore }),
       signal: AbortSignal.timeout(5000),
     });
-    if (!res.ok) { stats.backendReachable = false; return []; }
+    if (!res.ok) { stats.backendReachable = false; console.error(`[pentatonic-memory] search HTTP ${res.status}`); return []; }
     stats.backendReachable = true;
     const data = await res.json();
     return data.results || [];
-  } catch {
+  } catch (err) {
     stats.backendReachable = false;
+    console.error(`[pentatonic-memory] search fetch error: ${err.message}`);
     return [];
   }
 }
@@ -73,11 +74,12 @@ async function localStore(baseUrl, content, metadata = {}) {
       body: JSON.stringify({ content, metadata }),
       signal: AbortSignal.timeout(10000),
     });
-    if (!res.ok) { stats.backendReachable = false; return null; }
+    if (!res.ok) { stats.backendReachable = false; console.error(`[pentatonic-memory] store HTTP ${res.status}`); return null; }
     stats.backendReachable = true;
     return res.json();
-  } catch {
+  } catch (err) {
     stats.backendReachable = false;
+    console.error(`[pentatonic-memory] store fetch error: ${err.message}`);
     return null;
   }
 }
@@ -264,7 +266,7 @@ export default {
   kind: "context-engine",
 
   register(api) {
-    const config = api.config || {};
+    const config = api.pluginConfig || api.config?.plugins?.entries?.["pentatonic-memory"]?.config || api.config || {};
     const hosted = !!(config.tes_endpoint && config.tes_api_key);
     const baseUrl = config.memory_url || "http://localhost:3333";
     const searchLimit = config.search_limit || 5;
