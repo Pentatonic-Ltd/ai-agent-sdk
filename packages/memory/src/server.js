@@ -290,10 +290,11 @@ async function main() {
 
       if (url.pathname === "/search" && req.method === "POST") {
         try {
-          // Use text search by default (fast, no external dependencies).
-          // Vector search available via ?mode=vector if embeddings are working.
-          const useVector = url.searchParams.get("mode") === "vector";
-          const searchFn = useVector ? memory.search : memory.textSearch;
+          // Try vector search first (embeddings + BM25 + recency + frequency).
+          // Falls back to text-only search internally if embeddings fail.
+          // Use ?mode=text to force text-only search.
+          const textOnly = url.searchParams.get("mode") === "text";
+          const searchFn = textOnly ? memory.textSearch : memory.search;
           const results = await searchFn(body.query || "", {
             clientId: CLIENT_ID,
             limit: body.limit || 5,

@@ -271,7 +271,10 @@ export default {
     const baseUrl = config.memory_url || "http://localhost:3333";
     const searchLimit = config.search_limit || 5;
     const minScore = config.min_score || 0.3;
-    const log = (msg) => process.stderr.write(`[pentatonic-memory] ${msg}\n`);
+    const log = (msg) => console.error(`[pentatonic-memory] ${msg}`);
+
+    log(`register: config=${JSON.stringify(config)}`);
+    log(`register: baseUrl=${baseUrl} hosted=${hosted}`);
 
     stats.mode = hosted ? "hosted" : "local";
 
@@ -294,21 +297,25 @@ export default {
       },
 
       async ingest({ sessionId, message }) {
+        log(`ingest: session=${sessionId} role=${message?.role} len=${message?.content?.length || 0}`);
         if (!message?.content) return { ingested: false };
         const role = message.role || message.type;
         if (role !== "user" && role !== "assistant") return { ingested: false };
         try {
           await store(message.content, { session_id: sessionId, role });
           stats.memoriesStored++;
+          log(`ingest: stored (total=${stats.memoriesStored})`);
           return { ingested: true };
-        } catch {
+        } catch (err) {
+          log(`ingest: error ${err.message}`);
           return { ingested: false };
         }
       },
 
       async assemble({ sessionId, messages }) {
+        log(`assemble: session=${sessionId} msgs=${messages.length}`);
         const lastUserMsg = [...messages].reverse().find((m) => m.role === "user" || m.type === "user");
-        if (!lastUserMsg?.content) return { messages, estimatedTokens: 0 };
+        if (!lastUserMsg?.content) { log("assemble: no user message"); return { messages, estimatedTokens: 0 }; }
 
         // First interaction: welcome the user and offer TES upgrade
         if (!stats.setupPrompted) {
@@ -357,7 +364,9 @@ export default {
         }
 
         try {
+          log(`assemble: searching for "${lastUserMsg.content.substring(0, 50)}" at ${baseUrl}`);
           const results = await search(lastUserMsg.content, searchLimit, minScore);
+          log(`assemble: got ${results.length} results`);
           if (!results.length) {
             stats.lastAssembleCount = 0;
             return { messages, estimatedTokens: 0 };

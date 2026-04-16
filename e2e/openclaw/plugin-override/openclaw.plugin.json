@@ -14,6 +14,11 @@
         "default": "local",
         "description": "Local (Docker + Ollama) or hosted (Pentatonic TES)"
       },
+      "memory_url": {
+        "type": "string",
+        "default": "http://localhost:3333",
+        "description": "Memory server HTTP URL (local mode, default: http://localhost:3333)"
+      },
       "database_url": {
         "type": "string",
         "description": "PostgreSQL connection string (local mode)"
