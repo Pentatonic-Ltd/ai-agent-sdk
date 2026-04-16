@@ -346,13 +346,22 @@ export default {
             trimmed.startsWith("Conversation info") ||
             trimmed.startsWith("Note: The previous agent run") ||
             trimmed.startsWith("(untrusted metadata)") ||
+            trimmed.startsWith("[Queued messages") ||
             trimmed.startsWith("[System]") ||
             trimmed.startsWith("System:")
           ) continue;
           lastUserText = text;
           break;
         }
-        if (!lastUserText) { log("assemble: no real user message found"); return { messages, estimatedTokens: 0 }; }
+        if (!lastUserText) {
+          // Log previews of all user messages so we can spot new internal prompt prefixes
+          const previews = messages
+            .filter(m => m.role === "user" || m.type === "user")
+            .map(m => getTextContent(m)?.substring(0, 60) || "")
+            .filter(Boolean);
+          log(`assemble: no real user message — all filtered. previews=${JSON.stringify(previews)}`);
+          return { messages, estimatedTokens: 0 };
+        }
 
         try {
           log(`assemble: searching for "${lastUserText.substring(0, 50)}" at ${baseUrl}`);
