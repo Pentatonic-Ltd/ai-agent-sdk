@@ -1,6 +1,6 @@
 {
   "name": "@pentatonic-ai/openclaw-memory-plugin",
-  "version": "0.6.11",
+  "version": "0.6.12",
   "description": "Pentatonic Memory plugin for OpenClaw — persistent, searchable memory with multi-signal retrieval and HyDE query expansion",
   "type": "module",
   "main": "index.js",

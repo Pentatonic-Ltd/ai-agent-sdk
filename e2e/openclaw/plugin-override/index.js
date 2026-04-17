@@ -483,6 +483,7 @@ export default {
           ].join("\n");
 
           log(`assemble: injecting ${addition.length} chars of systemPromptAddition`);
+          log(`assemble: content=${addition.replace(/\n/g, " | ").substring(0, 500)}`);
           return { messages, estimatedTokens: Math.ceil(addition.length / 4), systemPromptAddition: addition };
         } catch {
           stats.lastAssembleCount = 0;
