@@ -274,9 +274,6 @@ export default {
     const minScore = config.min_score || 0.3;
     const log = (msg) => console.error(`[pentatonic-memory] ${msg}`);
 
-    log(`register: config=${JSON.stringify(config)}`);
-    log(`register: baseUrl=${baseUrl} hosted=${hosted}`);
-
     stats.mode = hosted ? "hosted" : "local";
 
     // Unified search/store that routes to local or hosted
@@ -336,7 +333,6 @@ export default {
       },
 
       async ingestBatch({ sessionId, messages }) {
-        log(`ingestBatch: session=${sessionId} count=${messages.length}`);
         let ingestedCount = 0;
         for (const message of messages) {
           const { text, role } = extractIngestText(message);
@@ -344,27 +340,23 @@ export default {
           try {
             await store(text, { session_id: sessionId, role });
             ingestedCount++;
-            log(`ingestBatch: stored role=${role} text="${text.substring(0, 60)}"`);
           } catch (err) {
             log(`ingestBatch: error ${err.message}`);
           }
         }
         stats.memoriesStored += ingestedCount;
-        log(`ingestBatch: done ingested=${ingestedCount}/${messages.length} (total=${stats.memoriesStored})`);
+        if (ingestedCount > 0) {
+          log(`ingestBatch: ingested ${ingestedCount}/${messages.length} (total=${stats.memoriesStored})`);
+        }
         return { ingested: ingestedCount };
       },
 
       async ingest({ sessionId, message }) {
         const { text, role } = extractIngestText(message);
-        if (!text) {
-          log(`ingest: skip session=${sessionId} role=${role}`);
-          return { ingested: false };
-        }
-        log(`ingest: session=${sessionId} role=${role} text="${text.substring(0, 60)}"`);
+        if (!text) return { ingested: false };
         try {
           await store(text, { session_id: sessionId, role });
           stats.memoriesStored++;
-          log(`ingest: stored (total=${stats.memoriesStored})`);
           return { ingested: true };
         } catch (err) {
           log(`ingest: error ${err.message}`);
@@ -373,8 +365,6 @@ export default {
       },
 
       async assemble({ sessionId, messages }) {
-        log(`assemble: session=${sessionId} msgs=${messages.length}`);
-
         // Extract text from message content (may be string or array of content blocks)
         function getTextContent(msg) {
           if (!msg) return null;
@@ -442,24 +432,14 @@ export default {
           const extracted = extractUserText(text);
           if (extracted) {
             lastUserText = extracted;
-            log(`assemble: extracted user text: "${extracted.substring(0, 80)}"`);
             break;
           }
         }
-        if (!lastUserText) {
-          // Log previews of all user messages so we can spot new internal prompt prefixes
-          const previews = messages
-            .filter(m => m.role === "user" || m.type === "user")
-            .map(m => getTextContent(m)?.substring(0, 60) || "")
-            .filter(Boolean);
-          log(`assemble: no real user message — all filtered. previews=${JSON.stringify(previews)}`);
-          return { messages, estimatedTokens: 0 };
-        }
+        if (!lastUserText) return { messages, estimatedTokens: 0 };
 
         try {
-          log(`assemble: searching for "${lastUserText.substring(0, 50)}" at ${baseUrl}`);
           const results = await search(lastUserText, searchLimit, minScore);
-          log(`assemble: got ${results.length} results`);
+          log(`assemble: "${lastUserText.substring(0, 50)}" → ${results.length} results`);
           if (!results.length) {
             stats.lastAssembleCount = 0;
             return { messages, estimatedTokens: 0 };
@@ -482,8 +462,6 @@ export default {
             `=== END PENTATONIC MEMORY ===`,
           ].join("\n");
 
-          log(`assemble: injecting ${addition.length} chars of systemPromptAddition`);
-          log(`assemble: content=${addition.replace(/\n/g, " | ").substring(0, 500)}`);
           return { messages, estimatedTokens: Math.ceil(addition.length / 4), systemPromptAddition: addition };
         } catch {
           stats.lastAssembleCount = 0;
@@ -496,10 +474,8 @@ export default {
       // OpenClaw calls afterTurn INSTEAD of ingest/ingestBatch when defined.
       // So we do the ingestion here ourselves.
       async afterTurn({ sessionId, messages, prePromptMessageCount }) {
-        log(`afterTurn: session=${sessionId} total=${messages?.length || 0} pre=${prePromptMessageCount}`);
         if (!messages || typeof prePromptMessageCount !== "number") return;
         const newMessages = messages.slice(prePromptMessageCount);
-        log(`afterTurn: new=${newMessages.length}`);
         let ingestedCount = 0;
         for (const message of newMessages) {
           const { text, role } = extractIngestText(message);
@@ -507,13 +483,14 @@ export default {
           try {
             await store(text, { session_id: sessionId, role });
             ingestedCount++;
-            log(`afterTurn: stored role=${role} text="${text.substring(0, 60)}"`);
           } catch (err) {
             log(`afterTurn: error ${err.message}`);
           }
         }
         stats.memoriesStored += ingestedCount;
-        log(`afterTurn: done ingested=${ingestedCount}/${newMessages.length} (total=${stats.memoriesStored})`);
+        if (ingestedCount > 0) {
+          log(`afterTurn: ingested ${ingestedCount}/${newMessages.length} (total=${stats.memoriesStored})`);
+        }
       },
     }));
 
