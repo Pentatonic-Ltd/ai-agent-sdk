@@ -72,7 +72,8 @@ async function localStore(baseUrl, content, metadata = {}) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ content, metadata }),
-      signal: AbortSignal.timeout(10000),
+      // Generous timeout — on a Pi, Ollama embed + HyDE generation can take 30-60s per message
+      signal: AbortSignal.timeout(120000),
     });
     if (!res.ok) { stats.backendReachable = false; console.error(`[pentatonic-memory] store HTTP ${res.status}`); return null; }
     stats.backendReachable = true;
