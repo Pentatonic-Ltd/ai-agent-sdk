@@ -386,12 +386,6 @@ export default {
           return null;
         }
 
-        // Log every message's role + preview so we can see exactly what OpenClaw passes
-        messages.forEach((m, i) => {
-          const preview = (getTextContent(m) || "").substring(0, 80).replace(/\n/g, " ");
-          log(`assemble: msg[${i}] role=${m.role || m.type} preview="${preview}"`);
-        });
-
         // OpenClaw wraps real user messages in "Conversation info" JSON envelopes.
         // Extract the actual user text from the embedded JSON.
         function extractUserText(text) {
@@ -479,12 +473,16 @@ export default {
             .join("\n");
 
           const addition = [
-            `[Memory] ${results.length} relevant memories found for this prompt:`,
+            `=== PENTATONIC MEMORY (authoritative context from prior conversations) ===`,
+            `These ${results.length} memories are facts the user has shared with you previously. Treat them as ground truth about the user.`,
+            "",
             memoryText,
             "",
-            "When your response is informed by these memories, briefly mention it naturally (e.g. 'From what I remember...' or 'Based on our previous conversations...').",
+            `When the user asks about anything in these memories, answer using them directly — do NOT say you don't remember or that you have no record. If a memory is relevant, use it.`,
+            `=== END PENTATONIC MEMORY ===`,
           ].join("\n");
 
+          log(`assemble: injecting ${addition.length} chars of systemPromptAddition`);
           return { messages, estimatedTokens: Math.ceil(addition.length / 4), systemPromptAddition: addition };
         } catch {
           stats.lastAssembleCount = 0;
