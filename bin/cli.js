@@ -33,13 +33,19 @@ function ask(question) {
 }
 
 function askSecret(question) {
+  // Non-TTY fallback: piped/redirected input can't use raw mode.
+  // rl.close() would discard buffered stdin, so use readline directly instead.
+  if (!process.stdin.isTTY) {
+    return new Promise((resolve) => rl.question(question, resolve));
+  }
+
   return new Promise((resolve) => {
     // Close readline so it stops echoing input
     rl.close();
 
     process.stdout.write(question);
     const stdin = process.stdin;
-    if (stdin.isTTY) stdin.setRawMode(true);
+    stdin.setRawMode(true);
     stdin.resume();
 
     let input = "";
@@ -47,7 +53,7 @@ function askSecret(question) {
       const c = ch.toString();
       if (c === "\n" || c === "\r") {
         stdin.removeListener("data", onData);
-        if (stdin.isTTY) stdin.setRawMode(false);
+        stdin.setRawMode(false);
         stdin.pause();
         process.stdout.write("\n");
         // Recreate readline for subsequent prompts
