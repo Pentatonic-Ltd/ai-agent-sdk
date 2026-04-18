@@ -12,16 +12,57 @@ function parseArgs() {
   const args = process.argv.slice(2);
   const flags = {};
   for (let i = 0; i < args.length; i++) {
-    if (args[i] === "--endpoint" && args[i + 1]) {
-      flags.endpoint = args[i + 1];
-      i++;
-    } else if (args[i].startsWith("--endpoint=")) {
-      flags.endpoint = args[i].split("=")[1];
-    } else if (!args[i].startsWith("--")) {
-      flags.command = args[i];
+    const a = args[i];
+    if (a === "--endpoint" && args[i + 1]) {
+      flags.endpoint = args[++i];
+    } else if (a.startsWith("--endpoint=")) {
+      flags.endpoint = a.split("=")[1];
+    } else if (a === "--path" && args[i + 1]) {
+      flags.path = args[++i];
+    } else if (a.startsWith("--path=")) {
+      flags.path = a.split("=")[1];
+    } else if (a === "--timeout" && args[i + 1]) {
+      flags.timeout = parseInt(args[++i], 10);
+    } else if (a.startsWith("--timeout=")) {
+      flags.timeout = parseInt(a.split("=")[1], 10);
+    } else if (a === "--json") {
+      flags.json = true;
+    } else if (a === "--alert") {
+      flags.alert = true;
+    } else if (a === "--no-plugins") {
+      flags.noPlugins = true;
+    } else if (!a.startsWith("--")) {
+      flags.command = a;
     }
   }
   return flags;
+}
+
+async function runDoctorCommand(flags) {
+  // Lazy-load to keep doctor's pg dep optional for users who only run
+  // `npx ai-agent-sdk init` or `memory`.
+  const { runDoctor, renderHuman, renderJson } = await import(
+    "../packages/doctor/src/index.js"
+  );
+
+  const report = await runDoctor({
+    path: flags.path || "auto",
+    plugins: !flags.noPlugins,
+    timeoutMs: flags.timeout,
+  });
+
+  const hasIssues = report.summary.warning + report.summary.critical > 0;
+  if (flags.alert && !hasIssues) return 0;
+
+  if (flags.json) {
+    process.stdout.write(renderJson(report) + "\n");
+  } else {
+    process.stdout.write(renderHuman(report) + "\n");
+  }
+
+  if (report.summary.critical > 0) return 2;
+  if (report.summary.warning > 0) return 1;
+  return 0;
 }
 const POLL_INTERVAL_MS = 3000;
 const POLL_TIMEOUT_MS = 300000; // 5 minutes
@@ -248,6 +289,12 @@ async function main() {
     return;
   }
 
+  if (flags.command === "doctor") {
+    const code = await runDoctorCommand(flags);
+    rl.close();
+    process.exit(code);
+  }
+
   if (flags.command !== "init") {
     console.log(`
 @pentatonic-ai/ai-agent-sdk
@@ -255,7 +302,15 @@ async function main() {
 Usage:
   npx @pentatonic-ai/ai-agent-sdk init                    Set up hosted TES account
   npx @pentatonic-ai/ai-agent-sdk memory                  Set up local memory stack
+  npx @pentatonic-ai/ai-agent-sdk doctor                  Run health checks (exit 0/1/2)
   npx @pentatonic-ai/ai-agent-sdk init --endpoint URL     Use a custom TES endpoint
+
+doctor flags:
+  --json                  Emit a JSON report
+  --alert                 Suppress output when all green
+  --no-plugins            Skip ~/.config/pentatonic-ai/doctor-plugins/*
+  --path local|hosted|platform|auto
+  --timeout <ms>          Per-check timeout (default 10000)
 
 For docs, see https://api.pentatonic.com
     `);
