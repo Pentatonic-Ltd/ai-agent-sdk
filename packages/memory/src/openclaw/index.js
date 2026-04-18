@@ -38,6 +38,10 @@
 import pg from "pg";
 import { createMemorySystem } from "../index.js";
 import { createContextEngine } from "./context-engine.js";
+// VI signing — best-effort, never blocks emit. See ../../../../src/vi.js
+// for the JWS spec; signed events satisfy the conversation-analytics
+// dashboard's Verifiable Intent tab.
+import { signForSession } from "../../../../src/vi-session.js";
 
 const { Pool } = pg;
 
@@ -138,6 +142,15 @@ async function hostedEmitChatTurn(config, sessionId, turn) {
   if (turn.toolCalls?.length) attributes.tool_calls = turn.toolCalls;
   if (turn.turnNumber !== undefined) attributes.turn_number = turn.turnNumber;
   if (turn.systemPrompt) attributes.system_prompt = turn.systemPrompt;
+
+  // VI signing — sign the attributes (the bound event body the verifier
+  // hashes). Attached as attributes.vi.worker_jws to match the sidecar
+  // shape verifyEventVI expects in workers/consumers/eventStorage.js.
+  // Disable per-config with vi_disabled: true.
+  if (config.vi_disabled !== true) {
+    const jws = await signForSession(sessionId, attributes);
+    if (jws) attributes.vi = { worker_jws: jws };
+  }
 
   try {
     const response = await fetch(`${config.tes_endpoint}/api/graphql`, {
