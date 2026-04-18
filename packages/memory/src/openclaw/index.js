@@ -117,6 +117,56 @@ async function hostedSearch(config, query, limit = 5, minScore = 0.3) {
   }
 }
 
+/**
+ * Emit a CHAT_TURN event to TES so the conversation-analytics dashboard
+ * (Token Universe + Tools tabs) can render. Without this, the dashboard
+ * filters on eventType=CHAT_TURN and shows nothing for OpenClaw users
+ * because the only events emitted are STORE_MEMORY.
+ *
+ * Anything missing from the message metadata is omitted rather than
+ * defaulted to zero — that way the dashboard can distinguish "no data"
+ * from "zero usage".
+ */
+async function hostedEmitChatTurn(config, sessionId, turn) {
+  const attributes = {
+    source: "openclaw-plugin",
+    user_message: turn.userMessage,
+    assistant_response: turn.assistantResponse,
+  };
+  if (turn.model) attributes.model = turn.model;
+  if (turn.usage) attributes.usage = turn.usage;
+  if (turn.toolCalls?.length) attributes.tool_calls = turn.toolCalls;
+  if (turn.turnNumber !== undefined) attributes.turn_number = turn.turnNumber;
+  if (turn.systemPrompt) attributes.system_prompt = turn.systemPrompt;
+
+  try {
+    const response = await fetch(`${config.tes_endpoint}/api/graphql`, {
+      method: "POST",
+      headers: tesHeaders(config),
+      body: JSON.stringify({
+        query: `mutation EmitEvent($input: EventInput!) {
+          emitEvent(input: $input) { eventId success message }
+        }`,
+        variables: {
+          input: {
+            eventType: "CHAT_TURN",
+            entityType: "conversation",
+            data: {
+              entity_id: sessionId,
+              attributes,
+            },
+          },
+        },
+      }),
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!response.ok) return null;
+    return response.json();
+  } catch {
+    return null;
+  }
+}
+
 async function hostedStore(config, content, metadata = {}) {
   try {
     const response = await fetch(`${config.tes_endpoint}/api/graphql`, {
@@ -152,6 +202,63 @@ async function hostedStore(config, content, metadata = {}) {
 
 // --- Hosted context engine ---
 
+// Per-session turn buffer. Holds the user message until the matching
+// assistant response arrives, at which point we emit a CHAT_TURN.
+// Turn counter is kept in a separate map so it survives buffer clears
+// between turns. Module-scoped (rather than per-engine) so multiple
+// engine instances don't double-buffer the same session.
+const turnBuffers = new Map(); // sessionId → { userMessage }
+const turnCounters = new Map(); // sessionId → highest turn_number emitted
+
+function _resetTurnBuffersForTest() {
+  turnBuffers.clear();
+  turnCounters.clear();
+}
+export { _resetTurnBuffersForTest };
+
+// Pull whatever the runtime hands us. Different OpenClaw versions wrap
+// provider responses differently — we look in the obvious places and
+// silently omit fields we can't find. The dashboard handles undefined
+// usage/tool_calls gracefully (renders "no data" rather than zeros).
+function extractAssistantMetadata(message) {
+  const meta = {};
+  // Direct fields first (richest hook contracts)
+  if (message.model) meta.model = message.model;
+  if (message.usage) meta.usage = message.usage;
+  if (Array.isArray(message.tool_calls) && message.tool_calls.length) {
+    meta.toolCalls = message.tool_calls;
+  } else if (Array.isArray(message.toolCalls) && message.toolCalls.length) {
+    meta.toolCalls = message.toolCalls;
+  }
+  // Fall back to a wrapped raw response if the runtime forwards it
+  const raw = message.raw || message.response || message._raw;
+  if (raw && typeof raw === "object") {
+    if (!meta.model && raw.model) meta.model = raw.model;
+    if (!meta.usage && raw.usage) meta.usage = raw.usage;
+    if (!meta.toolCalls) {
+      // Anthropic puts tool_use blocks in raw.content[]
+      if (Array.isArray(raw.content)) {
+        const tc = raw.content
+          .filter((b) => b?.type === "tool_use")
+          .map((b) => ({ tool: b.name, args: b.input || {} }));
+        if (tc.length) meta.toolCalls = tc;
+      }
+      // OpenAI puts tool_calls inside choices[0].message
+      if (
+        !meta.toolCalls &&
+        Array.isArray(raw.choices) &&
+        raw.choices[0]?.message?.tool_calls
+      ) {
+        meta.toolCalls = raw.choices[0].message.tool_calls.map((tc) => ({
+          tool: tc.function?.name || tc.name,
+          args: tc.function?.arguments,
+        }));
+      }
+    }
+  }
+  return meta;
+}
+
 function createHostedContextEngine(config, opts = {}) {
   const searchLimit = opts.searchLimit || 5;
   const minScore = opts.minScore || 0.3;
@@ -169,17 +276,50 @@ function createHostedContextEngine(config, opts = {}) {
       const role = message.role || message.type;
       if (role !== "user" && role !== "assistant") return { ingested: false };
 
+      // STORE_MEMORY for retrieval (existing behaviour — unchanged).
       try {
         await hostedStore(config, message.content, {
           session_id: sessionId,
           role,
         });
         log(`[memory] Ingested ${role} message via TES`);
-        return { ingested: true };
       } catch (err) {
         log(`[memory] Hosted ingest failed: ${err.message}`);
-        return { ingested: false };
       }
+
+      // CHAT_TURN buffering for analytics. We pair each user message with
+      // the next assistant message in the same session and emit on the
+      // assistant turn. This is what populates the conversation-analytics
+      // Token Universe + Tools tabs.
+      try {
+        if (role === "user") {
+          turnBuffers.set(sessionId, {
+            userMessage: String(message.content),
+          });
+        } else if (role === "assistant") {
+          const buf = turnBuffers.get(sessionId);
+          const turnNumber = (turnCounters.get(sessionId) || 0) + 1;
+          turnCounters.set(sessionId, turnNumber);
+          // Even with no buffered user message we still emit, so an
+          // assistant-only event isn't dropped — it just renders without
+          // a prompt half.
+          const meta = extractAssistantMetadata(message);
+          await hostedEmitChatTurn(config, sessionId, {
+            userMessage: buf?.userMessage,
+            assistantResponse: String(message.content),
+            turnNumber,
+            ...meta,
+          });
+          turnBuffers.delete(sessionId);
+          log(
+            `[memory] Emitted CHAT_TURN${meta.usage ? " w/ usage" : ""}${meta.toolCalls?.length ? ` w/ ${meta.toolCalls.length} tool_calls` : ""}`
+          );
+        }
+      } catch (err) {
+        log(`[memory] CHAT_TURN emit failed: ${err.message}`);
+      }
+
+      return { ingested: true };
     },
 
     async assemble({ sessionId, messages }) {
