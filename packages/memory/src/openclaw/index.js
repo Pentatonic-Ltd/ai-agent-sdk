@@ -143,14 +143,21 @@ async function hostedEmitChatTurn(config, sessionId, turn) {
     const response = await fetch(`${config.tes_endpoint}/api/graphql`, {
       method: "POST",
       headers: tesHeaders(config),
+      // Route through createModuleEvent on the conversation-analytics
+      // module rather than the top-level emitEvent. The latter requires
+      // a permission most client API keys don't have ("Access denied:
+      // You don't have permission to update emitEvent"), but the
+      // module's manifest declares CHAT_TURN as a registered event
+      // type, so the module-scoped path is both authorised and
+      // consistent with how STORE_MEMORY is emitted.
       body: JSON.stringify({
-        query: `mutation EmitEvent($input: EventInput!) {
-          emitEvent(input: $input) { eventId success message }
+        query: `mutation Cme($moduleId: String!, $input: ModuleEventInput!) {
+          createModuleEvent(moduleId: $moduleId, input: $input) { success eventId }
         }`,
         variables: {
+          moduleId: "conversation-analytics",
           input: {
             eventType: "CHAT_TURN",
-            entityType: "conversation",
             data: {
               entity_id: sessionId,
               attributes,
