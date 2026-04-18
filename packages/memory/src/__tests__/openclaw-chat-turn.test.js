@@ -66,7 +66,9 @@ describe("openclaw plugin — hosted CHAT_TURN emission", () => {
     });
 
     const chatTurnCall = calls.find(
-      (c) => c.body?.variables?.input?.eventType === "CHAT_TURN"
+      (c) =>
+        c.body?.variables?.moduleId === "conversation-analytics" &&
+        c.body?.variables?.input?.eventType === "CHAT_TURN"
     );
     expect(chatTurnCall).toBeDefined();
     const attrs = chatTurnCall.body.variables.input.data.attributes;
@@ -110,7 +112,9 @@ describe("openclaw plugin — hosted CHAT_TURN emission", () => {
       message: { role: "assistant", content: "ok" },
     });
     const turnCall = calls.find(
-      (c) => c.body?.variables?.input?.eventType === "CHAT_TURN"
+      (c) =>
+        c.body?.variables?.moduleId === "conversation-analytics" &&
+        c.body?.variables?.input?.eventType === "CHAT_TURN"
     );
     expect("usage" in turnCall.body.variables.input.data.attributes).toBe(false);
     expect("tool_calls" in turnCall.body.variables.input.data.attributes).toBe(
@@ -139,7 +143,9 @@ describe("openclaw plugin — hosted CHAT_TURN emission", () => {
       },
     });
     const attrs = calls.find(
-      (c) => c.body?.variables?.input?.eventType === "CHAT_TURN"
+      (c) =>
+        c.body?.variables?.moduleId === "conversation-analytics" &&
+        c.body?.variables?.input?.eventType === "CHAT_TURN"
     ).body.variables.input.data.attributes;
     expect(attrs.tool_calls).toEqual([
       { tool: "search", args: { q: "shoes" } },
@@ -160,7 +166,9 @@ describe("openclaw plugin — hosted CHAT_TURN emission", () => {
       });
     }
     const turns = calls.filter(
-      (c) => c.body?.variables?.input?.eventType === "CHAT_TURN"
+      (c) =>
+        c.body?.variables?.moduleId === "conversation-analytics" &&
+        c.body?.variables?.input?.eventType === "CHAT_TURN"
     );
     expect(turns.map((t) => t.body.variables.input.data.attributes.turn_number)).toEqual(
       [1, 2, 3]
@@ -175,7 +183,9 @@ describe("openclaw plugin — hosted CHAT_TURN emission", () => {
       message: { role: "assistant", content: "hi without prompt" },
     });
     const turn = calls.find(
-      (c) => c.body?.variables?.input?.eventType === "CHAT_TURN"
+      (c) =>
+        c.body?.variables?.moduleId === "conversation-analytics" &&
+        c.body?.variables?.input?.eventType === "CHAT_TURN"
     );
     expect(turn).toBeDefined();
     expect(turn.body.variables.input.data.attributes.user_message).toBeUndefined();
