@@ -128,6 +128,7 @@ function normalizeDb(db, schema) {
 export { createAIClient } from "./ai.js";
 export { search, textSearch } from "./search.js";
 export { ingest, generateHypotheticalQueries } from "./ingest.js";
+export { distill, extractAtomicFacts } from "./distill.js";
 export { decay } from "./decay.js";
 export { consolidate } from "./consolidate.js";
 export { ensureLayers, getLayers } from "./layers.js";

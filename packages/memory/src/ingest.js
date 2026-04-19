@@ -2,6 +2,8 @@
  * Memory ingestion — store content, generate embedding, generate HyDE queries.
  */
 
+import { distill } from "./distill.js";
+
 /**
  * Ingest content as a new memory node.
  *
@@ -79,6 +81,14 @@ export async function ingest(db, ai, llm, content, opts = {}) {
     }
   } catch (err) {
     log(`HyDE failed for ${memoryId}: ${err.message}`);
+  }
+
+  // Distill atomic facts in the background — only for raw ingestions
+  // (skip if this call is already storing a distilled atom or user opted out).
+  if (opts.distill !== false && !opts.sourceId) {
+    distill(db, ai, llm, memoryId, content, { ...opts, logger: log }).catch(
+      (err) => log(`distill failed for ${memoryId}: ${err.message}`)
+    );
   }
 
   return { id: memoryId, content, layerId };
