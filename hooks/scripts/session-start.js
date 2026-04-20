@@ -9,13 +9,12 @@ import {
   emitModuleEvent,
   writeTurnState,
   readStdin,
+  checkLocalServerVersion,
 } from "./shared.js";
 
 async function main() {
   const config = loadConfig();
-  if (!config?.tes_endpoint || !config?.tes_api_key) {
-    process.exit(0);
-  }
+  if (!config) process.exit(0);
 
   const input = readStdin();
   const sessionId = input.session_id || `claude-code-${Date.now()}`;
@@ -26,6 +25,17 @@ async function main() {
     turn_number: 0,
     session_start: Date.now(),
   });
+
+  // Local mode: verify memory server version is new enough and warn if not.
+  // Plugin updates don't update the Dockerised memory server — users need
+  // to re-run `npx @pentatonic-ai/ai-agent-sdk@latest memory` separately.
+  if (config.mode === "local") {
+    await checkLocalServerVersion(config);
+    return;
+  }
+
+  // Hosted mode: emit SESSION_START for analytics.
+  if (!config.tes_endpoint || !config.tes_api_key) process.exit(0);
 
   try {
     await emitModuleEvent(
