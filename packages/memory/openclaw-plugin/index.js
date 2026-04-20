@@ -554,6 +554,21 @@ export default {
             .map((m) => `- [${Math.round((m.similarity || 0) * 100)}%] ${m.content}`)
             .join("\n");
 
+          // Visibility marker: instruct the model to append a footer so the
+          // end user sees when Pentatonic Memory was used. Opt out with
+          // show_memory_indicator: false in plugin config.
+          const showIndicator = config.show_memory_indicator !== false;
+          const indicatorRule = showIndicator
+            ? [
+                "",
+                `After your reply, on a new line, append exactly this footer (no other prefix, no trailing content):`,
+                `—`,
+                `🧠 _Used ${results.length} memor${results.length === 1 ? "y" : "ies"} from Pentatonic Memory_`,
+                "",
+                `If the memories above were not relevant to your reply, omit the footer.`,
+              ]
+            : [];
+
           const addition = [
             `=== PENTATONIC MEMORY (authoritative context from prior conversations) ===`,
             `These ${results.length} memories are facts the user has shared with you previously. Treat them as ground truth about the user.`,
@@ -561,6 +576,7 @@ export default {
             memoryText,
             "",
             `When the user asks about anything in these memories, answer using them directly — do NOT say you don't remember or that you have no record. If a memory is relevant, use it.`,
+            ...indicatorRule,
             `=== END PENTATONIC MEMORY ===`,
           ].join("\n");
 

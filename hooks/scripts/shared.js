@@ -40,6 +40,42 @@ export function loadConfig() {
   return config;
 }
 
+// --- Memory Context Formatting ---
+
+/**
+ * Build the additionalContext string that UserPromptSubmit injects when
+ * memories are found. Includes a visible footer instruction so the end
+ * user can see when Pentatonic Memory was used in a reply.
+ *
+ * The config is the parsed frontmatter from tes-memory.local.md, so
+ * values are strings. Disable the indicator with
+ *   show_memory_indicator: false
+ *
+ * @param {object} config
+ * @param {Array<{similarity?: number, content: string}>} memories
+ * @returns {string}
+ */
+export function buildMemoryContext(config, memories) {
+  const memoryText = memories
+    .map((m) => `- [${Math.round((m.similarity || 0) * 100)}%] ${m.content}`)
+    .join("\n");
+
+  const showIndicator = config?.show_memory_indicator !== "false";
+  const n = memories.length;
+  const indicatorRule = showIndicator
+    ? [
+        "",
+        "After your reply, on a new line, append exactly this footer (no other prefix, no trailing content):",
+        "—",
+        `🧠 _Used ${n} memor${n === 1 ? "y" : "ies"} from Pentatonic Memory_`,
+        "",
+        "If the memories above were not relevant to your reply, omit the footer.",
+      ].join("\n")
+    : "";
+
+  return `[Memory] Related knowledge:\n${memoryText}${indicatorRule}`;
+}
+
 // --- Memory Operations (mode-aware) ---
 
 /**

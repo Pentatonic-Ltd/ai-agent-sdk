@@ -65,6 +65,11 @@
         "type": "number",
         "default": 0.3,
         "description": "Minimum relevance threshold"
+      },
+      "show_memory_indicator": {
+        "type": "boolean",
+        "default": true,
+        "description": "Tell the LLM to append a footer to replies informed by memory, so the user sees when Pentatonic Memory was used"
       }
     }
   },
