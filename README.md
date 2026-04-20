@@ -31,6 +31,7 @@
 - [SDK: Wrap Your LLM Client](#sdk-wrap-your-llm-client)
 - [Supported Providers](#supported-providers)
 - [API Reference](#api-reference)
+- [Health Checks (`doctor`)](#health-checks-doctor)
 - [Architecture](#architecture)
 
 ## Overview
@@ -324,6 +325,64 @@ import { normalizeResponse } from "@pentatonic-ai/ai-agent-sdk";
 
 const { content, model, usage, toolCalls } = normalizeResponse(openaiResponse);
 ```
+
+## Health Checks (`doctor`)
+
+Run a full health check of your SDK install at any time:
+
+```bash
+npx @pentatonic-ai/ai-agent-sdk doctor
+```
+
+`doctor` auto-detects which install path you're on (Local Memory, Hosted
+TES, or self-hosted Pentatonic platform) and runs only the checks that
+apply. Exit code is `0` for all-clear, `1` for warnings, `2` for critical.
+
+Common flags:
+
+```bash
+npx @pentatonic-ai/ai-agent-sdk doctor --json     # machine-readable
+npx @pentatonic-ai/ai-agent-sdk doctor --alert    # silent unless issues
+npx @pentatonic-ai/ai-agent-sdk doctor --no-plugins
+npx @pentatonic-ai/ai-agent-sdk doctor --path local
+```
+
+What gets checked:
+
+- **Universal** — Node version, disk space, SDK config-file permissions
+- **Local Memory** — Postgres + pgvector + migrations, embedding/LLM
+  endpoints, memory server port
+- **Hosted TES** — endpoint reachable, API key authenticates
+- **Self-hosted platform** — HybridRAG, Qdrant, Neo4j, vLLM (each
+  optional, skipped when its env var is unset)
+
+### Plugins
+
+Drop a `.mjs` file into `~/.config/pentatonic-ai/doctor-plugins/` to add
+your own checks. Useful for app-specific things — internal APIs, ingest
+freshness, custom infrastructure — without forking the SDK.
+
+```js
+// ~/.config/pentatonic-ai/doctor-plugins/my-app.mjs
+export default {
+  name: "my-app",
+  checks: [
+    {
+      name: "internal API",
+      severity: "warning",
+      run: async () => {
+        const res = await fetch("https://internal/health");
+        return res.ok
+          ? { ok: true, msg: "200 OK" }
+          : { ok: false, msg: `HTTP ${res.status}` };
+      },
+    },
+  ],
+};
+```
+
+See [`packages/doctor/README.md`](packages/doctor/README.md) for the full
+plugin contract and programmatic API.
 
 ## Architecture
 

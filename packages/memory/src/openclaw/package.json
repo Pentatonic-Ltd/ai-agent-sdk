@@ -1,5 +1,5 @@
 {
-  "name": "@pentatonic-ai/openclaw-memory-plugin",
+  "name": "@pentatonic-ai/openclaw-memory-plugin-internal",
   "version": "0.4.0",
   "type": "module",
   "openclaw": {

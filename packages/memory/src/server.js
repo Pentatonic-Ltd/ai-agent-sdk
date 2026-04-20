@@ -111,6 +111,27 @@ async function main() {
       await setupPool.query(sql);
       process.stderr.write("[memory-server] embedding_vec column created\n");
     }
+
+    // Re-run 006 if there are JSONB embeddings but no populated vectors —
+    // catches the case where 006 ran on a fresh DB before any data existed,
+    // then a subsequent insert was silently dimension-mismatched.
+    const mismatchCheck = await setupPool.query(
+      `SELECT
+         EXISTS (SELECT 1 FROM memory_nodes WHERE embedding IS NOT NULL) AS has_jsonb,
+         EXISTS (SELECT 1 FROM memory_nodes WHERE embedding_vec IS NOT NULL) AS has_vec
+       FROM memory_nodes LIMIT 1`
+    );
+    const row = mismatchCheck.rows[0] || {};
+    if (row.has_jsonb && !row.has_vec) {
+      process.stderr.write("[memory-server] JSONB embeddings present but no vectors — re-running migration 006\n");
+      const { readFileSync } = await import("fs");
+      const { resolve, dirname } = await import("path");
+      const { fileURLToPath } = await import("url");
+      const migrationPath = resolve(dirname(fileURLToPath(import.meta.url)), "../migrations/006-fix-vector-dim.sql");
+      const sql = readFileSync(migrationPath, "utf-8");
+      await setupPool.query(sql);
+      process.stderr.write("[memory-server] embedding_vec repair complete\n");
+    }
   } catch (err) {
     process.stderr.write(`[memory-server] Vector column repair skipped: ${err.message}\n`);
   }
