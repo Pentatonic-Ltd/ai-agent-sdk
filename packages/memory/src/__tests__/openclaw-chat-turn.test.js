@@ -190,4 +190,100 @@ describe("openclaw plugin — hosted CHAT_TURN emission", () => {
     expect(turn).toBeDefined();
     expect(turn.body.variables.input.data.attributes.user_message).toBeUndefined();
   });
+
+  // Regression: OpenClaw passes content as an array of content blocks
+  // (e.g. [{type: "text", text: "..."}]) rather than a plain string.
+  // The earlier String(message.content) approach produced "[object Object]"
+  // for every Telegram-sourced turn.
+  it("handles content-block arrays from the OpenClaw runtime", async () => {
+    const calls = captureFetch();
+    const engine = makeEngine();
+
+    await engine.ingest({
+      sessionId: "sess-blocks",
+      message: {
+        role: "user",
+        content: [{ type: "text", text: "what food do i like?" }],
+      },
+    });
+    await engine.ingest({
+      sessionId: "sess-blocks",
+      message: {
+        role: "assistant",
+        content: [{ type: "text", text: "you like steak" }],
+      },
+    });
+
+    const attrs = calls.find(
+      (c) =>
+        c.body?.variables?.moduleId === "conversation-analytics" &&
+        c.body?.variables?.input?.eventType === "CHAT_TURN"
+    ).body.variables.input.data.attributes;
+    expect(attrs.user_message).toBe("what food do i like?");
+    expect(attrs.assistant_response).toBe("you like steak");
+  });
+
+  // Regression: OpenClaw wraps real user messages from external channels
+  // (Telegram, etc.) in "Conversation info (untrusted metadata)" envelopes
+  // with JSON blocks + the actual user text appended. The emit should
+  // contain just the user's real words, not the JSON wrapper.
+  it("strips OpenClaw metadata envelopes from user messages", async () => {
+    const calls = captureFetch();
+    const engine = makeEngine();
+
+    const envelope = [
+      "Conversation info (untrusted metadata):",
+      "```json",
+      JSON.stringify({ message_id: "42", sender: "Phil" }, null, 2),
+      "```",
+      "",
+      "remember that i love cheese",
+    ].join("\n");
+
+    await engine.ingest({
+      sessionId: "sess-envelope",
+      message: { role: "user", content: envelope },
+    });
+    await engine.ingest({
+      sessionId: "sess-envelope",
+      message: { role: "assistant", content: "noted" },
+    });
+
+    const attrs = calls.find(
+      (c) =>
+        c.body?.variables?.moduleId === "conversation-analytics" &&
+        c.body?.variables?.input?.eventType === "CHAT_TURN"
+    ).body.variables.input.data.attributes;
+    expect(attrs.user_message).toBe("remember that i love cheese");
+  });
+
+  // Newer OpenClaw runtimes call afterTurn instead of ingest. The plugin
+  // should behave identically via both paths.
+  it("emits CHAT_TURN via afterTurn when the runtime uses that hook", async () => {
+    const calls = captureFetch();
+    const engine = makeEngine();
+
+    // Simulate afterTurn: messages is the full conversation, prePromptMessageCount
+    // is where the pre-turn history ended.
+    await engine.afterTurn({
+      sessionId: "sess-afterTurn",
+      messages: [
+        { role: "user", content: "hello" },
+        { role: "assistant", content: "hi there", model: "claude" },
+      ],
+      prePromptMessageCount: 0,
+    });
+
+    const turn = calls.find(
+      (c) =>
+        c.body?.variables?.moduleId === "conversation-analytics" &&
+        c.body?.variables?.input?.eventType === "CHAT_TURN"
+    );
+    expect(turn).toBeDefined();
+    const attrs = turn.body.variables.input.data.attributes;
+    expect(attrs.user_message).toBe("hello");
+    expect(attrs.assistant_response).toBe("hi there");
+    expect(attrs.model).toBe("claude");
+    expect(attrs.turn_number).toBe(1);
+  });
 });
