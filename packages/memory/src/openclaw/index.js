@@ -210,7 +210,21 @@ function createHostedContextEngine(config, opts = {}) {
           )
           .join("\n");
 
-        const addition = `[Memory] Relevant context from past conversations:\n${memoryText}`;
+        // Visibility footer — instruct the model to surface that memory was
+        // used. Opt out via show_memory_indicator: false in plugin config.
+        const showIndicator = config.show_memory_indicator !== false;
+        const indicatorRule = showIndicator
+          ? [
+              "",
+              `After your reply, on a new line, append exactly this footer (no other prefix, no trailing content):`,
+              `—`,
+              `🧠 _Used ${results.length} memor${results.length === 1 ? "y" : "ies"} from Pentatonic Memory_`,
+              "",
+              `If the memories above were not relevant to your reply, omit the footer.`,
+            ].join("\n")
+          : "";
+
+        const addition = `[Memory] Relevant context from past conversations:\n${memoryText}${indicatorRule}`;
 
         log(`[memory] Assembled ${results.length} memories via TES`);
 

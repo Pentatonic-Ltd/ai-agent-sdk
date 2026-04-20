@@ -13,6 +13,7 @@ import {
   writeTurnState,
   readStdin,
   searchMemories,
+  buildMemoryContext,
 } from "./shared.js";
 
 async function main() {
@@ -37,13 +38,9 @@ async function main() {
   try {
     const memories = await searchMemories(config, input.prompt);
     if (memories.length > 0) {
-      const memoryText = memories
-        .map((m) => `- [${Math.round((m.similarity || 0) * 100)}%] ${m.content}`)
-        .join("\n");
-
       process.stdout.write(
         JSON.stringify({
-          additionalContext: `[Memory] Related knowledge:\n${memoryText}`,
+          additionalContext: buildMemoryContext(config, memories),
         })
       );
     }
