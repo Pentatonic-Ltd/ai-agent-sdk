@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "name": "doctor",
+  "description": "Health check subsystem — imported via @pentatonic-ai/ai-agent-sdk/doctor",
+  "type": "module"
+}

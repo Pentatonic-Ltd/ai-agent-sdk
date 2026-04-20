@@ -12,7 +12,8 @@
     },
     "./memory": "./packages/memory/src/index.js",
     "./memory/server": "./packages/memory/src/server.js",
-    "./memory/openclaw": "./packages/memory/src/openclaw/index.js"
+    "./memory/openclaw": "./packages/memory/src/openclaw/index.js",
+    "./doctor": "./packages/doctor/src/index.js"
   },
   "bin": {
     "ai-agent-sdk": "./bin/cli.js"
@@ -22,6 +23,7 @@
     "src",
     "bin",
     "packages/memory",
+    "packages/doctor",
     "build.js",
     "README.md",
     "LICENSE"
