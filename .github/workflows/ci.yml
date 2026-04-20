@@ -132,6 +132,10 @@ jobs:
           MEMORY_SERVER_URL: http://localhost:3334
           DATABASE_URL: postgres://memory_test:memory_test@localhost:5435/memory_test
 
+      - name: Run CHAT_TURN emission E2E tests
+        run: |
+          NODE_OPTIONS='--experimental-vm-modules' npx jest --config jest.config.cjs e2e/openclaw/chat-turn.e2e.test.js --testTimeout=30000
+
       - name: Stop services
         if: always()
         run: docker compose -f e2e/openclaw/docker-compose.test.yml down
