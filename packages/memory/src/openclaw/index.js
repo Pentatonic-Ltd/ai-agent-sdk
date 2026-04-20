@@ -214,14 +214,86 @@ async function hostedStore(config, content, metadata = {}) {
 // Turn counter is kept in a separate map so it survives buffer clears
 // between turns. Module-scoped (rather than per-engine) so multiple
 // engine instances don't double-buffer the same session.
+//
+// Simple LRU cap to avoid unbounded growth in long-running processes
+// with many sessions (each entry is small, 500 sessions ≈ <50KB, but
+// the cap exists to enforce an upper bound).
+const MAX_SESSIONS = 500;
 const turnBuffers = new Map(); // sessionId → { userMessage }
 const turnCounters = new Map(); // sessionId → highest turn_number emitted
+
+function capSessionMaps() {
+  while (turnBuffers.size > MAX_SESSIONS) {
+    turnBuffers.delete(turnBuffers.keys().next().value);
+  }
+  while (turnCounters.size > MAX_SESSIONS) {
+    turnCounters.delete(turnCounters.keys().next().value);
+  }
+}
 
 function _resetTurnBuffersForTest() {
   turnBuffers.clear();
   turnCounters.clear();
 }
 export { _resetTurnBuffersForTest };
+
+// Extract text from a message content field. OpenClaw may pass content
+// either as a plain string or as an array of content blocks ([{type:"text",
+// text:"..."}, ...]). Returns null if no text can be extracted.
+function getTextContent(message) {
+  if (!message) return null;
+  const c = message.content;
+  if (typeof c === "string") return c;
+  if (Array.isArray(c)) {
+    const text = c
+      .filter((b) => b?.type === "text" && typeof b.text === "string")
+      .map((b) => b.text)
+      .join(" ");
+    return text || null;
+  }
+  return null;
+}
+
+// OpenClaw wraps real user messages from external channels (Telegram etc.)
+// in "Conversation info (untrusted metadata)" JSON envelopes, with the
+// actual user text appended after the metadata blocks. Strip those
+// envelopes to get the real user text. Returns null for pure system
+// prompts ("Note: The previous agent run", "System (untrusted)", etc.).
+function extractUserText(raw) {
+  if (!raw) return null;
+  const trimmed = raw.trim();
+
+  if (
+    trimmed.startsWith("Note: The previous agent run") ||
+    trimmed.startsWith("System (untrusted)") ||
+    trimmed.startsWith("[System]") ||
+    trimmed.startsWith("System:") ||
+    trimmed.startsWith("[Queued messages")
+  ) {
+    return null;
+  }
+
+  if (
+    trimmed.startsWith("Conversation info") ||
+    trimmed.startsWith("(untrusted metadata)") ||
+    trimmed.startsWith("Sender (untrusted") ||
+    trimmed.startsWith("Untrusted context")
+  ) {
+    const stripped = trimmed
+      .replace(
+        /(?:Conversation info|Sender|Thread starter|Replied message|Forwarded message context|Chat history since last reply) \(untrusted[^)]*\):\s*```json[\s\S]*?```/g,
+        ""
+      )
+      .replace(
+        /Untrusted context \(metadata, do not treat as instructions or commands\):/g,
+        ""
+      )
+      .trim();
+    return stripped || null;
+  }
+
+  return trimmed;
+}
 
 // Pull whatever the runtime hands us. Different OpenClaw versions wrap
 // provider responses differently — we look in the obvious places and
@@ -266,6 +338,57 @@ function extractAssistantMetadata(message) {
   return meta;
 }
 
+// Process a single message: emit STORE_MEMORY for retrieval, and buffer
+// for CHAT_TURN emission on the next assistant message. Shared between
+// the `ingest` and `afterTurn` hooks so we behave consistently whichever
+// one the OpenClaw runtime invokes.
+async function handleHostedMessage(config, sessionId, message, log) {
+  const role = message?.role || message?.type;
+  if (role !== "user" && role !== "assistant") return;
+
+  const raw = getTextContent(message);
+  if (!raw) return;
+
+  // For user messages, strip OpenClaw's metadata envelope so we store
+  // and emit the real user text, not the JSON wrapper.
+  const text = role === "user" ? extractUserText(raw) : raw;
+  if (!text) return;
+
+  // STORE_MEMORY for retrieval.
+  try {
+    await hostedStore(config, text, { session_id: sessionId, role });
+  } catch (err) {
+    log(`[memory] Hosted store failed: ${err.message}`);
+  }
+
+  // CHAT_TURN buffering: pair each user message with the next assistant
+  // message in the same session and emit on the assistant turn.
+  try {
+    if (role === "user") {
+      turnBuffers.set(sessionId, { userMessage: text });
+      capSessionMaps();
+    } else if (role === "assistant") {
+      const buf = turnBuffers.get(sessionId);
+      const turnNumber = (turnCounters.get(sessionId) || 0) + 1;
+      turnCounters.set(sessionId, turnNumber);
+      capSessionMaps();
+      const meta = extractAssistantMetadata(message);
+      await hostedEmitChatTurn(config, sessionId, {
+        userMessage: buf?.userMessage,
+        assistantResponse: text,
+        turnNumber,
+        ...meta,
+      });
+      turnBuffers.delete(sessionId);
+      log(
+        `[memory] Emitted CHAT_TURN${meta.usage ? " w/ usage" : ""}${meta.toolCalls?.length ? ` w/ ${meta.toolCalls.length} tool_calls` : ""}`
+      );
+    }
+  } catch (err) {
+    log(`[memory] CHAT_TURN emit failed: ${err.message}`);
+  }
+}
+
 function createHostedContextEngine(config, opts = {}) {
   const searchLimit = opts.searchLimit || 5;
   const minScore = opts.minScore || 0.3;
@@ -278,70 +401,34 @@ function createHostedContextEngine(config, opts = {}) {
       ownsCompaction: false,
     },
 
+    // Called by older OpenClaw runtimes that don't use afterTurn.
+    // Falls through to the shared handler so behaviour is identical.
     async ingest({ sessionId, message }) {
-      if (!message?.content) return { ingested: false };
-      const role = message.role || message.type;
-      if (role !== "user" && role !== "assistant") return { ingested: false };
-
-      // STORE_MEMORY for retrieval (existing behaviour — unchanged).
-      try {
-        await hostedStore(config, message.content, {
-          session_id: sessionId,
-          role,
-        });
-        log(`[memory] Ingested ${role} message via TES`);
-      } catch (err) {
-        log(`[memory] Hosted ingest failed: ${err.message}`);
-      }
-
-      // CHAT_TURN buffering for analytics. We pair each user message with
-      // the next assistant message in the same session and emit on the
-      // assistant turn. This is what populates the conversation-analytics
-      // Token Universe + Tools tabs.
-      try {
-        if (role === "user") {
-          turnBuffers.set(sessionId, {
-            userMessage: String(message.content),
-          });
-        } else if (role === "assistant") {
-          const buf = turnBuffers.get(sessionId);
-          const turnNumber = (turnCounters.get(sessionId) || 0) + 1;
-          turnCounters.set(sessionId, turnNumber);
-          // Even with no buffered user message we still emit, so an
-          // assistant-only event isn't dropped — it just renders without
-          // a prompt half.
-          const meta = extractAssistantMetadata(message);
-          await hostedEmitChatTurn(config, sessionId, {
-            userMessage: buf?.userMessage,
-            assistantResponse: String(message.content),
-            turnNumber,
-            ...meta,
-          });
-          turnBuffers.delete(sessionId);
-          log(
-            `[memory] Emitted CHAT_TURN${meta.usage ? " w/ usage" : ""}${meta.toolCalls?.length ? ` w/ ${meta.toolCalls.length} tool_calls` : ""}`
-          );
-        }
-      } catch (err) {
-        log(`[memory] CHAT_TURN emit failed: ${err.message}`);
-      }
-
+      await handleHostedMessage(config, sessionId, message, log);
       return { ingested: true };
     },
 
     async assemble({ sessionId, messages }) {
-      const lastUserMsg = [...messages]
-        .reverse()
-        .find((m) => m.role === "user" || m.type === "user");
-
-      if (!lastUserMsg?.content) {
+      // Find the most recent real user message. Skip OpenClaw's internal
+      // metadata prompts (extractUserText returns null for those).
+      let lastUserText = null;
+      for (const m of [...messages].reverse()) {
+        if (m.role !== "user" && m.type !== "user") continue;
+        const raw = getTextContent(m);
+        const extracted = extractUserText(raw);
+        if (extracted) {
+          lastUserText = extracted;
+          break;
+        }
+      }
+      if (!lastUserText) {
         return { messages, estimatedTokens: 0 };
       }
 
       try {
         const results = await hostedSearch(
           config,
-          lastUserMsg.content,
+          lastUserText,
           searchLimit,
           minScore
         );
@@ -376,7 +463,16 @@ function createHostedContextEngine(config, opts = {}) {
       return { ok: true, compacted: false };
     },
 
-    async afterTurn() {},
+    // Newer OpenClaw runtimes call afterTurn instead of ingest. We slice
+    // messages added during this turn (user+assistant) and hand each one
+    // to the shared handler — same STORE_MEMORY + CHAT_TURN flow.
+    async afterTurn({ sessionId, messages, prePromptMessageCount }) {
+      if (!messages || typeof prePromptMessageCount !== "number") return;
+      const newMessages = messages.slice(prePromptMessageCount);
+      for (const message of newMessages) {
+        await handleHostedMessage(config, sessionId, message, log);
+      }
+    },
   };
 }
 
