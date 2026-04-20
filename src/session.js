@@ -1,6 +1,7 @@
 import { normalizeResponse } from "./normalizer.js";
 import { sendEvent } from "./transport.js";
 import { buildTrackUrl } from "./tracking.js";
+import { signForSession } from "./vi-session.js";
 
 function truncate(value, maxLen) {
   if (!value || !maxLen || typeof value !== "string") return value;
@@ -22,6 +23,8 @@ export class Session {
   _reset() {
     this._promptTokens = 0;
     this._completionTokens = 0;
+    this._cacheReadTokens = 0;
+    this._cacheCreateTokens = 0;
     this._rounds = 0;
     this._toolCalls = [];
     this._model = null;
@@ -29,12 +32,27 @@ export class Session {
   }
 
   get totalUsage() {
-    return {
+    const usage = {
       prompt_tokens: this._promptTokens,
       completion_tokens: this._completionTokens,
-      total_tokens: this._promptTokens + this._completionTokens,
+      total_tokens:
+        this._promptTokens +
+        this._completionTokens +
+        this._cacheReadTokens +
+        this._cacheCreateTokens,
       ai_rounds: this._rounds,
     };
+    // Cache token passthrough (Anthropic only). Added only when non-zero
+    // so the legacy { prompt_tokens, completion_tokens, total_tokens,
+    // ai_rounds } shape is preserved when no cache is in play. The
+    // conversation-analytics Token Universe tab reads these directly.
+    if (this._cacheReadTokens) {
+      usage.cache_read_input_tokens = this._cacheReadTokens;
+    }
+    if (this._cacheCreateTokens) {
+      usage.cache_creation_input_tokens = this._cacheCreateTokens;
+    }
+    return usage;
   }
 
   get toolCalls() {
@@ -47,6 +65,8 @@ export class Session {
 
     this._promptTokens += normalized.usage.prompt_tokens;
     this._completionTokens += normalized.usage.completion_tokens;
+    this._cacheReadTokens += normalized.usage.cache_read_input_tokens || 0;
+    this._cacheCreateTokens += normalized.usage.cache_creation_input_tokens || 0;
     this._rounds += 1;
 
     if (normalized.model) {
@@ -107,6 +127,15 @@ export class Session {
 
     if (turnNumber !== undefined) {
       attributes.turn_number = turnNumber;
+    }
+
+    // VI signing — sign attributes after all other fields are populated
+    // so the hash binds to the exact event body that ships. Best-effort:
+    // a sign failure leaves the event unsigned (vi_status='unsigned' on
+    // the dashboard) rather than blocking emit.
+    if (this._config.viDisabled !== true) {
+      const jws = await signForSession(this.sessionId, attributes);
+      if (jws) attributes.vi = { worker_jws: jws };
     }
 
     const result = await sendEvent(this._config, {

@@ -34,6 +34,21 @@ function empty() {
   };
 }
 
+// Anthropic-only. The conversation-analytics Token Universe tab stacks
+// cache_read / cache_create alongside input / output, so we pass them
+// through whenever the provider supplies them. Other providers omit
+// these keys silently.
+function extractCacheUsage(usage) {
+  const out = {};
+  if (typeof usage.cache_read_input_tokens === "number") {
+    out.cache_read_input_tokens = usage.cache_read_input_tokens;
+  }
+  if (typeof usage.cache_creation_input_tokens === "number") {
+    out.cache_creation_input_tokens = usage.cache_creation_input_tokens;
+  }
+  return out;
+}
+
 function normalizeOpenAI(raw) {
   const message = raw.choices?.[0]?.message || {};
   const usage = raw.usage || {};
@@ -76,6 +91,7 @@ function normalizeAnthropic(raw) {
     usage: {
       prompt_tokens: usage.input_tokens || 0,
       completion_tokens: usage.output_tokens || 0,
+      ...extractCacheUsage(usage),
     },
     toolCalls,
   };
