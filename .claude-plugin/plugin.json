@@ -1,6 +1,6 @@
 {
   "name": "tes-memory",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "AI agent memory — local or hosted. Persistent, searchable memory with multi-signal retrieval and HyDE query expansion",
   "author": {
     "name": "Pentatonic",

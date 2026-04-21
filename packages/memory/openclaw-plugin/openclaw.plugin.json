@@ -2,7 +2,7 @@
   "id": "pentatonic-memory",
   "name": "Pentatonic Memory",
   "description": "Persistent, searchable memory with multi-signal retrieval and HyDE query expansion. Local (Docker + Ollama) or hosted (Pentatonic TES).",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "kind": "context-engine",
   "configSchema": {
     "type": "object",
