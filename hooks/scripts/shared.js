@@ -40,6 +40,58 @@ export function loadConfig() {
   return config;
 }
 
+// --- Version check ---
+
+// Minimum memory-server version the hooks expect. Bump when the hooks
+// start relying on a new endpoint, schema, or query param. Older servers
+// still work for common operations — the mismatch just surfaces as a
+// stderr warning so users know to update.
+const MIN_SERVER_VERSION = "0.5.0";
+
+function parseVersion(v) {
+  if (typeof v !== "string") return null;
+  const parts = v.split(".").slice(0, 3).map((n) => parseInt(n, 10));
+  if (parts.some(Number.isNaN)) return null;
+  while (parts.length < 3) parts.push(0);
+  return parts;
+}
+
+export function versionGte(a, b) {
+  const pa = parseVersion(a);
+  const pb = parseVersion(b);
+  if (!pa || !pb) return true;
+  for (let i = 0; i < 3; i++) {
+    if (pa[i] > pb[i]) return true;
+    if (pa[i] < pb[i]) return false;
+  }
+  return true;
+}
+
+/**
+ * Check that the local memory server is at least MIN_SERVER_VERSION.
+ * Logs a stderr warning if not. Best-effort — silent if the server is
+ * unreachable or doesn't expose a version.
+ */
+export async function checkLocalServerVersion(config) {
+  const baseUrl = config?.memory_url || "http://localhost:3333";
+  try {
+    const res = await fetch(`${baseUrl}/health`, {
+      signal: AbortSignal.timeout(3000),
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    const serverVersion = data?.version;
+    if (!serverVersion) return;
+    if (versionGte(serverVersion, MIN_SERVER_VERSION)) return;
+    process.stderr.write(
+      `[pentatonic-memory] WARNING: memory server is ${serverVersion}, hooks need >= ${MIN_SERVER_VERSION}. ` +
+        `Some features may not work. Run: npx @pentatonic-ai/ai-agent-sdk@latest memory\n`
+    );
+  } catch {
+    // Unreachable / malformed — silent
+  }
+}
+
 // --- Memory Context Formatting ---
 
 /**

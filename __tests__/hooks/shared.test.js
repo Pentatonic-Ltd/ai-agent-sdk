@@ -6,7 +6,8 @@ import { tmpdir } from "os";
 // We test the shared utilities by importing them.
 // Config loading requires filesystem, so we use real temp files.
 
-let loadConfig, emitModuleEvent, readTurnState, writeTurnState, clearTurnState, buildMemoryContext;
+let loadConfig, emitModuleEvent, readTurnState, writeTurnState, clearTurnState;
+let versionGte, checkLocalServerVersion, buildMemoryContext;
 
 beforeAll(async () => {
   const mod = await import("../../hooks/scripts/shared.js");
@@ -15,6 +16,8 @@ beforeAll(async () => {
   readTurnState = mod.readTurnState;
   writeTurnState = mod.writeTurnState;
   clearTurnState = mod.clearTurnState;
+  versionGte = mod.versionGte;
+  checkLocalServerVersion = mod.checkLocalServerVersion;
   buildMemoryContext = mod.buildMemoryContext;
 });
 
@@ -199,6 +202,106 @@ describe("emitModuleEvent", () => {
 
     const result = await emitModuleEvent(config, "conversation-analytics", "TEST", "sess-1", {});
     expect(result).toBeNull();
+  });
+});
+
+describe("versionGte", () => {
+  it("returns true when a > b", () => {
+    expect(versionGte("1.2.3", "1.2.2")).toBe(true);
+    expect(versionGte("2.0.0", "1.9.9")).toBe(true);
+    expect(versionGte("0.5.0", "0.4.9")).toBe(true);
+  });
+
+  it("returns true when a === b", () => {
+    expect(versionGte("0.5.0", "0.5.0")).toBe(true);
+  });
+
+  it("returns false when a < b", () => {
+    expect(versionGte("0.4.9", "0.5.0")).toBe(false);
+    expect(versionGte("1.0.0", "1.0.1")).toBe(false);
+  });
+
+  it("pads shorter version strings with zeros", () => {
+    expect(versionGte("0.5", "0.5.0")).toBe(true);
+    expect(versionGte("1", "0.9.9")).toBe(true);
+  });
+
+  it("treats unparseable versions as 'newer than anything' to avoid false positives", () => {
+    expect(versionGte("unknown", "0.5.0")).toBe(true);
+    expect(versionGte("0.5.0", "unknown")).toBe(true);
+  });
+});
+
+describe("checkLocalServerVersion", () => {
+  let stderrWrites;
+  let originalWrite;
+
+  beforeEach(() => {
+    stderrWrites = [];
+    originalWrite = process.stderr.write.bind(process.stderr);
+    process.stderr.write = (chunk) => {
+      stderrWrites.push(String(chunk));
+      return true;
+    };
+  });
+
+  afterEach(() => {
+    process.stderr.write = originalWrite;
+  });
+
+  it("warns when the server is older than the minimum", async () => {
+    globalThis.fetch = async (url) => {
+      expect(url).toBe("http://localhost:3333/health");
+      return {
+        ok: true,
+        json: async () => ({ status: "ok", version: "0.4.5" }),
+      };
+    };
+    await checkLocalServerVersion({});
+    const warning = stderrWrites.find((w) =>
+      w.includes("memory server is 0.4.5")
+    );
+    expect(warning).toBeDefined();
+    expect(warning).toMatch(/npx @pentatonic-ai\/ai-agent-sdk@latest memory/);
+  });
+
+  it("does NOT warn when the server is up to date", async () => {
+    globalThis.fetch = async () => ({
+      ok: true,
+      json: async () => ({ status: "ok", version: "0.5.0" }),
+    });
+    await checkLocalServerVersion({});
+    expect(stderrWrites.find((w) => w.includes("memory server is"))).toBeUndefined();
+  });
+
+  it("uses config.memory_url when provided", async () => {
+    let hitUrl;
+    globalThis.fetch = async (url) => {
+      hitUrl = url;
+      return {
+        ok: true,
+        json: async () => ({ status: "ok", version: "0.5.0" }),
+      };
+    };
+    await checkLocalServerVersion({ memory_url: "http://custom:9999" });
+    expect(hitUrl).toBe("http://custom:9999/health");
+  });
+
+  it("silently no-ops on unreachable server", async () => {
+    globalThis.fetch = async () => {
+      throw new Error("ECONNREFUSED");
+    };
+    await expect(checkLocalServerVersion({})).resolves.toBeUndefined();
+    expect(stderrWrites.find((w) => w.includes("memory server is"))).toBeUndefined();
+  });
+
+  it("silently no-ops when version field is absent", async () => {
+    globalThis.fetch = async () => ({
+      ok: true,
+      json: async () => ({ status: "ok" }),
+    });
+    await checkLocalServerVersion({});
+    expect(stderrWrites.find((w) => w.includes("memory server is"))).toBeUndefined();
   });
 });
 

@@ -21,6 +21,49 @@
 
 const TES_ENDPOINT = "https://api.pentatonic.com";
 
+// Minimum local memory server version the plugin expects. Bump this when
+// the plugin starts relying on new endpoints, schema, or query params.
+// A server older than this still works for common operations — the
+// mismatch just surfaces as a stderr warning so users know to update.
+const MIN_SERVER_VERSION = "0.5.0";
+
+// Track whether we've already warned for a given server version so we
+// don't spam stderr every health check.
+const warnedServerVersions = new Set();
+
+function parseVersion(v) {
+  if (typeof v !== "string") return null;
+  const parts = v.split(".").slice(0, 3).map((n) => parseInt(n, 10));
+  if (parts.some(Number.isNaN)) return null;
+  while (parts.length < 3) parts.push(0);
+  return parts;
+}
+
+// Returns true when a >= b. Missing or unparseable versions are treated
+// as "newer than anything" to avoid false warnings when a server
+// pre-dates the /health version field.
+function versionGte(a, b) {
+  const pa = parseVersion(a);
+  const pb = parseVersion(b);
+  if (!pa) return true;
+  if (!pb) return true;
+  for (let i = 0; i < 3; i++) {
+    if (pa[i] > pb[i]) return true;
+    if (pa[i] < pb[i]) return false;
+  }
+  return true;
+}
+
+function warnIfServerTooOld(serverVersion) {
+  if (warnedServerVersions.has(serverVersion)) return;
+  if (versionGte(serverVersion, MIN_SERVER_VERSION)) return;
+  warnedServerVersions.add(serverVersion);
+  console.error(
+    `[pentatonic-memory] WARNING: memory server is ${serverVersion}, plugin needs >= ${MIN_SERVER_VERSION}. ` +
+      `Some features may not work until you update — run: npx @pentatonic-ai/ai-agent-sdk@latest memory`
+  );
+}
+
 const SUCCESS_GIFS = [
   "https://media.giphy.com/media/l0MYt5jPR6QX5APm0/giphy.gif",    // brain expanding
   "https://media.giphy.com/media/3o7btNa0RUYa5E7iiQ/giphy.gif",   // elephant never forgets
@@ -89,7 +132,18 @@ async function localHealth(baseUrl) {
   try {
     const res = await fetch(`${baseUrl}/health`, { signal: AbortSignal.timeout(3000) });
     stats.backendReachable = res.ok;
-    return res.ok;
+    if (!res.ok) return false;
+    // Check for server version mismatch. Warns loudly (but non-fatal)
+    // when the server is older than what this plugin expects — the
+    // common case is a user who updated the plugin but forgot to
+    // re-run `npx @pentatonic-ai/ai-agent-sdk@latest memory`.
+    try {
+      const data = await res.json();
+      if (data?.version) {
+        warnIfServerTooOld(data.version);
+      }
+    } catch { /* health body missing version — older server, no-op */ }
+    return true;
   } catch {
     stats.backendReachable = false;
     return false;
