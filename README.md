@@ -70,6 +70,7 @@ That's it. The plugin hooks automatically search memories on every prompt and st
 - **Automatic memory** -- every conversation turn is stored with embeddings and HyDE query expansion
 - **Semantic search** -- multi-signal retrieval combining vector similarity, BM25 full-text, recency decay, and access frequency
 - **Memory layers** -- episodic (recent), semantic (consolidated), procedural (how-to), working (temporary)
+- **Distilled memory** -- a background LLM pass extracts atomic facts from each raw turn and stores each as its own node in the semantic layer, linked back to the source. A query like *"what does Phil drink?"* matches *"Phil drinks cortado"* more reliably than a mixed paragraph covering food, drinks, and hobbies. Default-on; the raw turn is still preserved.
 - **Decay and consolidation** -- memories fade over time; frequently accessed ones get promoted
 
 ### Change models
@@ -195,7 +196,7 @@ openclaw pentatonic-memory local
 
 OpenClaw's context engine hooks fire on every lifecycle event:
 
-- **Ingest** -- every user and assistant message is stored with embeddings and HyDE query expansion
+- **Ingest** -- every user and assistant message is stored with embeddings and HyDE query expansion, then distilled into atomic facts in the background (see [Distilled memory](#what-you-get))
 - **Assemble** -- relevant memories are injected as system prompt context before every model run
 - **Compact** -- decay cycle runs when the context window fills
 - **After turn** -- high-access memories get consolidated to the semantic layer
