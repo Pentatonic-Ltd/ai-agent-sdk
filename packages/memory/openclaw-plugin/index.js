@@ -221,6 +221,108 @@ async function hostedStore(config, content, metadata = {}) {
   }
 }
 
+/**
+ * Emit a CHAT_TURN event to TES so the conversation-analytics dashboard
+ * (Token Universe + Tools tabs) can render. Without this, the dashboard
+ * filters on eventType=CHAT_TURN and shows nothing for OpenClaw users
+ * because the only events emitted are STORE_MEMORY.
+ *
+ * Missing metadata is omitted rather than zeroed — the dashboard
+ * distinguishes "no data" from "zero usage".
+ */
+async function hostedEmitChatTurn(config, sessionId, turn) {
+  const attributes = {
+    source: "openclaw-plugin",
+    user_message: turn.userMessage,
+    assistant_response: turn.assistantResponse,
+  };
+  if (turn.model) attributes.model = turn.model;
+  if (turn.usage) attributes.usage = turn.usage;
+  if (turn.toolCalls?.length) attributes.tool_calls = turn.toolCalls;
+  if (turn.turnNumber !== undefined) attributes.turn_number = turn.turnNumber;
+  if (turn.systemPrompt) attributes.system_prompt = turn.systemPrompt;
+
+  try {
+    const res = await fetch(`${config.tes_endpoint}/api/graphql`, {
+      method: "POST",
+      headers: tesHeaders(config),
+      body: JSON.stringify({
+        query: `mutation Cme($moduleId: String!, $input: ModuleEventInput!) {
+          createModuleEvent(moduleId: $moduleId, input: $input) { success eventId }
+        }`,
+        variables: {
+          moduleId: "conversation-analytics",
+          input: {
+            eventType: "CHAT_TURN",
+            data: { entity_id: sessionId, attributes },
+          },
+        },
+      }),
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}
+
+// Pull model/usage/tool_calls from whatever shape the runtime hands us.
+// Different OpenClaw versions wrap provider responses differently — we
+// check the obvious places and silently omit fields we can't find.
+function extractAssistantMetadata(message) {
+  const meta = {};
+  if (message?.model) meta.model = message.model;
+  if (message?.usage) meta.usage = message.usage;
+  if (Array.isArray(message?.tool_calls) && message.tool_calls.length) {
+    meta.toolCalls = message.tool_calls;
+  } else if (Array.isArray(message?.toolCalls) && message.toolCalls.length) {
+    meta.toolCalls = message.toolCalls;
+  }
+  const raw = message?.raw || message?.response || message?._raw;
+  if (raw && typeof raw === "object") {
+    if (!meta.model && raw.model) meta.model = raw.model;
+    if (!meta.usage && raw.usage) meta.usage = raw.usage;
+    if (!meta.toolCalls) {
+      if (Array.isArray(raw.content)) {
+        const tc = raw.content
+          .filter((b) => b?.type === "tool_use")
+          .map((b) => ({ tool: b.name, args: b.input || {} }));
+        if (tc.length) meta.toolCalls = tc;
+      }
+      if (!meta.toolCalls && Array.isArray(raw.choices) && raw.choices[0]?.message?.tool_calls) {
+        meta.toolCalls = raw.choices[0].message.tool_calls.map((tc) => ({
+          tool: tc.function?.name || tc.name,
+          args: tc.function?.arguments,
+        }));
+      }
+    }
+  }
+  return meta;
+}
+
+// Per-session turn buffer for CHAT_TURN emission. User message waits
+// for the next assistant message in the same session, then emits as
+// a paired turn. Capped to avoid unbounded growth.
+const MAX_SESSIONS = 500;
+const turnBuffers = new Map();
+const turnCounters = new Map();
+
+function capSessionMaps() {
+  while (turnBuffers.size > MAX_SESSIONS) {
+    turnBuffers.delete(turnBuffers.keys().next().value);
+  }
+  while (turnCounters.size > MAX_SESSIONS) {
+    turnCounters.delete(turnCounters.keys().next().value);
+  }
+}
+
+/** Test helper — clear turn buffers and counters between tests. */
+export function _resetTurnBuffersForTest() {
+  turnBuffers.clear();
+  turnCounters.clear();
+}
+
 // --- TES account setup via HTTP ---
 
 async function tesLogin(email, password, clientId) {
@@ -506,6 +608,21 @@ export default {
             .map((m) => `- [${Math.round((m.similarity || 0) * 100)}%] ${m.content}`)
             .join("\n");
 
+          // Visibility marker: instruct the model to append a footer so the
+          // end user sees when Pentatonic Memory was used. Opt out with
+          // show_memory_indicator: false in plugin config.
+          const showIndicator = config.show_memory_indicator !== false;
+          const indicatorRule = showIndicator
+            ? [
+                "",
+                `After your reply, on a new line, append exactly this footer (no other prefix, no trailing content):`,
+                `—`,
+                `🧠 _Used ${results.length} memor${results.length === 1 ? "y" : "ies"} from Pentatonic Memory_`,
+                "",
+                `If the memories above were not relevant to your reply, omit the footer.`,
+              ]
+            : [];
+
           const addition = [
             `=== PENTATONIC MEMORY (authoritative context from prior conversations) ===`,
             `These ${results.length} memories are facts the user has shared with you previously. Treat them as ground truth about the user.`,
@@ -513,6 +630,7 @@ export default {
             memoryText,
             "",
             `When the user asks about anything in these memories, answer using them directly — do NOT say you don't remember or that you have no record. If a memory is relevant, use it.`,
+            ...indicatorRule,
             `=== END PENTATONIC MEMORY ===`,
           ].join("\n");
 
@@ -526,7 +644,11 @@ export default {
       async compact() { return { ok: true, compacted: false }; },
 
       // OpenClaw calls afterTurn INSTEAD of ingest/ingestBatch when defined.
-      // So we do the ingestion here ourselves.
+      // We use it to:
+      //   1. Store each new message as a memory (STORE_MEMORY in hosted mode)
+      //   2. Pair user+assistant messages and emit a CHAT_TURN (hosted only),
+      //      which populates the conversation-analytics Token Universe +
+      //      Tools tabs in the dashboard.
       async afterTurn({ sessionId, messages, prePromptMessageCount }) {
         if (!messages || typeof prePromptMessageCount !== "number") return;
         const newMessages = messages.slice(prePromptMessageCount);
@@ -534,11 +656,38 @@ export default {
         for (const message of newMessages) {
           const { text, role } = extractIngestText(message);
           if (!text) continue;
+
+          // Store the memory (both modes).
           try {
             await store(text, { session_id: sessionId, role });
             ingestedCount++;
           } catch (err) {
-            log(`afterTurn: error ${err.message}`);
+            log(`afterTurn: store error ${err.message}`);
+          }
+
+          // CHAT_TURN emission (hosted only). Buffer user messages until
+          // an assistant message arrives, then emit the paired turn.
+          if (!hosted) continue;
+          try {
+            if (role === "user") {
+              turnBuffers.set(sessionId, { userMessage: text });
+              capSessionMaps();
+            } else if (role === "assistant") {
+              const buf = turnBuffers.get(sessionId);
+              const turnNumber = (turnCounters.get(sessionId) || 0) + 1;
+              turnCounters.set(sessionId, turnNumber);
+              capSessionMaps();
+              const meta = extractAssistantMetadata(message);
+              await hostedEmitChatTurn(config, sessionId, {
+                userMessage: buf?.userMessage,
+                assistantResponse: text,
+                turnNumber,
+                ...meta,
+              });
+              turnBuffers.delete(sessionId);
+            }
+          } catch (err) {
+            log(`afterTurn: CHAT_TURN emit error ${err.message}`);
           }
         }
         stats.memoriesStored += ingestedCount;

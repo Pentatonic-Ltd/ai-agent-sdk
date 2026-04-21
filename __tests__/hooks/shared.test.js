@@ -7,7 +7,7 @@ import { tmpdir } from "os";
 // Config loading requires filesystem, so we use real temp files.
 
 let loadConfig, emitModuleEvent, readTurnState, writeTurnState, clearTurnState;
-let versionGte, checkLocalServerVersion;
+let versionGte, checkLocalServerVersion, buildMemoryContext;
 
 beforeAll(async () => {
   const mod = await import("../../hooks/scripts/shared.js");
@@ -18,6 +18,7 @@ beforeAll(async () => {
   clearTurnState = mod.clearTurnState;
   versionGte = mod.versionGte;
   checkLocalServerVersion = mod.checkLocalServerVersion;
+  buildMemoryContext = mod.buildMemoryContext;
 });
 
 describe("Turn state management", () => {
@@ -301,5 +302,68 @@ describe("checkLocalServerVersion", () => {
     });
     await checkLocalServerVersion({});
     expect(stderrWrites.find((w) => w.includes("memory server is"))).toBeUndefined();
+  });
+});
+
+describe("buildMemoryContext — memory-used indicator", () => {
+  it("includes the memory list with similarity percentages", () => {
+    const out = buildMemoryContext({}, [
+      { similarity: 0.9, content: "Phil likes cheese" },
+      { similarity: 0.7, content: "Phil drinks cortado" },
+    ]);
+    expect(out).toMatch(/\[Memory\] Related knowledge:/);
+    expect(out).toMatch(/- \[90%\] Phil likes cheese/);
+    expect(out).toMatch(/- \[70%\] Phil drinks cortado/);
+  });
+
+  it("injects a footer instruction when memories are present (default on)", () => {
+    const out = buildMemoryContext({}, [
+      { similarity: 0.9, content: "fact" },
+    ]);
+    expect(out).toMatch(/🧠/);
+    expect(out).toMatch(/append exactly this footer/);
+    expect(out).toMatch(/Used 1 memory from Pentatonic Memory/);
+  });
+
+  it("pluralises the footer for multiple memories", () => {
+    const out = buildMemoryContext({}, [
+      { similarity: 0.9, content: "a" },
+      { similarity: 0.8, content: "b" },
+      { similarity: 0.7, content: "c" },
+    ]);
+    expect(out).toMatch(/Used 3 memories from Pentatonic Memory/);
+  });
+
+  it("omits the footer instruction when show_memory_indicator is 'false'", () => {
+    // Config comes from YAML frontmatter so values are strings
+    const out = buildMemoryContext(
+      { show_memory_indicator: "false" },
+      [{ similarity: 0.9, content: "fact" }]
+    );
+    expect(out).toMatch(/fact/);
+    expect(out).not.toMatch(/🧠/);
+    expect(out).not.toMatch(/Pentatonic Memory_/);
+  });
+
+  it("keeps the footer when show_memory_indicator is 'true' (explicit opt-in)", () => {
+    const out = buildMemoryContext(
+      { show_memory_indicator: "true" },
+      [{ similarity: 0.9, content: "fact" }]
+    );
+    expect(out).toMatch(/🧠/);
+  });
+
+  it("instructs the LLM to skip the footer when memories aren't relevant", () => {
+    const out = buildMemoryContext({}, [
+      { similarity: 0.3, content: "unrelated" },
+    ]);
+    expect(out).toMatch(
+      /If the memories above were not relevant to your reply, omit the footer/
+    );
+  });
+
+  it("handles missing similarity gracefully", () => {
+    const out = buildMemoryContext({}, [{ content: "no similarity given" }]);
+    expect(out).toMatch(/\[0%\] no similarity given/);
   });
 });
