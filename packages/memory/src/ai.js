@@ -30,9 +30,20 @@ export function createAIClient(config) {
 
   // Strip leading slashes so callers can use "embed" or "/embed"
   // interchangeably. Base url may or may not have a trailing slash.
-  const embeddingPath = (config.embeddingPath || "embeddings").replace(/^\/+/, "");
-  const chatPath = (config.chatPath || "chat/completions").replace(/^\/+/, "");
-  const baseUrl = config.url.replace(/\/+$/, "");
+  // Plain loops (not regex) to avoid polynomial-regex scanner flags.
+  const stripLeading = (s) => {
+    let i = 0;
+    while (i < s.length && s[i] === "/") i++;
+    return i === 0 ? s : s.slice(i);
+  };
+  const stripTrailing = (s) => {
+    let i = s.length;
+    while (i > 0 && s[i - 1] === "/") i--;
+    return i === s.length ? s : s.slice(0, i);
+  };
+  const embeddingPath = stripLeading(config.embeddingPath || "embeddings");
+  const chatPath = stripLeading(config.chatPath || "chat/completions");
+  const baseUrl = stripTrailing(config.url);
 
   return {
     /**
