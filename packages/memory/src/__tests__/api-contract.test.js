@@ -231,4 +231,45 @@ describe("ingest options contract", () => {
     expect(result).toHaveProperty("content");
     expect(result).toHaveProperty("layerId");
   });
+
+  it("hands the distill background promise to opts.waitUntil when provided", async () => {
+    const mockDb = async (sql) => {
+      if (sql.includes("SELECT id FROM memory_layers")) {
+        return { rows: [{ id: "layer-1" }] };
+      }
+      return { rows: [] };
+    };
+    const mockAi = { embed: async () => null };
+    const mockLlm = { chat: async () => "[]" };
+
+    const registered = [];
+    await ingest(mockDb, mockAi, mockLlm, "test content", {
+      clientId: "test-client",
+      waitUntil: (p) => registered.push(p),
+    });
+
+    expect(registered.length).toBe(1);
+    expect(typeof registered[0].then).toBe("function");
+    await registered[0]; // should resolve cleanly
+  });
+
+  it("does not call waitUntil when distill is skipped", async () => {
+    const mockDb = async (sql) => {
+      if (sql.includes("SELECT id FROM memory_layers")) {
+        return { rows: [{ id: "layer-1" }] };
+      }
+      return { rows: [] };
+    };
+    const mockAi = { embed: async () => null };
+    const mockLlm = { chat: async () => "[]" };
+
+    const registered = [];
+    await ingest(mockDb, mockAi, mockLlm, "test content", {
+      clientId: "test-client",
+      distill: false,
+      waitUntil: (p) => registered.push(p),
+    });
+
+    expect(registered.length).toBe(0);
+  });
 });

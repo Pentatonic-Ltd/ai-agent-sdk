@@ -17,6 +17,10 @@ import { distill } from "./distill.js";
  * @param {string} [opts.layerType="episodic"] - Target layer
  * @param {object} [opts.metadata] - Additional metadata
  * @param {Function} [opts.logger] - Optional logger
+ * @param {Function} [opts.waitUntil] - Platform hook to register background
+ *   tasks (e.g. Cloudflare Worker ctx.waitUntil). If provided, the distill
+ *   background task is handed to it so the host keeps it alive past return.
+ *   Without it, distill is fire-and-forget (fine for Node/browser).
  * @returns {Promise<{id: string, content: string, layerId: string}>}
  */
 export async function ingest(db, ai, llm, content, opts = {}) {
@@ -86,9 +90,11 @@ export async function ingest(db, ai, llm, content, opts = {}) {
   // Distill atomic facts in the background — only for raw ingestions
   // (skip if this call is already storing a distilled atom or user opted out).
   if (opts.distill !== false && !opts.sourceId) {
-    distill(db, ai, llm, memoryId, content, { ...opts, logger: log }).catch(
-      (err) => log(`distill failed for ${memoryId}: ${err.message}`)
-    );
+    const distillPromise = distill(db, ai, llm, memoryId, content, {
+      ...opts,
+      logger: log,
+    }).catch((err) => log(`distill failed for ${memoryId}: ${err.message}`));
+    if (typeof opts.waitUntil === "function") opts.waitUntil(distillPromise);
   }
 
   return { id: memoryId, content, layerId };
