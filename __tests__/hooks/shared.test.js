@@ -8,6 +8,7 @@ import { tmpdir } from "os";
 
 let loadConfig, emitModuleEvent, readTurnState, writeTurnState, clearTurnState;
 let versionGte, checkLocalServerVersion, buildMemoryContext;
+let extractSearchKeywords, searchMemories;
 
 beforeAll(async () => {
   const mod = await import("../../hooks/scripts/shared.js");
@@ -19,6 +20,8 @@ beforeAll(async () => {
   versionGte = mod.versionGte;
   checkLocalServerVersion = mod.checkLocalServerVersion;
   buildMemoryContext = mod.buildMemoryContext;
+  extractSearchKeywords = mod.extractSearchKeywords;
+  searchMemories = mod.searchMemories;
 });
 
 describe("Turn state management", () => {
@@ -365,5 +368,131 @@ describe("buildMemoryContext — memory-used indicator", () => {
   it("handles missing similarity gracefully", () => {
     const out = buildMemoryContext({}, [{ content: "no similarity given" }]);
     expect(out).toMatch(/\[0%\] no similarity given/);
+  });
+});
+
+describe("extractSearchKeywords", () => {
+  it("strips stopwords from verbose natural-language prompts", () => {
+    const out = extractSearchKeywords(
+      "when I was working in the thing-event-system, I copied over the migrations but needed to make some changes, what were they?"
+    );
+    // content words preserved, stopwords + question words dropped
+    expect(out).toMatch(/thing-event-system/);
+    expect(out).toMatch(/migrations/);
+    expect(out).toMatch(/changes/);
+    expect(out).not.toMatch(/\bwhen\b/);
+    expect(out).not.toMatch(/\bwhat\b/);
+    expect(out).not.toMatch(/\bwere\b/);
+  });
+
+  it("preserves hyphenated compound words", () => {
+    expect(extractSearchKeywords("where is the thing-event-system config?")).toMatch(
+      /thing-event-system/
+    );
+  });
+
+  it("returns null for non-string input", () => {
+    expect(extractSearchKeywords(null)).toBeNull();
+    expect(extractSearchKeywords(undefined)).toBeNull();
+    expect(extractSearchKeywords(42)).toBeNull();
+  });
+
+  it("returns null when the distilled form is identical to the input", () => {
+    // Already keyword-dense — no point retrying with the same query
+    expect(extractSearchKeywords("deep-memory migrations")).toBeNull();
+  });
+
+  it("returns null when the prompt is only stopwords", () => {
+    expect(extractSearchKeywords("what were they?")).toBeNull(); // all three are stopwords
+  });
+
+  it("drops tokens shorter than 2 characters", () => {
+    const out = extractSearchKeywords("I am a developer working on X");
+    expect(out).toBe("developer working");
+  });
+});
+
+describe("searchMemories — keyword retry fallback", () => {
+  const hostedConfig = {
+    tes_endpoint: "https://api.test.com",
+    tes_client_id: "test-client",
+    tes_api_key: "tes_sk_test123",
+  };
+
+  it("retries with distilled keywords when raw query returns nothing", async () => {
+    const calls = [];
+    globalThis.fetch = async (url, opts) => {
+      const body = JSON.parse(opts.body);
+      calls.push(body.variables.query);
+      // First call (raw prompt) returns empty; second (keywords) returns hits
+      const isFirst = calls.length === 1;
+      return {
+        ok: true,
+        json: async () => ({
+          data: {
+            semanticSearchMemories: isFirst
+              ? []
+              : [{ id: "m1", content: "match", similarity: 0.8 }],
+          },
+        }),
+      };
+    };
+
+    const results = await searchMemories(
+      hostedConfig,
+      "when I was working on the migrations, what were those changes again?"
+    );
+    expect(calls).toHaveLength(2);
+    expect(calls[0]).toMatch(/when I was working/); // raw prompt first
+    expect(calls[1]).not.toMatch(/\bwhen\b/); // keyword-distilled retry
+    expect(calls[1]).toMatch(/migrations/);
+    expect(results).toHaveLength(1);
+  });
+
+  it("does not retry when the raw query already returns results", async () => {
+    const calls = [];
+    globalThis.fetch = async (url, opts) => {
+      calls.push(JSON.parse(opts.body).variables.query);
+      return {
+        ok: true,
+        json: async () => ({
+          data: {
+            semanticSearchMemories: [{ id: "m1", content: "hit", similarity: 0.9 }],
+          },
+        }),
+      };
+    };
+
+    await searchMemories(hostedConfig, "thing-event-system migrations");
+    expect(calls).toHaveLength(1);
+  });
+
+  it("does not retry when the distilled form equals the input", async () => {
+    const calls = [];
+    globalThis.fetch = async (url, opts) => {
+      calls.push(JSON.parse(opts.body).variables.query);
+      return {
+        ok: true,
+        json: async () => ({ data: { semanticSearchMemories: [] } }),
+      };
+    };
+
+    // Already keyword-dense, so extractSearchKeywords returns null
+    await searchMemories(hostedConfig, "deep-memory migrations");
+    expect(calls).toHaveLength(1);
+  });
+
+  it("does not retry when the prompt is only stopwords", async () => {
+    const calls = [];
+    globalThis.fetch = async (url, opts) => {
+      calls.push(JSON.parse(opts.body).variables.query);
+      return {
+        ok: true,
+        json: async () => ({ data: { semanticSearchMemories: [] } }),
+      };
+    };
+
+    await searchMemories(hostedConfig, "what were they?");
+    expect(calls).toHaveLength(1);
   });
 });
