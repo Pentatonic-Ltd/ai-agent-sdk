@@ -130,14 +130,57 @@ export function buildMemoryContext(config, memories) {
 
 // --- Memory Operations (mode-aware) ---
 
+// Stopwords dropped when distilling a verbose prompt to keyword form.
+// Kept small on purpose: we only want to strip obvious filler so the
+// remaining tokens are content-bearing enough for semantic search.
+const STOPWORDS = new Set([
+  "a", "am", "an", "and", "are", "as", "at", "be", "been", "but", "by",
+  "can", "did", "do", "does", "for", "from", "had", "has", "have", "he",
+  "her", "him", "his", "how", "i", "if", "in", "into", "is", "it", "its",
+  "just", "like", "made", "me", "my", "need", "needed", "of", "on", "or",
+  "our", "out", "over", "she", "so", "some", "than", "that", "the",
+  "their", "them", "then", "there", "these", "they", "this", "those",
+  "to", "up", "us", "was", "we", "went", "were", "what", "when", "where",
+  "which", "who", "why", "will", "with", "would", "you", "your",
+]);
+
+/**
+ * Extract keyword-dense query from a verbose prompt. Drops stopwords,
+ * preserves hyphenated compounds, keeps tokens >=2 chars. Used to retry
+ * a semantic search when the raw prompt returned nothing — short
+ * keyword-dense queries hit the embedding index far more reliably than
+ * long pronoun-heavy natural-language prompts.
+ *
+ * Returns null if the distilled form is identical to (or a superset of)
+ * the original, so callers can skip a redundant retry.
+ */
+export function extractSearchKeywords(query) {
+  if (typeof query !== "string") return null;
+  const tokens = query
+    .toLowerCase()
+    .split(/[^a-z0-9-]+/)
+    .filter((t) => t.length >= 2 && !STOPWORDS.has(t));
+  if (tokens.length === 0) return null;
+  const distilled = tokens.join(" ");
+  if (distilled === query.toLowerCase().trim()) return null;
+  return distilled;
+}
+
 /**
  * Search memories. Routes to TES GraphQL or local memory server.
+ *
+ * If the raw query returns no results, we retry once with a
+ * keyword-distilled form. Natural-language prompts ("what were those
+ * changes again?") often fall below the semantic threshold even when
+ * relevant memories exist — stripping to content words recovers them.
  */
 export async function searchMemories(config, query) {
-  if (config.mode === "local") {
-    return searchLocal(config, query);
-  }
-  return searchHosted(config, query);
+  const search = config.mode === "local" ? searchLocal : searchHosted;
+  const first = await search(config, query);
+  if (first.length > 0) return first;
+  const keywords = extractSearchKeywords(query);
+  if (!keywords) return first;
+  return search(config, keywords);
 }
 
 /**

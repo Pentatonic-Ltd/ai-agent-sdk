@@ -88,6 +88,33 @@ const stats = {
   setupPrompted: false,
 };
 
+// --- Query keyword extraction ---
+// Natural-language prompts ("what were those changes again?") often fall
+// below the semantic threshold even when relevant memories exist. We
+// drop stopwords and retry with the keyword-distilled form.
+const STOPWORDS = new Set([
+  "a", "am", "an", "and", "are", "as", "at", "be", "been", "but", "by",
+  "can", "did", "do", "does", "for", "from", "had", "has", "have", "he",
+  "her", "him", "his", "how", "i", "if", "in", "into", "is", "it", "its",
+  "just", "like", "made", "me", "my", "need", "needed", "of", "on", "or",
+  "our", "out", "over", "she", "so", "some", "than", "that", "the",
+  "their", "them", "then", "there", "these", "they", "this", "those",
+  "to", "up", "us", "was", "we", "went", "were", "what", "when", "where",
+  "which", "who", "why", "will", "with", "would", "you", "your",
+]);
+
+export function extractSearchKeywords(query) {
+  if (typeof query !== "string") return null;
+  const tokens = query
+    .toLowerCase()
+    .split(/[^a-z0-9-]+/)
+    .filter((t) => t.length >= 2 && !STOPWORDS.has(t));
+  if (tokens.length === 0) return null;
+  const distilled = tokens.join(" ");
+  if (distilled === query.toLowerCase().trim()) return null;
+  return distilled;
+}
+
 // --- Local mode: HTTP to memory server ---
 
 async function localSearch(baseUrl, query, limit = 5, minScore = 0.3) {
@@ -432,10 +459,22 @@ export default {
 
     stats.mode = hosted ? "hosted" : "local";
 
-    // Unified search/store that routes to local or hosted
-    const search = hosted
+    // Unified search/store that routes to local or hosted.
+    // If the raw query returns nothing, retry once with the
+    // keyword-distilled form — natural-language prompts frequently
+    // miss the semantic threshold even when matches exist.
+    const searchBackend = hosted
       ? (query, limit, score) => hostedSearch(config, query, limit, score)
       : (query, limit, score) => localSearch(baseUrl, query, limit, score);
+
+    const search = async (query, limit, score) => {
+      const first = await searchBackend(query, limit, score);
+      if (first.length > 0) return first;
+      const keywords = extractSearchKeywords(query);
+      if (!keywords) return first;
+      log(`search: retry "${query.substring(0, 40)}" → "${keywords}"`);
+      return searchBackend(keywords, limit, score);
+    };
 
     const store = hosted
       ? (content, metadata) => hostedStore(config, content, metadata)
