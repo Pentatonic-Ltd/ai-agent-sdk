@@ -283,6 +283,89 @@ describe("search options contract", () => {
 
     expect(Array.isArray(results)).toBe(true);
   });
+
+  it("SQL includes atomBoost and verbosityPenalty terms", async () => {
+    const seenSqls = [];
+    const mockDb = async (sql) => {
+      seenSqls.push(sql);
+      if (sql.includes("information_schema.columns")) return { rows: [{ "?column?": 1 }] };
+      return { rows: [] };
+    };
+    const mockAi = { embed: async () => ({ embedding: [0.1], dimensions: 1, model: "t" }) };
+
+    await search(mockDb, mockAi, "q", { clientId: "c" });
+
+    const scoringSql = seenSqls.find((s) => s.includes("final_score"));
+    expect(scoringSql).toBeDefined();
+    expect(scoringSql).toMatch(/source_id IS NOT NULL/);
+    expect(scoringSql).toMatch(/length\(mn\.content\)/);
+  });
+
+  it("dedupeBySource drops raw rows whose id is a source of a matched atom", async () => {
+    const rows = [
+      { id: "raw-1", client_id: "c", layer_id: "l", content: "long raw turn",
+        confidence: 1, decay_rate: 0.05, access_count: 0, final_score: 0.9, source_id: null },
+      { id: "atom-1", client_id: "c", layer_id: "l", content: "Phil owns a Subaru",
+        confidence: 1, decay_rate: 0.05, access_count: 0, final_score: 0.8, source_id: "raw-1" },
+    ];
+    let searchCallCount = 0;
+    const mockDb = async (sql) => {
+      if (sql.includes("information_schema.columns")) return { rows: [{ "?column?": 1 }] };
+      if (sql.includes("final_score")) {
+        searchCallCount++;
+        return { rows };
+      }
+      return { rows: [] };
+    };
+    const mockAi = { embed: async () => ({ embedding: [0.1], dimensions: 1, model: "t" }) };
+
+    const out = await search(mockDb, mockAi, "q", { clientId: "c", minScore: 0 });
+
+    expect(searchCallCount).toBe(1);
+    expect(out.length).toBe(1);
+    expect(out[0].id).toBe("atom-1");
+    expect(out[0].source_id).toBe("raw-1");
+  });
+
+  it("dedupeBySource: false keeps both atom and its raw source", async () => {
+    const rows = [
+      { id: "raw-1", client_id: "c", layer_id: "l", content: "long",
+        confidence: 1, decay_rate: 0.05, access_count: 0, final_score: 0.9, source_id: null },
+      { id: "atom-1", client_id: "c", layer_id: "l", content: "short",
+        confidence: 1, decay_rate: 0.05, access_count: 0, final_score: 0.8, source_id: "raw-1" },
+    ];
+    const mockDb = async (sql) => {
+      if (sql.includes("information_schema.columns")) return { rows: [{ "?column?": 1 }] };
+      if (sql.includes("final_score")) return { rows };
+      return { rows: [] };
+    };
+    const mockAi = { embed: async () => ({ embedding: [0.1], dimensions: 1, model: "t" }) };
+
+    const out = await search(mockDb, mockAi, "q", {
+      clientId: "c",
+      minScore: 0,
+      dedupeBySource: false,
+    });
+
+    expect(out.length).toBe(2);
+    expect(out.map((r) => r.id).sort()).toEqual(["atom-1", "raw-1"]);
+  });
+
+  it("search results include source_id (null for raw, set for atoms)", async () => {
+    const rows = [
+      { id: "atom-1", client_id: "c", layer_id: "l", content: "atom",
+        confidence: 1, decay_rate: 0.05, access_count: 0, final_score: 0.9, source_id: "raw-1" },
+    ];
+    const mockDb = async (sql) => {
+      if (sql.includes("information_schema.columns")) return { rows: [{ "?column?": 1 }] };
+      if (sql.includes("final_score")) return { rows };
+      return { rows: [] };
+    };
+    const mockAi = { embed: async () => ({ embedding: [0.1], dimensions: 1, model: "t" }) };
+
+    const out = await search(mockDb, mockAi, "q", { clientId: "c", minScore: 0 });
+    expect(out[0].source_id).toBe("raw-1");
+  });
 });
 
 // --- Ingest options contract ---

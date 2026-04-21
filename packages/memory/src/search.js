@@ -10,6 +10,11 @@ const DEFAULT_WEIGHTS = {
   relevance: 0.6,
   recency: 0.25,
   frequency: 0.15,
+  // Boost distilled atoms — they're high signal per token by design.
+  atomBoost: 0.15,
+  // Penalty on verbose raw turns. Short focused memories rank higher.
+  // Atoms are exempt (penalty skipped when source_id IS NOT NULL).
+  verbosityPenalty: 0.1,
 };
 
 /**
@@ -25,6 +30,10 @@ const DEFAULT_WEIGHTS = {
  * @param {number} [opts.minScore=0.5] - Minimum score threshold
  * @param {string} [opts.userId] - Optional user scope
  * @param {object} [opts.weights] - Override scoring weights
+ *   (relevance, recency, frequency, atomBoost, verbosityPenalty)
+ * @param {boolean} [opts.dedupeBySource=true] - When an atom matches,
+ *   drop its raw source memory from the results (atoms are already
+ *   distillations of the source, so returning both is redundant).
  * @param {Function} [opts.logger] - Optional logger
  * @returns {Promise<Array>} Scored memory results
  */
@@ -107,7 +116,19 @@ export async function search(db, ai, query, opts = {}) {
         ${w.recency} * exp(
           -0.01 * EXTRACT(EPOCH FROM NOW() - COALESCE(mn.last_accessed, mn.created_at)) / 3600
         ) +
-        ${w.frequency} * (ln(mn.access_count + 1) / ln(ma.val + 1))
+        ${w.frequency} * (ln(mn.access_count + 1) / ln(ma.val + 1)) +
+        ${w.atomBoost} * (CASE WHEN mn.source_id IS NOT NULL THEN 1 ELSE 0 END) -
+        ${w.verbosityPenalty} * (
+          CASE WHEN mn.source_id IS NULL THEN
+            LEAST(
+              GREATEST(
+                (ln(length(mn.content) + 1) - ln(200)) / (ln(10000) - ln(200)),
+                0
+              ),
+              1
+            )
+          ELSE 0 END
+        )
       ) AS final_score
     FROM memory_nodes mn
     CROSS JOIN max_ac ma
@@ -123,9 +144,20 @@ export async function search(db, ai, query, opts = {}) {
 
   const result = await db(sql, params);
 
-  const filtered = (result.rows || []).filter(
+  let filtered = (result.rows || []).filter(
     (r) => parseFloat(r.final_score) >= threshold
   );
+
+  // De-dupe: when an atom matches, drop its raw source from the set.
+  // Default on; set opts.dedupeBySource: false to keep both.
+  if (opts.dedupeBySource !== false) {
+    const atomSources = new Set(
+      filtered.filter((r) => r.source_id).map((r) => r.source_id)
+    );
+    if (atomSources.size > 0) {
+      filtered = filtered.filter((r) => !atomSources.has(r.id));
+    }
+  }
 
   // Increment access counts
   const ids = filtered.map((r) => r.id);
@@ -182,6 +214,7 @@ function mapRow(row) {
     client_id: row.client_id,
     user_id: row.user_id || null,
     layer_id: row.layer_id,
+    source_id: row.source_id || null,
     content: row.content,
     metadata:
       typeof row.metadata === "string"
