@@ -342,7 +342,7 @@ async function main() {
         const health = {
           status: "ok",
           client: CLIENT_ID,
-          version: "0.5.0",
+          version: "0.5.1",
           search: "text",
           db: false,
           ollama: false,
