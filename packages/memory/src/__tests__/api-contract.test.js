@@ -168,6 +168,11 @@ describe("named exports", () => {
 // --- AI client ---
 
 describe("createAIClient", () => {
+  const realFetch = globalThis.fetch;
+  afterEach(() => {
+    globalThis.fetch = realFetch;
+  });
+
   it("returns an object with embed() and chat()", () => {
     const client = createAIClient({
       url: "http://localhost:11434/v1",
@@ -184,6 +189,79 @@ describe("createAIClient", () => {
       apiKey: "sk-test",
     });
     expect(client).toBeDefined();
+  });
+
+  it("hits /embeddings by default (OpenAI spec)", async () => {
+    let hitUrl;
+    globalThis.fetch = async (url) => {
+      hitUrl = url;
+      return { ok: true, json: async () => ({ data: [{ embedding: [0.1, 0.2] }] }) };
+    };
+    const client = createAIClient({
+      url: "http://localhost:11434/v1",
+      model: "test",
+    });
+    await client.embed("hello");
+    expect(hitUrl).toBe("http://localhost:11434/v1/embeddings");
+  });
+
+  it("uses embeddingPath override (e.g. Pentatonic AI Gateway)", async () => {
+    let hitUrl;
+    globalThis.fetch = async (url) => {
+      hitUrl = url;
+      return { ok: true, json: async () => ({ data: [{ embedding: [0.1] }] }) };
+    };
+    const client = createAIClient({
+      url: "https://lambda-gateway.pentatonic.com/v1",
+      model: "NV-Embed-v2",
+      embeddingPath: "embed",
+    });
+    await client.embed("hello");
+    expect(hitUrl).toBe("https://lambda-gateway.pentatonic.com/v1/embed");
+  });
+
+  it("normalises leading slashes and trailing base-url slashes", async () => {
+    let hitUrl;
+    globalThis.fetch = async (url) => {
+      hitUrl = url;
+      return { ok: true, json: async () => ({ data: [{ embedding: [0.1] }] }) };
+    };
+    const client = createAIClient({
+      url: "https://gateway.test/v1/",
+      model: "m",
+      embeddingPath: "/embed",
+    });
+    await client.embed("hi");
+    expect(hitUrl).toBe("https://gateway.test/v1/embed");
+  });
+
+  it("chatPath override applies to chat() too", async () => {
+    let hitUrl;
+    globalThis.fetch = async (url) => {
+      hitUrl = url;
+      return { ok: true, json: async () => ({ choices: [{ message: { content: "hi" } }] }) };
+    };
+    const client = createAIClient({
+      url: "https://gateway.test/v1",
+      model: "m",
+      chatPath: "chat",
+    });
+    await client.chat([{ role: "user", content: "q" }]);
+    expect(hitUrl).toBe("https://gateway.test/v1/chat");
+  });
+
+  it("chat defaults to /chat/completions", async () => {
+    let hitUrl;
+    globalThis.fetch = async (url) => {
+      hitUrl = url;
+      return { ok: true, json: async () => ({ choices: [{ message: { content: "hi" } }] }) };
+    };
+    const client = createAIClient({
+      url: "http://localhost:11434/v1",
+      model: "m",
+    });
+    await client.chat([{ role: "user", content: "q" }]);
+    expect(hitUrl).toBe("http://localhost:11434/v1/chat/completions");
   });
 });
 

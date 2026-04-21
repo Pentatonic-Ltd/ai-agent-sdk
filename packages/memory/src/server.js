@@ -13,6 +13,9 @@
  *   LLM_URL          — OpenAI-compatible chat endpoint (required)
  *   LLM_MODEL        — Chat model name for HyDE (required)
  *   API_KEY          — API key for embedding/LLM endpoints (optional)
+ *   EMBEDDING_PATH   — Path appended to EMBEDDING_URL (default: "embeddings").
+ *                      Set to "embed" for the Pentatonic AI Gateway.
+ *   CHAT_PATH        — Path appended to LLM_URL (default: "chat/completions")
  *   CLIENT_ID        — Client ID for memory scoping (default: "default")
  *   PORT             — HTTP port for SSE transport (default: 3333)
  */
@@ -46,11 +49,13 @@ function createMemory() {
       url: process.env.EMBEDDING_URL,
       model: process.env.EMBEDDING_MODEL,
       apiKey: process.env.API_KEY,
+      embeddingPath: process.env.EMBEDDING_PATH,
     },
     llm: {
       url: process.env.LLM_URL,
       model: process.env.LLM_MODEL,
       apiKey: process.env.API_KEY,
+      chatPath: process.env.CHAT_PATH,
     },
     logger: (msg) => process.stderr.write(`[memory] ${msg}\n`),
   });

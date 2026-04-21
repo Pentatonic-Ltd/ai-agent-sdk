@@ -8,10 +8,16 @@
 /**
  * Create an AI client from config.
  *
+ * Defaults to OpenAI-standard paths (`/embeddings`, `/chat/completions`).
+ * Override with `embeddingPath` / `chatPath` for gateways that use
+ * different routes — e.g. Pentatonic AI Gateway exposes `/embed`.
+ *
  * @param {object} config
  * @param {string} config.url - Base URL (e.g. "http://ollama:11434/v1")
  * @param {string} config.model - Model name
  * @param {string} [config.apiKey] - Optional API key
+ * @param {string} [config.embeddingPath="embeddings"] - Path appended to url
+ * @param {string} [config.chatPath="chat/completions"] - Path appended to url
  * @param {number} [config.dimensions] - Expected embedding dimensions
  * @returns {object} Client with embed() and chat() methods
  */
@@ -21,6 +27,12 @@ export function createAIClient(config) {
     headers["Authorization"] = `Bearer ${config.apiKey}`;
     headers["X-API-Key"] = config.apiKey;
   }
+
+  // Strip leading slashes so callers can use "embed" or "/embed"
+  // interchangeably. Base url may or may not have a trailing slash.
+  const embeddingPath = (config.embeddingPath || "embeddings").replace(/^\/+/, "");
+  const chatPath = (config.chatPath || "chat/completions").replace(/^\/+/, "");
+  const baseUrl = config.url.replace(/\/+$/, "");
 
   return {
     /**
@@ -32,7 +44,7 @@ export function createAIClient(config) {
      */
     async embed(text, inputType = "passage") {
       try {
-        const res = await fetch(`${config.url}/embeddings`, {
+        const res = await fetch(`${baseUrl}/${embeddingPath}`, {
           method: "POST",
           headers,
           body: JSON.stringify({
@@ -70,7 +82,7 @@ export function createAIClient(config) {
      */
     async chat(messages, opts = {}) {
       try {
-        const res = await fetch(`${config.url}/chat/completions`, {
+        const res = await fetch(`${baseUrl}/${chatPath}`, {
           method: "POST",
           headers,
           body: JSON.stringify({
