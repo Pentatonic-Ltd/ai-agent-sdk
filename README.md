@@ -73,6 +73,8 @@ That's it. The plugin hooks automatically search memories on every prompt and st
 - **Distilled memory** -- a background LLM pass extracts atomic facts from each raw turn and stores each as its own node in the semantic layer, linked back to the source. A query like *"what does Phil drink?"* matches *"Phil drinks cortado"* more reliably than a mixed paragraph covering food, drinks, and hobbies. Default-on; the raw turn is still preserved.
 - **Decay and consolidation** -- memories fade over time; frequently accessed ones get promoted
 
+> **Store latency note (v0.5.4+):** on the local memory server, `store_memory` now awaits distillation before returning instead of running it fire-and-forget. This fixed a bug where distillation was being killed mid-flight (atoms never got embeddings, so they were unreachable by semantic search), but it means stores now take as long as your configured LLM takes to produce atoms — typically 5–30s on `llama3.2:3b`, up to the `chat()` timeout ceiling (60s default, overridable via `opts.timeout`). Cloudflare Worker deployments pass `ctx.waitUntil` and still return fast. Set `opts.distill: false` on the ingest call if you want the old fast-return behaviour at the cost of no atoms.
+
 ### Change models
 
 ```bash
