@@ -1,8 +1,18 @@
 #!/usr/bin/env node
 
 /**
- * Stop hook — stores the conversation turn as a memory and emits
- * analytics events (hosted mode only).
+ * Stop hook — finalizes a user turn.
+ *
+ * Two responsibilities:
+ *   1. Footer enforcement (hybrid mechanism for memory-retrieval turns):
+ *      If memories were injected this turn but the last assistant
+ *      message doesn't end with the "🧠 Matched N memories" footer,
+ *      return decision:"block" to force Claude to append it. Capped at
+ *      one retry per turn to prevent loops.
+ *   2. Turn finalization: store the turn as a memory, emit analytics,
+ *      reset turn state. Runs only on the *last* Stop of the turn —
+ *      after the retry completes, so the stored content includes the
+ *      footer Claude appended.
  *
  * Works with both hosted TES and local memory system.
  */
@@ -15,6 +25,7 @@ import {
   readTurnState,
   writeTurnState,
   readStdin,
+  checkFooterRetry,
 } from "./shared.js";
 
 async function main() {
@@ -31,6 +42,36 @@ async function main() {
   if (!sessionId) process.exit(0);
 
   const state = readTurnState(sessionId);
+
+  // --- Footer enforcement (retry path) ---
+  //
+  // If memories were retrieved this turn and Claude's last message
+  // doesn't include the footer, force a continuation with decision:block.
+  // We bail BEFORE finalizing the turn so the retry captures the footer
+  // in the stored memory / CHAT_TURN event.
+  // The `reason` field of decision:"block" is rendered to the user as a
+  // "Stop hook error" block in Claude Code — so we use IT as the footer
+  // display channel directly. Decision:"block" does force a continuation,
+  // but the reason guides Claude to emit nothing of substance on it.
+  //
+  // The retry attempt counter still matters: it prevents this hook from
+  // displaying the footer on every subsequent Stop-hook invocation inside
+  // the same user turn.
+  const retry = checkFooterRetry(state, config, input.last_assistant_message);
+  if (retry) {
+    state.footer_retry_attempts = retry.nextAttempts;
+    writeTurnState(sessionId, state);
+    process.stdout.write(
+      JSON.stringify({
+        decision: "block",
+        reason: retry.footer,
+      })
+    );
+    return;
+  }
+
+  // --- Turn finalization ---
+
   const turnNumber = state.turn_number || 0;
   const durationMs = state.turn_start ? Date.now() - state.turn_start : undefined;
 
@@ -106,7 +147,9 @@ async function main() {
     }
   }
 
-  // Increment turn number, clear turn-specific data
+  // Increment turn number, clear turn-specific data (including
+  // memories_retrieved + footer_retry_attempts — user-prompt.js resets
+  // them at the start of the next turn too, but we also clear here).
   writeTurnState(sessionId, {
     tool_calls: [],
     turn_number: turnNumber + 1,

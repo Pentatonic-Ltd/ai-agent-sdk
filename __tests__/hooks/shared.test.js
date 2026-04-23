@@ -1,5 +1,5 @@
 import { jest } from "@jest/globals";
-import { mkdirSync, writeFileSync, rmSync, existsSync } from "fs";
+import { mkdirSync, writeFileSync, readFileSync, rmSync, existsSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
 
@@ -7,7 +7,10 @@ import { tmpdir } from "os";
 // Config loading requires filesystem, so we use real temp files.
 
 let loadConfig, emitModuleEvent, readTurnState, writeTurnState, clearTurnState;
-let versionGte, checkLocalServerVersion, buildMemoryContext;
+let versionGte, checkLocalServerVersion, buildMemoryContext, getMemoryFooter;
+let checkFooterRetry, sanitizeMemoryContent;
+let projectSlug, resolveAutoMemoryDir, formatSessionMemoriesFile;
+let writeSessionMemoriesToAutoMemory;
 let extractSearchKeywords, searchMemories;
 
 beforeAll(async () => {
@@ -20,6 +23,13 @@ beforeAll(async () => {
   versionGte = mod.versionGte;
   checkLocalServerVersion = mod.checkLocalServerVersion;
   buildMemoryContext = mod.buildMemoryContext;
+  getMemoryFooter = mod.getMemoryFooter;
+  checkFooterRetry = mod.checkFooterRetry;
+  sanitizeMemoryContent = mod.sanitizeMemoryContent;
+  projectSlug = mod.projectSlug;
+  resolveAutoMemoryDir = mod.resolveAutoMemoryDir;
+  formatSessionMemoriesFile = mod.formatSessionMemoriesFile;
+  writeSessionMemoriesToAutoMemory = mod.writeSessionMemoriesToAutoMemory;
   extractSearchKeywords = mod.extractSearchKeywords;
   searchMemories = mod.searchMemories;
 });
@@ -308,37 +318,52 @@ describe("checkLocalServerVersion", () => {
   });
 });
 
-describe("buildMemoryContext — memory-used indicator", () => {
+describe("buildMemoryContext", () => {
   it("includes the memory list with similarity percentages", () => {
     const out = buildMemoryContext({}, [
       { similarity: 0.9, content: "Phil likes cheese" },
       { similarity: 0.7, content: "Phil drinks cortado" },
     ]);
-    expect(out).toMatch(/\[Memory\] Related knowledge:/);
+    expect(out).toMatch(/\[Pentatonic Memory/);
     expect(out).toMatch(/- \[90%\] Phil likes cheese/);
     expect(out).toMatch(/- \[70%\] Phil drinks cortado/);
   });
 
-  it("injects a footer instruction when memories are present (default on)", () => {
+  it("frames memories as authoritative and overrides the file-based memory", () => {
     const out = buildMemoryContext({}, [
       { similarity: 0.9, content: "fact" },
     ]);
-    expect(out).toMatch(/🧠/);
-    expect(out).toMatch(/append exactly this footer/);
-    expect(out).toMatch(/Matched 1 memory from Pentatonic Memory/);
+    expect(out).toMatch(/AUTHORITATIVE SOURCE/);
+    expect(out).toMatch(/overrides[\s\S]*other memory system/i);
+    expect(out).toMatch(/file-based memory/i);
+    expect(out).toMatch(/search_memories/);
+    expect(out).toMatch(/do not reply "I don't know"/i);
+    expect(out).toMatch(/ground truth/i);
   });
 
-  it("pluralises the footer for multiple memories", () => {
+  it("handles missing similarity gracefully", () => {
+    const out = buildMemoryContext({}, [{ content: "no similarity given" }]);
+    expect(out).toMatch(/\[0%\] no similarity given/);
+  });
+
+  it("embeds the footer instruction for the model to follow (best-effort path)", () => {
+    const out = buildMemoryContext({}, [
+      { similarity: 0.9, content: "fact" },
+    ]);
+    expect(out).toMatch(/append exactly this footer/);
+    expect(out).toMatch(/🧠 _Matched 1 memory from Pentatonic Memory_/);
+  });
+
+  it("pluralises the footer in the injected instruction", () => {
     const out = buildMemoryContext({}, [
       { similarity: 0.9, content: "a" },
       { similarity: 0.8, content: "b" },
       { similarity: 0.7, content: "c" },
     ]);
-    expect(out).toMatch(/Matched 3 memories from Pentatonic Memory/);
+    expect(out).toMatch(/🧠 _Matched 3 memories from Pentatonic Memory_/);
   });
 
   it("omits the footer instruction when show_memory_indicator is 'false'", () => {
-    // Config comes from YAML frontmatter so values are strings
     const out = buildMemoryContext(
       { show_memory_indicator: "false" },
       [{ similarity: 0.9, content: "fact" }]
@@ -348,28 +373,218 @@ describe("buildMemoryContext — memory-used indicator", () => {
     expect(out).not.toMatch(/Pentatonic Memory_/);
   });
 
-  it("keeps the footer when show_memory_indicator is 'true' (explicit opt-in)", () => {
-    const out = buildMemoryContext(
-      { show_memory_indicator: "true" },
-      [{ similarity: 0.9, content: "fact" }]
+  it("strips dashboard noise from each memory content", () => {
+    const noisy = [
+      "[2026-04-21T11:47:04.826Z] I have a subaru and hyundai Updated — both a Subaru and a Hyundai.",
+      "",
+      "anonymous",
+      "ml_phil-h-claude_episodic",
+      "100% match",
+      "Confidence: 100%",
+      "Accessed: 2x",
+      "<1h ago",
+      "Decay: 0.05",
+      "Metadata",
+      "{",
+      '  "source": { "user": "anonymous", "system": "claude-code-plugin" },',
+      '  "event_id": "f4750a33",',
+      '  "event_type": "CHAT_TURN"',
+      "}",
+    ].join("\n");
+    const out = buildMemoryContext({}, [{ similarity: 0.9, content: noisy }]);
+    expect(out).toMatch(/I have a subaru and hyundai/);
+    expect(out).not.toMatch(/ml_phil-h-claude_episodic/);
+    expect(out).not.toMatch(/Confidence:/);
+    expect(out).not.toMatch(/Accessed: 2x/);
+    expect(out).not.toMatch(/event_id/);
+    expect(out).not.toMatch(/entity_type/);
+  });
+});
+
+describe("sanitizeMemoryContent", () => {
+  it("strips leading ISO timestamps on each line", () => {
+    const out = sanitizeMemoryContent("[2026-04-21T11:47:04.826Z] Phil owns a Subaru.");
+    expect(out).toBe("Phil owns a Subaru.");
+  });
+
+  it("strips standalone dashboard metadata lines", () => {
+    const input = [
+      "Phil owns a Subaru.",
+      "anonymous",
+      "ml_phil-h-claude_episodic",
+      "100% match",
+      "Confidence: 100%",
+      "Accessed: 2x",
+      "<1h ago",
+      "Decay: 0.05",
+      "Metadata",
+    ].join("\n");
+    const out = sanitizeMemoryContent(input);
+    expect(out).toBe("Phil owns a Subaru.");
+  });
+
+  it("strips trailing JSON metadata blob", () => {
+    const input = [
+      "Phil has two dogs named Max and Luna.",
+      "{",
+      '  "event_id": "abc-123",',
+      '  "event_type": "CHAT_TURN"',
+      "}",
+    ].join("\n");
+    const out = sanitizeMemoryContent(input);
+    expect(out).toBe("Phil has two dogs named Max and Luna.");
+  });
+
+  it("keeps the original content if stripping would leave almost nothing", () => {
+    const input = "anonymous\nml_phil-h-claude_episodic\n100% match";
+    const out = sanitizeMemoryContent(input);
+    expect(out).toBe(input); // fallback — all three lines would strip to empty
+  });
+
+  it("is a no-op for clean content", () => {
+    const clean = "Phil prefers espresso in the morning, tea in the afternoon.";
+    expect(sanitizeMemoryContent(clean)).toBe(clean);
+  });
+
+  it("handles non-string input safely", () => {
+    expect(sanitizeMemoryContent(undefined)).toBeUndefined();
+    expect(sanitizeMemoryContent(null)).toBeNull();
+  });
+
+  it("strips inline JSON metadata blobs with TES-style fields", () => {
+    const input = [
+      "User said: I have a Subaru.",
+      "{",
+      '  "event_id": "abc",',
+      '  "event_type": "CHAT_TURN",',
+      '  "entity_type": "conversation"',
+      "}",
+      "The next turn continued...",
+    ].join("\n");
+    const out = sanitizeMemoryContent(input);
+    expect(out).toMatch(/User said: I have a Subaru\./);
+    expect(out).toMatch(/The next turn continued\.\.\./);
+    expect(out).not.toMatch(/event_id/);
+    expect(out).not.toMatch(/entity_type/);
+  });
+
+  it("does NOT strip legitimate JSON code samples", () => {
+    const input = [
+      "Here's how to configure the client:",
+      "{",
+      '  "apiKey": "xxx",',
+      '  "endpoint": "https://api.test"',
+      "}",
+      "Then instantiate it.",
+    ].join("\n");
+    const out = sanitizeMemoryContent(input);
+    // apiKey and endpoint aren't TES metadata fields → not stripped
+    expect(out).toMatch(/apiKey/);
+    expect(out).toMatch(/endpoint/);
+  });
+
+  it("truncates long memories with an ellipsis", () => {
+    const long = "fact. ".repeat(200); // 1200 chars
+    const out = sanitizeMemoryContent(long);
+    expect(out.length).toBeLessThanOrEqual(601); // MEMORY_MAX_LEN + "…"
+    expect(out.endsWith("…")).toBe(true);
+    expect(out).toMatch(/fact\./);
+  });
+});
+
+describe("getMemoryFooter", () => {
+  it("renders the Matched-N footer when memories were retrieved", () => {
+    expect(getMemoryFooter({}, 1)).toBe(
+      "🧠 _Matched 1 memory from Pentatonic Memory_"
     );
-    expect(out).toMatch(/🧠/);
+    expect(getMemoryFooter({}, 3)).toBe(
+      "🧠 _Matched 3 memories from Pentatonic Memory_"
+    );
   });
 
-  it("always instructs the LLM to append the footer (no omit escape-hatch)", () => {
-    const out = buildMemoryContext({}, [
-      { similarity: 0.3, content: "unrelated" },
-    ]);
-    // The "omit the footer if irrelevant" instruction was removed so users
-    // always get a visible signal when memory was consulted — even if the
-    // retrieval was junk. Lets you spot poor retrieval quality.
-    expect(out).not.toMatch(/omit the footer/);
-    expect(out).toMatch(/append exactly this footer/);
+  it("returns null when zero memories were retrieved", () => {
+    expect(getMemoryFooter({}, 0)).toBeNull();
+    expect(getMemoryFooter({}, undefined)).toBeNull();
   });
 
-  it("handles missing similarity gracefully", () => {
-    const out = buildMemoryContext({}, [{ content: "no similarity given" }]);
-    expect(out).toMatch(/\[0%\] no similarity given/);
+  it("returns null when show_memory_indicator is 'false' (YAML string)", () => {
+    expect(getMemoryFooter({ show_memory_indicator: "false" }, 5)).toBeNull();
+  });
+
+  it("still renders when show_memory_indicator is 'true' (explicit opt-in)", () => {
+    expect(getMemoryFooter({ show_memory_indicator: "true" }, 2)).toMatch(
+      /🧠 _Matched 2 memories/
+    );
+  });
+
+  it("uses singular form for exactly one memory", () => {
+    expect(getMemoryFooter({}, 1)).toMatch(/1 memory from/);
+    expect(getMemoryFooter({}, 1)).not.toMatch(/1 memories/);
+  });
+});
+
+describe("checkFooterRetry", () => {
+  it("returns a retry ticket when footer is missing from the reply", () => {
+    const out = checkFooterRetry(
+      { memories_retrieved: 3, footer_retry_attempts: 0 },
+      {},
+      "Here's your answer without the footer."
+    );
+    expect(out).not.toBeNull();
+    expect(out.footer).toMatch(/Matched 3 memories/);
+    expect(out.nextAttempts).toBe(1);
+  });
+
+  it("returns null when the footer is already present in the reply", () => {
+    const footer = "🧠 _Matched 2 memories from Pentatonic Memory_";
+    const out = checkFooterRetry(
+      { memories_retrieved: 2, footer_retry_attempts: 0 },
+      {},
+      `Answer text\n\n${footer}`
+    );
+    expect(out).toBeNull();
+  });
+
+  it("returns null when no memories were retrieved", () => {
+    const out = checkFooterRetry(
+      { memories_retrieved: 0, footer_retry_attempts: 0 },
+      {},
+      "Any reply"
+    );
+    expect(out).toBeNull();
+  });
+
+  it("returns null when the indicator is disabled", () => {
+    const out = checkFooterRetry(
+      { memories_retrieved: 5, footer_retry_attempts: 0 },
+      { show_memory_indicator: "false" },
+      "Reply with no footer"
+    );
+    expect(out).toBeNull();
+  });
+
+  it("returns null once the retry budget is exhausted (caps at 1 retry)", () => {
+    const out = checkFooterRetry(
+      { memories_retrieved: 3, footer_retry_attempts: 1 },
+      {},
+      "Still no footer in the reply"
+    );
+    expect(out).toBeNull();
+  });
+
+  it("handles missing turn-state fields gracefully", () => {
+    expect(checkFooterRetry(undefined, {}, "")).toBeNull();
+    expect(checkFooterRetry({}, {}, "")).toBeNull();
+    expect(checkFooterRetry(null, {}, "")).toBeNull();
+  });
+
+  it("handles an empty assistant message (tool-only reply) — triggers retry", () => {
+    const out = checkFooterRetry(
+      { memories_retrieved: 2, footer_retry_attempts: 0 },
+      {},
+      ""
+    );
+    expect(out).not.toBeNull();
   });
 });
 
@@ -496,5 +711,169 @@ describe("searchMemories — keyword retry fallback", () => {
 
     await searchMemories(hostedConfig, "what were they?");
     expect(calls).toHaveLength(1);
+  });
+});
+
+describe("projectSlug", () => {
+  it("converts a project path to Claude Code's dashed slug", () => {
+    expect(projectSlug("/home/phil/Development/takebacks/ai-events-sdk")).toBe(
+      "-home-phil-Development-takebacks-ai-events-sdk"
+    );
+    expect(projectSlug("/home/phil")).toBe("-home-phil");
+  });
+
+  it("returns null for non-strings or empty", () => {
+    expect(projectSlug(undefined)).toBeNull();
+    expect(projectSlug(null)).toBeNull();
+    expect(projectSlug("")).toBeNull();
+  });
+});
+
+describe("resolveAutoMemoryDir", () => {
+  it("composes the expected path under <baseDir>/<slug>/memory", () => {
+    const base = "/fake/projects";
+    expect(
+      resolveAutoMemoryDir("/home/phil/Development/takebacks/ai-events-sdk", {
+        baseDir: base,
+      })
+    ).toBe(
+      "/fake/projects/-home-phil-Development-takebacks-ai-events-sdk/memory"
+    );
+  });
+
+  it("returns null for missing cwd", () => {
+    expect(resolveAutoMemoryDir(undefined)).toBeNull();
+  });
+});
+
+describe("formatSessionMemoriesFile", () => {
+  it("includes Claude-Code-style frontmatter", () => {
+    const out = formatSessionMemoriesFile(
+      "what car do I drive?",
+      [{ similarity: 0.9, content: "Phil owns a Subaru." }],
+      { now: "2026-04-23T18:00:00Z" }
+    );
+    expect(out).toMatch(/^---\nname: Session memories \(Pentatonic\)/);
+    expect(out).toMatch(/type: project/);
+    expect(out).toMatch(/Refreshed: 2026-04-23T18:00:00Z/);
+    expect(out).toMatch(/Query: what car do I drive\?/);
+    expect(out).toMatch(/Matched: 1 memory/);
+    expect(out).toMatch(/- \[90%\] Phil owns a Subaru\./);
+  });
+
+  it("pluralises for multiple memories", () => {
+    const out = formatSessionMemoriesFile("q", [
+      { similarity: 0.9, content: "a" },
+      { similarity: 0.7, content: "b" },
+    ]);
+    expect(out).toMatch(/Matched: 2 memories/);
+  });
+
+  it("writes a 'no memories' note when the array is empty", () => {
+    const out = formatSessionMemoriesFile("q", []);
+    expect(out).toMatch(/No memories matched this prompt/);
+  });
+
+  it("strips newlines from the query in the header (single-line safety)", () => {
+    const out = formatSessionMemoriesFile("line one\nline two", [
+      { similarity: 0.5, content: "x" },
+    ]);
+    expect(out).toMatch(/Query: line one line two/);
+  });
+
+  it("sanitizes memory content before writing (dashboard noise removed)", () => {
+    const noisy = "[2026-04-21T11:47:04Z] Phil owns a Subaru.\nanonymous\nml_phil-h-claude_episodic\n100% match";
+    const out = formatSessionMemoriesFile("q", [
+      { similarity: 0.8, content: noisy },
+    ]);
+    expect(out).toMatch(/Phil owns a Subaru\./);
+    expect(out).not.toMatch(/ml_phil-h-claude_episodic/);
+    expect(out).not.toMatch(/anonymous/);
+  });
+});
+
+describe("writeSessionMemoriesToAutoMemory — round-trip on disk", () => {
+  const baseDir = join(tmpdir(), `tes-automem-${Date.now()}`);
+  const cwd = "/fake/project/path";
+  const slug = "-fake-project-path";
+  const memDir = join(baseDir, slug, "memory");
+
+  afterEach(() => {
+    if (existsSync(baseDir)) rmSync(baseDir, { recursive: true, force: true });
+  });
+
+  it("creates the memory directory, writes the session file, and indexes it in MEMORY.md", () => {
+    const res = writeSessionMemoriesToAutoMemory(
+      cwd,
+      "what car?",
+      [{ similarity: 0.9, content: "Phil owns a Subaru." }],
+      { baseDir }
+    );
+    expect(res.written).toBe(true);
+
+    const sessionPath = join(memDir, "pentatonic_session_memories.md");
+    const indexPath = join(memDir, "MEMORY.md");
+    expect(existsSync(sessionPath)).toBe(true);
+    expect(existsSync(indexPath)).toBe(true);
+
+    const session = readFileSync(sessionPath, "utf-8");
+    expect(session).toMatch(/Phil owns a Subaru\./);
+    expect(session).toMatch(/type: project/);
+
+    const index = readFileSync(indexPath, "utf-8");
+    expect(index).toMatch(/pentatonic_session_memories\.md/);
+  });
+
+  it("refreshes the session file on each call but does not re-add the MEMORY.md pointer", () => {
+    writeSessionMemoriesToAutoMemory(
+      cwd,
+      "first query",
+      [{ similarity: 0.9, content: "First fact." }],
+      { baseDir }
+    );
+    writeSessionMemoriesToAutoMemory(
+      cwd,
+      "second query",
+      [{ similarity: 0.8, content: "Second fact." }],
+      { baseDir }
+    );
+
+    const session = readFileSync(
+      join(memDir, "pentatonic_session_memories.md"),
+      "utf-8"
+    );
+    // Latest write wins — only the second fact is present.
+    expect(session).toMatch(/Second fact\./);
+    expect(session).not.toMatch(/First fact\./);
+
+    const index = readFileSync(join(memDir, "MEMORY.md"), "utf-8");
+    const occurrences = index.match(/pentatonic_session_memories\.md/g) || [];
+    expect(occurrences.length).toBe(1);
+  });
+
+  it("preserves existing MEMORY.md content when adding the pointer", () => {
+    mkdirSync(memDir, { recursive: true });
+    const existing =
+      "- [Original note](original.md) — something the user had\n";
+    writeFileSync(join(memDir, "MEMORY.md"), existing, "utf-8");
+
+    writeSessionMemoriesToAutoMemory(
+      cwd,
+      "q",
+      [{ similarity: 0.9, content: "fact" }],
+      { baseDir }
+    );
+
+    const index = readFileSync(join(memDir, "MEMORY.md"), "utf-8");
+    expect(index).toMatch(/Original note/);
+    expect(index).toMatch(/pentatonic_session_memories\.md/);
+  });
+
+  it("returns {written:false} gracefully when cwd is missing", () => {
+    const res = writeSessionMemoriesToAutoMemory(undefined, "q", [], {
+      baseDir,
+    });
+    expect(res.written).toBe(false);
+    expect(res.reason).toBe("no-cwd");
   });
 });
