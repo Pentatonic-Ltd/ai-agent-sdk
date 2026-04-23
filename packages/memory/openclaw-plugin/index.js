@@ -434,10 +434,61 @@ async function tesGetApiKey(accessToken, clientId) {
 
 // --- Format helpers ---
 
+// Strip TES dashboard/metadata noise from a stored memory's content
+// before we show it to the model. Same shape as the Claude Code hook's
+// sanitizer in `hooks/scripts/shared.js` — duplicated inline here to
+// keep the published openclaw-plugin package fully standalone. Update
+// both if you change this.
+const TES_META_FIELDS =
+  "event_id|event_type|entity_type|source|clientId|correlationId|timestamp|session_id|layer_id|confidence|decay_rate|user_id";
+const MEMORY_MAX_LEN = 600;
+
+function sanitizeMemoryContent(content) {
+  if (typeof content !== "string") return content;
+  let out = content;
+  // Trailing JSON metadata blob (no `m` flag — `$` = end-of-string).
+  out = out.replace(/\n\{\s*\n[\s\S]*?\n\s*\}\s*$/, "");
+  // Inline JSON metadata blobs (2+ consecutive TES metadata fields).
+  out = out.replace(
+    new RegExp(
+      `\\{\\s*\\n(\\s*"(?:${TES_META_FIELDS})"[^\\n]*\\n){2,}\\s*\\}`,
+      "g"
+    ),
+    ""
+  );
+  // Dashboard-UI standalone lines.
+  const linePatterns = [
+    /^\s*anonymous\s*$/gm,
+    /^\s*ml_[a-z0-9_-]+_(episodic|semantic|procedural|working)\s*$/gm,
+    /^\s*\d+%\s*match\s*$/gm,
+    /^\s*Confidence:\s*\d+%\s*$/gm,
+    /^\s*Accessed:\s*\d+x?\s*$/gm,
+    /^\s*<?\s*\d+[smhd]\s*ago\s*$/gm,
+    /^\s*Decay:\s*[\d.]+\s*$/gm,
+    /^\s*Metadata\s*$/gm,
+  ];
+  for (const pat of linePatterns) out = out.replace(pat, "");
+  // Leading ISO timestamps — strip prefix, keep line content.
+  out = out.replace(/^\s*\[\d{4}-\d{2}-\d{2}T[\d:.]+Z\]\s*/gm, "");
+  // Collapse consecutive blank lines.
+  out = out.replace(/\n\s*\n\s*\n+/g, "\n\n").trim();
+  // Cap verbose transcript dumps.
+  if (out.length > MEMORY_MAX_LEN) {
+    out = out.slice(0, MEMORY_MAX_LEN).trimEnd() + "…";
+  }
+  // Fallback to original if we stripped everything.
+  const wordCount = (out.match(/\b\w{2,}\b/g) || []).length;
+  if (wordCount < 2) return content;
+  return out;
+}
+
 function formatResults(results) {
   if (!results.length) return "No relevant memories found.";
   return results
-    .map((m, i) => `${i + 1}. [${Math.round((m.similarity || 0) * 100)}%] ${m.content}`)
+    .map(
+      (m, i) =>
+        `${i + 1}. [${Math.round((m.similarity || 0) * 100)}%] ${sanitizeMemoryContent(m.content)}`
+    )
     .join("\n\n");
 }
 
@@ -644,7 +695,10 @@ export default {
           stats.lastAssembleCount = results.length;
 
           const memoryText = results
-            .map((m) => `- [${Math.round((m.similarity || 0) * 100)}%] ${m.content}`)
+            .map(
+              (m) =>
+                `- [${Math.round((m.similarity || 0) * 100)}%] ${sanitizeMemoryContent(m.content)}`
+            )
             .join("\n");
 
           // Visibility marker: instruct the model to append a footer so the

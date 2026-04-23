@@ -38,6 +38,7 @@
 import pg from "pg";
 import { createMemorySystem } from "../index.js";
 import { createContextEngine } from "./context-engine.js";
+import { sanitizeMemoryContent } from "../sanitize.js";
 
 const { Pool } = pg;
 
@@ -440,7 +441,7 @@ function createHostedContextEngine(config, opts = {}) {
         const memoryText = results
           .map(
             (m) =>
-              `- [${Math.round((m.similarity || 0) * 100)}%] ${m.content}`
+              `- [${Math.round((m.similarity || 0) * 100)}%] ${sanitizeMemoryContent(m.content)}`
           )
           .join("\n");
 
@@ -638,7 +639,7 @@ Tell the user to run step 1 first, then help them fill in the config with the cr
           return results
             .map(
               (m, i) =>
-                `${i + 1}. [${Math.round((m.similarity || 0) * 100)}%] ${m.content}`
+                `${i + 1}. [${Math.round((m.similarity || 0) * 100)}%] ${sanitizeMemoryContent(m.content)}`
             )
             .join("\n\n");
         },
@@ -705,7 +706,7 @@ Tell the user to run step 1 first, then help them fill in the config with the cr
           return results
             .map(
               (m, i) =>
-                `${i + 1}. [${Math.round((m.similarity || 0) * 100)}%] ${m.content}`
+                `${i + 1}. [${Math.round((m.similarity || 0) * 100)}%] ${sanitizeMemoryContent(m.content)}`
             )
             .join("\n\n");
         },
