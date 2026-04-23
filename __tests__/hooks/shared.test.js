@@ -325,7 +325,7 @@ describe("buildMemoryContext — memory-used indicator", () => {
     ]);
     expect(out).toMatch(/🧠/);
     expect(out).toMatch(/append exactly this footer/);
-    expect(out).toMatch(/Used 1 memory from Pentatonic Memory/);
+    expect(out).toMatch(/Matched 1 memory from Pentatonic Memory/);
   });
 
   it("pluralises the footer for multiple memories", () => {
@@ -334,7 +334,7 @@ describe("buildMemoryContext — memory-used indicator", () => {
       { similarity: 0.8, content: "b" },
       { similarity: 0.7, content: "c" },
     ]);
-    expect(out).toMatch(/Used 3 memories from Pentatonic Memory/);
+    expect(out).toMatch(/Matched 3 memories from Pentatonic Memory/);
   });
 
   it("omits the footer instruction when show_memory_indicator is 'false'", () => {

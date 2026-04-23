@@ -77,7 +77,7 @@ describe("memory-used indicator — hosted mode", () => {
     });
 
     expect(result.systemPromptAddition).toMatch(/🧠/);
-    expect(result.systemPromptAddition).toMatch(/Used 2 memories from Pentatonic Memory/);
+    expect(result.systemPromptAddition).toMatch(/Matched 2 memories from Pentatonic Memory/);
     expect(result.systemPromptAddition).toMatch(/append exactly this footer/);
   });
 
@@ -90,8 +90,8 @@ describe("memory-used indicator — hosted mode", () => {
       messages: [{ role: "user", content: "query" }],
     });
 
-    expect(result.systemPromptAddition).toMatch(/Used 1 memory from Pentatonic Memory/);
-    expect(result.systemPromptAddition).not.toMatch(/Used 1 memories/);
+    expect(result.systemPromptAddition).toMatch(/Matched 1 memory from Pentatonic Memory/);
+    expect(result.systemPromptAddition).not.toMatch(/Matched 1 memories/);
   });
 
   it("omits the indicator instruction when show_memory_indicator is false", async () => {

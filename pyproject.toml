@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pentatonic-ai-agent-sdk"
-version = "0.5.4"
+version = "0.5.5"
 description = "AI Agent SDK — observability, memory, and analytics for LLM applications. Provider-agnostic. Tracks token usage, tool calls, conversations, and enables shared team memory."
 readme = "README.md"
 license = "MIT"

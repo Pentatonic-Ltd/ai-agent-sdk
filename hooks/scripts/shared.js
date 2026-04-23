@@ -119,7 +119,7 @@ export function buildMemoryContext(config, memories) {
         "",
         "After your reply, on a new line, append exactly this footer (no other prefix, no trailing content):",
         "—",
-        `🧠 _Used ${n} memor${n === 1 ? "y" : "ies"} from Pentatonic Memory_`,
+        `🧠 _Matched ${n} memor${n === 1 ? "y" : "ies"} from Pentatonic Memory_`,
       ].join("\n")
     : "";
 
