@@ -45,6 +45,40 @@ export function createAIClient(config) {
   const chatPath = stripLeading(config.chatPath || "chat/completions");
   const baseUrl = stripTrailing(config.url);
 
+  /**
+   * Send an embedding request with N inputs. Shared by embed() and
+   * embedBatch(). Returns an array of { embedding, dimensions, model } or
+   * nulls (one per input, preserving order).
+   */
+  async function rawEmbed(texts, inputType) {
+    if (!texts.length) return [];
+    try {
+      const res = await fetch(`${baseUrl}/${embeddingPath}`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          input: texts.map((t) => (t ?? "").substring(0, 8192)),
+          model: config.model,
+          input_type: inputType,
+        }),
+        signal: AbortSignal.timeout(30000),
+      });
+      if (!res.ok) return texts.map(() => null);
+      const data = await res.json();
+      // OpenAI-compat: data.data = [{embedding, index}, ...]
+      // Pentatonic gateway / Ollama: data.embeddings = [[...], [...], ...]
+      const vectors =
+        data.data?.map((d) => d.embedding) || data.embeddings || [];
+      return texts.map((_, i) => {
+        const embedding = vectors[i];
+        if (!embedding) return null;
+        return { embedding, dimensions: embedding.length, model: config.model };
+      });
+    } catch {
+      return texts.map(() => null);
+    }
+  }
+
   return {
     /**
      * Generate an embedding vector for text.
@@ -54,32 +88,25 @@ export function createAIClient(config) {
      * @returns {Promise<{embedding: number[], dimensions: number, model: string} | null>}
      */
     async embed(text, inputType = "passage") {
-      try {
-        const res = await fetch(`${baseUrl}/${embeddingPath}`, {
-          method: "POST",
-          headers,
-          body: JSON.stringify({
-            input: [text.substring(0, 8192)],
-            model: config.model,
-            input_type: inputType,
-          }),
-          signal: AbortSignal.timeout(30000),
-        });
+      const results = await rawEmbed([text], inputType);
+      return results[0];
+    },
 
-        if (!res.ok) return null;
-
-        const data = await res.json();
-        const embedding = data.data?.[0]?.embedding || data.embeddings?.[0];
-        if (!embedding) return null;
-
-        return {
-          embedding,
-          dimensions: embedding.length,
-          model: config.model,
-        };
-      } catch {
-        return null;
-      }
+    /**
+     * Generate embeddings for N texts in a single HTTP round-trip. Returns
+     * an array the same length as the input; each entry is either the
+     * embedding object or null on failure.
+     *
+     * Batching matters under load — one call instead of N cuts GPU overhead
+     * and downstream queueing. Used by distill() to embed all atoms from a
+     * raw memory in one shot rather than N serial calls.
+     *
+     * @param {string[]} texts
+     * @param {string} [inputType="passage"]
+     * @returns {Promise<Array<{embedding: number[], dimensions: number, model: string} | null>>}
+     */
+    async embedBatch(texts, inputType = "passage") {
+      return rawEmbed(texts, inputType);
     },
 
     /**

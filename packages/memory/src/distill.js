@@ -104,8 +104,27 @@ export async function distill(db, ai, llm, sourceId, content, opts = {}) {
   }
   const layerId = layerResult.rows[0].id;
 
+  // Batch-embed all atoms in one HTTP call. Under load this is a big
+  // win over N serial embed calls — one GPU forward pass instead of N,
+  // less downstream queueing.
+  let embeddings;
+  if (ai.embedBatch) {
+    try {
+      embeddings = await ai.embedBatch(facts, "passage");
+    } catch (err) {
+      log(`distill: batch embed failed: ${err.message}`);
+      embeddings = facts.map(() => null);
+    }
+  } else {
+    // Older AI clients without embedBatch — fall through to per-atom embed
+    // inside the loop below. Kept for backwards compat with any custom
+    // client passed into createMemorySystem.
+    embeddings = null;
+  }
+
   const stored = [];
-  for (const fact of facts) {
+  for (let i = 0; i < facts.length; i++) {
+    const fact = facts[i];
     try {
       const atomId = `mem_${crypto.randomUUID()}`;
 
@@ -124,9 +143,13 @@ export async function distill(db, ai, llm, sourceId, content, opts = {}) {
         ]
       );
 
-      // Embed the atom (non-fatal)
+      // Attach embedding — from the batch when available, else fall back
+      // to a per-atom call.
       try {
-        const embResult = await ai.embed(fact, "passage");
+        let embResult = embeddings ? embeddings[i] : null;
+        if (!embResult && !embeddings) {
+          embResult = await ai.embed(fact, "passage");
+        }
         if (embResult?.embedding) {
           await db(
             `UPDATE memory_nodes SET embedding = $1, updated_at = NOW() WHERE id = $2`,
@@ -137,7 +160,9 @@ export async function distill(db, ai, llm, sourceId, content, opts = {}) {
         log(`distill: embedding failed for ${atomId}: ${err.message}`);
       }
 
-      // HyDE (2 queries for atoms — they're already focused)
+      // HyDE (2 queries for atoms — they're already focused).
+      // Still per-atom — chat completions don't share a batch surface
+      // across providers the way embeddings do.
       try {
         const queries = await generateHypotheticalQueries(llm, fact);
         const trimmed = queries.slice(0, 2);

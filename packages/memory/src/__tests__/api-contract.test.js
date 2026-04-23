@@ -263,6 +263,62 @@ describe("createAIClient", () => {
     await client.chat([{ role: "user", content: "q" }]);
     expect(hitUrl).toBe("http://localhost:11434/v1/chat/completions");
   });
+
+  it("embedBatch sends all inputs in one HTTP call", async () => {
+    let callCount = 0;
+    let lastBody;
+    globalThis.fetch = async (_url, opts) => {
+      callCount++;
+      lastBody = JSON.parse(opts.body);
+      return {
+        ok: true,
+        json: async () => ({
+          data: lastBody.input.map((_, i) => ({
+            embedding: [0.1, 0.2, 0.3],
+            index: i,
+          })),
+        }),
+      };
+    };
+    const client = createAIClient({
+      url: "http://localhost:11434/v1",
+      model: "m",
+    });
+    const out = await client.embedBatch(["a", "b", "c"], "passage");
+    expect(callCount).toBe(1);
+    expect(lastBody.input).toEqual(["a", "b", "c"]);
+    expect(out.length).toBe(3);
+    expect(out.every((r) => r.embedding.length === 3)).toBe(true);
+  });
+
+  it("embedBatch returns nulls on non-2xx without throwing", async () => {
+    globalThis.fetch = async () => ({ ok: false, json: async () => ({}) });
+    const client = createAIClient({
+      url: "http://localhost:11434/v1",
+      model: "m",
+    });
+    const out = await client.embedBatch(["a", "b"]);
+    expect(out).toEqual([null, null]);
+  });
+
+  it("embedBatch parses Ollama/Pentatonic-style {embeddings: [[...]]} response", async () => {
+    globalThis.fetch = async () => ({
+      ok: true,
+      json: async () => ({
+        embeddings: [
+          [0.1, 0.2],
+          [0.3, 0.4],
+        ],
+      }),
+    });
+    const client = createAIClient({
+      url: "http://localhost:11434/v1",
+      model: "m",
+    });
+    const out = await client.embedBatch(["x", "y"]);
+    expect(out[0].embedding).toEqual([0.1, 0.2]);
+    expect(out[1].embedding).toEqual([0.3, 0.4]);
+  });
 });
 
 // --- Search options contract ---
