@@ -89,6 +89,9 @@ export function createAIClient(config) {
      * @param {object} [opts]
      * @param {number} [opts.maxTokens=150]
      * @param {number} [opts.temperature=0.7]
+     * @param {number} [opts.timeout=60000] - Defaults 60s. Longer chunks +
+     *   smaller/local models routinely exceed 15s; 60s keeps distill/HyDE
+     *   reliable on prod-class content without catching genuine hangs.
      * @returns {Promise<string>} The assistant's response text
      */
     async chat(messages, opts = {}) {
@@ -102,7 +105,7 @@ export function createAIClient(config) {
             max_tokens: opts.maxTokens || 150,
             temperature: opts.temperature ?? 0.7,
           }),
-          signal: AbortSignal.timeout(opts.timeout || 15000),
+          signal: AbortSignal.timeout(opts.timeout || 60000),
         });
 
         if (!res.ok) return "";

@@ -34,6 +34,11 @@ const DEFAULT_WEIGHTS = {
  * @param {boolean} [opts.dedupeBySource=true] - When an atom matches,
  *   drop its raw source memory from the results (atoms are already
  *   distillations of the source, so returning both is redundant).
+ * @param {boolean} [opts.hydrateAtomSources=false] - Opt-in. For each
+ *   matched atom, also fetch its source raw by id and append to results
+ *   (deduped by id). Useful when downstream needs full-detail context
+ *   (dates, names, quotes) that atoms decontextualize away. Not
+ *   meaningful when dedupeBySource is also on.
  * @param {Function} [opts.logger] - Optional logger
  * @returns {Promise<Array>} Scored memory results
  */
@@ -156,6 +161,28 @@ export async function search(db, ai, query, opts = {}) {
     );
     if (atomSources.size > 0) {
       filtered = filtered.filter((r) => !atomSources.has(r.id));
+    }
+  }
+
+  // Hydrate: for each matched atom, also fetch and append its source raw
+  // (deduped by id). Atoms often drop specifics (dates, names); surfacing
+  // the raw gives the LLM consumer full context alongside the focused atom.
+  // Opt-in via opts.hydrateAtomSources. Not meaningful with dedupeBySource.
+  if (opts.hydrateAtomSources === true) {
+    const existingIds = new Set(filtered.map((r) => r.id));
+    const missingSourceIds = [
+      ...new Set(
+        filtered
+          .filter((r) => r.source_id && !existingIds.has(r.source_id))
+          .map((r) => r.source_id)
+      ),
+    ];
+    if (missingSourceIds.length > 0) {
+      const hydrated = await db(
+        `SELECT * FROM memory_nodes WHERE id = ANY($1)`,
+        [missingSourceIds]
+      );
+      filtered = filtered.concat(hydrated.rows || []);
     }
   }
 

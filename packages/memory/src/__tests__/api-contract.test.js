@@ -366,6 +366,97 @@ describe("search options contract", () => {
     const out = await search(mockDb, mockAi, "q", { clientId: "c", minScore: 0 });
     expect(out[0].source_id).toBe("raw-1");
   });
+
+  it("hydrateAtomSources: true fetches and appends source raws for matched atoms", async () => {
+    const matchedRows = [
+      { id: "atom-1", client_id: "c", layer_id: "l", content: "Caroline went to support group",
+        confidence: 1, decay_rate: 0.05, access_count: 0, final_score: 0.9, source_id: "raw-1" },
+    ];
+    const hydratedRaw = {
+      id: "raw-1", client_id: "c", layer_id: "l", source_id: null,
+      content: "[Date: 8 May 2023] Caroline: I went to the LGBTQ support group...",
+      confidence: 1, decay_rate: 0.05, access_count: 0,
+    };
+    const mockDb = async (sql, params) => {
+      if (sql.includes("information_schema.columns")) return { rows: [{ "?column?": 1 }] };
+      if (sql.includes("final_score")) return { rows: matchedRows };
+      if (sql.includes("id = ANY") && Array.isArray(params?.[0]) && params[0].includes("raw-1")) {
+        return { rows: [hydratedRaw] };
+      }
+      return { rows: [] };
+    };
+    const mockAi = { embed: async () => ({ embedding: [0.1], dimensions: 1, model: "t" }) };
+
+    const out = await search(mockDb, mockAi, "q", {
+      clientId: "c",
+      minScore: 0,
+      dedupeBySource: false,
+      hydrateAtomSources: true,
+    });
+
+    expect(out.length).toBe(2);
+    expect(out.map((r) => r.id).sort()).toEqual(["atom-1", "raw-1"]);
+    const raw = out.find((r) => r.id === "raw-1");
+    expect(raw.content).toContain("8 May 2023");
+  });
+
+  it("hydrateAtomSources: false is a no-op (default)", async () => {
+    const rows = [
+      { id: "atom-1", client_id: "c", layer_id: "l", content: "atom",
+        confidence: 1, decay_rate: 0.05, access_count: 0, final_score: 0.9, source_id: "raw-1" },
+    ];
+    let hydrateCalled = false;
+    const mockDb = async (sql) => {
+      if (sql.includes("information_schema.columns")) return { rows: [{ "?column?": 1 }] };
+      if (sql.includes("final_score")) return { rows };
+      if (sql.includes("SELECT * FROM memory_nodes WHERE id = ANY")) {
+        hydrateCalled = true;
+        return { rows: [] };
+      }
+      return { rows: [] };
+    };
+    const mockAi = { embed: async () => ({ embedding: [0.1], dimensions: 1, model: "t" }) };
+
+    await search(mockDb, mockAi, "q", {
+      clientId: "c",
+      minScore: 0,
+      dedupeBySource: false,
+    });
+
+    expect(hydrateCalled).toBe(false);
+  });
+});
+
+describe("ingest default behavior", () => {
+  it("awaits distill when no waitUntil is passed (fixes fire-and-forget in local dev)", async () => {
+    let distillStarted = false;
+    let distillFinished = false;
+    const mockDb = async (sql) => {
+      if (sql.includes("SELECT id FROM memory_layers")) {
+        return { rows: [{ id: "layer-1" }] };
+      }
+      return { rows: [] };
+    };
+    const mockAi = { embed: async () => null };
+    const mockLlm = {
+      chat: async () => {
+        distillStarted = true;
+        // Simulate LLM latency
+        await new Promise((r) => setTimeout(r, 20));
+        distillFinished = true;
+        return "[]";
+      },
+    };
+
+    await ingest(mockDb, mockAi, mockLlm, "some content", {
+      clientId: "c",
+      // no waitUntil — distill must be awaited inline
+    });
+
+    // After ingest returns, distill must have finished
+    expect(distillStarted).toBe(true);
+    expect(distillFinished).toBe(true);
+  });
 });
 
 // --- Ingest options contract ---

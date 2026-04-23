@@ -87,14 +87,20 @@ export async function ingest(db, ai, llm, content, opts = {}) {
     log(`HyDE failed for ${memoryId}: ${err.message}`);
   }
 
-  // Distill atomic facts in the background — only for raw ingestions
-  // (skip if this call is already storing a distilled atom or user opted out).
+  // Distill atomic facts — only for raw ingestions (skip if this call is
+  // already storing a distilled atom or user opted out).
+  //
+  // On Cloudflare Workers: caller passes `waitUntil` so distill runs past
+  // the handler return (without waitUntil the runtime kills unreferenced
+  // promises). On Node / local dev / test: we await inline so distill
+  // actually completes before ingest() returns.
   if (opts.distill !== false && !opts.sourceId) {
     const distillPromise = distill(db, ai, llm, memoryId, content, {
       ...opts,
       logger: log,
     }).catch((err) => log(`distill failed for ${memoryId}: ${err.message}`));
     if (typeof opts.waitUntil === "function") opts.waitUntil(distillPromise);
+    else await distillPromise;
   }
 
   return { id: memoryId, content, layerId };
