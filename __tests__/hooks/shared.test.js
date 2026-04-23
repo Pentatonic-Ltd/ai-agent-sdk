@@ -356,13 +356,15 @@ describe("buildMemoryContext — memory-used indicator", () => {
     expect(out).toMatch(/🧠/);
   });
 
-  it("instructs the LLM to skip the footer when memories aren't relevant", () => {
+  it("always instructs the LLM to append the footer (no omit escape-hatch)", () => {
     const out = buildMemoryContext({}, [
       { similarity: 0.3, content: "unrelated" },
     ]);
-    expect(out).toMatch(
-      /If the memories above were not relevant to your reply, omit the footer/
-    );
+    // The "omit the footer if irrelevant" instruction was removed so users
+    // always get a visible signal when memory was consulted — even if the
+    // retrieval was junk. Lets you spot poor retrieval quality.
+    expect(out).not.toMatch(/omit the footer/);
+    expect(out).toMatch(/append exactly this footer/);
   });
 
   it("handles missing similarity gracefully", () => {

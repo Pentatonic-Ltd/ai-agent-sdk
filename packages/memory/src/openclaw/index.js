@@ -453,8 +453,6 @@ function createHostedContextEngine(config, opts = {}) {
               `After your reply, on a new line, append exactly this footer (no other prefix, no trailing content):`,
               `—`,
               `🧠 _Used ${results.length} memor${results.length === 1 ? "y" : "ies"} from Pentatonic Memory_`,
-              "",
-              `If the memories above were not relevant to your reply, omit the footer.`,
             ].join("\n")
           : "";
 

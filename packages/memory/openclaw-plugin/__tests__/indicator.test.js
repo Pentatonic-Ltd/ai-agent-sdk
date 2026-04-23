@@ -123,10 +123,10 @@ describe("memory-used indicator — hosted mode", () => {
     expect(result.systemPromptAddition).toBeUndefined();
   });
 
-  it("instructs the LLM to omit the footer if memories weren't relevant", async () => {
-    // The prompt tells the model to skip the footer when the memories
-    // didn't influence the reply, so unrelated questions don't get a
-    // spurious "used 3 memories" footer.
+  it("always instructs the LLM to append the footer when memories were retrieved", async () => {
+    // Removed the "omit if irrelevant" escape hatch so users always get
+    // a visible signal when memory was consulted — even when retrieval
+    // was poor. Surfaces retrieval quality instead of hiding it.
     mockFetch([{ id: "m1", content: "Phil likes cheese", similarity: 0.4 }]);
     const engine = makeEngine();
 
@@ -135,8 +135,7 @@ describe("memory-used indicator — hosted mode", () => {
       messages: [{ role: "user", content: "query" }],
     });
 
-    expect(result.systemPromptAddition).toMatch(
-      /If the memories above were not relevant to your reply, omit the footer/
-    );
+    expect(result.systemPromptAddition).not.toMatch(/omit the footer/);
+    expect(result.systemPromptAddition).toMatch(/append exactly this footer/);
   });
 });
