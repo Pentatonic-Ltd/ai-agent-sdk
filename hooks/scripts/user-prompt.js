@@ -14,6 +14,7 @@ import {
   readStdin,
   searchMemories,
   buildMemoryContext,
+  writeSessionMemoriesToAutoMemory,
 } from "./shared.js";
 
 async function main() {
@@ -25,6 +26,7 @@ async function main() {
   state.user_message = input.prompt;
   state.turn_start = Date.now();
   state.tool_calls = [];
+  state.memories_retrieved = 0;
   writeTurnState(sessionId, state);
 
   const config = loadConfig();
@@ -37,6 +39,24 @@ async function main() {
 
   try {
     const memories = await searchMemories(config, input.prompt);
+    // Record the count so the Stop hook can emit the "Matched N" footer
+    // deterministically, without relying on the model to follow an
+    // injected instruction that can get buried in a long context.
+    state.memories_retrieved = memories.length;
+    writeTurnState(sessionId, state);
+
+    // Write into Claude Code's auto-memory directory so the model reads
+    // these as its own trusted memory (via MEMORY.md auto-load), rather
+    // than as "additional notes" that get frequently ignored. Best-
+    // effort — never blocks the hook.
+    if (memories.length > 0) {
+      try {
+        writeSessionMemoriesToAutoMemory(input.cwd, input.prompt, memories);
+      } catch {
+        // Non-fatal
+      }
+    }
+
     if (memories.length > 0) {
       process.stdout.write(
         JSON.stringify({
