@@ -21,7 +21,9 @@ import { detectPaths, PATHS } from "./detect.js";
 import { universalChecks } from "./checks/universal.js";
 import { localMemoryChecks } from "./checks/local-memory.js";
 import { hostedTesChecks } from "./checks/hosted-tes.js";
+import { dataFlowChecks } from "./checks/data-flow.js";
 import { platformChecks } from "./checks/platform.js";
+import { claudeCodeChecks } from "./checks/claude-code.js";
 import { loadPlugins } from "./plugins.js";
 import { SEVERITY } from "./index.js";
 
@@ -32,7 +34,8 @@ function pathChecks(path) {
     case PATHS.LOCAL:
       return localMemoryChecks();
     case PATHS.HOSTED:
-      return hostedTesChecks();
+      // Liveness (hostedTesChecks) + end-to-end data-flow probes.
+      return [...hostedTesChecks(), ...dataFlowChecks()];
     case PATHS.PLATFORM:
       return platformChecks();
     default:
@@ -91,8 +94,9 @@ export async function runDoctor(opts = {}) {
   const timeoutMs = opts.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   const paths = detectPaths(opts);
 
-  // Universal checks always run.
-  const checks = [...universalChecks()];
+  // Universal checks always run. claudeCodeChecks is also universal —
+  // the plugin may be present regardless of which install path is in use.
+  const checks = [...universalChecks(), ...claudeCodeChecks()];
   for (const p of paths) {
     checks.push(...pathChecks(p));
   }
