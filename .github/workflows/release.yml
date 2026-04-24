@@ -28,7 +28,21 @@ jobs:
       - run: npm run build
       - run: NODE_OPTIONS='--experimental-vm-modules' npx jest --config jest.config.cjs --testPathIgnorePatterns='/e2e/'
 
+      - name: Check if version already on npm
+        id: check
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          NAME=$(node -p "require('./package.json').name")
+          echo "Package: $NAME@$VERSION"
+          if npm view "$NAME@$VERSION" version > /dev/null 2>&1; then
+            echo "Already published. Skipping."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Publish
+        if: steps.check.outputs.skip == 'false'
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -52,7 +66,22 @@ jobs:
       - name: Test
         run: pip install pytest && pip install -e . && pytest python/tests/ -v
 
+      - name: Check if version already on PyPI
+        id: check
+        run: |
+          NAME=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['name'])")
+          VERSION=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          echo "Package: $NAME==$VERSION"
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://pypi.org/pypi/$NAME/$VERSION/json")
+          if [ "$STATUS" = "200" ]; then
+            echo "Already published. Skipping."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Publish
+        if: steps.check.outputs.skip == 'false'
         run: twine upload dist/*
         env:
           TWINE_USERNAME: __token__
