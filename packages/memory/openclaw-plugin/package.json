@@ -24,7 +24,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Pentatonic-Ltd/ai-agent-sdk.git",
+    "url": "git+https://github.com/Pentatonic-Ltd/ai-agent-sdk.git",
     "directory": "packages/memory/openclaw-plugin"
   },
   "keywords": ["openclaw", "plugin", "memory", "context-engine", "pentatonic", "tes"]
