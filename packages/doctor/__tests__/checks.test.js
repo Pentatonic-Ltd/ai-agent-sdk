@@ -1,5 +1,7 @@
 import { universalChecks } from "../src/checks/universal.js";
 import { hostedTesChecks } from "../src/checks/hosted-tes.js";
+import { dataFlowChecks } from "../src/checks/data-flow.js";
+import { claudeCodeChecks } from "../src/checks/claude-code.js";
 import { platformChecks } from "../src/checks/platform.js";
 
 // fetch mocking — we don't want any real network in unit tests.
@@ -183,5 +185,154 @@ describe("platform checks", () => {
     const r = await c.run();
     expect(r.ok).toBe(false);
     expect(r.msg).toMatch(/no models loaded/);
+  });
+});
+
+describe("data-flow checks", () => {
+  beforeEach(() => {
+    process.env.TES_ENDPOINT = "https://example.test";
+    process.env.TES_API_KEY = "key";
+    process.env.TES_CLIENT_ID = "test-client";
+  });
+  afterEach(() => {
+    delete process.env.TES_ENDPOINT;
+    delete process.env.TES_API_KEY;
+    delete process.env.TES_CLIENT_ID;
+  });
+
+  it("registers the three expected probes", () => {
+    const names = dataFlowChecks().map((c) => c.name);
+    expect(names).toContain("TES event stream has data");
+    expect(names).toContain("MEMORY_CREATED events for client");
+    expect(names).toContain("semanticSearchMemories returns hits");
+  });
+
+  it("event stream: warns when totalCount is 0", async () => {
+    mockFetch(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ data: { events: { totalCount: 0 } } }),
+    }));
+    const c = dataFlowChecks().find((x) => x.name === "TES event stream has data");
+    const r = await c.run();
+    expect(r.ok).toBe(false);
+    expect(r.msg).toMatch(/0 events yet/);
+  });
+
+  it("event stream: passes with a positive count", async () => {
+    mockFetch(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ data: { events: { totalCount: 42 } } }),
+    }));
+    const c = dataFlowChecks().find((x) => x.name === "TES event stream has data");
+    const r = await c.run();
+    expect(r.ok).toBe(true);
+    expect(r.detail.totalCount).toBe(42);
+  });
+
+  it("memory-created: flags the client id in the warning", async () => {
+    mockFetch(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ data: { events: { totalCount: 0 } } }),
+    }));
+    const c = dataFlowChecks().find(
+      (x) => x.name === "MEMORY_CREATED events for client"
+    );
+    const r = await c.run();
+    expect(r.ok).toBe(false);
+    expect(r.msg).toMatch(/test-client/);
+  });
+
+  it("semantic search: warns on 0 hits", async () => {
+    mockFetch(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ data: { semanticSearchMemories: [] } }),
+    }));
+    const c = dataFlowChecks().find(
+      (x) => x.name === "semanticSearchMemories returns hits"
+    );
+    const r = await c.run();
+    expect(r.ok).toBe(false);
+    expect(r.msg).toMatch(/0 hits/);
+  });
+
+  it("semantic search: passes with hits", async () => {
+    mockFetch(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        data: { semanticSearchMemories: [{ id: "m1", score: 0.8 }] },
+      }),
+    }));
+    const c = dataFlowChecks().find(
+      (x) => x.name === "semanticSearchMemories returns hits"
+    );
+    const r = await c.run();
+    expect(r.ok).toBe(true);
+    expect(r.detail.hits).toBe(1);
+  });
+
+  it("semantic search: 'field not found' deployments skip gracefully", async () => {
+    mockFetch(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        errors: [{ message: "Cannot query field \"semanticSearchMemories\"" }],
+      }),
+    }));
+    const c = dataFlowChecks().find(
+      (x) => x.name === "semanticSearchMemories returns hits"
+    );
+    const r = await c.run();
+    expect(r.ok).toBe(true);
+    expect(r.msg).toMatch(/skipped/);
+  });
+
+  it("all three report missing env clearly", async () => {
+    delete process.env.TES_CLIENT_ID;
+    for (const c of dataFlowChecks()) {
+      const r = await c.run();
+      expect(r.ok).toBe(false);
+      expect(r.msg).toMatch(/TES_ENDPOINT|required/);
+    }
+  });
+});
+
+describe("Claude Code plugin check", () => {
+  it("reports installed + version when manifest is present", async () => {
+    const [check] = claudeCodeChecks({
+      fileExists: () => true,
+      readFile: () =>
+        JSON.stringify({ name: "tes-memory", version: "0.5.3" }),
+      homedir: () => "/home/fake",
+    });
+    const r = await check.run();
+    expect(r.ok).toBe(true);
+    expect(r.msg).toMatch(/tes-memory v0\.5\.3 installed/);
+    expect(r.detail.version).toBe("0.5.3");
+  });
+
+  it("reports the install command when manifest is missing", async () => {
+    const [check] = claudeCodeChecks({
+      fileExists: () => false,
+      homedir: () => "/home/fake",
+    });
+    const r = await check.run();
+    expect(r.ok).toBe(false);
+    expect(r.msg).toMatch(/plugin install tes-memory/);
+  });
+
+  it("handles corrupt manifest json without throwing", async () => {
+    const [check] = claudeCodeChecks({
+      fileExists: () => true,
+      readFile: () => "{ not json",
+      homedir: () => "/home/fake",
+    });
+    const r = await check.run();
+    expect(r.ok).toBe(false);
+    expect(r.msg).toMatch(/unreadable/);
   });
 });

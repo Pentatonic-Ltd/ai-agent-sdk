@@ -24,7 +24,9 @@ export { renderHuman, renderJson } from "./output.js";
 export { universalChecks } from "./checks/universal.js";
 export { localMemoryChecks } from "./checks/local-memory.js";
 export { hostedTesChecks } from "./checks/hosted-tes.js";
+export { dataFlowChecks } from "./checks/data-flow.js";
 export { platformChecks } from "./checks/platform.js";
+export { claudeCodeChecks } from "./checks/claude-code.js";
 
 export const SEVERITY = Object.freeze({
   CRITICAL: "critical",
