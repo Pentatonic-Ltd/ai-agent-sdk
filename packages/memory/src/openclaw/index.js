@@ -39,6 +39,39 @@ import pg from "pg";
 import { createMemorySystem } from "../index.js";
 import { createContextEngine } from "./context-engine.js";
 import { sanitizeMemoryContent } from "../sanitize.js";
+import {
+  hostedSearch as _hostedSearch,
+  hostedEmitChatTurn as _hostedEmitChatTurn,
+  hostedStoreMemory as _hostedStoreMemory,
+} from "../hosted.js";
+
+// --- Hosted-mode adapters ---
+//
+// The OpenClaw plugin predates the public hosted-helper API (`packages/
+// memory/src/hosted.js`). The wrappers below adapt the plugin's existing
+// call shape to the public API so other consumers (the LLM proxy worker,
+// custom integrations) hit the same code path. Adapters are tiny — they
+// translate args and unwrap the result envelope. New code should import
+// from `@pentatonic-ai/ai-agent-sdk/memory/hosted` directly.
+
+async function hostedSearch(config, query, limit = 5, minScore = 0.3) {
+  const { memories } = await _hostedSearch(config, query, { limit, minScore });
+  return memories;
+}
+
+async function hostedEmitChatTurn(config, sessionId, turn) {
+  return _hostedEmitChatTurn(
+    config,
+    { ...turn, sessionId },
+    { source: "openclaw-plugin" }
+  );
+}
+
+async function hostedStore(config, content, metadata = {}) {
+  return _hostedStoreMemory(config, content, metadata, {
+    source: metadata.source || "openclaw-plugin",
+  });
+}
 
 const { Pool } = pg;
 
@@ -73,139 +106,6 @@ function getLocalMemory(config) {
   });
 
   return memory;
-}
-
-// --- Hosted mode helpers ---
-
-function tesHeaders(config) {
-  const headers = {
-    "Content-Type": "application/json",
-    "x-client-id": config.tes_client_id,
-  };
-  if (config.tes_api_key?.startsWith("tes_")) {
-    headers["Authorization"] = `Bearer ${config.tes_api_key}`;
-  } else {
-    headers["x-service-key"] = config.tes_api_key;
-  }
-  return headers;
-}
-
-async function hostedSearch(config, query, limit = 5, minScore = 0.3) {
-  try {
-    const response = await fetch(`${config.tes_endpoint}/api/graphql`, {
-      method: "POST",
-      headers: tesHeaders(config),
-      body: JSON.stringify({
-        query: `query($clientId: String!, $query: String!, $limit: Int, $minScore: Float) {
-          semanticSearchMemories(clientId: $clientId, query: $query, limit: $limit, minScore: $minScore) {
-            id content similarity
-          }
-        }`,
-        variables: {
-          clientId: config.tes_client_id,
-          query,
-          limit,
-          minScore,
-        },
-      }),
-      signal: AbortSignal.timeout(5000),
-    });
-    if (!response.ok) return [];
-    const json = await response.json();
-    return json.data?.semanticSearchMemories || [];
-  } catch {
-    return [];
-  }
-}
-
-/**
- * Emit a CHAT_TURN event to TES so the conversation-analytics dashboard
- * (Token Universe + Tools tabs) can render. Without this, the dashboard
- * filters on eventType=CHAT_TURN and shows nothing for OpenClaw users
- * because the only events emitted are STORE_MEMORY.
- *
- * Anything missing from the message metadata is omitted rather than
- * defaulted to zero — that way the dashboard can distinguish "no data"
- * from "zero usage".
- */
-async function hostedEmitChatTurn(config, sessionId, turn) {
-  const attributes = {
-    source: "openclaw-plugin",
-    user_message: turn.userMessage,
-    assistant_response: turn.assistantResponse,
-  };
-  if (turn.model) attributes.model = turn.model;
-  if (turn.usage) attributes.usage = turn.usage;
-  if (turn.toolCalls?.length) attributes.tool_calls = turn.toolCalls;
-  if (turn.turnNumber !== undefined) attributes.turn_number = turn.turnNumber;
-  if (turn.systemPrompt) attributes.system_prompt = turn.systemPrompt;
-
-  try {
-    const response = await fetch(`${config.tes_endpoint}/api/graphql`, {
-      method: "POST",
-      headers: tesHeaders(config),
-      // Route through createModuleEvent on the conversation-analytics
-      // module rather than the top-level emitEvent. The latter requires
-      // a permission most client API keys don't have ("Access denied:
-      // You don't have permission to update emitEvent"), but the
-      // module's manifest declares CHAT_TURN as a registered event
-      // type, so the module-scoped path is both authorised and
-      // consistent with how STORE_MEMORY is emitted.
-      body: JSON.stringify({
-        query: `mutation Cme($moduleId: String!, $input: ModuleEventInput!) {
-          createModuleEvent(moduleId: $moduleId, input: $input) { success eventId }
-        }`,
-        variables: {
-          moduleId: "conversation-analytics",
-          input: {
-            eventType: "CHAT_TURN",
-            data: {
-              entity_id: sessionId,
-              attributes,
-            },
-          },
-        },
-      }),
-      signal: AbortSignal.timeout(10000),
-    });
-    if (!response.ok) return null;
-    return response.json();
-  } catch {
-    return null;
-  }
-}
-
-async function hostedStore(config, content, metadata = {}) {
-  try {
-    const response = await fetch(`${config.tes_endpoint}/api/graphql`, {
-      method: "POST",
-      headers: tesHeaders(config),
-      body: JSON.stringify({
-        query: `mutation CreateModuleEvent($moduleId: String!, $input: ModuleEventInput!) {
-          createModuleEvent(moduleId: $moduleId, input: $input) { success eventId }
-        }`,
-        variables: {
-          moduleId: "deep-memory",
-          input: {
-            eventType: "STORE_MEMORY",
-            data: {
-              entity_id: metadata.session_id || "openclaw",
-              attributes: {
-                ...metadata,
-                content,
-                source: "openclaw-plugin",
-              },
-            },
-          },
-        },
-      }),
-      signal: AbortSignal.timeout(10000),
-    });
-    if (!response.ok) return null;
-    return response.json();
-  } catch {
-    return null;
-  }
 }
 
 // --- Hosted context engine ---
