@@ -370,3 +370,10 @@ function shortenReason(msg) {
     .replace(/[^a-z0-9]+/g, "_")
     .slice(0, 60);
 }
+
+// Re-export the system-message injector so callers that import the
+// hosted module get the full memory-augmentation surface in one place.
+// Keeping the implementation in `./inject.js` lets non-hosted consumers
+// (e.g. a future "augment a request body" helper that doesn't talk to
+// TES) reuse it without pulling in the GraphQL surface.
+export { injectMemories } from "./inject.js";

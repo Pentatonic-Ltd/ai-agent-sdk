@@ -2,11 +2,24 @@ import { TESClient } from "../src/index.js";
 
 let fetchCalls = [];
 globalThis.fetch = async (url, opts) => {
+  const body = opts?.body ? JSON.parse(opts.body) : null;
+
+  // Memory-search calls (default-on injection in wrapClient) return an
+  // empty result so injection is a no-op and the existing emit-focused
+  // tests can keep asserting against the emit call only. Memory
+  // injection has its own dedicated tests further down.
+  if (body?.query?.includes("semanticSearchMemories")) {
+    return {
+      ok: true,
+      json: async () => ({ data: { semanticSearchMemories: [] } }),
+    };
+  }
+
   fetchCalls.push({ url, opts });
   return {
     ok: true,
     json: async () => ({
-      data: { emitEvent: { success: true, eventId: "evt-456" } },
+      data: { createModuleEvent: { success: true, eventId: "evt-456" } },
     }),
   };
 };
@@ -639,5 +652,228 @@ describe("tes.wrap() — unsupported client", () => {
   it("throws for unknown client shape", () => {
     expect(() => tes.wrap({})).toThrow("Unsupported client");
     expect(() => tes.wrap({ foo: "bar" })).toThrow("Unsupported client");
+  });
+});
+
+// --- Memory injection (default-on) ---
+
+describe("tes.wrap() — memory injection", () => {
+  // Use a custom fetch stub for these tests so we can control the
+  // semanticSearchMemories response per-test.
+  let memoriesToReturn;
+  let originalFetch;
+  let memoryFetchCalls;
+
+  beforeEach(() => {
+    memoriesToReturn = [];
+    memoryFetchCalls = [];
+    originalFetch = globalThis.fetch;
+    globalThis.fetch = async (url, opts) => {
+      const body = opts?.body ? JSON.parse(opts.body) : null;
+      if (body?.query?.includes("semanticSearchMemories")) {
+        memoryFetchCalls.push({ url, opts });
+        return {
+          ok: true,
+          json: async () => ({
+            data: { semanticSearchMemories: memoriesToReturn },
+          }),
+        };
+      }
+      // Emit calls — succeed silently
+      return {
+        ok: true,
+        json: async () => ({
+          data: { createModuleEvent: { success: true, eventId: "evt" } },
+        }),
+      };
+    };
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  it("OpenAI: prepends a system message with retrieved memories (default on)", async () => {
+    memoriesToReturn = [
+      { id: "m1", content: "User is in Lisbon.", similarity: 0.83 },
+      { id: "m2", content: "Prefers Portuguese.", similarity: 0.74 },
+    ];
+
+    let seenParams;
+    const openai = {
+      chat: {
+        completions: {
+          create: async (params) => {
+            seenParams = params;
+            return {
+              choices: [{ message: { content: "ok" } }],
+              usage: { prompt_tokens: 1, completion_tokens: 1 },
+              model: "gpt-4o",
+            };
+          },
+        },
+      },
+    };
+
+    const ai = tes.wrap(openai);
+    await ai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [{ role: "user", content: "Where am I?" }],
+    });
+
+    expect(memoryFetchCalls).toHaveLength(1);
+    expect(seenParams.messages[0].role).toBe("system");
+    expect(seenParams.messages[0].content).toMatch(/Lisbon/);
+    expect(seenParams.messages[0].content).toMatch(/Portuguese/);
+    expect(ai.tesSession._lastMemoryStats.injected).toBe(2);
+  });
+
+  it("Anthropic: appends to system block with retrieved memories", async () => {
+    memoriesToReturn = [
+      { id: "m1", content: "User is in Lisbon.", similarity: 0.83 },
+    ];
+
+    let seenParams;
+    const anthropic = {
+      messages: {
+        create: async (params) => {
+          seenParams = params;
+          return {
+            content: [{ type: "text", text: "ok" }],
+            usage: { input_tokens: 1, output_tokens: 1 },
+            model: "claude-sonnet-4-6",
+          };
+        },
+      },
+    };
+
+    const ai = tes.wrap(anthropic);
+    await ai.messages.create({
+      model: "claude-sonnet-4-6",
+      max_tokens: 64,
+      system: "You are helpful.",
+      messages: [{ role: "user", content: "Where am I?" }],
+    });
+
+    const sys =
+      typeof seenParams.system === "string"
+        ? seenParams.system
+        : seenParams.system.map((b) => b.text).join("\n");
+    expect(sys).toMatch(/Lisbon/);
+    expect(sys).toMatch(/You are helpful/);
+  });
+
+  it("memory:false skips injection entirely (no semanticSearchMemories call)", async () => {
+    memoriesToReturn = [{ id: "m1", content: "x", similarity: 0.9 }];
+
+    let seenParams;
+    const openai = {
+      chat: {
+        completions: {
+          create: async (params) => {
+            seenParams = params;
+            return {
+              choices: [{ message: { content: "ok" } }],
+              usage: { prompt_tokens: 1, completion_tokens: 1 },
+              model: "gpt-4o",
+            };
+          },
+        },
+      },
+    };
+
+    const ai = tes.wrap(openai, { memory: false });
+    await ai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [{ role: "user", content: "hi" }],
+    });
+
+    expect(memoryFetchCalls).toHaveLength(0);
+    // Customer's params reach upstream untouched
+    expect(seenParams.messages).toHaveLength(1);
+    expect(seenParams.messages[0].role).toBe("user");
+    expect(ai.tesSession._lastMemoryStats.skipped).toBe("memory_disabled");
+  });
+
+  it("no memories returned → call proceeds with original params", async () => {
+    memoriesToReturn = [];
+
+    let seenParams;
+    const openai = {
+      chat: {
+        completions: {
+          create: async (params) => {
+            seenParams = params;
+            return {
+              choices: [{ message: { content: "ok" } }],
+              usage: { prompt_tokens: 1, completion_tokens: 1 },
+              model: "gpt-4o",
+            };
+          },
+        },
+      },
+    };
+
+    const ai = tes.wrap(openai);
+    await ai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [{ role: "user", content: "hi" }],
+    });
+
+    expect(seenParams.messages).toHaveLength(1);
+    expect(seenParams.messages[0].role).toBe("user");
+    expect(ai.tesSession._lastMemoryStats.skipped).toBe("no_memories");
+  });
+
+  it("memoryOpts forwards limit/minScore/timeoutMs to hostedSearch", async () => {
+    memoriesToReturn = [];
+
+    const openai = {
+      chat: {
+        completions: {
+          create: async () => ({
+            choices: [{ message: { content: "ok" } }],
+            usage: { prompt_tokens: 1, completion_tokens: 1 },
+            model: "gpt-4o",
+          }),
+        },
+      },
+    };
+
+    const ai = tes.wrap(openai, {
+      memoryOpts: { limit: 3, minScore: 0.7 },
+    });
+    await ai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [{ role: "user", content: "hi" }],
+    });
+
+    expect(memoryFetchCalls).toHaveLength(1);
+    const sent = JSON.parse(memoryFetchCalls[0].opts.body);
+    expect(sent.variables.limit).toBe(3);
+    expect(sent.variables.minScore).toBe(0.7);
+  });
+
+  it("Workers AI prompt-style: skips injection (no messages array)", async () => {
+    memoriesToReturn = [{ id: "m1", content: "x", similarity: 0.9 }];
+
+    let seenParams;
+    const workersAi = {
+      run: async (model, params) => {
+        seenParams = params;
+        return { response: "ok" };
+      },
+    };
+
+    const ai = tes.wrap(workersAi);
+    await ai.run("@cf/meta/llama-3.1-8b-instruct", {
+      prompt: "hello world",
+    });
+
+    // Memory search was NOT called — prompt-style requests don't get
+    // injection (no clean place to put a system preamble).
+    expect(memoryFetchCalls).toHaveLength(0);
+    expect(seenParams.prompt).toBe("hello world");
+    expect(ai.tesSession._lastMemoryStats.skipped).toBe("no_user_message");
   });
 });

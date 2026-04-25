@@ -1,6 +1,18 @@
 import { Session } from "./session.js";
 import { normalizeResponse } from "./normalizer.js";
 import { rewriteUrls } from "./tracking.js";
+import {
+  hostedSearch,
+  injectMemories,
+} from "../packages/memory/src/hosted.js";
+
+// Default memory-injection knobs. Match the proxy's defaults so SDK and
+// proxy customers see identical retrieval behaviour.
+const MEMORY_DEFAULTS = {
+  limit: 6,
+  minScore: 0.55,
+  timeoutMs: 800,
+};
 
 /**
  * Detect the client type by duck-typing its shape.
@@ -10,6 +22,96 @@ function detectClientType(client) {
   if (client?.messages?.create) return "anthropic";
   if (typeof client?.run === "function") return "workers-ai";
   return "unknown";
+}
+
+/**
+ * Pull the last user message from a request body. Anthropic + OpenAI both
+ * carry messages on `params.messages`; Workers AI may also use
+ * `params.prompt` or `params.input_text`. Returns null when nothing usable
+ * is present (e.g. embedding call, empty prompt) so memory retrieval is
+ * skipped cleanly.
+ */
+function extractLastUserMessage(params, provider) {
+  // Only messages-shaped requests are eligible for system-prompt injection.
+  // Workers AI prompt-style calls (`{ prompt: "..." }`) are passed through
+  // unchanged — there's no clean place to insert memory context without
+  // changing the request shape, and we never want to surprise the caller
+  // by mutating their prompt string.
+  void provider;
+  const msgs = Array.isArray(params?.messages) ? params.messages : null;
+  if (!msgs) return null;
+  for (let i = msgs.length - 1; i >= 0; i--) {
+    if (msgs[i].role === "user") {
+      const c = msgs[i].content;
+      if (typeof c === "string") return c;
+      if (Array.isArray(c)) {
+        return c
+          .filter((p) => p.type === "text" && typeof p.text === "string")
+          .map((p) => p.text)
+          .join("\n");
+      }
+    }
+  }
+  return null;
+}
+
+/**
+ * Inject memories from TES into request params before the LLM call.
+ *
+ * Default-on. Disable per-wrapClient via `sessionOpts.memory: false` or
+ * per-call via `sessionOpts.memoryOpts.disable: true`. Knobs come from
+ * `sessionOpts.memoryOpts` (`limit`, `minScore`, `timeoutMs`).
+ *
+ * Failure modes (TES timeout, module disabled, network error) are
+ * non-fatal — the call proceeds with the customer's original params and
+ * the skip reason is recorded on the session under `_lastMemoryStats`
+ * for observability.
+ */
+async function maybeInjectMemories(
+  clientConfig,
+  sessionOpts,
+  params,
+  provider
+) {
+  if (sessionOpts.memory === false) {
+    return { params, injected: 0, skipped: "memory_disabled" };
+  }
+
+  if (!clientConfig?.endpoint || !clientConfig?.apiKey) {
+    return { params, injected: 0, skipped: "no_tes_config" };
+  }
+
+  const userMessage = extractLastUserMessage(params, provider);
+  if (!userMessage) {
+    return { params, injected: 0, skipped: "no_user_message" };
+  }
+
+  const opts = { ...MEMORY_DEFAULTS, ...(sessionOpts.memoryOpts || {}) };
+  const { memories, skipped } = await hostedSearch(
+    {
+      endpoint: clientConfig.endpoint,
+      clientId: clientConfig.clientId,
+      apiKey: clientConfig.apiKey,
+    },
+    userMessage,
+    opts
+  );
+
+  if (!memories?.length) {
+    return { params, injected: 0, skipped: skipped || "no_memories" };
+  }
+
+  return {
+    params: injectMemories(params, memories, provider),
+    injected: memories.length,
+    skipped: null,
+  };
+}
+
+function recordMemoryStats(sessionOpts, stats) {
+  if (sessionOpts._session) {
+    sessionOpts._session._lastMemoryStats = stats;
+  }
 }
 
 /**
@@ -77,7 +179,14 @@ function wrapOpenAICompletions(clientConfig, completions, client, sessionOpts) {
     get(target, prop) {
       if (prop === "create") {
         return async (params) => {
-          const result = await target.create(params);
+          const memStats = await maybeInjectMemories(
+            clientConfig,
+            sessionOpts,
+            params,
+            "openai"
+          );
+          recordMemoryStats(sessionOpts, memStats);
+          const result = await target.create(memStats.params);
           const content = result.choices?.[0]?.message?.content;
           if (content) {
             result.choices[0].message.content = await rewriteUrls(
@@ -90,7 +199,7 @@ function wrapOpenAICompletions(clientConfig, completions, client, sessionOpts) {
           fireAndForgetEmit(
             clientConfig,
             sessionOpts,
-            params.messages,
+            memStats.params.messages,
             result
           );
           return result;
@@ -140,7 +249,14 @@ function wrapAnthropicMessages(clientConfig, messages, client, sessionOpts) {
     get(target, prop) {
       if (prop === "create") {
         return async (params) => {
-          const result = await target.create(params);
+          const memStats = await maybeInjectMemories(
+            clientConfig,
+            sessionOpts,
+            params,
+            "anthropic"
+          );
+          recordMemoryStats(sessionOpts, memStats);
+          const result = await target.create(memStats.params);
           if (Array.isArray(result.content)) {
             for (const block of result.content) {
               if (block.type === "text" && block.text) {
@@ -156,7 +272,7 @@ function wrapAnthropicMessages(clientConfig, messages, client, sessionOpts) {
           fireAndForgetEmit(
             clientConfig,
             sessionOpts,
-            params.messages,
+            memStats.params.messages,
             result
           );
           return result;
@@ -187,7 +303,14 @@ function wrapWorkersAI(clientConfig, aiBinding, sessionOpts) {
     get(target, prop) {
       if (prop === "run") {
         return async (model, params, ...rest) => {
-          const result = await target.run(model, params, ...rest);
+          const memStats = await maybeInjectMemories(
+            clientConfig,
+            sessionOpts,
+            params,
+            "workers-ai"
+          );
+          recordMemoryStats(sessionOpts, memStats);
+          const result = await target.run(model, memStats.params, ...rest);
           if (result.response) {
             result.response = await rewriteUrls(
               result.response,
@@ -199,7 +322,7 @@ function wrapWorkersAI(clientConfig, aiBinding, sessionOpts) {
           fireAndForgetEmit(
             clientConfig,
             sessionOpts,
-            params?.messages,
+            memStats.params?.messages,
             result,
             model
           );
