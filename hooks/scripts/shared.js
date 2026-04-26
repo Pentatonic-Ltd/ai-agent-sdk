@@ -451,11 +451,14 @@ export async function storeMemory(config, content, metadata = {}) {
 
 async function searchLocal(config, query) {
   const baseUrl = config.memory_url || "http://localhost:3333";
+  const limit = parseInt(config.search_limit, 10) || 5;
+  const minScore = parseFloat(config.min_score);
+  const min_score = Number.isFinite(minScore) ? minScore : 0.3;
   try {
     const response = await fetch(`${baseUrl}/search`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query, limit: 5, min_score: 0.3 }),
+      body: JSON.stringify({ query, limit, min_score }),
       signal: AbortSignal.timeout(5000),
     });
     if (!response.ok) return [];
@@ -504,17 +507,31 @@ function tesHeaders(config) {
 }
 
 async function searchHosted(config, query) {
+  // Both knobs are config-driven via tes-memory.local.md frontmatter:
+  //   search_limit: 5    (defaults to 5; max results returned)
+  //   min_score: 0.3     (defaults to 0.3; minimum similarity threshold)
+  // Until v0.5.x these were hardcoded — bumping/lowering required editing
+  // this file in the installed plugin cache, which got blown away on every
+  // plugin update. Now they read from the user's config like other knobs.
+  const limit = parseInt(config.search_limit, 10) || 5;
+  const parsed = parseFloat(config.min_score);
+  const minScore = Number.isFinite(parsed) ? parsed : 0.3;
   try {
     const response = await fetch(`${config.tes_endpoint}/api/graphql`, {
       method: "POST",
       headers: tesHeaders(config),
       body: JSON.stringify({
-        query: `query($clientId: String!, $query: String!) {
-          semanticSearchMemories(clientId: $clientId, query: $query, limit: 5, minScore: 0.3) {
+        query: `query($clientId: String!, $query: String!, $limit: Int!, $minScore: Float!) {
+          semanticSearchMemories(clientId: $clientId, query: $query, limit: $limit, minScore: $minScore) {
             id content similarity
           }
         }`,
-        variables: { clientId: config.tes_client_id, query },
+        variables: {
+          clientId: config.tes_client_id,
+          query,
+          limit,
+          minScore,
+        },
       }),
       signal: AbortSignal.timeout(5000),
     });
