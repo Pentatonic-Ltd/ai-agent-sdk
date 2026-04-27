@@ -37,6 +37,7 @@ const SEMANTIC_SEARCH_QUERY = `
       id
       content
       similarity
+      metadata
     }
   }
 `;

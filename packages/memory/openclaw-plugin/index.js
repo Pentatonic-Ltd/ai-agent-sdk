@@ -92,6 +92,100 @@ const stats = {
 // Natural-language prompts ("what were those changes again?") often fall
 // below the semantic threshold even when relevant memories exist. We
 // drop stopwords and retry with the keyword-distilled form.
+// ─── Source grouping ──────────────────────────────────────────────────
+//
+// Inlined copy of `packages/memory/src/source-grouping.js`. KEEP IN SYNC
+// — that file is the canonical source of truth and has the unit tests.
+// We inline here because this plugin ships as a standalone npm package
+// (`@pentatonic-ai/openclaw-memory-plugin`) without bundling the SDK,
+// so cross-file imports break the published artefact.
+
+const SOURCE_ORDER_PLUGIN = ["code", "slack", "gmail", "calendar", "meeting", "memory"];
+const SOURCE_LABEL_PLUGIN = {
+  code: { label: "Code", icon: "💻" },
+  slack: { label: "Slack", icon: "💬" },
+  gmail: { label: "Gmail", icon: "✉️" },
+  calendar: { label: "Calendar", icon: "📅" },
+  meeting: { label: "Meeting", icon: "🗒️" },
+  memory: { label: "Memory", icon: "🧠" },
+};
+
+export function detectSourcePlugin(metadata) {
+  if (!metadata || typeof metadata !== "object") return "memory";
+  const explicit = String(metadata.source || metadata.system || "").toLowerCase();
+  if (explicit) {
+    if (explicit.includes("slack")) return "slack";
+    if (explicit.includes("gmail")) return "gmail";
+    if (explicit.includes("calendar")) return "calendar";
+    if (explicit.includes("corpus") || explicit.includes("repo") || explicit.includes("code")) return "code";
+    if (explicit.includes("granola") || explicit.includes("meeting") || explicit.includes("transcript")) return "meeting";
+    const slug = explicit.replace(/-ingest$/, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    if (slug) return slug;
+  }
+  if (metadata.slack_thread_ts || metadata.slack_channel_id || metadata.slack_ts) return "slack";
+  if (metadata.gmail_thread_id || metadata.gmail_message_id) return "gmail";
+  if (metadata.calendar_event_id || metadata.calendar_id) return "calendar";
+  if (metadata.source_repo || metadata.source_repo_name || metadata.source_path) return "code";
+  if (metadata.meeting_id || metadata.transcript_id || metadata.granola_id) return "meeting";
+  const kind = String(metadata.memory_kind || "").toLowerCase();
+  if (kind.includes("chat") || kind.includes("slack")) return "slack";
+  if (kind.includes("email")) return "gmail";
+  if (kind.includes("meeting")) return "meeting";
+  if (kind.includes("code")) return "code";
+  return "memory";
+}
+
+export function groupBySourcePlugin(memories) {
+  const grouped = new Map();
+  if (!Array.isArray(memories) || memories.length === 0) return grouped;
+  const buckets = new Map();
+  for (const m of memories) {
+    const src = detectSourcePlugin(m?.metadata);
+    if (!buckets.has(src)) buckets.set(src, []);
+    buckets.get(src).push(m);
+  }
+  for (const src of SOURCE_ORDER_PLUGIN) {
+    if (buckets.has(src)) grouped.set(src, buckets.get(src));
+  }
+  const unknown = [...buckets.keys()].filter((k) => !SOURCE_ORDER_PLUGIN.includes(k)).sort();
+  for (const src of unknown) grouped.set(src, buckets.get(src));
+  return grouped;
+}
+
+export function formatSourceBadgesPlugin(grouped) {
+  const sources = [...grouped.keys()].filter((src) => grouped.get(src)?.length > 0);
+  if (sources.length === 1 && sources[0] === "memory") return "";
+  const parts = [];
+  for (const src of sources) {
+    parts.push(`${grouped.get(src).length} ${src}`);
+  }
+  return parts.join(" · ");
+}
+
+export function renderGroupedMemoryTextPlugin(grouped, sanitize) {
+  const sources = [...grouped.keys()];
+  const pct = (s) => Math.round((Number(s) || 0) * 100);
+  if (sources.length === 1 && sources[0] === "memory") {
+    return grouped.get("memory")
+      .map((m) => `- [${pct(m.similarity)}%] ${sanitize(m.content)}`)
+      .join("\n");
+  }
+  const blocks = [];
+  for (const src of sources) {
+    const hits = grouped.get(src);
+    if (!hits.length) continue;
+    const meta = SOURCE_LABEL_PLUGIN[src] || { label: src, icon: "" };
+    const head = meta.icon ? `${meta.icon} ${meta.label} (${hits.length})` : `${meta.label} (${hits.length})`;
+    blocks.push(head);
+    for (const m of hits) {
+      blocks.push(`- [${pct(m.similarity)}%] ${sanitize(m.content)}`);
+    }
+    blocks.push("");
+  }
+  while (blocks.length && blocks[blocks.length - 1] === "") blocks.pop();
+  return blocks.join("\n");
+}
+
 const STOPWORDS = new Set([
   "a", "am", "an", "and", "are", "as", "at", "be", "been", "but", "by",
   "can", "did", "do", "does", "for", "from", "had", "has", "have", "he",
@@ -200,7 +294,7 @@ async function hostedSearch(config, query, limit = 5, minScore = 0.3) {
       body: JSON.stringify({
         query: `query($clientId: String!, $query: String!, $limit: Int, $minScore: Float) {
           semanticSearchMemories(clientId: $clientId, query: $query, limit: $limit, minScore: $minScore) {
-            id content similarity
+            id content similarity metadata
           }
         }`,
         variables: { clientId: config.tes_client_id, query, limit, minScore },
@@ -694,23 +788,26 @@ export default {
           stats.memoriesInjected += results.length;
           stats.lastAssembleCount = results.length;
 
-          const memoryText = results
-            .map(
-              (m) =>
-                `- [${Math.round((m.similarity || 0) * 100)}%] ${sanitizeMemoryContent(m.content)}`
-            )
-            .join("\n");
+          const grouped = groupBySourcePlugin(results);
+          const memoryText = renderGroupedMemoryTextPlugin(grouped, sanitizeMemoryContent);
+          const badges = formatSourceBadgesPlugin(grouped);
 
           // Visibility marker: instruct the model to append a footer so the
-          // end user sees when Pentatonic Memory was used. Opt out with
+          // end user sees when Pentatonic Memory was used — and which
+          // surfaces the hits came from. Source breakdown is the
+          // cross-domain memory tell that single-source competitors
+          // (Anthropic, Cursor, Codex) can't render. Opt out with
           // show_memory_indicator: false in plugin config.
           const showIndicator = config.show_memory_indicator !== false;
+          const footerLine = badges
+            ? `🧠 _Matched ${results.length} memor${results.length === 1 ? "y" : "ies"} from Pentatonic Memory: ${badges}_`
+            : `🧠 _Matched ${results.length} memor${results.length === 1 ? "y" : "ies"} from Pentatonic Memory_`;
           const indicatorRule = showIndicator
             ? [
                 "",
                 `After your reply, on a new line, append exactly this footer (no other prefix, no trailing content):`,
                 `—`,
-                `🧠 _Matched ${results.length} memor${results.length === 1 ? "y" : "ies"} from Pentatonic Memory_`,
+                footerLine,
               ]
             : [];
 

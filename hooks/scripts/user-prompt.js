@@ -14,6 +14,7 @@ import {
   readStdin,
   searchMemories,
   buildMemoryContext,
+  computeSourceBadges,
   writeSessionMemoriesToAutoMemory,
 } from "./shared.js";
 
@@ -43,6 +44,10 @@ async function main() {
     // deterministically, without relying on the model to follow an
     // injected instruction that can get buried in a long context.
     state.memories_retrieved = memories.length;
+    // Persist the source-breakdown alongside the count so the Stop
+    // hook can recompute the same footer (count + badges) and validate
+    // the model emitted it verbatim — without re-fetching memories.
+    state.memories_source_badges = computeSourceBadges(memories);
     writeTurnState(sessionId, state);
 
     // Write into Claude Code's auto-memory directory so the model reads

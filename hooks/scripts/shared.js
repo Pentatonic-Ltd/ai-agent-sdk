@@ -11,6 +11,110 @@ import { readFileSync, writeFileSync, existsSync, unlinkSync, mkdirSync } from "
 import { join } from "path";
 import { homedir, tmpdir } from "os";
 
+// ─── Source grouping ──────────────────────────────────────────────────
+//
+// Inlined from `packages/memory/src/source-grouping.js` — that file is
+// the canonical source of truth. KEEP IN SYNC. We inline because the
+// hook scripts are invoked by Claude Code via direct path and don't
+// participate in the SDK's bundling — cross-file ESM imports work in
+// dev but the hook copy in users' configs would break.
+
+const HOOKS_SOURCE_ORDER = ["code", "slack", "gmail", "calendar", "meeting", "memory"];
+const HOOKS_SOURCE_LABEL = {
+  code: { label: "Code", icon: "💻" },
+  slack: { label: "Slack", icon: "💬" },
+  gmail: { label: "Gmail", icon: "✉️" },
+  calendar: { label: "Calendar", icon: "📅" },
+  meeting: { label: "Meeting", icon: "🗒️" },
+  memory: { label: "Memory", icon: "🧠" },
+};
+
+function detectMemorySource(metadata) {
+  if (!metadata || typeof metadata !== "object") return "memory";
+  const explicit = String(metadata.source || metadata.system || "").toLowerCase();
+  if (explicit) {
+    if (explicit.includes("slack")) return "slack";
+    if (explicit.includes("gmail")) return "gmail";
+    if (explicit.includes("calendar")) return "calendar";
+    if (explicit.includes("corpus") || explicit.includes("repo") || explicit.includes("code")) return "code";
+    if (explicit.includes("granola") || explicit.includes("meeting") || explicit.includes("transcript")) return "meeting";
+    const slug = explicit.replace(/-ingest$/, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    if (slug) return slug;
+  }
+  if (metadata.slack_thread_ts || metadata.slack_channel_id || metadata.slack_ts) return "slack";
+  if (metadata.gmail_thread_id || metadata.gmail_message_id) return "gmail";
+  if (metadata.calendar_event_id || metadata.calendar_id) return "calendar";
+  if (metadata.source_repo || metadata.source_repo_name || metadata.source_path) return "code";
+  if (metadata.meeting_id || metadata.transcript_id || metadata.granola_id) return "meeting";
+  const kind = String(metadata.memory_kind || "").toLowerCase();
+  if (kind.includes("chat") || kind.includes("slack")) return "slack";
+  if (kind.includes("email")) return "gmail";
+  if (kind.includes("meeting")) return "meeting";
+  if (kind.includes("code")) return "code";
+  return "memory";
+}
+
+function groupMemoriesBySource(memories) {
+  const grouped = new Map();
+  if (!Array.isArray(memories) || memories.length === 0) return grouped;
+  const buckets = new Map();
+  for (const m of memories) {
+    const src = detectMemorySource(m?.metadata);
+    if (!buckets.has(src)) buckets.set(src, []);
+    buckets.get(src).push(m);
+  }
+  for (const src of HOOKS_SOURCE_ORDER) {
+    if (buckets.has(src)) grouped.set(src, buckets.get(src));
+  }
+  const unknown = [...buckets.keys()].filter((k) => !HOOKS_SOURCE_ORDER.includes(k)).sort();
+  for (const src of unknown) grouped.set(src, buckets.get(src));
+  return grouped;
+}
+
+/**
+ * Compute the per-source badge string for a list of retrieved memories.
+ * Returns a string like "2 code · 3 slack · 1 meeting", or "" if no
+ * sources are detectable. Public so user-prompt.js can persist it onto
+ * the turn state for the Stop hook to recompute the same footer.
+ */
+export function computeSourceBadges(memories) {
+  const grouped = groupMemoriesBySource(memories);
+  const sources = [...grouped.keys()].filter((src) => grouped.get(src)?.length > 0);
+  // No useful breakdown when everything falls into the generic memory
+  // bucket — return empty so the legacy count-only footer renders.
+  if (sources.length === 1 && sources[0] === "memory") return "";
+  const parts = [];
+  for (const src of sources) {
+    parts.push(`${grouped.get(src).length} ${src}`);
+  }
+  return parts.join(" · ");
+}
+
+function renderGroupedMemoryText(memories, sanitize) {
+  const grouped = groupMemoriesBySource(memories);
+  const sources = [...grouped.keys()];
+  const pct = (s) => Math.round((Number(s) || 0) * 100);
+  if (sources.length === 1 && sources[0] === "memory") {
+    return grouped.get("memory")
+      .map((m) => `- [${pct(m.similarity)}%] ${sanitize(m.content)}`)
+      .join("\n");
+  }
+  const blocks = [];
+  for (const src of sources) {
+    const hits = grouped.get(src);
+    if (!hits.length) continue;
+    const meta = HOOKS_SOURCE_LABEL[src] || { label: src, icon: "" };
+    const head = meta.icon ? `${meta.icon} ${meta.label} (${hits.length})` : `${meta.label} (${hits.length})`;
+    blocks.push(head);
+    for (const m of hits) {
+      blocks.push(`- [${pct(m.similarity)}%] ${sanitize(m.content)}`);
+    }
+    blocks.push("");
+  }
+  while (blocks.length && blocks[blocks.length - 1] === "") blocks.pop();
+  return blocks.join("\n");
+}
+
 // --- Config ---
 
 export function loadConfig() {
@@ -181,12 +285,8 @@ export function sanitizeMemoryContent(content) {
  *      retry via `decision: "block"`. See stop.js.
  */
 export function buildMemoryContext(config, memories) {
-  const memoryText = memories
-    .map(
-      (m) =>
-        `- [${Math.round((m.similarity || 0) * 100)}%] ${sanitizeMemoryContent(m.content)}`
-    )
-    .join("\n");
+  const memoryText = renderGroupedMemoryText(memories, sanitizeMemoryContent);
+  const badges = computeSourceBadges(memories);
 
   const header = [
     "[Pentatonic Memory — AUTHORITATIVE SOURCE FOR USER FACTS]",
@@ -209,7 +309,7 @@ export function buildMemoryContext(config, memories) {
     "Memories (ranked by relevance):",
   ].join("\n");
 
-  const footer = getMemoryFooter(config, memories.length);
+  const footer = getMemoryFooter(config, memories.length, badges);
   if (!footer) return `${header}\n${memoryText}`;
 
   const indicatorRule = [
@@ -229,10 +329,11 @@ export function buildMemoryContext(config, memories) {
  *
  * Config values come from YAML frontmatter, so they're strings.
  */
-export function getMemoryFooter(config, n) {
+export function getMemoryFooter(config, n, badges) {
   if (!n || n <= 0) return null;
   if (config?.show_memory_indicator === "false") return null;
-  return `🧠 _Matched ${n} memor${n === 1 ? "y" : "ies"} from Pentatonic Memory_`;
+  const head = `🧠 _Matched ${n} memor${n === 1 ? "y" : "ies"} from Pentatonic Memory`;
+  return badges ? `${head}: ${badges}_` : `${head}_`;
 }
 
 export const MAX_FOOTER_RETRIES = 1;
@@ -251,7 +352,11 @@ export const MAX_FOOTER_RETRIES = 1;
  *   emit decision:"block" with the footer as the reason.
  */
 export function checkFooterRetry(state, config, lastAssistantMessage) {
-  const footer = getMemoryFooter(config, state?.memories_retrieved || 0);
+  const footer = getMemoryFooter(
+    config,
+    state?.memories_retrieved || 0,
+    state?.memories_source_badges || ""
+  );
   if (!footer) return null;
   const attempts = state?.footer_retry_attempts || 0;
   if (attempts >= MAX_FOOTER_RETRIES) return null;
@@ -511,7 +616,7 @@ async function searchHosted(config, query) {
       body: JSON.stringify({
         query: `query($clientId: String!, $query: String!) {
           semanticSearchMemories(clientId: $clientId, query: $query, limit: 5, minScore: 0.3) {
-            id content similarity
+            id content similarity metadata
           }
         }`,
         variables: { clientId: config.tes_client_id, query },

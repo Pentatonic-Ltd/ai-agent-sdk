@@ -40,6 +40,11 @@ import { createMemorySystem } from "../index.js";
 import { createContextEngine } from "./context-engine.js";
 import { sanitizeMemoryContent } from "../sanitize.js";
 import {
+  groupBySource,
+  formatSourceBadges,
+  renderGroupedMemoryText,
+} from "../source-grouping.js";
+import {
   hostedSearch as _hostedSearch,
   hostedEmitChatTurn as _hostedEmitChatTurn,
   hostedStoreMemory as _hostedStoreMemory,
@@ -338,28 +343,30 @@ function createHostedContextEngine(config, opts = {}) {
           return { messages, estimatedTokens: 0 };
         }
 
-        const memoryText = results
-          .map(
-            (m) =>
-              `- [${Math.round((m.similarity || 0) * 100)}%] ${sanitizeMemoryContent(m.content)}`
-          )
-          .join("\n");
+        const grouped = groupBySource(results);
+        const memoryText = renderGroupedMemoryText(grouped, sanitizeMemoryContent);
 
         // Visibility footer — instruct the model to surface that memory was
-        // used. Opt out via show_memory_indicator: false in plugin config.
+        // used. Source breakdown ("2 code · 1 slack · 1 meeting") is what
+        // makes cross-domain memory legible vs Anthropic / Cursor / Codex
+        // single-source recall. Opt out via show_memory_indicator: false.
         const showIndicator = config.show_memory_indicator !== false;
+        const badges = formatSourceBadges(grouped);
+        const footerLine = badges
+          ? `🧠 _Matched ${results.length} memor${results.length === 1 ? "y" : "ies"} from Pentatonic Memory: ${badges}_`
+          : `🧠 _Matched ${results.length} memor${results.length === 1 ? "y" : "ies"} from Pentatonic Memory_`;
         const indicatorRule = showIndicator
           ? [
               "",
               `After your reply, on a new line, append exactly this footer (no other prefix, no trailing content):`,
               `—`,
-              `🧠 _Matched ${results.length} memor${results.length === 1 ? "y" : "ies"} from Pentatonic Memory_`,
+              footerLine,
             ].join("\n")
           : "";
 
         const addition = `[Memory] Relevant context from past conversations:\n${memoryText}${indicatorRule}`;
 
-        log(`[memory] Assembled ${results.length} memories via TES`);
+        log(`[memory] Assembled ${results.length} memories via TES${badges ? ` (${badges})` : ""}`);
 
         return {
           messages,
