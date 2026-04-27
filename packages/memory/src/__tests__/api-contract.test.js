@@ -581,3 +581,154 @@ describe("ingest options contract", () => {
     expect(registered.length).toBe(0);
   });
 });
+
+// --- Ingest dedup ---
+
+describe("ingest dedup option", () => {
+  function makeMockDb(state = {}) {
+    const calls = [];
+    const existing = state.existing || []; // [{ id, client_id, content }, ...]
+    const inserted = [];
+    const db = async (sql, params) => {
+      calls.push({ sql, params });
+      if (sql.includes("SELECT id FROM memory_layers")) {
+        return { rows: [{ id: "layer-1" }] };
+      }
+      // Dedup pre-check (raw + LIKE legacy form)
+      if (sql.includes("SELECT id FROM memory_nodes")) {
+        const [clientId, content] = params;
+        const match = existing.find(
+          (r) =>
+            r.client_id === clientId &&
+            (r.content === content ||
+              r.content.endsWith(`] ${content}`)) // legacy timestamp-prefixed
+        );
+        return { rows: match ? [{ id: match.id }] : [] };
+      }
+      // Insert path
+      if (sql.startsWith("INSERT INTO memory_nodes")) {
+        inserted.push({
+          id: params[0],
+          client_id: params[1],
+          content: params[3],
+        });
+        return { rows: [] };
+      }
+      return { rows: [] };
+    };
+    return { db, calls, inserted };
+  }
+
+  const mockAi = { embed: async () => null };
+  const mockLlm = { chat: async () => "[]" };
+
+  it("inserts a fresh row when no duplicate exists", async () => {
+    const { db, inserted } = makeMockDb({ existing: [] });
+
+    const out = await ingest(db, mockAi, mockLlm, "fresh content", {
+      clientId: "c",
+      dedup: true,
+    });
+
+    expect(out.deduped).toBeUndefined();
+    expect(out.id.startsWith("mem_")).toBe(true);
+    expect(inserted).toHaveLength(1);
+    expect(inserted[0].content).toBe("fresh content");
+  });
+
+  it("returns the existing row's id when raw content matches", async () => {
+    const { db, inserted } = makeMockDb({
+      existing: [
+        { id: "mem_existing", client_id: "c", content: "duplicate content" },
+      ],
+    });
+
+    const out = await ingest(db, mockAi, mockLlm, "duplicate content", {
+      clientId: "c",
+      dedup: true,
+    });
+
+    expect(out.deduped).toBe(true);
+    expect(out.id).toBe("mem_existing");
+    expect(out.content).toBe("duplicate content");
+    expect(inserted).toHaveLength(0); // no insert happened
+  });
+
+  it("matches legacy timestamp-prefixed rows (`[<iso>] <content>`)", async () => {
+    const { db, inserted } = makeMockDb({
+      existing: [
+        {
+          id: "mem_legacy",
+          client_id: "c",
+          content: "[2026-04-26T10:00:00Z] duplicate content",
+        },
+      ],
+    });
+
+    const out = await ingest(db, mockAi, mockLlm, "duplicate content", {
+      clientId: "c",
+      dedup: true,
+    });
+
+    expect(out.deduped).toBe(true);
+    expect(out.id).toBe("mem_legacy");
+    expect(inserted).toHaveLength(0);
+  });
+
+  it("dedup off (default) still inserts on duplicate content", async () => {
+    const { db, inserted } = makeMockDb({
+      existing: [
+        { id: "mem_existing", client_id: "c", content: "duplicate content" },
+      ],
+    });
+
+    const out = await ingest(db, mockAi, mockLlm, "duplicate content", {
+      clientId: "c",
+      // dedup omitted — defaults to false
+    });
+
+    expect(out.deduped).toBeUndefined();
+    expect(inserted).toHaveLength(1);
+    expect(inserted[0].id).not.toBe("mem_existing");
+  });
+
+  it("scopes dedup to the given clientId (cross-tenant collisions don't dedup)", async () => {
+    const { db, inserted } = makeMockDb({
+      existing: [
+        { id: "mem_other", client_id: "other", content: "duplicate content" },
+      ],
+    });
+
+    const out = await ingest(db, mockAi, mockLlm, "duplicate content", {
+      clientId: "c", // different tenant
+      dedup: true,
+    });
+
+    expect(out.deduped).toBeUndefined();
+    expect(inserted).toHaveLength(1);
+    expect(inserted[0].client_id).toBe("c");
+  });
+
+  it("dedup check failure falls through to insert (best-effort semantics)", async () => {
+    let dupCheckSql = null;
+    const flakyDb = async (sql, params) => {
+      if (sql.includes("SELECT id FROM memory_layers")) {
+        return { rows: [{ id: "layer-1" }] };
+      }
+      if (sql.includes("SELECT id FROM memory_nodes")) {
+        dupCheckSql = sql;
+        throw new Error("DB unreachable");
+      }
+      return { rows: [] };
+    };
+
+    const out = await ingest(flakyDb, mockAi, mockLlm, "content", {
+      clientId: "c",
+      dedup: true,
+    });
+
+    expect(dupCheckSql).toContain("memory_nodes");
+    expect(out.deduped).toBeUndefined();
+    expect(out.id.startsWith("mem_")).toBe(true);
+  });
+});

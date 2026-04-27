@@ -21,7 +21,17 @@ import { distill } from "./distill.js";
  *   tasks (e.g. Cloudflare Worker ctx.waitUntil). If provided, the distill
  *   background task is handed to it so the host keeps it alive past return.
  *   Without it, distill is fire-and-forget (fine for Node/browser).
- * @returns {Promise<{id: string, content: string, layerId: string}>}
+ * @param {boolean} [opts.dedup=false] - Skip ingest if a memory_node with
+ *   byte-equal content already exists for this `client_id`. Use for
+ *   retry-safe pipelines where the same logical event may be processed
+ *   twice (queue retries, consumer fan-out). Returns the existing row's
+ *   id with `{deduped: true}` instead of inserting. Strict equality —
+ *   not a semantic similarity match. Best-effort: if the SELECT itself
+ *   fails, ingest proceeds (worst case: duplicate row, identical to
+ *   `dedup:false` behaviour). The eventual structural fix is a
+ *   `UNIQUE(client_id, content_hash)` constraint at the schema level;
+ *   this option is the bridge.
+ * @returns {Promise<{id: string, content: string, layerId: string, deduped?: boolean}>}
  */
 export async function ingest(db, ai, llm, content, opts = {}) {
   const clientId = opts.clientId;
@@ -41,6 +51,35 @@ export async function ingest(db, ai, llm, content, opts = {}) {
   }
 
   const layerId = layerResult.rows[0].id;
+
+  // Optional dedup: skip the insert (and all the embedding/HyDE/distill
+  // work that would follow) if a row with byte-equal content already
+  // exists for this tenant. The OR-LIKE branch matches against the
+  // legacy `[<iso>] <content>` form so callers that wrote with a
+  // timestamp prefix dedup correctly until the legacy corpus ages out.
+  if (opts.dedup) {
+    try {
+      const dupCheck = await db(
+        `SELECT id FROM memory_nodes
+           WHERE client_id = $1
+             AND (content = $2 OR content LIKE '%] ' || $2)
+           LIMIT 1`,
+        [clientId, content]
+      );
+      if (dupCheck.rows?.length) {
+        log(`dedup: matched existing memory ${dupCheck.rows[0].id}`);
+        return {
+          id: dupCheck.rows[0].id,
+          content,
+          layerId,
+          deduped: true,
+        };
+      }
+    } catch (err) {
+      log(`dedup check failed (proceeding with insert): ${err.message}`);
+    }
+  }
+
   const memoryId = `mem_${crypto.randomUUID()}`;
 
   // Insert memory node
