@@ -31,6 +31,12 @@ import { distill } from "./distill.js";
  *   `dedup:false` behaviour). The eventual structural fix is a
  *   `UNIQUE(client_id, content_hash)` constraint at the schema level;
  *   this option is the bridge.
+ * @param {string} [opts.dedupContent] - Optional: the string to dedup
+ *   against, when it differs from what gets stored. Use when callers
+ *   wrap the stored content in a non-stable prefix (timestamps, run
+ *   ids) — pass the raw form here so retries of the same logical event
+ *   match across runs whose prefixes differ by a few ms. Defaults to
+ *   `content`.
  * @returns {Promise<{id: string, content: string, layerId: string, deduped?: boolean}>}
  */
 export async function ingest(db, ai, llm, content, opts = {}) {
@@ -54,17 +60,21 @@ export async function ingest(db, ai, llm, content, opts = {}) {
 
   // Optional dedup: skip the insert (and all the embedding/HyDE/distill
   // work that would follow) if a row with byte-equal content already
-  // exists for this tenant. The OR-LIKE branch matches against the
-  // legacy `[<iso>] <content>` form so callers that wrote with a
+  // exists for this tenant. The dedup key is `opts.dedupContent` if
+  // provided (use for callers that wrap the stored form in a non-stable
+  // prefix like a timestamp), else `content`. The OR-LIKE branch matches
+  // against legacy `[<iso>] <content>` rows so callers that wrote with a
   // timestamp prefix dedup correctly until the legacy corpus ages out.
   if (opts.dedup) {
+    const dedupKey =
+      typeof opts.dedupContent === "string" ? opts.dedupContent : content;
     try {
       const dupCheck = await db(
         `SELECT id FROM memory_nodes
            WHERE client_id = $1
              AND (content = $2 OR content LIKE '%] ' || $2)
            LIMIT 1`,
-        [clientId, content]
+        [clientId, dedupKey]
       );
       if (dupCheck.rows?.length) {
         log(`dedup: matched existing memory ${dupCheck.rows[0].id}`);

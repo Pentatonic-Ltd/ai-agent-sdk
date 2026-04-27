@@ -709,6 +709,37 @@ describe("ingest dedup option", () => {
     expect(inserted[0].client_id).toBe("c");
   });
 
+  it("opts.dedupContent: matches against the raw form, stores the wrapped form", async () => {
+    const { db, inserted } = makeMockDb({
+      existing: [
+        // Row was stored on a previous run with a 10:00 timestamp prefix
+        {
+          id: "mem_legacy",
+          client_id: "c",
+          content: "[2026-04-26T10:00:00Z] Caroline went to a support group",
+        },
+      ],
+    });
+
+    const out = await ingest(
+      db,
+      mockAi,
+      mockLlm,
+      // The retry would store with a fresh timestamp — strict-equality
+      // would miss the dup. dedupContent makes us match on the raw form.
+      "[2026-04-26T10:00:01Z] Caroline went to a support group",
+      {
+        clientId: "c",
+        dedup: true,
+        dedupContent: "Caroline went to a support group",
+      }
+    );
+
+    expect(out.deduped).toBe(true);
+    expect(out.id).toBe("mem_legacy");
+    expect(inserted).toHaveLength(0);
+  });
+
   it("dedup check failure falls through to insert (best-effort semantics)", async () => {
     let dupCheckSql = null;
     const flakyDb = async (sql, params) => {
