@@ -24,6 +24,23 @@ Containers use named volumes that DON'T touch your host configs:
 
 Your `~/.claude` and `~/.openclaw` on the host are untouched.
 
+## Local SDK code is mounted at `/repo`
+
+The repo root is bind-mounted into the container at `/repo`, so you can run the **local** SDK CLI instead of pulling from npm:
+
+```bash
+# inside the container — uses the repo state on disk, not the published version
+node /repo/bin/cli.js init
+node /repo/bin/cli.js init --local
+node /repo/bin/cli.js init --remote --endpoint https://staging.api.pentatonic.com
+
+# or install it globally so `ai-agent-sdk` is on PATH
+npm install -g /repo
+ai-agent-sdk init
+```
+
+This is the easy way to test pre-publish CLI changes inside a clean container without needing to bind-mount manually.
+
 ## Optional env passthrough
 
 The script forwards these to the container if set:

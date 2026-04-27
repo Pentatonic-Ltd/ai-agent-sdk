@@ -21,6 +21,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOCKER_DIR="$SCRIPT_DIR/docker"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 CLAUDE_IMAGE="pentatonic-manual-test-claude"
 CLAUDE_VOLUME="manual-test-claude"
@@ -51,6 +52,13 @@ Optional env (passed through if set):
 Notes:
   • Containers run with --network=host so they can reach a memory server
     you start on the host (e.g. \`npx @pentatonic-ai/ai-agent-sdk memory\`).
+  • The repo is bind-mounted at /repo so you can use the LOCAL SDK
+    instead of pulling from npm — e.g. \`node /repo/bin/cli.js init\`,
+    or \`npm install -g /repo\` then \`ai-agent-sdk init\`.
+  • The host docker socket is mounted into the Claude Code container so
+    \`ai-agent-sdk init --local\` (which runs \`docker compose up\`) works.
+    Trade-off: the container has root-equivalent access to host docker.
+    Fine for a test rig; don't reuse this Dockerfile in production.
   • State persists across runs until you 'reset'. The first invocation
     builds the image (~30s for claude, slower if openclaw image cold).
   • Your host \`~/.claude\` and \`~/.openclaw\` are NOT touched.
@@ -81,7 +89,7 @@ build_if_needed() {
 # SAME state.
 run_claude() {
   build_if_needed "$CLAUDE_IMAGE" "$DOCKER_DIR/Dockerfile.claude-code"
-  log "starting Claude Code container (volume: $CLAUDE_VOLUME)..."
+  log "starting Claude Code container (volume: $CLAUDE_VOLUME, repo: /repo, host docker socket mounted)..."
   docker run --rm -it \
     --name "$CLAUDE_CONTAINER" \
     --network=host \
@@ -90,12 +98,14 @@ run_claude() {
     -e "TES_CLIENT_ID=${TES_CLIENT_ID:-}" \
     -e "TES_API_KEY=${TES_API_KEY:-}" \
     -v "${CLAUDE_VOLUME}:/root/.claude" \
+    -v "${REPO_ROOT}:/repo" \
+    -v /var/run/docker.sock:/var/run/docker.sock \
     "$CLAUDE_IMAGE"
 }
 
 run_openclaw() {
   build_if_needed "$OPENCLAW_IMAGE" "$DOCKER_DIR/Dockerfile.openclaw"
-  log "starting OpenClaw container (volume: $OPENCLAW_VOLUME)..."
+  log "starting OpenClaw container (volume: $OPENCLAW_VOLUME, repo: /repo)..."
   docker run --rm -it \
     --name "$OPENCLAW_CONTAINER" \
     --network=host \
@@ -104,6 +114,7 @@ run_openclaw() {
     -e "TES_CLIENT_ID=${TES_CLIENT_ID:-}" \
     -e "TES_API_KEY=${TES_API_KEY:-}" \
     -v "${OPENCLAW_VOLUME}:/home/node/.openclaw" \
+    -v "${REPO_ROOT}:/repo" \
     "$OPENCLAW_IMAGE"
 }
 
