@@ -191,14 +191,27 @@ describe("platform checks", () => {
 describe("data-flow checks", () => {
   beforeEach(() => {
     process.env.TES_ENDPOINT = "https://example.test";
-    process.env.TES_API_KEY = "key";
+    process.env.TES_API_KEY = "tes_test_key";
     process.env.TES_CLIENT_ID = "test-client";
   });
   afterEach(() => {
     delete process.env.TES_ENDPOINT;
     delete process.env.TES_API_KEY;
     delete process.env.TES_CLIENT_ID;
+    delete process.env.PENTATONIC_DOCTOR_PROBE_QUERY;
   });
+
+  // Capture the request bodies so tests can assert on the GraphQL
+  // shape doctor sends — not just the response handling.
+  function captureFetch(handler) {
+    const calls = [];
+    globalThis.fetch = async (url, opts) => {
+      const body = opts?.body ? JSON.parse(opts.body) : null;
+      calls.push({ url, headers: opts?.headers || {}, body });
+      return handler(url, opts);
+    };
+    return calls;
+  }
 
   it("registers the three expected probes", () => {
     const names = dataFlowChecks().map((c) => c.name);
@@ -207,32 +220,76 @@ describe("data-flow checks", () => {
     expect(names).toContain("semanticSearchMemories returns hits");
   });
 
+  // --- event stream check ---
+
+  it("event stream: sends GraphQL query with `limit:1` (not `first:1`)", async () => {
+    const calls = captureFetch(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ data: { events: { totalCount: 5 } } }),
+    }));
+    const c = dataFlowChecks().find(
+      (x) => x.name === "TES event stream has data"
+    );
+    await c.run();
+    expect(calls).toHaveLength(1);
+    expect(calls[0].body.query).toMatch(/events\(\s*limit:\s*1\s*\)/);
+    expect(calls[0].body.query).not.toMatch(/first\s*:/);
+    expect(calls[0].body.query).toMatch(/totalCount/);
+  });
+
   it("event stream: warns when totalCount is 0", async () => {
-    mockFetch(async () => ({
+    captureFetch(async () => ({
       ok: true,
       status: 200,
       json: async () => ({ data: { events: { totalCount: 0 } } }),
     }));
-    const c = dataFlowChecks().find((x) => x.name === "TES event stream has data");
+    const c = dataFlowChecks().find(
+      (x) => x.name === "TES event stream has data"
+    );
     const r = await c.run();
     expect(r.ok).toBe(false);
     expect(r.msg).toMatch(/0 events yet/);
   });
 
   it("event stream: passes with a positive count", async () => {
-    mockFetch(async () => ({
+    captureFetch(async () => ({
       ok: true,
       status: 200,
       json: async () => ({ data: { events: { totalCount: 42 } } }),
     }));
-    const c = dataFlowChecks().find((x) => x.name === "TES event stream has data");
+    const c = dataFlowChecks().find(
+      (x) => x.name === "TES event stream has data"
+    );
     const r = await c.run();
     expect(r.ok).toBe(true);
     expect(r.detail.totalCount).toBe(42);
   });
 
+  // --- memory-created check ---
+
+  it("memory-created: filter uses eventType + StringFilterInput wrapper", async () => {
+    const calls = captureFetch(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ data: { events: { totalCount: 3 } } }),
+    }));
+    const c = dataFlowChecks().find(
+      (x) => x.name === "MEMORY_CREATED events for client"
+    );
+    await c.run();
+    const { query, variables } = calls[0].body;
+    // Schema requires eventType (not "kind") with a StringFilterInput
+    // wrapper, and clientId likewise as a filter wrapper.
+    expect(query).toMatch(/eventType:\s*\{\s*eq:\s*\$eventType\s*\}/);
+    expect(query).toMatch(/clientId:\s*\{\s*eq:\s*\$client\s*\}/);
+    expect(query).not.toMatch(/\bkind\b/);
+    expect(variables.eventType).toBe("MEMORY_CREATED");
+    expect(variables.client).toBe("test-client");
+  });
+
   it("memory-created: flags the client id in the warning", async () => {
-    mockFetch(async () => ({
+    captureFetch(async () => ({
       ok: true,
       status: 200,
       json: async () => ({ data: { events: { totalCount: 0 } } }),
@@ -245,8 +302,31 @@ describe("data-flow checks", () => {
     expect(r.msg).toMatch(/test-client/);
   });
 
+  // --- semantic search check ---
+
+  it("semantic search: sends required clientId arg + selects similarity (not score)", async () => {
+    const calls = captureFetch(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        data: { semanticSearchMemories: [{ id: "m1", similarity: 0.8 }] },
+      }),
+    }));
+    const c = dataFlowChecks().find(
+      (x) => x.name === "semanticSearchMemories returns hits"
+    );
+    await c.run();
+    const { query, variables } = calls[0].body;
+    // clientId is required by the schema; doctor must send it.
+    expect(query).toMatch(/clientId:\s*\$clientId/);
+    expect(variables.clientId).toBe("test-client");
+    // Result type exposes `similarity`, not `score`.
+    expect(query).toMatch(/similarity/);
+    expect(query).not.toMatch(/\bscore\b/);
+  });
+
   it("semantic search: warns on 0 hits", async () => {
-    mockFetch(async () => ({
+    captureFetch(async () => ({
       ok: true,
       status: 200,
       json: async () => ({ data: { semanticSearchMemories: [] } }),
@@ -260,11 +340,11 @@ describe("data-flow checks", () => {
   });
 
   it("semantic search: passes with hits", async () => {
-    mockFetch(async () => ({
+    captureFetch(async () => ({
       ok: true,
       status: 200,
       json: async () => ({
-        data: { semanticSearchMemories: [{ id: "m1", score: 0.8 }] },
+        data: { semanticSearchMemories: [{ id: "m1", similarity: 0.8 }] },
       }),
     }));
     const c = dataFlowChecks().find(
@@ -275,12 +355,12 @@ describe("data-flow checks", () => {
     expect(r.detail.hits).toBe(1);
   });
 
-  it("semantic search: 'field not found' deployments skip gracefully", async () => {
-    mockFetch(async () => ({
+  it("semantic search: 'cannot query field' skips gracefully", async () => {
+    captureFetch(async () => ({
       ok: true,
       status: 200,
       json: async () => ({
-        errors: [{ message: "Cannot query field \"semanticSearchMemories\"" }],
+        errors: [{ message: 'Cannot query field "semanticSearchMemories" on type "Query"' }],
       }),
     }));
     const c = dataFlowChecks().find(
@@ -289,6 +369,90 @@ describe("data-flow checks", () => {
     const r = await c.run();
     expect(r.ok).toBe(true);
     expect(r.msg).toMatch(/skipped/);
+  });
+
+  it("semantic search: schema-arg mismatches surface as errors, NOT silent skips", async () => {
+    // E.g. a missing required arg — error mentions the field name but
+    // is NOT the "Cannot query field" wording. Doctor must report,
+    // not pretend the deployment doesn't expose the field.
+    captureFetch(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        errors: [
+          {
+            message:
+              'Field "semanticSearchMemories" argument "clientId" of type "String!" is required',
+          },
+        ],
+      }),
+    }));
+    const c = dataFlowChecks().find(
+      (x) => x.name === "semanticSearchMemories returns hits"
+    );
+    const r = await c.run();
+    expect(r.ok).toBe(false);
+    expect(r.msg).not.toMatch(/skipped/);
+    expect(r.msg).toMatch(/required/);
+  });
+
+  it("PENTATONIC_DOCTOR_PROBE_QUERY overrides the default probe text", async () => {
+    process.env.PENTATONIC_DOCTOR_PROBE_QUERY = "custom probe text";
+    const calls = captureFetch(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ data: { semanticSearchMemories: [] } }),
+    }));
+    const c = dataFlowChecks().find(
+      (x) => x.name === "semanticSearchMemories returns hits"
+    );
+    await c.run();
+    expect(calls[0].body.variables.q).toBe("custom probe text");
+  });
+
+  // --- auth header branching ---
+
+  it("uses Authorization: Bearer for tes_-prefixed keys", async () => {
+    const calls = captureFetch(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ data: { events: { totalCount: 1 } } }),
+    }));
+    process.env.TES_API_KEY = "tes_user_abc";
+    const c = dataFlowChecks().find(
+      (x) => x.name === "TES event stream has data"
+    );
+    await c.run();
+    expect(calls[0].headers.Authorization).toBe("Bearer tes_user_abc");
+    expect(calls[0].headers["x-service-key"]).toBeUndefined();
+  });
+
+  it("uses x-service-key for non-tes_ keys (internal service tokens)", async () => {
+    const calls = captureFetch(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ data: { events: { totalCount: 1 } } }),
+    }));
+    process.env.TES_API_KEY = "internal_svc_xyz";
+    const c = dataFlowChecks().find(
+      (x) => x.name === "TES event stream has data"
+    );
+    await c.run();
+    expect(calls[0].headers["x-service-key"]).toBe("internal_svc_xyz");
+    expect(calls[0].headers.Authorization).toBeUndefined();
+  });
+
+  it("sends x-client-id on every request", async () => {
+    const calls = captureFetch(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ data: { events: { totalCount: 1 } } }),
+    }));
+    const c = dataFlowChecks().find(
+      (x) => x.name === "TES event stream has data"
+    );
+    await c.run();
+    expect(calls[0].headers["x-client-id"]).toBe("test-client");
   });
 
   it("all three report missing env clearly", async () => {
@@ -302,27 +466,68 @@ describe("data-flow checks", () => {
 });
 
 describe("Claude Code plugin check", () => {
-  it("reports installed + version when manifest is present", async () => {
+  it("reports installed + version when manifest is present at ~/.claude", async () => {
     const [check] = claudeCodeChecks({
-      fileExists: () => true,
+      fileExists: (p) => p === "/home/fake/.claude/plugins/marketplaces/pentatonic-ai/.claude-plugin/plugin.json",
       readFile: () =>
         JSON.stringify({ name: "tes-memory", version: "0.5.3" }),
       homedir: () => "/home/fake",
+      env: {},
     });
     const r = await check.run();
     expect(r.ok).toBe(true);
     expect(r.msg).toMatch(/tes-memory v0\.5\.3 installed/);
     expect(r.detail.version).toBe("0.5.3");
+    expect(r.detail.path).toMatch(/\.claude\/plugins/);
   });
 
-  it("reports the install command when manifest is missing", async () => {
+  it("falls through to ~/.claude-pentatonic when ~/.claude is empty", async () => {
+    const pentatonicPath =
+      "/home/fake/.claude-pentatonic/plugins/marketplaces/pentatonic-ai/.claude-plugin/plugin.json";
+    const [check] = claudeCodeChecks({
+      fileExists: (p) => p === pentatonicPath,
+      readFile: () =>
+        JSON.stringify({ name: "tes-memory", version: "0.5.3" }),
+      homedir: () => "/home/fake",
+      env: {},
+    });
+    const r = await check.run();
+    expect(r.ok).toBe(true);
+    expect(r.detail.path).toBe(pentatonicPath);
+  });
+
+  it("respects CLAUDE_CONFIG_DIR override (highest precedence)", async () => {
+    const overridePath =
+      "/custom/cfg/plugins/marketplaces/pentatonic-ai/.claude-plugin/plugin.json";
+    const [check] = claudeCodeChecks({
+      fileExists: (p) => p === overridePath,
+      readFile: () =>
+        JSON.stringify({ name: "tes-memory", version: "9.9.9" }),
+      homedir: () => "/home/fake",
+      env: { CLAUDE_CONFIG_DIR: "/custom/cfg" },
+    });
+    const r = await check.run();
+    expect(r.ok).toBe(true);
+    expect(r.detail.path).toBe(overridePath);
+    expect(r.detail.version).toBe("9.9.9");
+  });
+
+  it("reports the install command + all candidate paths when none exist", async () => {
     const [check] = claudeCodeChecks({
       fileExists: () => false,
       homedir: () => "/home/fake",
+      env: { CLAUDE_CONFIG_DIR: "/custom/cfg" },
     });
     const r = await check.run();
     expect(r.ok).toBe(false);
     expect(r.msg).toMatch(/plugin install tes-memory/);
+    expect(r.detail.candidates).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining("/custom/cfg/plugins"),
+        expect.stringContaining("/home/fake/.claude/plugins"),
+        expect.stringContaining("/home/fake/.claude-pentatonic/plugins"),
+      ])
+    );
   });
 
   it("handles corrupt manifest json without throwing", async () => {
@@ -330,6 +535,7 @@ describe("Claude Code plugin check", () => {
       fileExists: () => true,
       readFile: () => "{ not json",
       homedir: () => "/home/fake",
+      env: {},
     });
     const r = await check.run();
     expect(r.ok).toBe(false);

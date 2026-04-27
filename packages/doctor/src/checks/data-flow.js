@@ -18,15 +18,51 @@
  * warning is more informative than pretending liveness implies correctness,
  * but an empty stream on a fresh install is legitimate and shouldn't fail
  * the overall doctor pass.
+ *
+ * GraphQL shapes match TES's deployed schema (verified against
+ * thing-event-system/functions/api/graphql/domains/event/schema.js and
+ * thing-event-system/modules/deep-memory/graphql/memory/schema.js):
+ *
+ *   events(filter: EventFilterInput, limit: Int, offset: Int): EventPage!
+ *   EventFilterInput { eventType: StringFilterInput, clientId: StringFilterInput, ... }
+ *   EventPage { totalCount: Int!, ... }
+ *
+ *   semanticSearchMemories(
+ *     clientId: String!,
+ *     query: String!,
+ *     userId: String,
+ *     limit: Int,
+ *     minScore: Float
+ *   ): [SemanticMemoryResult!]!
+ *   SemanticMemoryResult { id: String!, similarity: Float!, ... }
  */
 
 import { SEVERITY } from "../index.js";
 
-async function fetchWithTimeout(url, opts = {}, timeoutMs = 5000) {
+async function fetchWithTimeout(url, opts = {}, timeoutMs = 10_000) {
   return await fetch(url, {
     ...opts,
     signal: AbortSignal.timeout(timeoutMs),
   });
+}
+
+/**
+ * Auth header: TES accepts `Authorization: Bearer tes_...` for end-user
+ * keys and `x-service-key: <key>` for internal/service keys. Mirrors the
+ * branching in hooks/scripts/shared.js so doctor authenticates the same
+ * way the SDK runtime does.
+ */
+function authHeaders(apiKey, clientId) {
+  const headers = {
+    "Content-Type": "application/json",
+    "x-client-id": clientId,
+  };
+  if (apiKey?.startsWith("tes_")) {
+    headers["Authorization"] = `Bearer ${apiKey}`;
+  } else if (apiKey) {
+    headers["x-service-key"] = apiKey;
+  }
+  return headers;
 }
 
 async function graphql(endpoint, apiKey, clientId, query, variables) {
@@ -34,14 +70,9 @@ async function graphql(endpoint, apiKey, clientId, query, variables) {
     `${endpoint.replace(/\/$/, "")}/api/graphql`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-        "x-client-id": clientId,
-      },
+      headers: authHeaders(apiKey, clientId),
       body: JSON.stringify({ query, variables }),
-    },
-    10_000
+    }
   );
   if (!res.ok) {
     const text = await res.text().catch(() => "");
@@ -75,14 +106,12 @@ function checkEventStreamHasData() {
       const env = requireHostedEnv();
       if (env.missing) return { ok: false, msg: env.reason };
       try {
-        // Deployments vary in exactly how events are counted, so we use
-        // the aggregate count exposed via a small events() list+total.
-        // `first: 1` keeps the payload tiny — we only care about the total.
+        // `limit: 1` keeps the payload tiny — we only care about the total.
         const data = await graphql(
           env.endpoint,
           env.apiKey,
           env.clientId,
-          `query DoctorEventCount { events(first: 1) { totalCount } }`
+          `query DoctorEventCount { events(limit: 1) { totalCount } }`
         );
         const total = data?.events?.totalCount ?? 0;
         if (total > 0) {
@@ -116,12 +145,18 @@ function checkMemoryCreatedForClient() {
           env.endpoint,
           env.apiKey,
           env.clientId,
-          `query DoctorMemCount($kind: String!, $client: String!) {
-             events(first: 1, filter: { kind: $kind, clientId: $client }) {
+          `query DoctorMemCount($eventType: String!, $client: String!) {
+             events(
+               limit: 1,
+               filter: {
+                 eventType: { eq: $eventType }
+                 clientId: { eq: $client }
+               }
+             ) {
                totalCount
              }
            }`,
-          { kind: "MEMORY_CREATED", client: env.clientId }
+          { eventType: "MEMORY_CREATED", client: env.clientId }
         );
         const total = data?.events?.totalCount ?? 0;
         if (total > 0) {
@@ -143,6 +178,12 @@ function checkMemoryCreatedForClient() {
   };
 }
 
+// Match TES's "Cannot query field 'X'" error wording precisely so a
+// schema-arg mismatch doesn't masquerade as "deployment doesn't expose
+// the field" — that would silently hide real errors.
+const FIELD_NOT_FOUND_RE =
+  /cannot query field "?semanticSearchMemories"?/i;
+
 function checkSemanticSearchReturnsHits() {
   return {
     name: "semanticSearchMemories returns hits",
@@ -160,13 +201,18 @@ function checkSemanticSearchReturnsHits() {
           env.endpoint,
           env.apiKey,
           env.clientId,
-          `query DoctorSearch($q: String!, $minScore: Float!) {
-             semanticSearchMemories(query: $q, minScore: $minScore, limit: 5) {
+          `query DoctorSearch($clientId: String!, $q: String!, $minScore: Float!) {
+             semanticSearchMemories(
+               clientId: $clientId,
+               query: $q,
+               minScore: $minScore,
+               limit: 5
+             ) {
                id
-               score
+               similarity
              }
            }`,
-          { q: query, minScore }
+          { clientId: env.clientId, q: query, minScore }
         );
         const hits = data?.semanticSearchMemories ?? [];
         if (hits.length > 0) {
@@ -182,10 +228,10 @@ function checkSemanticSearchReturnsHits() {
           detail: { query, minScore, hits: 0 },
         };
       } catch (err) {
-        // A "field not found" GraphQL error means the deployment doesn't
-        // expose semanticSearchMemories yet — downgrade to info rather than
-        // pretending retrieval is broken.
-        if (/semanticSearchMemories/i.test(err.message)) {
+        // Only treat the precise "Cannot query field" error as
+        // "deployment doesn't expose this" — schema-arg mismatches and
+        // other graphql errors should surface, not be silently skipped.
+        if (FIELD_NOT_FOUND_RE.test(err.message)) {
           return {
             ok: true,
             msg: "semanticSearchMemories not exposed by this deployment (skipped)",
