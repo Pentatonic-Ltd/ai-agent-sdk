@@ -363,6 +363,40 @@ describe("buildMemoryContext", () => {
     expect(out).toMatch(/🧠 _Matched 3 memories from Pentatonic Memory_/);
   });
 
+  it("renders source-grouped sections when metadata identifies multiple sources", () => {
+    const out = buildMemoryContext({}, [
+      { similarity: 0.9, content: "code chunk", metadata: { source: "corpus-ingest" } },
+      { similarity: 0.85, content: "slack thread", metadata: { source: "slack-ingest" } },
+      { similarity: 0.7, content: "email body", metadata: { source: "gmail-ingest" } },
+    ]);
+    expect(out).toContain("Code (1)");
+    expect(out).toContain("Slack (1)");
+    expect(out).toContain("Gmail (1)");
+    // Source order: code, slack, gmail per SOURCE_ORDER.
+    expect(out.indexOf("Code")).toBeLessThan(out.indexOf("Slack"));
+    expect(out.indexOf("Slack")).toBeLessThan(out.indexOf("Gmail"));
+  });
+
+  it("includes per-source badges in the footer when sources are typed", () => {
+    const out = buildMemoryContext({}, [
+      { similarity: 0.9, content: "code chunk", metadata: { source: "corpus-ingest" } },
+      { similarity: 0.85, content: "slack 1", metadata: { source: "slack-ingest" } },
+      { similarity: 0.8, content: "slack 2", metadata: { source: "slack-ingest" } },
+    ]);
+    expect(out).toMatch(
+      /🧠 _Matched 3 memories from Pentatonic Memory: 1 code · 2 slack_/
+    );
+  });
+
+  it("falls back to the count-only footer when metadata is missing (backwards compat)", () => {
+    const out = buildMemoryContext({}, [
+      { similarity: 0.9, content: "a" },
+      { similarity: 0.8, content: "b" },
+    ]);
+    expect(out).toMatch(/🧠 _Matched 2 memories from Pentatonic Memory_/);
+    expect(out).not.toMatch(/: \d+ memory_/);
+  });
+
   it("omits the footer instruction when show_memory_indicator is 'false'", () => {
     const out = buildMemoryContext(
       { show_memory_indicator: "false" },
