@@ -31,6 +31,10 @@ function parseArgs() {
       flags.alert = true;
     } else if (a === "--no-plugins") {
       flags.noPlugins = true;
+    } else if (a === "--local") {
+      flags.local = true;
+    } else if (a === "--remote") {
+      flags.remote = true;
     } else if (!a.startsWith("--")) {
       flags.command = a;
     }
@@ -286,50 +290,14 @@ memory_url: http://localhost:3333
   rl.close();
 }
 
-async function main() {
-  const flags = parseArgs();
-  const TES_ENDPOINT = flags.endpoint || DEFAULT_ENDPOINT;
-
-  if (flags.command === "memory") {
-    await setupLocalMemory();
-    return;
-  }
-
-  if (flags.command === "doctor") {
-    const code = await runDoctorCommand(flags);
-    rl.close();
-    process.exit(code);
-  }
-
-  if (flags.command !== "init") {
-    console.log(`
-@pentatonic-ai/ai-agent-sdk
-
-Usage:
-  npx @pentatonic-ai/ai-agent-sdk init                    Set up hosted TES account
-  npx @pentatonic-ai/ai-agent-sdk memory                  Set up local memory stack
-  npx @pentatonic-ai/ai-agent-sdk doctor                  Run health checks (exit 0/1/2)
-  npx @pentatonic-ai/ai-agent-sdk init --endpoint URL     Use a custom TES endpoint
-
-doctor flags:
-  --json                  Emit a JSON report
-  --alert                 Suppress output when all green
-  --no-plugins            Skip ~/.config/pentatonic-ai/doctor-plugins/*
-  --path local|hosted|platform|auto
-  --timeout <ms>          Per-check timeout (default 10000)
-
-For docs, see https://api.pentatonic.com
-    `);
-    process.exit(0);
-  }
-
+async function setupHostedTes(TES_ENDPOINT) {
   const isLocal = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/.test(TES_ENDPOINT);
   if (!TES_ENDPOINT.startsWith("https://") && !isLocal) {
     console.error(`\n  Error: endpoint must use https:// (http:// is only allowed for localhost)\n`);
     process.exit(1);
   }
 
-  console.log(`\n  Welcome to Pentatonic AI Events SDK`);
+  console.log(`\n  Hosted TES Setup`);
   if (TES_ENDPOINT !== DEFAULT_ENDPOINT) {
     console.log(`  Using endpoint: ${TES_ENDPOINT}`);
   }
@@ -534,6 +502,72 @@ For docs, see https://api.pentatonic.com
   }
 
   rl.close();
+}
+
+async function main() {
+  const flags = parseArgs();
+  const TES_ENDPOINT = flags.endpoint || DEFAULT_ENDPOINT;
+
+  if (flags.command === "doctor") {
+    const code = await runDoctorCommand(flags);
+    rl.close();
+    process.exit(code);
+  }
+
+  // `memory` is kept as a shortcut to skip the local-or-remote question
+  // for users with that command in scripts/docs. New users should use init.
+  if (flags.command === "memory") {
+    await setupLocalMemory();
+    return;
+  }
+
+  if (flags.command !== "init") {
+    console.log(`
+@pentatonic-ai/ai-agent-sdk
+
+Usage:
+  npx @pentatonic-ai/ai-agent-sdk init                    Set up memory (local or hosted)
+  npx @pentatonic-ai/ai-agent-sdk init --local            Skip the prompt; set up local
+  npx @pentatonic-ai/ai-agent-sdk init --remote           Skip the prompt; set up hosted TES
+  npx @pentatonic-ai/ai-agent-sdk init --endpoint URL     Use a custom TES endpoint
+  npx @pentatonic-ai/ai-agent-sdk doctor                  Run health checks (exit 0/1/2)
+  npx @pentatonic-ai/ai-agent-sdk memory                  Shortcut for 'init --local'
+
+doctor flags:
+  --json                  Emit a JSON report
+  --alert                 Suppress output when all green
+  --no-plugins            Skip ~/.config/pentatonic-ai/doctor-plugins/*
+  --path local|hosted|platform|auto
+  --timeout <ms>          Per-check timeout (default 10000)
+
+For docs, see https://api.pentatonic.com
+    `);
+    process.exit(0);
+  }
+
+  // init: ask local-or-remote up front. --local / --remote skip the prompt.
+  let mode;
+  if (flags.local && flags.remote) {
+    console.error("\n  Error: --local and --remote are mutually exclusive\n");
+    process.exit(1);
+  } else if (flags.local) {
+    mode = "local";
+  } else if (flags.remote) {
+    mode = "remote";
+  } else {
+    console.log(`\n  Pentatonic Memory setup\n`);
+    const choice = await askChoice("? Where should memory live?", [
+      "Local — Docker stack on this machine (private, free, requires Docker)",
+      "Remote — Pentatonic TES (hosted, team-wide)",
+    ]);
+    mode = choice.startsWith("Local") ? "local" : "remote";
+  }
+
+  if (mode === "local") {
+    await setupLocalMemory();
+  } else {
+    await setupHostedTes(TES_ENDPOINT);
+  }
 }
 
 main().catch((err) => {
