@@ -1,0 +1,35 @@
+# Manual-test image for Claude Code scenarios.
+#
+# Slim Node base + the official Claude Code CLI globally installed.
+# Auth state and plugin cache are persisted in a named volume mounted at
+# CLAUDE_CONFIG_DIR — see scenarios/*.compose.yml for the bind point.
+FROM node:20-bookworm-slim
+
+# Useful runtime tooling for the test playbook (curl for prodding the
+# memory server, jq for inspecting events, less for paging).
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    jq \
+    git \
+    less \
+    ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
+
+# Force git to use HTTPS for GitHub. Claude Code's `/plugin marketplace
+# add <slug>` clones via `git@github.com:...` by default, which invokes
+# ssh; the container has neither ssh nor a GitHub key. HTTPS works
+# anonymously for public marketplaces (which is the only kind the rig
+# is designed to test against).
+RUN git config --global url."https://github.com/".insteadOf "git@github.com:" \
+ && git config --global --add url."https://github.com/".insteadOf "ssh://git@github.com/"
+
+# Claude Code CLI. Pinned at image build time; rebuild the image to
+# refresh. Inside the container the user runs `claude` directly.
+RUN npm install -g @anthropic-ai/claude-code@latest
+
+# Visible prompt marker so it's obvious you're inside the test container.
+ENV PS1='[manual-test:claude-code] \w \$ '
+ENV CLAUDE_CONFIG_DIR=/root/.claude
+
+WORKDIR /workspace
+CMD ["bash"]

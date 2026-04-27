@@ -1,0 +1,11 @@
+# Manual-test image for OpenClaw scenarios.
+#
+# We build on the published OpenClaw image used by the e2e tests, so the
+# install/runtime story matches what real users hit. The Pentatonic Memory
+# plugin is installed via the playbook (`openclaw plugins install ...`)
+# rather than baked in — the install flow IS one of the things we want to
+# manually test.
+FROM ghcr.io/openclaw/openclaw:latest
+
+# Visible prompt marker (overwritten if the user changes shells).
+ENV PS1='[manual-test:openclaw] \w \$ '
