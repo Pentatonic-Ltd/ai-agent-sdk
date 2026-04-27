@@ -102,7 +102,7 @@ export function buildHostedHeaders(config) {
  * @param {number} [opts.minScore=0.55]
  * @param {number} [opts.timeoutMs=5000]
  * @returns {Promise<{
- *   memories: Array<{id: string, content: string, similarity: number}>,
+ *   memories: Array<{id: string, content: string, similarity: number, metadata?: object}>,
  *   skipped?: string,
  * }>}
  *

@@ -11,16 +11,13 @@ import { readFileSync, writeFileSync, existsSync, unlinkSync, mkdirSync } from "
 import { join } from "path";
 import { homedir, tmpdir } from "os";
 
-// ─── Source grouping ──────────────────────────────────────────────────
-//
-// Inlined from `packages/memory/src/source-grouping.js` — that file is
-// the canonical source of truth. KEEP IN SYNC. We inline because the
-// hook scripts are invoked by Claude Code via direct path and don't
-// participate in the SDK's bundling — cross-file ESM imports work in
-// dev but the hook copy in users' configs would break.
-
-const HOOKS_SOURCE_ORDER = ["code", "slack", "gmail", "calendar", "meeting", "memory"];
-const HOOKS_SOURCE_LABEL = {
+// Source grouping for retrieved memories. Same shape as
+// `packages/memory/src/source-grouping.js` (the canonical implementation,
+// with unit tests) — duplicated inline here because hook scripts are
+// invoked by Claude Code via direct path and don't participate in the
+// SDK's bundling. Update both if you change this.
+const SOURCE_ORDER = ["code", "slack", "gmail", "calendar", "meeting", "memory"];
+const SOURCE_LABEL = {
   code: { label: "Code", icon: "💻" },
   slack: { label: "Slack", icon: "💬" },
   gmail: { label: "Gmail", icon: "✉️" },
@@ -63,10 +60,10 @@ function groupMemoriesBySource(memories) {
     if (!buckets.has(src)) buckets.set(src, []);
     buckets.get(src).push(m);
   }
-  for (const src of HOOKS_SOURCE_ORDER) {
+  for (const src of SOURCE_ORDER) {
     if (buckets.has(src)) grouped.set(src, buckets.get(src));
   }
-  const unknown = [...buckets.keys()].filter((k) => !HOOKS_SOURCE_ORDER.includes(k)).sort();
+  const unknown = [...buckets.keys()].filter((k) => !SOURCE_ORDER.includes(k)).sort();
   for (const src of unknown) grouped.set(src, buckets.get(src));
   return grouped;
 }
@@ -103,7 +100,7 @@ function renderGroupedMemoryText(memories, sanitize) {
   for (const src of sources) {
     const hits = grouped.get(src);
     if (!hits.length) continue;
-    const meta = HOOKS_SOURCE_LABEL[src] || { label: src, icon: "" };
+    const meta = SOURCE_LABEL[src] || { label: src, icon: "" };
     const head = meta.icon ? `${meta.icon} ${meta.label} (${hits.length})` : `${meta.label} (${hits.length})`;
     blocks.push(head);
     for (const m of hits) {

@@ -7,12 +7,6 @@
  * a meeting" tells you the agent connected the dots Anthropic / Cursor /
  * Codex couldn't.
  *
- * This module is the single source of truth for source detection +
- * grouping logic. Both the OpenClaw plugin (`openclaw-plugin/index.js`)
- * and the SDK-bundled OpenClaw integration (`src/openclaw/index.js`)
- * import from here so the same memory hits render identically wherever
- * the SDK is consumed.
- *
  * Source IDs map to the `source` (or `system`) field in TES STORE_MEMORY
  * event attributes — `slack-ingest`, `gmail-ingest`, `calendar-ingest`,
  * `corpus-ingest`. We normalise to short labels (`slack`, `gmail`,
@@ -22,6 +16,11 @@
  * preserves backwards compatibility with deployments that don't yet
  * populate `metadata.source` or with memory sources we haven't taught
  * the SDK about. New sources only need a single entry here to surface.
+ *
+ * Canonical implementation. The Claude Code hook (`hooks/scripts/
+ * shared.js`) and the published openclaw-plugin (`openclaw-plugin/
+ * index.js`) each inline the same logic — they're published standalone
+ * and can't cross-import. Update all three if changing.
  */
 
 /**
