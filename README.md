@@ -26,6 +26,7 @@
 - [Overview](#overview)
 - [Local Memory (self-hosted)](#local-memory-self-hosted)
 - [Hosted TES](#hosted-tes)
+- [Repository Onboarding (corpus ingest)](#repository-onboarding-corpus-ingest)
 - [Claude Code Plugin](#claude-code-plugin)
 - [OpenClaw Plugin](#openclaw-plugin)
 - [SDK: Wrap Your LLM Client](#sdk-wrap-your-llm-client)
@@ -137,6 +138,65 @@ pip install pentatonic-ai-agent-sdk
 - **Team-wide shared memory** -- semantic search across your team's AI interactions
 - **Admin dashboard** -- visualize conversations, token usage, and memory explorer
 - **Multi-tenancy** -- isolated databases per client
+
+## Repository Onboarding (corpus ingest)
+
+The plugin's memory layer starts empty. To avoid the cold-start
+problem where retrieval has nothing useful to return for the first
+days of use, you can ingest your repos on day one:
+
+```bash
+# Interactive — picks repos, shows a cost preview, ingests, offers to install
+# a git post-commit hook so memory stays current as you work
+npx @pentatonic-ai/ai-agent-sdk onboard
+
+# One-shot ingest of a single repo
+npx @pentatonic-ai/ai-agent-sdk ingest ~/code/my-app
+
+# See what's tracked and how big the corpus is
+npx @pentatonic-ai/ai-agent-sdk status
+
+# Delta-resync everything that's tracked (or one repo)
+npx @pentatonic-ai/ai-agent-sdk resync
+
+# Manage the tracked-repos list
+npx @pentatonic-ai/ai-agent-sdk corpus list
+npx @pentatonic-ai/ai-agent-sdk corpus remove ~/code/old-project
+npx @pentatonic-ai/ai-agent-sdk corpus reset
+```
+
+Tenant credentials come from env vars (`TES_ENDPOINT`, `TES_CLIENT_ID`,
+`TES_API_KEY`) or `~/.config/tes/credentials.json` if you used
+`npx @pentatonic-ai/ai-agent-sdk init`.
+
+### What gets ingested, what doesn't
+
+The walker honors `.gitignore` and `.tesignore`, plus a hard-exclude
+list for secrets and credentials that **cannot be overridden** even
+with `!pattern` rules:
+
+- `.env*` (any environment file)
+- `*.pem`, `*.key`, `*.crt`, `*.p12`, `*.pfx`, `*.jks`
+- `id_rsa`, `id_ed25519`, `id_ecdsa`, `id_dsa` (SSH private keys)
+- `.ssh/`, `.aws/`, `.gcp/`, `.azure/` (whole directories)
+- `.npmrc`, `.pypirc`, `.netrc`
+- `secrets/`, `credentials/`, `service-account.*`
+- `*_secret*`, `*_token*`, `*_password*`
+
+Plus directory-level skips: `node_modules`, `dist`, `build`, `.next`,
+`venv`, `__pycache__`, `target`, `.terraform`, etc. And extension
+skips for binaries, lockfiles, and minified output.
+
+### How it stays current
+
+If you accept the prompt during `onboard`, a git post-commit hook is
+installed at `.git/hooks/post-commit` that re-ingests files changed
+in each commit. The hook is non-fatal — it never blocks a commit.
+Install manually any time with:
+
+```bash
+npx @pentatonic-ai/ai-agent-sdk install-git-hook
+```
 
 ## Claude Code Plugin
 

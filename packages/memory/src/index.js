@@ -133,3 +133,21 @@ export { decay } from "./decay.js";
 export { consolidate } from "./consolidate.js";
 export { ensureLayers, getLayers } from "./layers.js";
 export { migrate } from "./migrate.js";
+export {
+  ingestCorpus,
+  syncCorpus,
+  ingestPaths,
+  estimateCorpus,
+  discover,
+  isPathEligible,
+  chunkFile,
+  localAdapter,
+  hostedAdapter,
+  loadState,
+  saveState,
+  defaultStatePath,
+  emptyState,
+  upsertSource,
+  removeSource,
+  getSource,
+} from "./corpus/index.js";

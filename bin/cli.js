@@ -301,15 +301,76 @@ async function main() {
     process.exit(code);
   }
 
+  // --------------------------------------------------------------------
+  // Corpus subcommands — onboarding/repo ingest (spec 01)
+  // --------------------------------------------------------------------
+  const CORPUS_COMMANDS = new Set([
+    "onboard", "ingest", "status", "resync", "corpus",
+    "install-git-hook", "ingest-paths",
+  ]);
+  if (CORPUS_COMMANDS.has(flags.command)) {
+    const corpusCli = await import(
+      "../packages/memory/src/corpus/cli.js"
+    );
+    const subArgs = process.argv.slice(2).filter((a) => a !== flags.command);
+    const ctx = {
+      ask,
+      close: () => rl.close(),
+    };
+    let code = 0;
+    try {
+      switch (flags.command) {
+        case "onboard":
+          code = await corpusCli.cmdOnboard(subArgs, ctx);
+          break;
+        case "ingest":
+          code = await corpusCli.cmdIngest(subArgs);
+          break;
+        case "status":
+          code = await corpusCli.cmdStatus();
+          break;
+        case "resync":
+          code = await corpusCli.cmdResync(subArgs);
+          break;
+        case "corpus":
+          code = await corpusCli.cmdCorpus(subArgs, ctx);
+          break;
+        case "install-git-hook":
+          code = await corpusCli.cmdInstallGitHook();
+          break;
+        case "ingest-paths":
+          code = await corpusCli.cmdIngestPaths(subArgs);
+          break;
+      }
+    } catch (err) {
+      process.stderr.write(`Error: ${err.message}\n`);
+      code = 2;
+    }
+    rl.close();
+    process.exit(code);
+  }
+
   if (flags.command !== "init") {
     console.log(`
 @pentatonic-ai/ai-agent-sdk
 
-Usage:
+Setup:
   npx @pentatonic-ai/ai-agent-sdk init                    Set up hosted TES account
   npx @pentatonic-ai/ai-agent-sdk memory                  Set up local memory stack
   npx @pentatonic-ai/ai-agent-sdk doctor                  Run health checks (exit 0/1/2)
-  npx @pentatonic-ai/ai-agent-sdk init --endpoint URL     Use a custom TES endpoint
+
+Memory corpus (onboarding):
+  npx @pentatonic-ai/ai-agent-sdk onboard                 Interactive: pick repos, ingest, install hooks
+  npx @pentatonic-ai/ai-agent-sdk ingest <path>           One-shot ingest of a repo
+  npx @pentatonic-ai/ai-agent-sdk status                  Show tracked repos and corpus stats
+  npx @pentatonic-ai/ai-agent-sdk resync [<path>]         Delta-sync (or all tracked repos)
+  npx @pentatonic-ai/ai-agent-sdk corpus list             List tracked repos
+  npx @pentatonic-ai/ai-agent-sdk corpus remove <path>    Stop tracking a repo
+  npx @pentatonic-ai/ai-agent-sdk corpus reset            Wipe local corpus state
+  npx @pentatonic-ai/ai-agent-sdk install-git-hook        Install post-commit hook in cwd
+
+Tenant for corpus commands is read from these env vars:
+  TES_ENDPOINT, TES_CLIENT_ID, TES_API_KEY
 
 doctor flags:
   --json                  Emit a JSON report
@@ -318,7 +379,10 @@ doctor flags:
   --path local|hosted|platform|auto
   --timeout <ms>          Per-check timeout (default 10000)
 
-For docs, see https://api.pentatonic.com
+init flags:
+  --endpoint URL          Use a custom TES endpoint (default ${DEFAULT_ENDPOINT})
+
+For docs, see https://thingeventsystem.ai/sdk
     `);
     process.exit(0);
   }

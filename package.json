@@ -14,7 +14,8 @@
     "./memory/server": "./packages/memory/src/server.js",
     "./memory/openclaw": "./packages/memory/src/openclaw/index.js",
     "./doctor": "./packages/doctor/src/index.js",
-    "./memory/hosted": "./packages/memory/src/hosted.js"
+    "./memory/hosted": "./packages/memory/src/hosted.js",
+    "./memory/corpus": "./packages/memory/src/corpus/index.js"
   },
   "bin": {
     "ai-agent-sdk": "./bin/cli.js"
