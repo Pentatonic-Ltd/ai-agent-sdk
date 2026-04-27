@@ -877,3 +877,119 @@ describe("writeSessionMemoriesToAutoMemory — round-trip on disk", () => {
     expect(res.reason).toBe("no-cwd");
   });
 });
+
+// --- search_limit / min_score config wiring ---
+//
+// These knobs come from tes-memory.local.md frontmatter as strings (the
+// loader doesn't parse types). Both used to be hardcoded `limit: 5,
+// minScore: 0.3` in the GraphQL query / local-server POST. The fix in
+// this PR plumbs them through; these tests assert the *outgoing request
+// body* — without them, future refactors could silently re-hardcode the
+// values and the suite would stay green.
+describe("searchMemories — search_limit and min_score config wiring", () => {
+  const hostedConfig = {
+    tes_endpoint: "https://api.test.com",
+    tes_client_id: "test-client",
+    tes_api_key: "tes_sk_test123",
+  };
+  const localConfig = {
+    mode: "local",
+    memory_url: "http://localhost:9999",
+  };
+
+  function captureFetchOnce(searchResults = [{ id: "m1", content: "x", similarity: 0.9 }]) {
+    const calls = [];
+    globalThis.fetch = async (url, opts) => {
+      const body = opts?.body ? JSON.parse(opts.body) : null;
+      calls.push({ url, body });
+      // Same-shape response for both hosted (GraphQL) and local (HTTP).
+      const isHosted = String(url).includes("/api/graphql");
+      return {
+        ok: true,
+        json: async () =>
+          isHosted
+            ? { data: { semanticSearchMemories: searchResults } }
+            : { results: searchResults },
+      };
+    };
+    return calls;
+  }
+
+  // --- hosted (GraphQL) ---
+
+  it("hosted: passes config.search_limit through as the GraphQL `limit` variable", async () => {
+    const calls = captureFetchOnce();
+    await searchMemories({ ...hostedConfig, search_limit: "3" }, "q");
+    expect(calls[0].body.variables.limit).toBe(3);
+  });
+
+  it("hosted: defaults to limit=5 when search_limit is not set", async () => {
+    const calls = captureFetchOnce();
+    await searchMemories(hostedConfig, "q");
+    expect(calls[0].body.variables.limit).toBe(5);
+  });
+
+  it("hosted: passes config.min_score through as the GraphQL `minScore` variable", async () => {
+    const calls = captureFetchOnce();
+    await searchMemories({ ...hostedConfig, min_score: "0.7" }, "q");
+    expect(calls[0].body.variables.minScore).toBeCloseTo(0.7, 5);
+  });
+
+  it("hosted: defaults to minScore=0.3 when min_score is not set", async () => {
+    const calls = captureFetchOnce();
+    await searchMemories(hostedConfig, "q");
+    expect(calls[0].body.variables.minScore).toBeCloseTo(0.3, 5);
+  });
+
+  it("hosted: respects min_score=0 (legitimate 'return everything' debug setting)", async () => {
+    const calls = captureFetchOnce();
+    await searchMemories({ ...hostedConfig, min_score: "0" }, "q");
+    expect(calls[0].body.variables.minScore).toBe(0);
+  });
+
+  it("hosted: falls back to 0.3 default when min_score is non-numeric", async () => {
+    const calls = captureFetchOnce();
+    await searchMemories({ ...hostedConfig, min_score: "not-a-number" }, "q");
+    expect(calls[0].body.variables.minScore).toBeCloseTo(0.3, 5);
+  });
+
+  it("hosted: declares both as variables in the GraphQL query (not literals)", async () => {
+    const calls = captureFetchOnce();
+    await searchMemories({ ...hostedConfig, search_limit: "10", min_score: "0.5" }, "q");
+    const queryStr = calls[0].body.query;
+    // Variables, not literals — keeps the parsed-query plan stable and
+    // matches the schema-strict deployment.
+    expect(queryStr).toMatch(/\$limit:\s*Int!/);
+    expect(queryStr).toMatch(/\$minScore:\s*Float!/);
+    expect(queryStr).toMatch(/limit:\s*\$limit/);
+    expect(queryStr).toMatch(/minScore:\s*\$minScore/);
+    // No leftover hardcoded values.
+    expect(queryStr).not.toMatch(/limit:\s*5\b/);
+    expect(queryStr).not.toMatch(/minScore:\s*0\.3\b/);
+  });
+
+  // --- local (memory server HTTP) ---
+
+  it("local: includes config.search_limit and config.min_score in POST body", async () => {
+    const calls = captureFetchOnce();
+    await searchMemories(
+      { ...localConfig, search_limit: "8", min_score: "0.6" },
+      "q"
+    );
+    expect(calls[0].body.limit).toBe(8);
+    expect(calls[0].body.min_score).toBeCloseTo(0.6, 5);
+  });
+
+  it("local: defaults to limit=5, min_score=0.3 when neither is set", async () => {
+    const calls = captureFetchOnce();
+    await searchMemories(localConfig, "q");
+    expect(calls[0].body.limit).toBe(5);
+    expect(calls[0].body.min_score).toBeCloseTo(0.3, 5);
+  });
+
+  it("local: respects min_score=0", async () => {
+    const calls = captureFetchOnce();
+    await searchMemories({ ...localConfig, min_score: "0" }, "q");
+    expect(calls[0].body.min_score).toBe(0);
+  });
+});
