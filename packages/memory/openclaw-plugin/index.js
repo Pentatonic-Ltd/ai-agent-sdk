@@ -92,16 +92,13 @@ const stats = {
 // Natural-language prompts ("what were those changes again?") often fall
 // below the semantic threshold even when relevant memories exist. We
 // drop stopwords and retry with the keyword-distilled form.
-// ─── Source grouping ──────────────────────────────────────────────────
-//
-// Inlined copy of `packages/memory/src/source-grouping.js`. KEEP IN SYNC
-// — that file is the canonical source of truth and has the unit tests.
-// We inline here because this plugin ships as a standalone npm package
-// (`@pentatonic-ai/openclaw-memory-plugin`) without bundling the SDK,
-// so cross-file imports break the published artefact.
-
-const SOURCE_ORDER_PLUGIN = ["code", "slack", "gmail", "calendar", "meeting", "memory"];
-const SOURCE_LABEL_PLUGIN = {
+// Source grouping for retrieved memories. Same shape as
+// `packages/memory/src/source-grouping.js` (the canonical implementation,
+// with unit tests) — duplicated inline here to keep the published
+// openclaw-plugin package fully standalone. Update both if you change
+// this.
+const SOURCE_ORDER = ["code", "slack", "gmail", "calendar", "meeting", "memory"];
+const SOURCE_LABEL = {
   code: { label: "Code", icon: "💻" },
   slack: { label: "Slack", icon: "💬" },
   gmail: { label: "Gmail", icon: "✉️" },
@@ -110,7 +107,7 @@ const SOURCE_LABEL_PLUGIN = {
   memory: { label: "Memory", icon: "🧠" },
 };
 
-export function detectSourcePlugin(metadata) {
+function detectMemorySource(metadata) {
   if (!metadata || typeof metadata !== "object") return "memory";
   const explicit = String(metadata.source || metadata.system || "").toLowerCase();
   if (explicit) {
@@ -135,24 +132,24 @@ export function detectSourcePlugin(metadata) {
   return "memory";
 }
 
-export function groupBySourcePlugin(memories) {
+function groupMemoriesBySource(memories) {
   const grouped = new Map();
   if (!Array.isArray(memories) || memories.length === 0) return grouped;
   const buckets = new Map();
   for (const m of memories) {
-    const src = detectSourcePlugin(m?.metadata);
+    const src = detectMemorySource(m?.metadata);
     if (!buckets.has(src)) buckets.set(src, []);
     buckets.get(src).push(m);
   }
-  for (const src of SOURCE_ORDER_PLUGIN) {
+  for (const src of SOURCE_ORDER) {
     if (buckets.has(src)) grouped.set(src, buckets.get(src));
   }
-  const unknown = [...buckets.keys()].filter((k) => !SOURCE_ORDER_PLUGIN.includes(k)).sort();
+  const unknown = [...buckets.keys()].filter((k) => !SOURCE_ORDER.includes(k)).sort();
   for (const src of unknown) grouped.set(src, buckets.get(src));
   return grouped;
 }
 
-export function formatSourceBadgesPlugin(grouped) {
+function formatSourceBadges(grouped) {
   const sources = [...grouped.keys()].filter((src) => grouped.get(src)?.length > 0);
   if (sources.length === 1 && sources[0] === "memory") return "";
   const parts = [];
@@ -162,7 +159,7 @@ export function formatSourceBadgesPlugin(grouped) {
   return parts.join(" · ");
 }
 
-export function renderGroupedMemoryTextPlugin(grouped, sanitize) {
+function renderGroupedMemoryText(grouped, sanitize) {
   const sources = [...grouped.keys()];
   const pct = (s) => Math.round((Number(s) || 0) * 100);
   if (sources.length === 1 && sources[0] === "memory") {
@@ -174,7 +171,7 @@ export function renderGroupedMemoryTextPlugin(grouped, sanitize) {
   for (const src of sources) {
     const hits = grouped.get(src);
     if (!hits.length) continue;
-    const meta = SOURCE_LABEL_PLUGIN[src] || { label: src, icon: "" };
+    const meta = SOURCE_LABEL[src] || { label: src, icon: "" };
     const head = meta.icon ? `${meta.icon} ${meta.label} (${hits.length})` : `${meta.label} (${hits.length})`;
     blocks.push(head);
     for (const m of hits) {
@@ -788,9 +785,9 @@ export default {
           stats.memoriesInjected += results.length;
           stats.lastAssembleCount = results.length;
 
-          const grouped = groupBySourcePlugin(results);
-          const memoryText = renderGroupedMemoryTextPlugin(grouped, sanitizeMemoryContent);
-          const badges = formatSourceBadgesPlugin(grouped);
+          const grouped = groupMemoriesBySource(results);
+          const memoryText = renderGroupedMemoryText(grouped, sanitizeMemoryContent);
+          const badges = formatSourceBadges(grouped);
 
           // Visibility marker: instruct the model to append a footer so the
           // end user sees when Pentatonic Memory was used — and which
