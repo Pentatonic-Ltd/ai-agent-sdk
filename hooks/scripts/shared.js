@@ -13,16 +13,40 @@ import { homedir, tmpdir } from "os";
 
 // --- Config ---
 
+/**
+ * Resolve TES config with per-project override support.
+ *
+ * Resolution order (first hit wins):
+ *   1. $CLAUDE_PROJECT_DIR/.claude/tes-memory.local.md   — repo-local override
+ *   2. $CLAUDE_CONFIG_DIR/tes-memory.local.md            — CLI-provided dir
+ *   3. ~/.claude/tes-memory.local.md                     — personal default
+ *   4. ~/.claude-pentatonic/tes-memory.local.md          — legacy location
+ *
+ * This lets a single machine route different projects to different TES
+ * tenants (e.g. work vs personal, staging vs prod) without env hacks:
+ * drop `.claude/tes-memory.local.md` in the repo and Claude Code picks it
+ * up automatically via CLAUDE_PROJECT_DIR.
+ *
+ * The returned object has a non-enumerable `_path` field (string) telling
+ * callers which file was resolved — useful for diagnostics.
+ *
+ * `agent_id` defaults to `basename($CLAUDE_PROJECT_DIR)` if not declared in
+ * frontmatter, so events get attributed to the project even when configs
+ * are shared.
+ */
 export function loadConfig() {
-  const candidates = [
-    join(homedir(), ".claude", "tes-memory.local.md"),
-    join(homedir(), ".claude-pentatonic", "tes-memory.local.md"),
-  ];
-  if (process.env.CLAUDE_CONFIG_DIR) {
-    candidates.unshift(
-      join(process.env.CLAUDE_CONFIG_DIR, "tes-memory.local.md")
+  const candidates = [];
+  if (process.env.CLAUDE_PROJECT_DIR) {
+    candidates.push(
+      join(process.env.CLAUDE_PROJECT_DIR, ".claude", "tes-memory.local.md")
     );
   }
+  if (process.env.CLAUDE_CONFIG_DIR) {
+    candidates.push(join(process.env.CLAUDE_CONFIG_DIR, "tes-memory.local.md"));
+  }
+  candidates.push(join(homedir(), ".claude", "tes-memory.local.md"));
+  candidates.push(join(homedir(), ".claude-pentatonic", "tes-memory.local.md"));
+
   const configPath = candidates.find((p) => existsSync(p));
   if (!configPath) return null;
 
@@ -37,7 +61,34 @@ export function loadConfig() {
       config[key.trim()] = rest.join(":").trim();
     }
   }
+
+  // agent_id defaults to the project dir basename when unset, so events
+  // stay attributable even when projects share a config file.
+  if (!config.agent_id && process.env.CLAUDE_PROJECT_DIR) {
+    config.agent_id = process.env.CLAUDE_PROJECT_DIR.split("/")
+      .filter(Boolean)
+      .pop();
+  }
+
+  // _path is for diagnostics (doctor, logs) — hidden from attribute spread.
+  Object.defineProperty(config, "_path", {
+    value: configPath,
+    enumerable: false,
+    writable: false,
+  });
   return config;
+}
+
+/**
+ * Build the `source` attribute emitted alongside every event.
+ * Format: `claude-code-<agent_id>` — falls back to `claude-code-plugin`
+ * when agent_id isn't resolvable (shouldn't happen under Claude Code,
+ * but keeps the field non-empty for diagnostic paths).
+ */
+function eventSource(config) {
+  return config?.agent_id
+    ? `claude-code-${config.agent_id}`
+    : "claude-code-plugin";
 }
 
 // --- Version check ---
@@ -559,7 +610,8 @@ async function storeHosted(config, content, metadata) {
               attributes: {
                 ...metadata,
                 content,
-                source: "claude-code-plugin",
+                agent_id: config.agent_id,
+                source: eventSource(config),
                 user_id: config.tes_user_id || undefined,
               },
             },
@@ -594,7 +646,8 @@ export async function emitModuleEvent(config, moduleId, eventType, entityId, att
               entity_id: entityId,
               attributes: {
                 ...attributes,
-                source: "claude-code-plugin",
+                agent_id: config.agent_id,
+                source: eventSource(config),
                 user_id: config.tes_user_id || undefined,
               },
             },

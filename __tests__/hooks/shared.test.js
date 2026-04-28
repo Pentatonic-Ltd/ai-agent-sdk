@@ -80,6 +80,7 @@ describe("loadConfig", () => {
   afterAll(() => {
     rmSync(testDir, { recursive: true, force: true });
     delete process.env.CLAUDE_CONFIG_DIR;
+    delete process.env.CLAUDE_PROJECT_DIR;
   });
 
   it("returns null when no config file exists", () => {
@@ -136,6 +137,103 @@ tes_api_key: devkey
     const config = loadConfig();
     expect(config).toBeNull();
   });
+
+  it("exposes the resolved file path on config._path", () => {
+    writeFileSync(
+      configPath,
+      `---
+tes_endpoint: https://api.test.com
+tes_client_id: c
+tes_api_key: tes_k
+---
+`
+    );
+    process.env.CLAUDE_CONFIG_DIR = testDir;
+    delete process.env.CLAUDE_PROJECT_DIR;
+
+    const config = loadConfig();
+    expect(config._path).toBe(configPath);
+    // _path is non-enumerable so it never leaks into event attributes.
+    expect(Object.keys(config)).not.toContain("_path");
+  });
+
+  it("picks CLAUDE_PROJECT_DIR override over CLAUDE_CONFIG_DIR", () => {
+    // Home/user default
+    writeFileSync(
+      configPath,
+      `---
+tes_endpoint: https://user.test.com
+tes_client_id: user-tenant
+tes_api_key: tes_user
+---
+`
+    );
+
+    // Repo-local override
+    const projectDir = join(tmpdir(), `tes-test-project-${Date.now()}`);
+    const projectClaudeDir = join(projectDir, ".claude");
+    mkdirSync(projectClaudeDir, { recursive: true });
+    writeFileSync(
+      join(projectClaudeDir, "tes-memory.local.md"),
+      `---
+tes_endpoint: https://project.test.com
+tes_client_id: project-tenant
+tes_api_key: tes_project
+---
+`
+    );
+
+    process.env.CLAUDE_CONFIG_DIR = testDir;
+    process.env.CLAUDE_PROJECT_DIR = projectDir;
+
+    try {
+      const config = loadConfig();
+      expect(config.tes_endpoint).toBe("https://project.test.com");
+      expect(config.tes_client_id).toBe("project-tenant");
+    } finally {
+      rmSync(projectDir, { recursive: true, force: true });
+      delete process.env.CLAUDE_PROJECT_DIR;
+    }
+  });
+
+  it("derives agent_id from CLAUDE_PROJECT_DIR basename when not in frontmatter", () => {
+    writeFileSync(
+      configPath,
+      `---
+tes_endpoint: https://api.test.com
+tes_client_id: t
+tes_api_key: tes_k
+---
+`
+    );
+    process.env.CLAUDE_CONFIG_DIR = testDir;
+    process.env.CLAUDE_PROJECT_DIR = "/home/user/projects/my-cool-app";
+
+    const config = loadConfig();
+    expect(config.agent_id).toBe("my-cool-app");
+
+    delete process.env.CLAUDE_PROJECT_DIR;
+  });
+
+  it("respects explicit agent_id in frontmatter over CLAUDE_PROJECT_DIR derivation", () => {
+    writeFileSync(
+      configPath,
+      `---
+tes_endpoint: https://api.test.com
+tes_client_id: t
+tes_api_key: tes_k
+agent_id: custom-agent
+---
+`
+    );
+    process.env.CLAUDE_CONFIG_DIR = testDir;
+    process.env.CLAUDE_PROJECT_DIR = "/home/user/some-other-dir";
+
+    const config = loadConfig();
+    expect(config.agent_id).toBe("custom-agent");
+
+    delete process.env.CLAUDE_PROJECT_DIR;
+  });
 });
 
 describe("emitModuleEvent", () => {
@@ -174,7 +272,21 @@ describe("emitModuleEvent", () => {
     expect(body.variables.input.data.entity_id).toBe("sess-1");
   });
 
-  it("includes source and user_id in attributes", async () => {
+  it("includes agent_id and source derived from agent_id", async () => {
+    const attributedConfig = { ...config, agent_id: "machinegenie" };
+    await emitModuleEvent(attributedConfig, "deep-memory", "CHAT_TURN", "sess-1", {
+      turn_number: 0,
+    });
+
+    const body = JSON.parse(fetchCalls[0].opts.body);
+    const attrs = body.variables.input.data.attributes;
+    expect(attrs.agent_id).toBe("machinegenie");
+    expect(attrs.source).toBe("claude-code-machinegenie");
+    expect(attrs.user_id).toBe("test-user");
+    expect(attrs.turn_number).toBe(0);
+  });
+
+  it("falls back to claude-code-plugin source when agent_id unset", async () => {
     await emitModuleEvent(config, "deep-memory", "CHAT_TURN", "sess-1", {
       turn_number: 0,
     });
@@ -182,8 +294,7 @@ describe("emitModuleEvent", () => {
     const body = JSON.parse(fetchCalls[0].opts.body);
     const attrs = body.variables.input.data.attributes;
     expect(attrs.source).toBe("claude-code-plugin");
-    expect(attrs.user_id).toBe("test-user");
-    expect(attrs.turn_number).toBe(0);
+    expect(attrs.agent_id).toBeUndefined();
   });
 
   it("uses Bearer auth for tes_ prefixed keys", async () => {
