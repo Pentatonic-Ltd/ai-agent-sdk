@@ -13,6 +13,7 @@
  */
 
 import { chunkFile } from "./chunkers.js";
+import { extractReferences } from "./signatures.js";
 import {
   loadState,
   saveState,
@@ -51,6 +52,13 @@ import { resolve, basename } from "node:path";
  * @param {Function} [opts.onWarning] - (msg) => void
  * @param {string}   [opts.sourceUrl] - Optional git remote URL to record
  * @param {object}   [opts.discoverOpts] - Forwarded to discover()
+ * @param {"references"|"content"} [opts.mode="references"] - Storage mode.
+ *   "references" (default): store path + signature pointers; the agent
+ *   reads source files at query time. Stale source = `Read` fails →
+ *   loud, self-correcting failure mode.
+ *   "content": store full chunk content (legacy behaviour). Stale chunks
+ *   silently mislead retrieval until re-ingested. Kept for callers who
+ *   explicitly want a self-contained index.
  * @returns {Promise<{filesProcessed, filesIngested, filesSkipped, chunksCreated, bytesProcessed}>}
  */
 export async function ingestCorpus(adapter, repoPath, opts = {}) {
@@ -59,6 +67,14 @@ export async function ingestCorpus(adapter, repoPath, opts = {}) {
   const maxChunks = opts.maxChunks ?? 100000;
   const onProgress = opts.onProgress || (() => {});
   const onWarning = opts.onWarning || (() => {});
+
+  // Default mode is "references" — store pointers, not chunks. See JSDoc
+  // above. Set mode: "content" to opt back into the chunk-content
+  // behaviour for callers who explicitly want a self-contained index
+  // (e.g. air-gapped retrieval where the source isn't readable at
+  // query time).
+  const mode = opts.mode === "content" ? "content" : "references";
+  const extract = mode === "content" ? chunkFile : extractReferences;
 
   const state = await loadState(opts.statePath);
   const source = upsertSource(state, repoAbs, {
@@ -120,7 +136,7 @@ export async function ingestCorpus(adapter, repoPath, opts = {}) {
         }
       }
 
-      const chunks = chunkFile(file);
+      const chunks = extract(file);
       if (totals.chunksCreated + chunks.length > maxChunks) {
         aborted = new Error(
           `corpus: maxChunks (${maxChunks}) exceeded — stopped at ${file.relPath}`

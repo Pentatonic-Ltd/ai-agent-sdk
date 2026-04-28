@@ -23,7 +23,6 @@
  */
 
 import { ingest } from "../ingest.js";
-import { ensureLayers } from "../layers.js";
 import { buildHostedHeaders } from "../hosted.js";
 
 const CREATE_MEMORY_MUTATION = `
@@ -82,24 +81,32 @@ export function localAdapter(memory, opts = {}) {
     },
 
     async ingestChunk(content, metadata) {
-      // Use memory.ingest if we have the high-level API, otherwise fall
-      // back to the lower-level ingest() function with explicit deps.
-      if (typeof memory.ingest === "function") {
-        const result = await memory.ingest(content, {
-          clientId: opts.clientId,
-          userId: opts.userId,
-          layerType: layer,
-          metadata,
-        });
-        return { id: result.id };
-      }
-      // Direct ingest() form — caller passed { db, ai, llm }
-      const result = await ingest(memory.db, memory.ai, memory.llm, content, {
+      // Code references aren't conversational user-stated facts, so the
+      // distill step (which runs an "extract atomic facts from a
+      // conversation" prompt) is at best wasted compute and at worst
+      // hallucinates "user" facts from code structure that pollute the
+      // semantic layer. Skip distillation for corpus ingest.
+      const ingestOpts = {
         clientId: opts.clientId,
         userId: opts.userId,
         layerType: layer,
         metadata,
-      });
+        distill: false,
+      };
+      // Use memory.ingest if we have the high-level API, otherwise fall
+      // back to the lower-level ingest() function with explicit deps.
+      if (typeof memory.ingest === "function") {
+        const result = await memory.ingest(content, ingestOpts);
+        return { id: result.id };
+      }
+      // Direct ingest() form — caller passed { db, ai, llm }
+      const result = await ingest(
+        memory.db,
+        memory.ai,
+        memory.llm,
+        content,
+        ingestOpts
+      );
       return { id: result.id };
     },
 
@@ -247,6 +254,11 @@ export function hostedAdapter(config, opts = {}) {
     },
 
     async ingestChunk(content, metadata) {
+      // Note: distillation happens (or not) server-side. We can't pass
+      // distill:false through createMemory the way localAdapter does.
+      // metadata.kind = "code_reference" is the signal downstream
+      // consumers should branch on to skip the conversation-shaped
+      // distiller. Tracked as a follow-up TES change.
       const lid = await resolveLayerId();
       const result = await graphql(CREATE_MEMORY_MUTATION, {
         clientId,
