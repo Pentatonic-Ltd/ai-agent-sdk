@@ -16,6 +16,10 @@ import { distill } from "./distill.js";
  * @param {string} [opts.userId] - Optional user ID
  * @param {string} [opts.layerType="episodic"] - Target layer
  * @param {object} [opts.metadata] - Additional metadata
+ * @param {boolean} [opts.distill=true] - Run conversation-shaped fact
+ *   extraction. Pass false for code/structured content.
+ * @param {boolean} [opts.hyde=true] - Generate hypothetical queries
+ *   (HyDE). Pass false for code/structured content.
  * @param {Function} [opts.logger] - Optional logger
  * @param {Function} [opts.waitUntil] - Platform hook to register background
  *   tasks (e.g. Cloudflare Worker ctx.waitUntil). If provided, the distill
@@ -73,18 +77,23 @@ export async function ingest(db, ai, llm, content, opts = {}) {
     log(`Embedding failed for ${memoryId}: ${err.message}`);
   }
 
-  // HyDE: generate hypothetical queries (non-fatal)
-  try {
-    const queries = await generateHypotheticalQueries(llm, content);
-    if (queries.length) {
-      await db(
-        `UPDATE memory_nodes SET metadata = jsonb_set(COALESCE(metadata, '{}')::jsonb, '{hypothetical_queries}', $1::jsonb), updated_at = NOW() WHERE id = $2`,
-        [JSON.stringify(queries), memoryId]
-      );
-      log(`Generated ${queries.length} hypothetical queries for ${memoryId}`);
+  // HyDE: generate hypothetical queries (non-fatal). Skippable via
+  // opts.hyde === false — corpus ingest passes this for code_reference
+  // chunks because hypothetical-question expansion against function
+  // signatures degrades retrieval and burns one LLM call per chunk.
+  if (opts.hyde !== false) {
+    try {
+      const queries = await generateHypotheticalQueries(llm, content);
+      if (queries.length) {
+        await db(
+          `UPDATE memory_nodes SET metadata = jsonb_set(COALESCE(metadata, '{}')::jsonb, '{hypothetical_queries}', $1::jsonb), updated_at = NOW() WHERE id = $2`,
+          [JSON.stringify(queries), memoryId]
+        );
+        log(`Generated ${queries.length} hypothetical queries for ${memoryId}`);
+      }
+    } catch (err) {
+      log(`HyDE failed for ${memoryId}: ${err.message}`);
     }
-  } catch (err) {
-    log(`HyDE failed for ${memoryId}: ${err.message}`);
   }
 
   // Distill atomic facts — only for raw ingestions (skip if this call is

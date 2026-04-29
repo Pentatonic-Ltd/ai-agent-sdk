@@ -7,7 +7,7 @@
  */
 
 import { resolve, basename } from "node:path";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { promises as fsp } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { homedir } from "node:os";
@@ -53,9 +53,7 @@ function resolveTenant() {
   );
   if (existsSync(credPath)) {
     try {
-      const raw = JSON.parse(
-        require("node:fs").readFileSync(credPath, "utf-8")
-      );
+      const raw = JSON.parse(readFileSync(credPath, "utf-8"));
       if (raw.endpoint && raw.clientId && raw.apiKey) {
         return { ...raw, source: "credentials" };
       }

@@ -29,6 +29,11 @@ const DEFAULT_WEIGHTS = {
  * @param {number} [opts.limit=20] - Max results
  * @param {number} [opts.minScore=0.5] - Minimum score threshold
  * @param {string} [opts.userId] - Optional user scope
+ * @param {string} [opts.kind] - Filter by metadata.kind exact match
+ *   (e.g. "code_reference"). When omitted, all kinds are searched.
+ *   Lets corpus ingest scope a query to code references only,
+ *   isolating them from conversational memories that share the
+ *   semantic layer.
  * @param {object} [opts.weights] - Override scoring weights
  *   (relevance, recency, frequency, atomBoost, verbosityPenalty)
  * @param {boolean} [opts.dedupeBySource=true] - When an atom matches,
@@ -76,10 +81,18 @@ export async function search(db, ai, query, opts = {}) {
   }
 
   const embJson = JSON.stringify(embResult.embedding);
-  const userFilter = opts.userId ? `AND mn.user_id = $5` : "";
-
   const params = [opts.clientId, embJson, query, limit];
-  if (opts.userId) params.push(opts.userId);
+  let nextParam = 5;
+  let userFilter = "";
+  if (opts.userId) {
+    userFilter = `AND mn.user_id = $${nextParam++}`;
+    params.push(opts.userId);
+  }
+  let kindFilter = "";
+  if (opts.kind) {
+    kindFilter = `AND mn.metadata->>'kind' = $${nextParam++}`;
+    params.push(opts.kind);
+  }
 
   const sql = `
     WITH max_ac AS (
@@ -143,6 +156,7 @@ export async function search(db, ai, query, opts = {}) {
       AND mn.embedding_vec IS NOT NULL
       AND vector_dims(mn.embedding_vec) = vector_dims($2::vector)
       ${userFilter}
+      ${kindFilter}
     ORDER BY final_score DESC
     LIMIT $4
   `;
@@ -203,10 +217,18 @@ export async function search(db, ai, query, opts = {}) {
  */
 export async function textSearch(db, query, opts = {}) {
   const limit = Math.min(Math.max(1, opts.limit || 20), 200);
-  const userFilter = opts.userId ? `AND mn.user_id = $4` : "";
-  const params = opts.userId
-    ? [opts.clientId, query, limit, opts.userId]
-    : [opts.clientId, query, limit];
+  const params = [opts.clientId, query, limit];
+  let nextParam = 4;
+  let userFilter = "";
+  if (opts.userId) {
+    userFilter = `AND mn.user_id = $${nextParam++}`;
+    params.push(opts.userId);
+  }
+  let kindFilter = "";
+  if (opts.kind) {
+    kindFilter = `AND mn.metadata->>'kind' = $${nextParam++}`;
+    params.push(opts.kind);
+  }
 
   const sql = `
     SELECT mn.* FROM memory_nodes mn
@@ -216,6 +238,7 @@ export async function textSearch(db, query, opts = {}) {
         OR mn.content ILIKE '%' || $2 || '%'
       )
       ${userFilter}
+      ${kindFilter}
     ORDER BY
       ts_rank(to_tsvector('english', mn.content), plainto_tsquery('english', $2)) DESC,
       mn.confidence DESC

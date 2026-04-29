@@ -32,7 +32,9 @@ function parseArgs() {
     } else if (a === "--no-plugins") {
       flags.noPlugins = true;
     } else if (!a.startsWith("--")) {
-      flags.command = a;
+      // First non-flag arg is the command; subsequent ones are subcommand
+      // arguments handled by the dispatched cmd (e.g. `ingest <path>`).
+      if (!flags.command) flags.command = a;
     }
   }
   return flags;
