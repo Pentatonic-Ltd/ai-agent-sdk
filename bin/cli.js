@@ -531,6 +531,17 @@ async function main() {
     process.exit(exitCode);
   }
 
+  // SDK login identity check. Named `whoami` rather than `status`
+  // because the corpus subcommand `tes status` already exists (shows
+  // tracked repos). Matches the standard CLI convention for "who am
+  // I logged in as" and avoids the conflict.
+  if (flags.command === "whoami") {
+    const { runWhoamiCommand } = await import("./commands/whoami.js");
+    const { exitCode } = await runWhoamiCommand();
+    rl.close();
+    process.exit(exitCode);
+  }
+
   // `memory` is kept as a shortcut to skip the local-or-remote question
   // for users with that command in scripts/docs. New users should use init.
   if (flags.command === "memory") {
