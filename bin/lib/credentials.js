@@ -58,14 +58,20 @@ export async function readCredentials() {
 }
 
 /**
- * Ping TES with the stored credentials. Returns { ok, email, clientName }
+ * Ping TES with the stored credentials. Returns { ok, clientName }
  * on success or { ok: false, status, error } on failure.
  *
- * Used by `status` to surface "logged in as / creds invalid" messages.
+ * Used by `whoami` to surface "logged in to / creds invalid" messages.
+ *
+ * Uses `memoryLayers(clientId)` — a query the SDK's agent-events role
+ * is permitted to run. Admin-only queries like `client(id)` and
+ * `myOrganization` would 403 with the service-account API key the
+ * SDK mints. Returning *anything* (even an empty array) confirms
+ * the token verified server-side; a 401 means it didn't.
  */
 export async function pingTes(creds) {
   if (!creds) return { ok: false, error: "no credentials" };
-  const query = `{ me { email } client(id: "${creds.clientId}") { name } }`;
+  const query = `query Ping($id: String!) { memoryLayers(clientId: $id) { id } }`;
   try {
     const res = await fetch(`${creds.endpoint}/api/graphql`, {
       method: "POST",
@@ -74,7 +80,7 @@ export async function pingTes(creds) {
         Authorization: `Bearer ${creds.apiKey}`,
         "x-client-id": creds.clientId,
       },
-      body: JSON.stringify({ query }),
+      body: JSON.stringify({ query, variables: { id: creds.clientId } }),
     });
     if (res.status === 401) {
       return { ok: false, status: 401, error: "credentials invalid" };
@@ -86,11 +92,8 @@ export async function pingTes(creds) {
     if (body.errors?.length) {
       return { ok: false, error: body.errors[0].message };
     }
-    return {
-      ok: true,
-      email: body.data?.me?.email || null,
-      clientName: body.data?.client?.name || creds.clientId,
-    };
+    // No tenant display name from this query; CLI shows clientId only.
+    return { ok: true, clientName: creds.clientId };
   } catch (err) {
     return { ok: false, error: err.message };
   }

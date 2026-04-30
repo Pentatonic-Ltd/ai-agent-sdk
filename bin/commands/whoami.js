@@ -34,7 +34,7 @@ export async function runWhoamiCommand(opts = {}) {
   }
 
   log("");
-  log(`  ✓ Logged in as ${ping.email || "(unknown email)"} on tenant \`${creds.clientId}\` (${ping.clientName})`);
+  log(`  ✓ Logged in to tenant \`${creds.clientId}\` (${ping.clientName})`);
   log(`  Endpoint: ${creds.endpoint}`);
   log("");
   return { exitCode: 0 };

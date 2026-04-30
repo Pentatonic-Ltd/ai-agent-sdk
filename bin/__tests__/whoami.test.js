@@ -42,7 +42,7 @@ describe("whoami command", () => {
     expect(logs.join("\n")).toMatch(/not logged in|run login/i);
   });
 
-  it("prints identity on healthy creds", async () => {
+  it("prints tenant identity on healthy creds", async () => {
     await writeCreds({
       endpoint: "https://tes-demo.api.pentatonic.com",
       clientId: "tes-demo",
@@ -51,12 +51,11 @@ describe("whoami command", () => {
     fetchMock.mockResolvedValueOnce({
       ok: true,
       status: 200,
-      json: async () => ({ data: { me: { email: "phil@x.com" }, client: { name: "TES Demo" } } }),
+      json: async () => ({ data: { memoryLayers: [{ id: "ml_tes-demo_episodic" }] } }),
     });
     const result = await runWhoamiCommand({ log, errLog });
     expect(result.exitCode).toBe(0);
-    expect(logs.join("\n")).toMatch(/phil@x\.com/);
-    expect(logs.join("\n")).toMatch(/TES Demo|tes-demo/);
+    expect(logs.join("\n")).toMatch(/tes-demo/);
   });
 
   it("warns about invalid creds on 401 and exits 2", async () => {
