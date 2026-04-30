@@ -25,7 +25,33 @@ import { distill } from "./distill.js";
  *   tasks (e.g. Cloudflare Worker ctx.waitUntil). If provided, the distill
  *   background task is handed to it so the host keeps it alive past return.
  *   Without it, distill is fire-and-forget (fine for Node/browser).
- * @returns {Promise<{id: string, content: string, layerId: string}>}
+ * @param {boolean} [opts.dedup=false] - Skip ingest if a memory_node with
+ *   byte-equal content already exists for this `client_id`. Use for
+ *   retry-safe pipelines where the same logical event may be processed
+ *   twice (queue retries, consumer fan-out). Returns the existing row's
+ *   id with `{deduped: true, dedupMatchKind: "exact"|"legacy"}` instead
+ *   of inserting. Strict equality — not a semantic similarity match.
+ *   Best-effort: if the SELECT itself fails, ingest proceeds (worst case:
+ *   duplicate row, identical to `dedup:false` behaviour). The eventual
+ *   structural fix is a `UNIQUE(client_id, content_hash)` constraint at
+ *   the schema level; this option is the bridge.
+ * @param {string} [opts.dedupContent] - Optional: the string to dedup
+ *   against, when it differs from what gets stored. Use when callers
+ *   wrap the stored content in a non-stable prefix (timestamps, run
+ *   ids) — pass the raw form here so retries of the same logical event
+ *   match across runs whose prefixes differ by a few ms. Defaults to
+ *   `content`.
+ * @param {number} [opts.dedupLegacyWindowDays=7] - How far back the
+ *   `[<iso>] <content>` legacy-form `LIKE` match scans. Default 7 days.
+ *   The leading-wildcard `LIKE` can't use a btree index, so without a
+ *   bound it would scan the whole tenant partition on every ingest as
+ *   the corpus grows. Real retries land within seconds, so 7 days is
+ *   generous; the window only exists so the dedup check transitions
+ *   cleanly when callers stop writing the legacy form. Set `0` to
+ *   disable the legacy-form match entirely (recommended once the
+ *   backfill script has run and no caller writes the prefix anymore —
+ *   strict equality alone is then enough).
+ * @returns {Promise<{id: string, content: string, layerId: string, deduped?: boolean, dedupMatchKind?: "exact"|"legacy"}>}
  */
 export async function ingest(db, ai, llm, content, opts = {}) {
   const clientId = opts.clientId;
@@ -45,6 +71,72 @@ export async function ingest(db, ai, llm, content, opts = {}) {
   }
 
   const layerId = layerResult.rows[0].id;
+
+  // Optional dedup: skip the insert (and all the embedding/HyDE/distill
+  // work that would follow) if a row with byte-equal content already
+  // exists for this tenant.
+  //
+  // Two match strategies:
+  //   - exact:  content = $key  (uses the (client_id, content) btree if
+  //             one is present; degrades to a partition scan if not)
+  //   - legacy: content LIKE '%] ' || $key  for `[<iso>] <key>` rows
+  //             that callers wrote with a timestamp prefix. Bounded by
+  //             dedupLegacyWindowDays so the leading-wildcard scan
+  //             stays cheap as the corpus grows.
+  //
+  // Caller can disable the legacy branch by setting
+  // dedupLegacyWindowDays: 0 — once the backfill has run and no caller
+  // writes the prefix anymore, strict equality alone is enough.
+  if (opts.dedup) {
+    const dedupKey =
+      typeof opts.dedupContent === "string" ? opts.dedupContent : content;
+    const legacyWindowDays =
+      opts.dedupLegacyWindowDays === undefined
+        ? 7
+        : Number(opts.dedupLegacyWindowDays);
+    try {
+      const sql =
+        legacyWindowDays > 0
+          ? `SELECT id,
+                    CASE WHEN content = $2 THEN 'exact' ELSE 'legacy' END AS match_kind
+               FROM memory_nodes
+              WHERE client_id = $1
+                AND (
+                  content = $2
+                  OR (
+                    content LIKE '%] ' || $2
+                    AND created_at > NOW() - ($3 || ' days')::interval
+                  )
+                )
+              LIMIT 1`
+          : `SELECT id, 'exact' AS match_kind
+               FROM memory_nodes
+              WHERE client_id = $1
+                AND content = $2
+              LIMIT 1`;
+      const params =
+        legacyWindowDays > 0
+          ? [clientId, dedupKey, String(legacyWindowDays)]
+          : [clientId, dedupKey];
+      const dupCheck = await db(sql, params);
+      if (dupCheck.rows?.length) {
+        const matchKind = dupCheck.rows[0].match_kind || "exact";
+        log(
+          `dedup: matched existing memory ${dupCheck.rows[0].id} (${matchKind})`
+        );
+        return {
+          id: dupCheck.rows[0].id,
+          content,
+          layerId,
+          deduped: true,
+          dedupMatchKind: matchKind,
+        };
+      }
+    } catch (err) {
+      log(`dedup check failed (proceeding with insert): ${err.message}`);
+    }
+  }
+
   const memoryId = `mem_${crypto.randomUUID()}`;
 
   // Insert memory node
