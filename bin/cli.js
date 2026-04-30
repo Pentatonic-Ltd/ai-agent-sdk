@@ -70,74 +70,11 @@ async function runDoctorCommand(flags) {
   if (report.summary.warning > 0) return 1;
   return 0;
 }
-const POLL_INTERVAL_MS = 3000;
-const POLL_TIMEOUT_MS = 300000; // 5 minutes
 
 let rl = createInterface({ input: process.stdin, output: process.stdout });
 
 function ask(question) {
   return new Promise((resolve) => rl.question(question, resolve));
-}
-
-function askSecret(question) {
-  // Non-TTY fallback: piped/redirected input can't use raw mode.
-  // rl.close() would discard buffered stdin, so use readline directly instead.
-  if (!process.stdin.isTTY) {
-    return new Promise((resolve) => rl.question(question, resolve));
-  }
-
-  return new Promise((resolve) => {
-    // Close readline so it stops echoing input
-    rl.close();
-
-    process.stdout.write(question);
-    const stdin = process.stdin;
-    stdin.setRawMode(true);
-    stdin.resume();
-
-    let input = "";
-    const onData = (ch) => {
-      const c = ch.toString();
-      if (c === "\n" || c === "\r") {
-        stdin.removeListener("data", onData);
-        stdin.setRawMode(false);
-        stdin.pause();
-        process.stdout.write("\n");
-        // Recreate readline for subsequent prompts
-        rl = createInterface({ input: process.stdin, output: process.stdout });
-        resolve(input);
-      } else if (c === "\u007f" || c === "\b") {
-        if (input.length > 0) {
-          input = input.slice(0, -1);
-          process.stdout.write("\b \b");
-        }
-      } else if (c === "\u0003") {
-        process.exit(1);
-      } else {
-        input += c;
-        process.stdout.write("*");
-      }
-    };
-    stdin.on("data", onData);
-  });
-}
-
-function askChoice(question, choices) {
-  return new Promise((resolve) => {
-    const choiceStr = choices.map((c, i) => `  ${i + 1}) ${c}`).join("\n");
-    process.stdout.write(`${question}\n${choiceStr}\n`);
-    rl.question("? Choice: ", (answer) => {
-      const idx = parseInt(answer, 10) - 1;
-      if (idx >= 0 && idx < choices.length) {
-        resolve(choices[idx]);
-      } else {
-        const match = choices.find(
-          (c) => c.toLowerCase() === answer.trim().toLowerCase()
-        );
-        resolve(match || choices[0]);
-      }
-    });
-  });
 }
 
 function spinner(text) {
@@ -156,39 +93,6 @@ function spinner(text) {
       process.stdout.write(`\r✗ ${msg}\n`);
     },
   };
-}
-
-async function httpPost(url, body) {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  const data = await response.json();
-  return { status: response.status, ok: response.ok, data };
-}
-
-async function graphql(endpoint, token, query, variables) {
-  const response = await fetch(`${endpoint}/api/graphql`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ query, variables }),
-  });
-  const data = await response.json();
-  if (data.errors?.length) {
-    throw new Error(data.errors[0].message);
-  }
-  return data.data;
-}
-
-function toClientId(companyName) {
-  return companyName
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
 }
 
 async function setupLocalMemory() {
@@ -292,219 +196,6 @@ memory_url: http://localhost:3333
   rl.close();
 }
 
-async function setupHostedTes(TES_ENDPOINT) {
-  const isLocal = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/.test(TES_ENDPOINT);
-  if (!TES_ENDPOINT.startsWith("https://") && !isLocal) {
-    console.error(`\n  Error: endpoint must use https:// (http:// is only allowed for localhost)\n`);
-    process.exit(1);
-  }
-
-  console.log(`\n  Hosted TES Setup`);
-  if (TES_ENDPOINT !== DEFAULT_ENDPOINT) {
-    console.log(`  Using endpoint: ${TES_ENDPOINT}`);
-  }
-  console.log("");
-
-  // Collect info
-  const email = await ask("? Email: ");
-  const clientId = toClientId(await ask("? Client ID: "));
-  const password = await askSecret("? Password: ");
-  const region = await askChoice("? Region:", ["EU", "US"]);
-
-  // Try login first — account may already be verified from a previous run
-  let accessToken = null;
-  const loginSpinner = spinner("Checking for existing account...");
-  try {
-    const { ok, data } = await httpPost(
-      `${TES_ENDPOINT}/api/enrollment/login`,
-      { email, password, clientId }
-    );
-    if (ok && data.tokens?.accessToken) {
-      accessToken = data.tokens.accessToken;
-      loginSpinner.stop("Account already verified!");
-    } else {
-      loginSpinner.stop("No existing account found.");
-    }
-  } catch {
-    loginSpinner.stop("No existing account found.");
-  }
-
-  // If not already verified, submit enrollment
-  if (!accessToken) {
-    const enrollSpinner = spinner("Creating account...");
-    try {
-      const { ok, data } = await httpPost(
-        `${TES_ENDPOINT}/api/enrollment/submit`,
-        {
-          clientId,
-          companyName: clientId,
-          industryType: "technology",
-          authProvider: "native",
-          adminEmail: email,
-          adminPassword: password,
-          region: region.toLowerCase(),
-        }
-      );
-
-      if (!ok) {
-        const errors = data.errors || {};
-        const isPending =
-          errors.clientId?.includes("already pending") ||
-          errors.adminEmail?.includes("already has a pending");
-        const isAlreadyRegistered =
-          errors.clientId?.includes("already registered");
-
-        if (isPending) {
-          enrollSpinner.stop("Enrollment already pending — waiting for verification.");
-        } else if (isAlreadyRegistered) {
-          enrollSpinner.fail(
-            "This client ID is already registered.\n" +
-            "  If you belong to this organization, ask your admin to invite you.\n" +
-            "  Then run this command again — it will log you in automatically."
-          );
-          process.exit(1);
-        } else {
-          enrollSpinner.fail(
-            data.message || Object.values(errors).join(", ") || "Enrollment failed"
-          );
-          process.exit(1);
-        }
-      } else {
-        enrollSpinner.stop("Account created! Check your email to verify.");
-      }
-    } catch (err) {
-      enrollSpinner.fail(`Failed to connect: ${err.message}`);
-      process.exit(1);
-    }
-
-    // Poll for verification
-    console.log("\n  Waiting for email verification...");
-    console.log("  (Check your inbox and click the verification link)\n");
-
-    const pollSpinner = spinner("Waiting for verification...");
-    const startTime = Date.now();
-
-    while (Date.now() - startTime < POLL_TIMEOUT_MS) {
-      await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS));
-
-      try {
-        const { ok, data } = await httpPost(
-          `${TES_ENDPOINT}/api/enrollment/login`,
-          { email, password, clientId }
-        );
-
-        if (ok && data.tokens?.accessToken) {
-          accessToken = data.tokens.accessToken;
-          pollSpinner.stop("Email verified!");
-          break;
-        }
-      } catch {
-        // Not verified yet, keep polling
-      }
-    }
-
-    if (!accessToken) {
-      pollSpinner.fail(
-        "Verification timed out. Run `npx @pentatonic-ai/ai-agent-sdk init` again — it will resume where you left off."
-      );
-      process.exit(1);
-    }
-  }
-
-  // Get API key — use the service token created during enrollment,
-  // or create a new one if not available (e.g., existing account login)
-  const keySpinner = spinner("Getting API key...");
-  try {
-    let apiKey;
-
-    // Try to retrieve the enrollment service token first (created during verification)
-    try {
-      const tokenRes = await fetch(
-        `${TES_ENDPOINT}/api/enrollment/service-token?client_id=${clientId}`
-      );
-      if (tokenRes.ok) {
-        const tokenData = await tokenRes.json();
-        if (tokenData.token) {
-          apiKey = tokenData.token;
-        }
-      }
-    } catch {
-      // Service token not available, will create one
-    }
-
-    // Fallback: create a new token via GraphQL
-    if (!apiKey) {
-      const result = await graphql(
-        TES_ENDPOINT,
-        accessToken,
-        `mutation CreateApiToken($clientId: String!, $input: CreateApiTokenInput!) {
-          createClientApiToken(clientId: $clientId, input: $input) {
-            success
-            plainTextToken
-          }
-        }`,
-        {
-          clientId,
-          input: {
-            name: "ai-events-sdk",
-            role: "agent-events",
-          },
-        }
-      );
-      apiKey = result.createClientApiToken.plainTextToken;
-    }
-
-    keySpinner.stop("API key ready!");
-
-    // Print credentials
-    const clientEndpoint =
-      TES_ENDPOINT === DEFAULT_ENDPOINT
-        ? `https://${clientId}.api.pentatonic.com`
-        : TES_ENDPOINT;
-
-    console.log("\n  Add these to your environment:\n");
-    console.log(`  TES_ENDPOINT=${clientEndpoint}`);
-    console.log(`  TES_CLIENT_ID=${clientId}`);
-    console.log(`  TES_API_KEY=${apiKey}`);
-    console.log("");
-
-    // Install SDK
-    const installChoice = await askChoice("Install SDK:", [
-      "npm install @pentatonic-ai/ai-agent-sdk",
-      "pip install pentatonic-ai-agent-sdk",
-      "Skip — I'll install manually",
-    ]);
-
-    if (installChoice.startsWith("npm")) {
-      const installSpinner = spinner("Installing @pentatonic-ai/ai-agent-sdk...");
-      try {
-        execFileSync("npm", ["install", "@pentatonic-ai/ai-agent-sdk"], { stdio: "pipe" });
-        installSpinner.stop("@pentatonic-ai/ai-agent-sdk installed!");
-      } catch {
-        installSpinner.fail("Install failed. Run manually: npm install @pentatonic-ai/ai-agent-sdk");
-      }
-    } else if (installChoice.startsWith("pip")) {
-      const installSpinner = spinner("Installing pentatonic-ai-agent-sdk...");
-      try {
-        execFileSync("pip", ["install", "pentatonic-ai-agent-sdk"], { stdio: "pipe" });
-        installSpinner.stop("pentatonic-ai-agent-sdk installed!");
-      } catch {
-        installSpinner.fail("Install failed. Run manually: pip install pentatonic-ai-agent-sdk");
-      }
-    } else {
-      console.log("\n  Install later with:");
-      console.log("    npm install @pentatonic-ai/ai-agent-sdk");
-      console.log("    pip install pentatonic-ai-agent-sdk");
-    }
-
-    console.log("  You're ready! See docs at https://api.pentatonic.com\n");
-  } catch (err) {
-    keySpinner.fail(`Failed to generate key: ${err.message}`);
-    process.exit(1);
-  }
-
-  rl.close();
-}
 
 async function main() {
   const flags = parseArgs();
@@ -582,12 +273,12 @@ async function main() {
 @pentatonic-ai/ai-agent-sdk
 
 Usage:
-  npx @pentatonic-ai/ai-agent-sdk init                    Set up memory (local or hosted)
-  npx @pentatonic-ai/ai-agent-sdk init --local            Skip the prompt; set up local
-  npx @pentatonic-ai/ai-agent-sdk init --remote           Skip the prompt; set up hosted TES
-  npx @pentatonic-ai/ai-agent-sdk init --endpoint URL     Use a custom TES endpoint
-  npx @pentatonic-ai/ai-agent-sdk doctor                  Run health checks (exit 0/1/2)
+  npx @pentatonic-ai/ai-agent-sdk login                   Sign in with TES (browser-based OAuth)
+  npx @pentatonic-ai/ai-agent-sdk whoami                  Show current login identity
+  npx @pentatonic-ai/ai-agent-sdk init                    [deprecated] Alias for 'login'
+  npx @pentatonic-ai/ai-agent-sdk init --local            Set up local Docker memory stack
   npx @pentatonic-ai/ai-agent-sdk memory                  Shortcut for 'init --local'
+  npx @pentatonic-ai/ai-agent-sdk doctor                  Run health checks (exit 0/1/2)
 
 Memory corpus (onboarding):
   npx @pentatonic-ai/ai-agent-sdk onboard                 Interactive: pick paths, ingest, install hooks
@@ -614,29 +305,27 @@ For docs, see https://api.pentatonic.com
     process.exit(0);
   }
 
-  // init: ask local-or-remote up front. --local / --remote skip the prompt.
-  let mode;
+  // init: --local still routes to setupLocalMemory (Docker stack —
+  // separate concern). Anything else (no flag, --remote, mode prompt)
+  // delegates to login via runInitAlias which emits a one-line
+  // deprecation warning. setupHostedTes (the old form-based hosted
+  // flow) is gone; init has been replaced by `login` for one major
+  // release, then `init` itself goes away.
   if (flags.local && flags.remote) {
     console.error("\n  Error: --local and --remote are mutually exclusive\n");
     process.exit(1);
-  } else if (flags.local) {
-    mode = "local";
-  } else if (flags.remote) {
-    mode = "remote";
-  } else {
-    console.log(`\n  Pentatonic Memory setup\n`);
-    const choice = await askChoice("? Where should memory live?", [
-      "Local — Docker stack on this machine (private, free, requires Docker)",
-      "Remote — Pentatonic TES (hosted, team-wide)",
-    ]);
-    mode = choice.startsWith("Local") ? "local" : "remote";
   }
-
-  if (mode === "local") {
+  if (flags.local) {
     await setupLocalMemory();
-  } else {
-    await setupHostedTes(TES_ENDPOINT);
+    return;
   }
+  // Non-local path → login alias.
+  const { runInitAlias } = await import("./commands/login.js");
+  const { exitCode } = await runInitAlias({
+    endpoint: TES_ENDPOINT,
+  });
+  rl.close();
+  process.exit(exitCode);
 }
 
 main().catch((err) => {
