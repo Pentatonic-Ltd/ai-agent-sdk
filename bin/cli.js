@@ -516,6 +516,21 @@ async function main() {
     process.exit(code);
   }
 
+  // SDK login (browser-based OAuth) — replaces the old in-terminal
+  // setupHostedTes flow. `login` opens api.pentatonic.com/cli-init in
+  // a browser, listens on localhost for the OAuth callback, exchanges
+  // for an access token, mints a long-lived tes_* via createClientApiToken,
+  // writes ~/.config/tes/credentials.json. `init` is kept as a one-major
+  // alias (Task 10).
+  if (flags.command === "login") {
+    const { runLoginCommand } = await import("./commands/login.js");
+    const { exitCode } = await runLoginCommand({
+      endpoint: TES_ENDPOINT,
+    });
+    rl.close();
+    process.exit(exitCode);
+  }
+
   // `memory` is kept as a shortcut to skip the local-or-remote question
   // for users with that command in scripts/docs. New users should use init.
   if (flags.command === "memory") {
