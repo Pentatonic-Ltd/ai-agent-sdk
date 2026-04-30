@@ -6,11 +6,11 @@
   </picture>
 </p>
 
-<h3 align="center">AI Agent SDK</h3>
+<h3 align="center">Pentatonic AI Agent SDK</h3>
 
 <p align="center">
-  Observability, memory, and analytics for LLM applications.<br>
-  Run locally or use hosted TES. JavaScript &amp; Python.
+  Memory and observability for AI agents.<br>
+  Two products on one platform (TES). One install. JavaScript &amp; Python.
 </p>
 
 <p align="center">
@@ -21,70 +21,105 @@
 
 ---
 
+## What's in this SDK
+
+Two products that share one TES account, one install line, and one dashboard:
+
+| Product | What it does | When you want it |
+|---|---|---|
+| **Memory** | Persistent, searchable memory for your AI agent — semantic + keyword retrieval, distillation, decay, repo onboarding. Runs locally (Docker) or hosted (TES). | You want your agent to remember conversations, preferences, and codebase context across sessions. |
+| **Observability** | Wrap your LLM client and capture every call — tokens, tool calls, latency, content. Events flow to TES for the dashboard, analytics, and search attribution. | You want to know what your agent is actually doing in production. |
+
+Both products are sold separately, but you can use either, both, or neither. Plugins for **Claude Code** and **OpenClaw** install everything at once if you'd rather skip the SDK glue.
+
+## Pick your path
+
+- 🧠 **I want memory in my agent** → [Memory](#memory)
+- 📊 **I want to instrument my LLM calls** → [Observability](#observability)
+- 🔌 **I'm using Claude Code or OpenClaw** → [Plugins](#plugins)
+- 📂 **I want to seed memory from my codebase or docs** → [Repository onboarding](#repository-onboarding-corpus-ingest)
+- 🩺 **I want to check my install** → [Health checks (`doctor`)](#health-checks-doctor)
+
 ## Table of Contents
 
-- [Overview](#overview)
-- [Local Memory (self-hosted)](#local-memory-self-hosted)
-- [Hosted TES](#hosted-tes)
+- [TES — the platform](#tes--the-platform)
+- [Memory](#memory)
+  - [Hosted (cloud)](#hosted-cloud)
+  - [Local (self-hosted)](#local-self-hosted)
+  - [Use as a library](#use-as-a-library)
+  - [Distilled memory](#distilled-memory)
+- [Observability](#observability)
+  - [Wrap your LLM client](#wrap-your-llm-client)
+  - [Supported providers](#supported-providers)
+- [Plugins](#plugins)
+  - [Claude Code](#claude-code)
+  - [OpenClaw](#openclaw)
 - [Repository Onboarding (corpus ingest)](#repository-onboarding-corpus-ingest)
-- [Claude Code Plugin](#claude-code-plugin)
-- [OpenClaw Plugin](#openclaw-plugin)
-- [SDK: Wrap Your LLM Client](#sdk-wrap-your-llm-client)
-- [Supported Providers](#supported-providers)
 - [API Reference](#api-reference)
 - [Health Checks (`doctor`)](#health-checks-doctor)
 - [Architecture](#architecture)
 
-## Overview
+---
 
-Two ways to use the SDK:
+## TES — the platform
 
-**Local Memory** -- Run a fully private memory system on your own machine. PostgreSQL + pgvector + Ollama in Docker. No API keys, no cloud. Your agent gets persistent, searchable memory backed by multi-signal retrieval and HyDE query expansion.
+**TES** (Thing Event System) is Pentatonic's account-and-events backbone. Both products in this SDK run on it: memory writes/queries land in TES, observability events stream to it, and the dashboard reads from it.
 
-**Hosted TES** -- Connect to Pentatonic's Thing Event System for production-grade observability, higher-dimensional embeddings, conversation analytics, and team-wide shared memory.
+You only need a TES account if you're using **hosted memory** or **observability** (observability always sends events to TES). **Local memory** runs entirely on your machine and needs no TES account.
 
-Both paths work with Claude Code and OpenClaw. The plugins auto-search on every prompt and auto-store every conversation turn.
+```bash
+# One-time: create a TES account, verify email, get API keys
+npx @pentatonic-ai/ai-agent-sdk init
+```
 
-## Local Memory (self-hosted)
+This writes credentials to `~/.config/tes/credentials.json` and sets up env vars:
 
-Run the full memory stack locally. Requires Docker and ~4GB disk for models.
+```
+TES_ENDPOINT=https://your-company.api.pentatonic.com
+TES_CLIENT_ID=your-company
+TES_API_KEY=tes_your-company_xxxxx
+```
 
-### 1. Set up
+You can also point at a local TES dev instance with `TES_ENDPOINT=http://localhost:8788`.
+
+---
+
+## Memory
+
+Persistent, searchable memory for AI agents. Multi-signal retrieval (vector + BM25 + recency + frequency), HyDE query expansion, atomic-fact distillation, and four memory layers (episodic, semantic, procedural, working).
+
+Two deployment modes — same API, same plugins, same library:
+
+### Hosted (cloud)
+
+Run on Pentatonic's infrastructure. Higher-dimensional embeddings (NV-Embed-v2, 4096d), per-tenant Postgres, team-wide shared memory, the dashboard.
+
+```bash
+# 1. Get a TES account (see [TES — the platform](#tes--the-platform))
+npx @pentatonic-ai/ai-agent-sdk init
+
+# 2. Install the SDK
+npm install @pentatonic-ai/ai-agent-sdk
+# or: pip install pentatonic-ai-agent-sdk
+```
+
+That's it — memory operations now go through TES.
+
+### Local (self-hosted)
+
+Run the full stack on your own machine. PostgreSQL + pgvector + Ollama in Docker. No API keys, no cloud. Pi 5 with 8GB RAM works fine (`nomic-embed-text` ~300MB + `llama3.2:3b` ~2GB).
 
 ```bash
 npx @pentatonic-ai/ai-agent-sdk memory
 ```
 
-This starts PostgreSQL + pgvector, Ollama, and the memory server. It pulls embedding and chat models, and writes the local config.
+This starts Postgres + pgvector, Ollama, and the memory server. It pulls embedding and chat models, and writes the local config.
 
-### 2. Install the Claude Code plugin
-
-```
-/plugin marketplace add Pentatonic-Ltd/ai-agent-sdk
-/plugin install tes-memory@pentatonic-ai
-```
-
-That's it. The plugin hooks automatically search memories on every prompt and store every conversation turn. Fully local, fully private.
-
-### What you get
-
-- **Automatic memory** -- every conversation turn is stored with embeddings and HyDE query expansion
-- **Semantic search** -- multi-signal retrieval combining vector similarity, BM25 full-text, recency decay, and access frequency
-- **Memory layers** -- episodic (recent), semantic (consolidated), procedural (how-to), working (temporary)
-- **Distilled memory** -- a background LLM pass extracts atomic facts from each raw turn and stores each as its own node in the semantic layer, linked back to the source. A query like *"what does Phil drink?"* matches *"Phil drinks cortado"* more reliably than a mixed paragraph covering food, drinks, and hobbies. Default-on; the raw turn is still preserved.
-- **Decay and consolidation** -- memories fade over time; frequently accessed ones get promoted
-
-> **Store latency note (v0.5.4+):** on the local memory server, `store_memory` now awaits distillation before returning instead of running it fire-and-forget. This fixed a bug where distillation was being killed mid-flight (atoms never got embeddings, so they were unreachable by semantic search), but it means stores now take as long as your configured LLM takes to produce atoms — typically 5–30s on `llama3.2:3b`, up to the `chat()` timeout ceiling (60s default, overridable via `opts.timeout`). Cloudflare Worker deployments pass `ctx.waitUntil` and still return fast. Set `opts.distill: false` on the ingest call if you want the old fast-return behaviour at the cost of no atoms.
-
-### Change models
+Change models:
 
 ```bash
 EMBEDDING_MODEL=mxbai-embed-large LLM_MODEL=qwen2.5:7b npx @pentatonic-ai/ai-agent-sdk memory
 ```
-
-### Raspberry Pi
-
-Pi 5 with 8GB RAM runs the full stack. `nomic-embed-text` (~300MB) + `llama3.2:3b` (~2GB) leaves plenty of headroom.
 
 ### Use as a library
 
@@ -103,243 +138,21 @@ await memory.ingest('User prefers dark mode', { clientId: 'my-app' });
 const results = await memory.search('preferences', { clientId: 'my-app' });
 ```
 
-## Hosted TES
+### Distilled memory
 
-Connect to Pentatonic's hosted infrastructure for production use.
+A background LLM pass extracts atomic facts from each raw turn and stores each as its own node in the semantic layer, linked back to the source. A query like *"what does Phil drink?"* matches *"Phil drinks cortado"* more reliably than a mixed paragraph covering food, drinks, and hobbies. Default-on; the raw turn is still preserved.
 
-### 1. Create an account
+> **Store latency note (v0.5.4+):** on the local memory server, `store_memory` now awaits distillation before returning instead of running it fire-and-forget. This fixed a bug where distillation was being killed mid-flight (atoms never got embeddings, so they were unreachable by semantic search), but it means stores now take as long as your configured LLM takes to produce atoms — typically 5–30s on `llama3.2:3b`, up to the `chat()` timeout ceiling (60s default, overridable via `opts.timeout`). Cloudflare Worker deployments pass `ctx.waitUntil` and still return fast. Set `opts.distill: false` on the ingest call if you want the old fast-return behaviour at the cost of no atoms.
 
-```bash
-npx @pentatonic-ai/ai-agent-sdk init
-```
+---
 
-This walks you through account creation, email verification, and API key generation. You'll get:
+## Observability
 
-```
-TES_ENDPOINT=https://your-company.api.pentatonic.com
-TES_CLIENT_ID=your-company
-TES_API_KEY=tes_your-company_xxxxx
-```
+Wrap your LLM client and every call automatically emits a `CHAT_TURN` event to TES — input/output tokens, tool calls, model, latency, content. Events flow into the TES dashboard, where you get session metrics, search attribution, dead-end detection, and full-text + semantic search across conversations.
 
-### 2. Install
+Observability requires a TES account (hosted or self-hosted Pentatonic platform). Events have nowhere to go without one.
 
-```bash
-npm install @pentatonic-ai/ai-agent-sdk
-```
-
-```bash
-pip install pentatonic-ai-agent-sdk
-```
-
-### What you get (in addition to local features)
-
-- **Higher-dimensional embeddings** -- NV-Embed-v2 (4096d) for better retrieval accuracy
-- **Conversation analytics** -- session metrics, search attribution, dead-end detection
-- **Team-wide shared memory** -- semantic search across your team's AI interactions
-- **Admin dashboard** -- visualize conversations, token usage, and memory explorer
-- **Multi-tenancy** -- isolated databases per client
-
-## Repository Onboarding (corpus ingest)
-
-The plugin's memory layer starts empty. To avoid the cold-start
-problem where retrieval has nothing useful to return for the first
-days of use, you can ingest your repos (or any folder of docs) on
-day one:
-
-```bash
-# Interactive — picks paths, shows a cost preview, ingests, offers
-# to install a git post-commit hook so memory stays current
-npx @pentatonic-ai/ai-agent-sdk onboard
-
-# One-shot ingest of a single path
-npx @pentatonic-ai/ai-agent-sdk ingest ~/code/my-app
-npx @pentatonic-ai/ai-agent-sdk ingest ~/Documents/design-notes  # any folder works
-
-# See what's tracked and how big the corpus is
-npx @pentatonic-ai/ai-agent-sdk status
-
-# Delta-resync everything that's tracked (or one path)
-npx @pentatonic-ai/ai-agent-sdk resync
-
-# Manage the tracked-paths list
-npx @pentatonic-ai/ai-agent-sdk corpus list
-npx @pentatonic-ai/ai-agent-sdk corpus remove ~/code/old-project
-npx @pentatonic-ai/ai-agent-sdk corpus reset
-```
-
-Tenant credentials come from env vars (`TES_ENDPOINT`, `TES_CLIENT_ID`,
-`TES_API_KEY`) or `~/.config/tes/credentials.json` if you used
-`npx @pentatonic-ai/ai-agent-sdk init`. To point at a TES instance
-running on `localhost`, set `TES_ENDPOINT=http://localhost:8788`.
-
-### What gets stored: references, not content
-
-By default, ingest stores **pointers to source content** (path + line
-range + a short signature/summary), not full chunk content. Per-language
-strategies:
-
-- **Markdown** — one reference per H1/H2 section
-- **JS / TS** — one per top-level `function` / `class` / `const` / `export`
-- **Python** — one per top-level `def` / `class`
-- **JSON / YAML** — collapsed top-level keys
-- **Other** — single file-level reference
-
-Why pointers? **Code mutates between ingests.** Embedded chunks of
-old source rot silently — the LLM keeps confidently citing functions
-you've since rewritten, with retrieval evidence to back it up.
-Pointers rot loudly: when a file moves or changes, `Read` fails or
-returns different content, and the agent observes and adjusts.
-Stale-but-confident is the worst-class memory bug; loud-and-self-
-correcting is qualitatively better for source code.
-
-It also means proprietary source never leaves your machine — only
-the index (path + summary) is sent to the hosted TES, and the agent
-reads actual file contents at query time on its own.
-
-If you need a self-contained index (e.g. for air-gapped retrieval
-where the source isn't available at query time), opt into legacy
-chunk-content storage by passing `mode: "content"` to `ingestCorpus`
-when using the SDK as a library.
-
-### What gets ingested, what doesn't
-
-Any folder works — git is not required. The walker honors `.gitignore`
-and `.tesignore` if present, plus a hard-exclude list for secrets and
-credentials that **cannot be overridden** even with `!pattern` rules:
-
-- `.env*` (any environment file)
-- `*.pem`, `*.key`, `*.crt`, `*.p12`, `*.pfx`, `*.jks`
-- `id_rsa`, `id_ed25519`, `id_ecdsa`, `id_dsa` (SSH private keys)
-- `.ssh/`, `.aws/`, `.gcp/`, `.azure/` (whole directories)
-- `.npmrc`, `.pypirc`, `.netrc`
-- `secrets/`, `credentials/`, `service-account.*`
-- `*_secret*`, `*_token*`, `*_password*`
-
-Plus directory-level skips: `.git`, `node_modules`, `dist`, `build`,
-`.next`, `venv`, `__pycache__`, `target`, `.terraform`, etc. And
-extension skips for binaries, lockfiles, and minified output. Files
-larger than 512 KB are skipped by default (override with adapter
-options if you need to).
-
-### How it stays current
-
-For git repos, accepting the prompt during `onboard` installs a
-post-commit hook at `.git/hooks/post-commit` that re-ingests files
-changed in each commit. The hook is non-fatal — it never blocks a
-commit. Install manually any time with:
-
-```bash
-npx @pentatonic-ai/ai-agent-sdk install-git-hook
-```
-
-For non-git folders, re-run `ingest` or `resync` whenever the source
-changes. Re-ingest is cheap: the SDK keeps a content-hash per file
-and skips anything that hasn't changed since the last run.
-
-## Claude Code Plugin
-
-Works with both local and hosted setups. Install once, switch modes via config.
-
-### Install via marketplace
-
-```
-/plugin marketplace add Pentatonic-Ltd/ai-agent-sdk
-/plugin install tes-memory@pentatonic-ai
-```
-
-### Set up
-
-For hosted TES:
-```
-/tes-memory:tes-setup
-```
-
-For local memory:
-```bash
-npx @pentatonic-ai/ai-agent-sdk memory
-```
-
-### What it tracks
-
-- **Every conversation turn** -- user messages, assistant responses, tool calls, duration
-- **Automatic memory search** -- relevant memories injected as context on every prompt
-- **Automatic memory storage** -- every turn stored with embeddings and HyDE queries
-- **Token usage** -- input, output, cache read, cache creation tokens per turn
-
-## OpenClaw Plugin
-
-Works with both local and hosted setups. Just tell OpenClaw to set it up.
-
-### Install
-
-```bash
-openclaw plugins install @pentatonic-ai/openclaw-memory-plugin
-```
-
-### Set up
-
-Tell OpenClaw:
-
-```
-Set up pentatonic memory
-```
-
-The agent will ask whether you want **local** (private, Docker-based) or **hosted** (Pentatonic TES cloud), then walk you through the rest. For hosted mode, it handles account creation, email verification, and API key generation conversationally.
-
-Or use the CLI directly:
-
-```bash
-openclaw pentatonic-memory local
-```
-
-### What it does
-
-OpenClaw's context engine hooks fire on every lifecycle event:
-
-- **Ingest** -- every user and assistant message is stored with embeddings and HyDE query expansion, then distilled into atomic facts in the background (see [Distilled memory](#what-you-get))
-- **Assemble** -- relevant memories are injected as system prompt context before every model run
-- **Compact** -- decay cycle runs when the context window fills
-- **After turn** -- high-access memories get consolidated to the semantic layer
-
-Plus agent-callable tools: `memory_search`, `memory_store`, `memory_layers`.
-
-### Configuration
-
-After setup, config lives in `~/.openclaw/pentatonic-memory.json`. To switch modes, run setup again or edit directly.
-
-You can also configure via `openclaw.json`:
-
-```json
-{
-  "plugins": {
-    "slots": { "contextEngine": "pentatonic-memory" },
-    "entries": {
-      "pentatonic-memory": {
-        "enabled": true,
-        "config": {
-          "database_url": "postgres://memory:memory@localhost:5433/memory",
-          "embedding_url": "http://localhost:11435/v1",
-          "embedding_model": "nomic-embed-text",
-          "llm_url": "http://localhost:11435/v1",
-          "llm_model": "llama3.2:3b"
-        }
-      }
-    }
-  }
-}
-```
-
-For hosted mode, replace the config block with:
-
-```json
-{
-  "tes_endpoint": "https://your-company.api.pentatonic.com",
-  "tes_client_id": "your-company",
-  "tes_api_key": "tes_your-company_xxxxx"
-}
-```
-
-## SDK: Wrap Your LLM Client
+### Wrap your LLM client
 
 **JavaScript**
 
@@ -377,7 +190,7 @@ result = ai.chat.completions.create(
 )
 ```
 
-## Supported Providers
+### Supported providers
 
 | Provider | Detection | Intercepted Method |
 |----------|-----------|-------------------|
@@ -387,9 +200,167 @@ result = ai.chat.completions.create(
 
 All other methods pass through unchanged.
 
+---
+
+## Plugins
+
+If you use Claude Code or OpenClaw, the plugin gives you both products at once — every conversation turn is captured (observability) AND searched/stored as memory. No SDK glue to write.
+
+### Claude Code
+
+Works with both local and hosted memory. Install once, switch modes via config.
+
+```
+/plugin marketplace add Pentatonic-Ltd/ai-agent-sdk
+/plugin install tes-memory@pentatonic-ai
+```
+
+For hosted TES:
+```
+/tes-memory:tes-setup
+```
+
+For local memory:
+```bash
+npx @pentatonic-ai/ai-agent-sdk memory
+```
+
+**What it tracks:**
+- Every conversation turn — user messages, assistant responses, tool calls, duration
+- Automatic memory search — relevant memories injected as context on every prompt
+- Automatic memory storage — every turn stored with embeddings and HyDE queries
+- Token usage — input, output, cache read, cache creation tokens per turn
+
+### OpenClaw
+
+```bash
+openclaw plugins install @pentatonic-ai/openclaw-memory-plugin
+```
+
+Then tell OpenClaw:
+
+```
+Set up pentatonic memory
+```
+
+The agent will ask whether you want **local** (private, Docker-based) or **hosted** (Pentatonic TES cloud), then walk you through the rest. For hosted mode, it handles account creation, email verification, and API key generation conversationally.
+
+Or use the CLI directly:
+
+```bash
+openclaw pentatonic-memory local
+```
+
+**What it does:** OpenClaw's context engine hooks fire on every lifecycle event — `ingest` stores user/assistant messages with embeddings + HyDE + distillation; `assemble` injects relevant memories as system-prompt context before every model run; `compact` runs the decay cycle when the context window fills; `after-turn` consolidates high-access memories into the semantic layer. Plus agent-callable tools: `memory_search`, `memory_store`, `memory_layers`.
+
+After setup, config lives in `~/.openclaw/pentatonic-memory.json`. To switch modes, run setup again or edit directly.
+
+You can also configure via `openclaw.json`:
+
+```json
+{
+  "plugins": {
+    "slots": { "contextEngine": "pentatonic-memory" },
+    "entries": {
+      "pentatonic-memory": {
+        "enabled": true,
+        "config": {
+          "database_url": "postgres://memory:memory@localhost:5433/memory",
+          "embedding_url": "http://localhost:11435/v1",
+          "embedding_model": "nomic-embed-text",
+          "llm_url": "http://localhost:11435/v1",
+          "llm_model": "llama3.2:3b"
+        }
+      }
+    }
+  }
+}
+```
+
+For hosted mode, replace the config block with:
+
+```json
+{
+  "tes_endpoint": "https://your-company.api.pentatonic.com",
+  "tes_client_id": "your-company",
+  "tes_api_key": "tes_your-company_xxxxx"
+}
+```
+
+---
+
+## Repository Onboarding (corpus ingest)
+
+The memory layer starts empty. To avoid the cold-start problem where retrieval has nothing useful to return for the first days of use, you can ingest your repos (or any folder of docs) on day one:
+
+```bash
+# Interactive — picks paths, shows a cost preview, ingests, offers
+# to install a git post-commit hook so memory stays current
+npx @pentatonic-ai/ai-agent-sdk onboard
+
+# One-shot ingest of a single path
+npx @pentatonic-ai/ai-agent-sdk ingest ~/code/my-app
+npx @pentatonic-ai/ai-agent-sdk ingest ~/Documents/design-notes  # any folder works
+
+# See what's tracked and how big the corpus is
+npx @pentatonic-ai/ai-agent-sdk status
+
+# Delta-resync everything that's tracked (or one path)
+npx @pentatonic-ai/ai-agent-sdk resync
+
+# Manage the tracked-paths list
+npx @pentatonic-ai/ai-agent-sdk corpus list
+npx @pentatonic-ai/ai-agent-sdk corpus remove ~/code/old-project
+npx @pentatonic-ai/ai-agent-sdk corpus reset
+```
+
+Tenant credentials come from env vars (`TES_ENDPOINT`, `TES_CLIENT_ID`, `TES_API_KEY`) or `~/.config/tes/credentials.json` if you used `npx @pentatonic-ai/ai-agent-sdk init`. To point at a TES instance running on `localhost`, set `TES_ENDPOINT=http://localhost:8788`.
+
+### What gets stored: references, not content
+
+By default, ingest stores **pointers to source content** (path + line range + a short signature/summary), not full chunk content. Per-language strategies:
+
+- **Markdown** — one reference per H1/H2 section
+- **JS / TS** — one per top-level `function` / `class` / `const` / `export`
+- **Python** — one per top-level `def` / `class`
+- **JSON / YAML** — collapsed top-level keys
+- **Other** — single file-level reference
+
+Why pointers? **Code mutates between ingests.** Embedded chunks of old source rot silently — the LLM keeps confidently citing functions you've since rewritten, with retrieval evidence to back it up. Pointers rot loudly: when a file moves or changes, `Read` fails or returns different content, and the agent observes and adjusts. Stale-but-confident is the worst-class memory bug; loud-and-self-correcting is qualitatively better for source code.
+
+It also means proprietary source never leaves your machine — only the index (path + summary) is sent to the hosted TES, and the agent reads actual file contents at query time on its own.
+
+If you need a self-contained index (e.g. for air-gapped retrieval where the source isn't available at query time), opt into legacy chunk-content storage by passing `mode: "content"` to `ingestCorpus` when using the SDK as a library.
+
+### What gets ingested, what doesn't
+
+Any folder works — git is not required. The walker honors `.gitignore` and `.tesignore` if present, plus a hard-exclude list for secrets and credentials that **cannot be overridden** even with `!pattern` rules:
+
+- `.env*` (any environment file)
+- `*.pem`, `*.key`, `*.crt`, `*.p12`, `*.pfx`, `*.jks`
+- `id_rsa`, `id_ed25519`, `id_ecdsa`, `id_dsa` (SSH private keys)
+- `.ssh/`, `.aws/`, `.gcp/`, `.azure/` (whole directories)
+- `.npmrc`, `.pypirc`, `.netrc`
+- `secrets/`, `credentials/`, `service-account.*`
+- `*_secret*`, `*_token*`, `*_password*`
+
+Plus directory-level skips: `.git`, `node_modules`, `dist`, `build`, `.next`, `venv`, `__pycache__`, `target`, `.terraform`, etc. And extension skips for binaries, lockfiles, and minified output. Files larger than 512 KB are skipped by default (override with adapter options if you need to).
+
+### How it stays current
+
+For git repos, accepting the prompt during `onboard` installs a post-commit hook at `.git/hooks/post-commit` that re-ingests files changed in each commit. The hook is non-fatal — it never blocks a commit. Install manually any time with:
+
+```bash
+npx @pentatonic-ai/ai-agent-sdk install-git-hook
+```
+
+For non-git folders, re-run `ingest` or `resync` whenever the source changes. Re-ingest is cheap: the SDK keeps a content-hash per file and skips anything that hasn't changed since the last run.
+
+---
+
 ## API Reference
 
-### `TESClient(config)`
+### `TESClient(config)` — Observability
 
 | Param | Type | Default | Description |
 |-------|------|---------|-------------|
@@ -427,6 +398,12 @@ import { normalizeResponse } from "@pentatonic-ai/ai-agent-sdk";
 const { content, model, usage, toolCalls } = normalizeResponse(openaiResponse);
 ```
 
+### `createMemorySystem(deps)` — Memory
+
+Returns a memory instance with `.migrate()`, `.ensureLayers(clientId)`, `.ingest(content, opts)`, `.search(query, opts)`, and more. See [Use as a library](#use-as-a-library).
+
+---
+
 ## Health Checks (`doctor`)
 
 Run a full health check of your SDK install at any time:
@@ -435,9 +412,7 @@ Run a full health check of your SDK install at any time:
 npx @pentatonic-ai/ai-agent-sdk doctor
 ```
 
-`doctor` auto-detects which install path you're on (Local Memory, Hosted
-TES, or self-hosted Pentatonic platform) and runs only the checks that
-apply. Exit code is `0` for all-clear, `1` for warnings, `2` for critical.
+`doctor` auto-detects which install path you're on (Local Memory, Hosted TES, or self-hosted Pentatonic platform) and runs only the checks that apply. Exit code is `0` for all-clear, `1` for warnings, `2` for critical.
 
 Common flags:
 
@@ -451,17 +426,13 @@ npx @pentatonic-ai/ai-agent-sdk doctor --path local
 What gets checked:
 
 - **Universal** — Node version, disk space, SDK config-file permissions
-- **Local Memory** — Postgres + pgvector + migrations, embedding/LLM
-  endpoints, memory server port
+- **Local Memory** — Postgres + pgvector + migrations, embedding/LLM endpoints, memory server port
 - **Hosted TES** — endpoint reachable, API key authenticates
-- **Self-hosted platform** — HybridRAG, Qdrant, Neo4j, vLLM (each
-  optional, skipped when its env var is unset)
+- **Self-hosted platform** — HybridRAG, Qdrant, Neo4j, vLLM (each optional, skipped when its env var is unset)
 
 ### Plugins
 
-Drop a `.mjs` file into `~/.config/pentatonic-ai/doctor-plugins/` to add
-your own checks. Useful for app-specific things — internal APIs, ingest
-freshness, custom infrastructure — without forking the SDK.
+Drop a `.mjs` file into `~/.config/pentatonic-ai/doctor-plugins/` to add your own checks. Useful for app-specific things — internal APIs, ingest freshness, custom infrastructure — without forking the SDK.
 
 ```js
 // ~/.config/pentatonic-ai/doctor-plugins/my-app.mjs
@@ -482,31 +453,34 @@ export default {
 };
 ```
 
-See [`packages/doctor/README.md`](packages/doctor/README.md) for the full
-plugin contract and programmatic API.
+See [`packages/doctor/README.md`](packages/doctor/README.md) for the full plugin contract and programmatic API.
+
+---
 
 ## Architecture
 
 ```
-        +-------------------+     +-------------------+
-        | Claude Code Plugin|     |  OpenClaw Plugin   |
-        | (hooks: auto-     |     | (context engine:   |
-        |  search + store)  |     |  ingest, assemble, |
-        +--------+----------+     |  compact, tools)   |
-                 |                +--------+----------+
-                 |                         |
-                 +------------+------------+
-                              |
-                  +-----------+-----------+
-                  |                       |
-            Local Memory            Hosted TES
-            (Docker)                (Cloud)
-                  |                       |
-       +----+----+----+          +---+----+---+
-       |    |    |    |          |   |    |   |
-      PG  Ollama MCP HTTP      PG  R2  Queue Workers
-      pgvector        API     pgvector       Modules
+                    Your code
+                        |
+        +---------------+---------------+
+        |                               |
+   Memory product              Observability product
+   (createMemorySystem)         (TESClient.wrap)
+        |                               |
+        |                               |
+   +----+----+                          |
+   |         |                          |
+ Local    Hosted ---------------------- TES
+ (Docker)              (Cloudflare cloud)
+   |                          |
+PG+pgvector              PG, R2, Queues,
++ Ollama                 Workers, Modules
+                         (deep-memory,
+                          conversation-
+                          analytics, …)
 ```
+
+Plugins (Claude Code, OpenClaw) are lightweight integrations on top of both products — they call into memory and emit observability events on the user's behalf.
 
 ## License
 
