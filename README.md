@@ -26,6 +26,7 @@
 - [Overview](#overview)
 - [Local Memory (self-hosted)](#local-memory-self-hosted)
 - [Hosted TES](#hosted-tes)
+- [Repository Onboarding (corpus ingest)](#repository-onboarding-corpus-ingest)
 - [Claude Code Plugin](#claude-code-plugin)
 - [OpenClaw Plugin](#openclaw-plugin)
 - [SDK: Wrap Your LLM Client](#sdk-wrap-your-llm-client)
@@ -137,6 +138,103 @@ pip install pentatonic-ai-agent-sdk
 - **Team-wide shared memory** -- semantic search across your team's AI interactions
 - **Admin dashboard** -- visualize conversations, token usage, and memory explorer
 - **Multi-tenancy** -- isolated databases per client
+
+## Repository Onboarding (corpus ingest)
+
+The plugin's memory layer starts empty. To avoid the cold-start
+problem where retrieval has nothing useful to return for the first
+days of use, you can ingest your repos (or any folder of docs) on
+day one:
+
+```bash
+# Interactive — picks paths, shows a cost preview, ingests, offers
+# to install a git post-commit hook so memory stays current
+npx @pentatonic-ai/ai-agent-sdk onboard
+
+# One-shot ingest of a single path
+npx @pentatonic-ai/ai-agent-sdk ingest ~/code/my-app
+npx @pentatonic-ai/ai-agent-sdk ingest ~/Documents/design-notes  # any folder works
+
+# See what's tracked and how big the corpus is
+npx @pentatonic-ai/ai-agent-sdk status
+
+# Delta-resync everything that's tracked (or one path)
+npx @pentatonic-ai/ai-agent-sdk resync
+
+# Manage the tracked-paths list
+npx @pentatonic-ai/ai-agent-sdk corpus list
+npx @pentatonic-ai/ai-agent-sdk corpus remove ~/code/old-project
+npx @pentatonic-ai/ai-agent-sdk corpus reset
+```
+
+Tenant credentials come from env vars (`TES_ENDPOINT`, `TES_CLIENT_ID`,
+`TES_API_KEY`) or `~/.config/tes/credentials.json` if you used
+`npx @pentatonic-ai/ai-agent-sdk init`. To point at a TES instance
+running on `localhost`, set `TES_ENDPOINT=http://localhost:8788`.
+
+### What gets stored: references, not content
+
+By default, ingest stores **pointers to source content** (path + line
+range + a short signature/summary), not full chunk content. Per-language
+strategies:
+
+- **Markdown** — one reference per H1/H2 section
+- **JS / TS** — one per top-level `function` / `class` / `const` / `export`
+- **Python** — one per top-level `def` / `class`
+- **JSON / YAML** — collapsed top-level keys
+- **Other** — single file-level reference
+
+Why pointers? **Code mutates between ingests.** Embedded chunks of
+old source rot silently — the LLM keeps confidently citing functions
+you've since rewritten, with retrieval evidence to back it up.
+Pointers rot loudly: when a file moves or changes, `Read` fails or
+returns different content, and the agent observes and adjusts.
+Stale-but-confident is the worst-class memory bug; loud-and-self-
+correcting is qualitatively better for source code.
+
+It also means proprietary source never leaves your machine — only
+the index (path + summary) is sent to the hosted TES, and the agent
+reads actual file contents at query time on its own.
+
+If you need a self-contained index (e.g. for air-gapped retrieval
+where the source isn't available at query time), opt into legacy
+chunk-content storage by passing `mode: "content"` to `ingestCorpus`
+when using the SDK as a library.
+
+### What gets ingested, what doesn't
+
+Any folder works — git is not required. The walker honors `.gitignore`
+and `.tesignore` if present, plus a hard-exclude list for secrets and
+credentials that **cannot be overridden** even with `!pattern` rules:
+
+- `.env*` (any environment file)
+- `*.pem`, `*.key`, `*.crt`, `*.p12`, `*.pfx`, `*.jks`
+- `id_rsa`, `id_ed25519`, `id_ecdsa`, `id_dsa` (SSH private keys)
+- `.ssh/`, `.aws/`, `.gcp/`, `.azure/` (whole directories)
+- `.npmrc`, `.pypirc`, `.netrc`
+- `secrets/`, `credentials/`, `service-account.*`
+- `*_secret*`, `*_token*`, `*_password*`
+
+Plus directory-level skips: `.git`, `node_modules`, `dist`, `build`,
+`.next`, `venv`, `__pycache__`, `target`, `.terraform`, etc. And
+extension skips for binaries, lockfiles, and minified output. Files
+larger than 512 KB are skipped by default (override with adapter
+options if you need to).
+
+### How it stays current
+
+For git repos, accepting the prompt during `onboard` installs a
+post-commit hook at `.git/hooks/post-commit` that re-ingests files
+changed in each commit. The hook is non-fatal — it never blocks a
+commit. Install manually any time with:
+
+```bash
+npx @pentatonic-ai/ai-agent-sdk install-git-hook
+```
+
+For non-git folders, re-run `ingest` or `resync` whenever the source
+changes. Re-ingest is cheap: the SDK keeps a content-hash per file
+and skips anything that hasn't changed since the last run.
 
 ## Claude Code Plugin
 
