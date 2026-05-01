@@ -173,6 +173,10 @@ export async function runLoginCommand(opts = {}) {
   log(`  ✓ Connected as ${claims.email || "user"} on tenant \`${clientId}\``);
   log(`  ✓ Credentials written to ~/.config/tes/credentials.json`);
   log("");
+  log("  Claude Code's tes-memory plugin and the OpenClaw pentatonic-memory");
+  log("  plugin will pick these credentials up automatically — restart them");
+  log("  if they're already running.");
+  log("");
 
   return { exitCode: 0, clientId };
 }

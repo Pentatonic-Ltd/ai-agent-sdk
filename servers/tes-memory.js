@@ -30,21 +30,49 @@ function loadConfig() {
     candidates.unshift(join(process.env.CLAUDE_CONFIG_DIR, "tes-memory.local.md"));
   }
   const configPath = candidates.find((p) => existsSync(p));
-  if (!configPath) {
-    return null;
-  }
 
-  const content = readFileSync(configPath, "utf-8");
-  const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
-  if (!frontmatterMatch) return null;
-
-  const config = {};
-  for (const line of frontmatterMatch[1].split("\n")) {
-    const [key, ...rest] = line.split(":");
-    if (key && rest.length) {
-      config[key.trim()] = rest.join(":").trim();
+  let config = null;
+  if (configPath) {
+    const content = readFileSync(configPath, "utf-8");
+    const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
+    if (frontmatterMatch) {
+      config = {};
+      for (const line of frontmatterMatch[1].split("\n")) {
+        const [key, ...rest] = line.split(":");
+        if (key && rest.length) {
+          config[key.trim()] = rest.join(":").trim();
+        }
+      }
     }
   }
+
+  // Fall back to ~/.config/tes/credentials.json (written by `tes login`)
+  // when the plugin config is absent or doesn't carry tes_* keys. Lets
+  // a user who's run `tes login` get the plugin working without also
+  // running /tes-setup to populate tes-memory.local.md.
+  if (!config?.tes_endpoint || !config?.tes_api_key || !config?.tes_client_id) {
+    const credPath = join(
+      process.env.XDG_CONFIG_HOME || join(homedir(), ".config"),
+      "tes",
+      "credentials.json"
+    );
+    if (existsSync(credPath)) {
+      try {
+        const creds = JSON.parse(readFileSync(credPath, "utf-8"));
+        if (creds?.endpoint && creds?.clientId && creds?.apiKey) {
+          config = {
+            ...(config || {}),
+            tes_endpoint: config?.tes_endpoint || creds.endpoint,
+            tes_client_id: config?.tes_client_id || creds.clientId,
+            tes_api_key: config?.tes_api_key || creds.apiKey,
+          };
+        }
+      } catch {
+        // Malformed credentials.json — caller will see "not configured".
+      }
+    }
+  }
+
   return config;
 }
 

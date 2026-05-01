@@ -36,6 +36,9 @@
  */
 
 import pg from "pg";
+import { existsSync, readFileSync } from "node:fs";
+import { homedir } from "node:os";
+import { join } from "node:path";
 import { createMemorySystem } from "../index.js";
 import { createContextEngine } from "./context-engine.js";
 import { sanitizeMemoryContent } from "../sanitize.js";
@@ -44,6 +47,37 @@ import {
   hostedEmitChatTurn as _hostedEmitChatTurn,
   hostedStoreMemory as _hostedStoreMemory,
 } from "../hosted.js";
+
+/**
+ * Hydrate hosted-mode credentials from ~/.config/tes/credentials.json
+ * when the plugin config doesn't carry tes_endpoint/tes_api_key/
+ * tes_client_id. Lets a user who ran `tes login` get OpenClaw working
+ * without also editing openclaw.json by hand. Plugin-config values
+ * take precedence over the credentials file.
+ */
+function hydrateHostedConfig(config) {
+  if (config?.tes_endpoint && config?.tes_api_key && config?.tes_client_id) {
+    return config;
+  }
+  const credPath = join(
+    process.env.XDG_CONFIG_HOME || join(homedir(), ".config"),
+    "tes",
+    "credentials.json"
+  );
+  if (!existsSync(credPath)) return config;
+  try {
+    const creds = JSON.parse(readFileSync(credPath, "utf-8"));
+    if (!creds?.endpoint || !creds?.clientId || !creds?.apiKey) return config;
+    return {
+      ...(config || {}),
+      tes_endpoint: config?.tes_endpoint || creds.endpoint,
+      tes_client_id: config?.tes_client_id || creds.clientId,
+      tes_api_key: config?.tes_api_key || creds.apiKey,
+    };
+  } catch {
+    return config;
+  }
+}
 
 // --- Hosted-mode adapters ---
 //
@@ -399,7 +433,11 @@ export default {
   kind: "context-engine",
 
   register(api) {
-    const config = api.config || {};
+    // Hydrate hosted creds from ~/.config/tes/credentials.json if the
+    // plugin config doesn't carry tes_* keys. Lets `tes login` auto-
+    // configure OpenClaw without the user editing openclaw.json by
+    // hand. Plugin-config values take precedence.
+    const config = hydrateHostedConfig(api.config || {});
     const hosted = isHostedMode(config);
     const log = (msg) =>
       process.stderr.write(`[pentatonic-memory] ${msg}\n`);
