@@ -172,28 +172,90 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         properties: {},
       },
     },
+    {
+      name: "tes_status",
+      description:
+        "Show the user's current TES connection state. Reports the tenant " +
+        "(clientId) they're logged into, the endpoint, and whether the " +
+        "stored API key is still valid against the server. Use this when " +
+        "the user asks 'am I connected to TES?' or 'who am I logged in as?'",
+      inputSchema: {
+        type: "object",
+        properties: {},
+      },
+    },
   ],
 }));
 
+const NOT_CONFIGURED_MSG =
+  "TES memory is not configured. In your terminal, run:\n\n" +
+  "    npx @pentatonic-ai/ai-agent-sdk login\n\n" +
+  "This opens a browser, signs you in (or signs you up), and writes " +
+  "credentials to ~/.config/tes/credentials.json. Restart Claude Code " +
+  "afterwards and the plugin will pick them up automatically.";
+
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const config = loadConfig();
-  if (!config?.tes_endpoint || !config?.tes_api_key || !config?.tes_client_id) {
-    return {
-      content: [
-        {
-          type: "text",
-          text:
-            "TES memory is not configured. In your terminal, run:\n\n" +
-            "    npx @pentatonic-ai/ai-agent-sdk login\n\n" +
-            "This opens a browser, signs you in (or signs you up), and writes " +
-            "credentials to ~/.config/tes/credentials.json. Restart Claude Code " +
-            "afterwards and the plugin will pick them up automatically.",
-        },
-      ],
-    };
+  const { name, arguments: args } = request.params;
+
+  // tes_status is always runnable — its whole purpose is to report
+  // whether the plugin is configured + whether creds still validate.
+  if (name === "tes_status") {
+    if (
+      !config?.tes_endpoint ||
+      !config?.tes_api_key ||
+      !config?.tes_client_id
+    ) {
+      return {
+        content: [{ type: "text", text: `Status: not connected.\n\n${NOT_CONFIGURED_MSG}` }],
+      };
+    }
+    // Ping a query the agent-events role is permitted to run.
+    try {
+      const data = await graphql(
+        config,
+        `query Ping($id: String!) { memoryLayers(clientId: $id) { id } }`,
+        { id: config.tes_client_id }
+      );
+      const layerCount = Array.isArray(data?.memoryLayers)
+        ? data.memoryLayers.length
+        : 0;
+      return {
+        content: [
+          {
+            type: "text",
+            text:
+              `✓ Connected to tenant \`${config.tes_client_id}\`\n` +
+              `  Endpoint: ${config.tes_endpoint}\n` +
+              `  Memory layers visible: ${layerCount}\n` +
+              (config.tes_user_id
+                ? `  User ID: ${config.tes_user_id}\n`
+                : ""),
+          },
+        ],
+      };
+    } catch (err) {
+      const msg = err?.message || String(err);
+      const looksUnauthed = /401|unauthor|invalid token|expired/i.test(msg);
+      return {
+        content: [
+          {
+            type: "text",
+            text: looksUnauthed
+              ? `Status: credentials invalid (likely revoked or expired).\n\n` +
+                `Run \`npx @pentatonic-ai/ai-agent-sdk login\` to refresh, then restart Claude Code.`
+              : `Status: connected to ${config.tes_endpoint}, but the verify ping failed: ${msg}`,
+          },
+        ],
+      };
+    }
   }
 
-  const { name, arguments: args } = request.params;
+  if (!config?.tes_endpoint || !config?.tes_api_key || !config?.tes_client_id) {
+    return {
+      content: [{ type: "text", text: NOT_CONFIGURED_MSG }],
+    };
+  }
 
   try {
     if (name === "search_memories") {
