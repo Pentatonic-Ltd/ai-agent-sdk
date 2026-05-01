@@ -161,21 +161,25 @@ If `/search` returns the row from `/store`, the engine is live.
 
 **Connect Claude Code**
 
-The `tes-memory` plugin's hooks already speak the engine's wire format. Two steps:
+The `tes-memory` plugin's hooks already speak the engine's wire format. Three steps:
 
 1. Install the plugin (once):
    ```
    /plugin marketplace add Pentatonic-Ltd/ai-agent-sdk
    /plugin install tes-memory@pentatonic-ai
    ```
-2. Point it at your local engine. Edit `~/.claude-pentatonic/tes-memory.local.md` (create if missing):
-   ```yaml
-   ---
-   mode: local
-   memory_url: http://localhost:8099
-   ---
+2. Point it at your local engine — one command writes the plugin config:
+   ```bash
+   npx @pentatonic-ai/ai-agent-sdk config local
    ```
+   This writes `~/.claude-pentatonic/tes-memory.local.md` with `mode: local` and `memory_url: http://localhost:8099`. If you want a different URL, pass `--engine-url <url>`. To switch back to hosted later, run `tes config hosted` (delegates to `login`).
 3. Reload: `/reload-plugins` (or restart Claude Code if status reports stale state — MCP server processes need a full restart to pick up plugin updates).
+
+Inspect what's currently configured at any time:
+
+```bash
+npx @pentatonic-ai/ai-agent-sdk config show
+```
 
 Verify:
 
@@ -307,22 +311,26 @@ Works with both local and hosted memory. Install once, switch modes via config.
 /plugin install tes-memory@pentatonic-ai
 ```
 
-**Local engine** — bring up the engine first ([Memory > Local](#local-self-hosted)), then point the plugin at it. Edit `~/.claude-pentatonic/tes-memory.local.md`:
+**Local engine** — bring up the engine first ([Memory > Local](#local-self-hosted)), then write the plugin config:
 
-```yaml
----
-mode: local
-memory_url: http://localhost:8099
----
+```bash
+npx @pentatonic-ai/ai-agent-sdk config local
 ```
 
 **Hosted TES** — run `login` once, the plugin auto-discovers `~/.config/tes/credentials.json`:
 
 ```bash
 npx @pentatonic-ai/ai-agent-sdk login
+# equivalent: npx @pentatonic-ai/ai-agent-sdk config hosted
 ```
 
-Either way, verify with `/tes-memory:tes-status` in Claude Code. The plugin's MCP server, hooks, and tools all read the same config.
+Either way, verify with `/tes-memory:tes-status` in Claude Code, or from the shell:
+
+```bash
+npx @pentatonic-ai/ai-agent-sdk config show
+```
+
+The plugin's MCP server, hooks, and tools all read the same config — switching modes is a single CLI call away.
 
 **What it tracks (auto, every turn):**
 - Memory search at prompt time — relevant memories injected as context
