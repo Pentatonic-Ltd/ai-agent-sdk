@@ -91,7 +91,13 @@ export async function runLoginCommand(opts = {}) {
     });
     if (!tokenRes.ok) {
       const body = await tokenRes.json().catch(() => ({}));
-      errLog(`Token exchange failed (${tokenRes.status}): ${body.error || "unknown"}`);
+      // Surface error_description if present — `invalid_grant` alone
+      // is ambiguous (could be expired code, PKCE mismatch, redirect_uri
+      // mismatch, replay, etc.). The description names the actual cause.
+      const detail = body.error_description
+        ? `${body.error}: ${body.error_description}`
+        : body.error || "unknown";
+      errLog(`Token exchange failed (${tokenRes.status}): ${detail}`);
       return { exitCode: 4 };
     }
     const tokenBody = await tokenRes.json();
