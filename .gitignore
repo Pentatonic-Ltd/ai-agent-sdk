@@ -7,3 +7,9 @@ python/.venv/
 .pytest_cache/
 .env
 e2e/openclaw/openclaw-home/
+
+# Internal architecture/design specs — operator-specific contents
+# (internal hostnames, in-flight TES PR refs, deploy mechanics).
+# Kept out of the public SDK; design docs live in private channels.
+specs/
+docs/
