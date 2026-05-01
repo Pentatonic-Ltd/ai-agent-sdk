@@ -211,12 +211,20 @@ If you use Claude Code or OpenClaw, the plugin gives you both products at once â
 
 Works with both local and hosted memory. Install once, switch modes via config.
 
+For hosted TES, run `login` first so credentials exist when the plugin starts up:
+
+```bash
+npx @pentatonic-ai/ai-agent-sdk login
+```
+
+Then in Claude Code:
+
 ```
 /plugin marketplace add Pentatonic-Ltd/ai-agent-sdk
 /plugin install tes-memory@pentatonic-ai
 ```
 
-For hosted TES, run `npx @pentatonic-ai/ai-agent-sdk login` once in your terminal â€” the plugin's MCP server, hooks, and tools all auto-discover the credentials written to `~/.config/tes/credentials.json`. To verify the connection later, ask Claude `/tes-memory:tes-status`.
+The plugin's MCP server, hooks, and tools auto-discover the credentials at `~/.config/tes/credentials.json`. To verify the connection later, ask Claude `/tes-memory:tes-status`.
 
 For local memory:
 ```bash
