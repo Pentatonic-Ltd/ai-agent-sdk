@@ -1,41 +1,41 @@
 ---
 name: tes-setup
-description: Set up TES memory — creates an account and configures the plugin with your API credentials
+description: Set up TES memory — sign in via browser-based OAuth and configure the plugin
 ---
 
 # TES Setup
 
-Run the interactive setup to create a Pentatonic TES account and configure this plugin.
+Connect this plugin to a Pentatonic TES account. The CLI uses browser-based OAuth (sign-in or sign-up in your browser, not the terminal) and writes credentials to a shared file the plugin auto-discovers.
 
 ## Steps
 
-1. Run the TES init command to create an account and get credentials:
+1. Run the TES login command. It will open your browser:
 
 ```bash
-npx @pentatonic-ai/ai-agent-sdk init
+npx @pentatonic-ai/ai-agent-sdk login
 ```
 
-2. After completing the setup, you'll receive credentials like:
-```
-TES_ENDPOINT=https://your-client.api.pentatonic.com
-TES_CLIENT_ID=your-company
-TES_API_KEY=tes_your-company_xxxxx
-```
+2. In the browser:
+   - **Returning user**: enter your client ID, sign in.
+   - **New user**: click "Sign up", create a new tenant (clientId + region + email + password), verify your email, then sign in.
+   - You'll land on a "Connected" tab — close it.
 
-3. Save these credentials to the plugin settings file at `~/.claude/tes-memory.local.md`:
+3. The CLI writes credentials to `~/.config/tes/credentials.json` and prints:
 
-```yaml
----
-tes_endpoint: https://your-client.api.pentatonic.com
-tes_client_id: your-company
-tes_api_key: tes_your-company_xxxxx
-tes_user_id: your-email@company.com
----
+```
+✓ Connected as you@example.com on tenant `your-clientid`
+✓ Credentials written to ~/.config/tes/credentials.json
 ```
 
-4. Confirm the setup by telling the user their TES memory is configured and they can use:
-   - `search_memories` tool to find relevant past knowledge
-   - `store_memory` tool to explicitly save important information
-   - Session events are emitted automatically via hooks
+4. Restart Claude Code so the `tes-memory` MCP server picks up the new credentials. The plugin reads `~/.config/tes/credentials.json` automatically — no manual paste step.
 
-**Important:** Always run the init command first. Do not ask the user to manually create credentials.
+5. Confirm the setup by trying these tools in Claude:
+   - `search_memories` — find relevant past knowledge
+   - `store_memory` — save important information explicitly
+   - Session events are emitted automatically via hooks.
+
+## Notes
+
+- If the browser doesn't auto-open (e.g. inside a container with no display), the CLI prints the URL — open it manually in your host browser. Localhost callback works as long as the CLI's host has the loopback reachable.
+- If the user already has `~/.claude/tes-memory.local.md` configured for a different tenant, that file wins over `~/.config/tes/credentials.json`. Delete or update it to switch tenants.
+- The old `npx @pentatonic-ai/ai-agent-sdk init` command still works as a one-major-release alias for `login` (it emits a deprecation warning).
