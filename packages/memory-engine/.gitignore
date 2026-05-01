@@ -1,3 +1,8 @@
+# Local docs / runbooks may contain operator-specific info (AWS account
+# IDs, internal hostnames, etc.). Keep them out of the SDK; deploy
+# documentation lives in the TES repo.
+docs/
+
 __pycache__/
 *.pyc
 *.pyo
