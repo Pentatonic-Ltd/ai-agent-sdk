@@ -69,10 +69,18 @@ export function detectPaths(opts = {}) {
     found.add(PATHS.PLATFORM);
   }
 
-  const localConfig = join(home, ".claude", "tes-memory.local.md");
+  // Local engine: detected via plugin config (claude-pentatonic preferred,
+  // fall back to claude), or explicit MEMORY_ENGINE_URL env override.
+  const localConfigPaths = [
+    env.CLAUDE_CONFIG_DIR
+      ? join(env.CLAUDE_CONFIG_DIR, "tes-memory.local.md")
+      : null,
+    join(home, ".claude-pentatonic", "tes-memory.local.md"),
+    join(home, ".claude", "tes-memory.local.md"),
+  ].filter(Boolean);
   const looksLocal =
-    (env.DATABASE_URL && env.EMBEDDING_URL && env.LLM_URL) ||
-    fileExists(localConfig);
+    Boolean(env.MEMORY_ENGINE_URL) ||
+    localConfigPaths.some((p) => fileExists(p));
   if (looksLocal) {
     found.add(PATHS.LOCAL);
   }

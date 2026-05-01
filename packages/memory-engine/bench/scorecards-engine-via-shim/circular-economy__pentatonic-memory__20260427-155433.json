@@ -1,0 +1,1278 @@
+{
+  "bench": "circular-economy",
+  "stack": "pentatonic-memory",
+  "n_tasks": 25,
+  "n_correct": 20,
+  "accuracy": 0.8,
+  "mean_score": 0.872,
+  "p50_search_ms": 124.21072801225819,
+  "p95_search_ms": 219.5600733073661,
+  "total_tokens_in": 0,
+  "total_tokens_out": 0,
+  "total_usd": 0.0,
+  "by_tag": {
+    "factoid": {
+      "n": 14,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "material": {
+      "n": 8,
+      "mean_score": 0.8125,
+      "accuracy": 0.75
+    },
+    "takeback": {
+      "n": 6,
+      "mean_score": 0.9166666666666666,
+      "accuracy": 0.8333333333333334
+    },
+    "lifecycle": {
+      "n": 2,
+      "mean_score": 0.5,
+      "accuracy": 0.5
+    },
+    "multi-fact": {
+      "n": 1,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "policy": {
+      "n": 3,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "certification": {
+      "n": 4,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "multi-doc": {
+      "n": 2,
+      "mean_score": 0.5,
+      "accuracy": 0.5
+    },
+    "regulation": {
+      "n": 5,
+      "mean_score": 0.96,
+      "accuracy": 0.8
+    },
+    "concept": {
+      "n": 1,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "rubric": {
+      "n": 3,
+      "mean_score": 0.6,
+      "accuracy": 0.0
+    },
+    "honesty": {
+      "n": 1,
+      "mean_score": 0.5,
+      "accuracy": 0.0
+    },
+    "multi-hop": {
+      "n": 2,
+      "mean_score": 0.65,
+      "accuracy": 0.0
+    },
+    "entity": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "negative": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    }
+  },
+  "extra": {
+    "ingest_ms": 5898.549320001621,
+    "grading": "substring",
+    "limit": 3,
+    "tokens": {
+      "corpus_tokens": 1459,
+      "query_tokens": 359,
+      "context_tokens": 5896,
+      "retrieval_tokens": 6255,
+      "naive_tokens": 36834,
+      "saved_tokens": 30579,
+      "reduction_pct": 0.8301840690666232,
+      "mean_retrieval_tokens_per_task": 250.2,
+      "tokenizer": "cl100k_base",
+      "per_task": {
+        "atlas-material-source": {
+          "query": 15,
+          "context": 245,
+          "retrieval": 260,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "atlas-takeback-credit": {
+          "query": 15,
+          "context": 273,
+          "retrieval": 288,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "atlas-closed-loop": {
+          "query": 8,
+          "context": 217,
+          "retrieval": 225,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "luna-takeback-split": {
+          "query": 16,
+          "context": 255,
+          "retrieval": 271,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "luna-silicone-fate": {
+          "query": 13,
+          "context": 234,
+          "retrieval": 247,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "pla-home-compost": {
+          "query": 10,
+          "context": 249,
+          "retrieval": 259,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "pla-hot-drinks": {
+          "query": 10,
+          "context": 255,
+          "retrieval": 265,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "pbat-local-authority": {
+          "query": 13,
+          "context": 256,
+          "retrieval": 269,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "ghost-net-source": {
+          "query": 15,
+          "context": 238,
+          "retrieval": 253,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "kite-harness-foam-recovery": {
+          "query": 18,
+          "context": 238,
+          "retrieval": 256,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "haven-sleeve-bottles-15": {
+          "query": 17,
+          "context": 211,
+          "retrieval": 228,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "cert-c2c-tiers": {
+          "query": 12,
+          "context": 219,
+          "retrieval": 231,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "cert-c2c-our-products": {
+          "query": 14,
+          "context": 218,
+          "retrieval": 232,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "cert-grs-threshold": {
+          "query": 12,
+          "context": 233,
+          "retrieval": 245,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "cert-en13432-temp": {
+          "query": 11,
+          "context": 249,
+          "retrieval": 260,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "reg-uk-epr-scope": {
+          "query": 13,
+          "context": 227,
+          "retrieval": 240,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "reg-espr-dpp": {
+          "query": 13,
+          "context": 206,
+          "retrieval": 219,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "reg-ca-sb54-deadline": {
+          "query": 14,
+          "context": 227,
+          "retrieval": 241,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "reg-lithium-return": {
+          "query": 13,
+          "context": 254,
+          "retrieval": 267,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "closed-loop-threshold": {
+          "query": 16,
+          "context": 233,
+          "retrieval": 249,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "rubric-customer-greenwash-claim": {
+          "query": 27,
+          "context": 237,
+          "retrieval": 264,
+          "judge_in": 592,
+          "judge_out": 48,
+          "judge_latency_ms": 1083.4475809633732
+        },
+        "rubric-full-takeback-story-atlas": {
+          "query": 17,
+          "context": 231,
+          "retrieval": 248,
+          "judge_in": 559,
+          "judge_out": 46,
+          "judge_latency_ms": 1084.0106250047684
+        },
+        "rubric-regulatory-scope-briefing": {
+          "query": 22,
+          "context": 221,
+          "retrieval": 243,
+          "judge_in": 572,
+          "judge_out": 32,
+          "judge_latency_ms": 658.5470380187035
+        },
+        "entity-closed-loop-skus": {
+          "query": 12,
+          "context": 221,
+          "retrieval": 233,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "entity-home-compostable": {
+          "query": 13,
+          "context": 249,
+          "retrieval": 262,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        }
+      },
+      "judge_tokens_in": 1723,
+      "judge_tokens_out": 126,
+      "judge_calls": 3,
+      "judge_mean_latency_ms": 942.001747995615
+    },
+    "cost_usd": {
+      "assumed_completion_tokens_per_task": 100,
+      "rates": {
+        "input_per_1k": 0.0025,
+        "output_per_1k": 0.01,
+        "model": "gpt-4o"
+      },
+      "retrieval_usd_in": 0.015637500000000002,
+      "retrieval_usd_out": 0.025,
+      "retrieval_usd_total": 0.04063750000000001,
+      "naive_usd_total": 0.11708500000000002,
+      "saved_usd": 0.07644750000000002,
+      "saved_usd_per_1k_tasks": 3.0579000000000005
+    }
+  },
+  "task_results": [
+    {
+      "task_id": "atlas-material-source",
+      "query": "Where does the recycled polypropylene in the Atlas Phone Shell come from?",
+      "answer": "Material: recycled ocean-bound polypropylene (rPP-OB). Feedstock: polypropylene waste collected within 50km of coastlines before it enters waterways. Certification: Global Recycled Standard (GRS) and OceanCycle. Typical recycled content: 95-99% (process additives make up the balance). Applications in our catalogue: Atlas Phone Shell (68% of shell mass), Luna bottle accessory clip.\n---\nGRS (Global Recycled Standard): third-party verification of recycled content, chain of custody, social and environmental practices, and chemical restrictions. Minimum 20% recycled content for a product to bear the GRS claim. Materials using GRS in our catalogue: rPP-OB (Atlas Phone Shell), rPET-FELT (Haven Sleeves).\n---\nTake-back programme \u2014 Atlas Phone Shell (ATL-PHN-001). Accepted condition: any, including broken. Credit: 50% of original purchase price as store credit. Process: free returns label at pentatonic.com/takeback/ATL-PHN-001. Recovery route: shell is mechanically shredded, rPP-OB fraction recovered and fed back into the next production run. Closed-loop: YES.",
+      "hits": [
+        {
+          "text": "Material: recycled ocean-bound polypropylene (rPP-OB). Feedstock: polypropylene waste collected within 50km of coastlines before it enters waterways. Certification: Global Recycled Standard (GRS) and OceanCycle. Typical recycled content: 95-99% (process additives make up the balance). Applications in our catalogue: Atlas Phone Shell (68% of shell mass), Luna bottle accessory clip.",
+          "score": 0.6463009715080261,
+          "source": "pentatonic-memory",
+          "doc_id": "material-rpp-ocean"
+        },
+        {
+          "text": "GRS (Global Recycled Standard): third-party verification of recycled content, chain of custody, social and environmental practices, and chemical restrictions. Minimum 20% recycled content for a product to bear the GRS claim. Materials using GRS in our catalogue: rPP-OB (Atlas Phone Shell), rPET-FELT (Haven Sleeves).",
+          "score": 0.4683022201061249,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-grs"
+        },
+        {
+          "text": "Take-back programme \u2014 Atlas Phone Shell (ATL-PHN-001). Accepted condition: any, including broken. Credit: 50% of original purchase price as store credit. Process: free returns label at pentatonic.com/takeback/ATL-PHN-001. Recovery route: shell is mechanically shredded, rPP-OB fraction recovered and fed back into the next production run. Closed-loop: YES.",
+          "score": 0.6143126487731934,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-atlas-phone"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 123.71371599147096,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 260,
+      "query_tokens": 15,
+      "context_tokens": 245,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "atlas-takeback-credit",
+      "query": "What credit do I get for returning an Atlas Phone Shell via take-back?",
+      "answer": "Take-back programme \u2014 Atlas Phone Shell (ATL-PHN-001). Accepted condition: any, including broken. Credit: 50% of original purchase price as store credit. Process: free returns label at pentatonic.com/takeback/ATL-PHN-001. Recovery route: shell is mechanically shredded, rPP-OB fraction recovered and fed back into the next production run. Closed-loop: YES.\n---\nTake-back programme \u2014 Nomad Kite Harness v3 (NMD-HRN-V3). Accepted condition: worn but repairable or end-of-life. Credit: 25% of original price. Alternative: repair-not-replace via the Nomad repair service (\u00a325 flat fee). Recovery route: ghost-net nylon is mechanically recycled back into new harness shells \u2014 closed-loop. EVA foam padding is NOT recovered (currently sent to energy-from-waste).\n---\nTake-back programme \u2014 Luna Water Bottle 500ml (LUN-BTL-042). Accepted condition: any. Credit: 40% of original price as store credit (body) + 10% (lid, if returned intact). Process: drop-off at any UK Pentatonic pop-up, or mail-in via takeback label. Recovery route: steel body enters industrial recycling (not closed-loop); silicone lid is down-cycled into playground surfacing granulate.",
+      "hits": [
+        {
+          "text": "Take-back programme \u2014 Atlas Phone Shell (ATL-PHN-001). Accepted condition: any, including broken. Credit: 50% of original purchase price as store credit. Process: free returns label at pentatonic.com/takeback/ATL-PHN-001. Recovery route: shell is mechanically shredded, rPP-OB fraction recovered and fed back into the next production run. Closed-loop: YES.",
+          "score": 0.7212380170822144,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-atlas-phone"
+        },
+        {
+          "text": "Take-back programme \u2014 Nomad Kite Harness v3 (NMD-HRN-V3). Accepted condition: worn but repairable or end-of-life. Credit: 25% of original price. Alternative: repair-not-replace via the Nomad repair service (\u00a325 flat fee). Recovery route: ghost-net nylon is mechanically recycled back into new harness shells \u2014 closed-loop. EVA foam padding is NOT recovered (currently sent to energy-from-waste).",
+          "score": 0.42550432682037354,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-kite-harness"
+        },
+        {
+          "text": "Take-back programme \u2014 Luna Water Bottle 500ml (LUN-BTL-042). Accepted condition: any. Credit: 40% of original price as store credit (body) + 10% (lid, if returned intact). Process: drop-off at any UK Pentatonic pop-up, or mail-in via takeback label. Recovery route: steel body enters industrial recycling (not closed-loop); silicone lid is down-cycled into playground surfacing granulate.",
+          "score": 0.46357059478759766,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-luna-bottle"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 201.6432099917438,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 288,
+      "query_tokens": 15,
+      "context_tokens": 273,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "atlas-closed-loop",
+      "query": "Is the Atlas Phone Shell closed-loop?",
+      "answer": "Take-back programme \u2014 Atlas Phone Shell (ATL-PHN-001). Accepted condition: any, including broken. Credit: 50% of original purchase price as store credit. Process: free returns label at pentatonic.com/takeback/ATL-PHN-001. Recovery route: shell is mechanically shredded, rPP-OB fraction recovered and fed back into the next production run. Closed-loop: YES.\n---\nCradle to Cradle Certified: multi-attribute product certification covering material health, material reutilisation, renewable energy, water stewardship, and social fairness. Tiers (lowest to highest): Bronze, Silver, Gold, Platinum. Our holders: Atlas Phone Shell (Bronze).\n---\nGRS (Global Recycled Standard): third-party verification of recycled content, chain of custody, social and environmental practices, and chemical restrictions. Minimum 20% recycled content for a product to bear the GRS claim. Materials using GRS in our catalogue: rPP-OB (Atlas Phone Shell), rPET-FELT (Haven Sleeves).",
+      "hits": [
+        {
+          "text": "Take-back programme \u2014 Atlas Phone Shell (ATL-PHN-001). Accepted condition: any, including broken. Credit: 50% of original purchase price as store credit. Process: free returns label at pentatonic.com/takeback/ATL-PHN-001. Recovery route: shell is mechanically shredded, rPP-OB fraction recovered and fed back into the next production run. Closed-loop: YES.",
+          "score": 0.6384720206260681,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-atlas-phone"
+        },
+        {
+          "text": "Cradle to Cradle Certified: multi-attribute product certification covering material health, material reutilisation, renewable energy, water stewardship, and social fairness. Tiers (lowest to highest): Bronze, Silver, Gold, Platinum. Our holders: Atlas Phone Shell (Bronze).",
+          "score": 0.48182180523872375,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-cradle-to-cradle"
+        },
+        {
+          "text": "GRS (Global Recycled Standard): third-party verification of recycled content, chain of custody, social and environmental practices, and chemical restrictions. Minimum 20% recycled content for a product to bear the GRS claim. Materials using GRS in our catalogue: rPP-OB (Atlas Phone Shell), rPET-FELT (Haven Sleeves).",
+          "score": 0.35467320680618286,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-grs"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 122.95081399497576,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 225,
+      "query_tokens": 8,
+      "context_tokens": 217,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "luna-takeback-split",
+      "query": "How is the take-back credit split between body and lid for the Luna bottle?",
+      "answer": "Take-back programme \u2014 Luna Water Bottle 500ml (LUN-BTL-042). Accepted condition: any. Credit: 40% of original price as store credit (body) + 10% (lid, if returned intact). Process: drop-off at any UK Pentatonic pop-up, or mail-in via takeback label. Recovery route: steel body enters industrial recycling (not closed-loop); silicone lid is down-cycled into playground surfacing granulate.\n---\nMaterial: 304 stainless steel with 65% recycled content. Source: mix of post-consumer scrap (mostly end-of-life appliances) and pre-consumer mill scrap. EPD (Environmental Product Declaration) available on request. Used in: Luna Water Bottle body, Nomad Kite Harness v3 spreader bar (316 variant with 55% recycled).\n---\nTake-back programme \u2014 Atlas Phone Shell (ATL-PHN-001). Accepted condition: any, including broken. Credit: 50% of original purchase price as store credit. Process: free returns label at pentatonic.com/takeback/ATL-PHN-001. Recovery route: shell is mechanically shredded, rPP-OB fraction recovered and fed back into the next production run. Closed-loop: YES.",
+      "hits": [
+        {
+          "text": "Take-back programme \u2014 Luna Water Bottle 500ml (LUN-BTL-042). Accepted condition: any. Credit: 40% of original price as store credit (body) + 10% (lid, if returned intact). Process: drop-off at any UK Pentatonic pop-up, or mail-in via takeback label. Recovery route: steel body enters industrial recycling (not closed-loop); silicone lid is down-cycled into playground surfacing granulate.",
+          "score": 0.6451965570449829,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-luna-bottle"
+        },
+        {
+          "text": "Material: 304 stainless steel with 65% recycled content. Source: mix of post-consumer scrap (mostly end-of-life appliances) and pre-consumer mill scrap. EPD (Environmental Product Declaration) available on request. Used in: Luna Water Bottle body, Nomad Kite Harness v3 spreader bar (316 variant with 55% recycled).",
+          "score": 0.4040732979774475,
+          "source": "pentatonic-memory",
+          "doc_id": "material-steel-304-recycled"
+        },
+        {
+          "text": "Take-back programme \u2014 Atlas Phone Shell (ATL-PHN-001). Accepted condition: any, including broken. Credit: 50% of original purchase price as store credit. Process: free returns label at pentatonic.com/takeback/ATL-PHN-001. Recovery route: shell is mechanically shredded, rPP-OB fraction recovered and fed back into the next production run. Closed-loop: YES.",
+          "score": 0.42054295539855957,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-atlas-phone"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 126.03215198032558,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 271,
+      "query_tokens": 16,
+      "context_tokens": 255,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "luna-silicone-fate",
+      "query": "What happens to the Luna bottle's silicone lid after take-back?",
+      "answer": "Take-back programme \u2014 Luna Water Bottle 500ml (LUN-BTL-042). Accepted condition: any. Credit: 40% of original price as store credit (body) + 10% (lid, if returned intact). Process: drop-off at any UK Pentatonic pop-up, or mail-in via takeback label. Recovery route: steel body enters industrial recycling (not closed-loop); silicone lid is down-cycled into playground surfacing granulate.\n---\nMaterial: 304 stainless steel with 65% recycled content. Source: mix of post-consumer scrap (mostly end-of-life appliances) and pre-consumer mill scrap. EPD (Environmental Product Declaration) available on request. Used in: Luna Water Bottle body, Nomad Kite Harness v3 spreader bar (316 variant with 55% recycled).\n---\nMaterial: 100% recycled PET felt. Feedstock: post-consumer PET bottles (UK kerbside collection). Approx 12 bottles per 13\" laptop sleeve, 18 bottles per 15\" laptop sleeve. No virgin polyester added. Recyclable at end-of-life via the Haven take-back programme.",
+      "hits": [
+        {
+          "text": "Take-back programme \u2014 Luna Water Bottle 500ml (LUN-BTL-042). Accepted condition: any. Credit: 40% of original price as store credit (body) + 10% (lid, if returned intact). Process: drop-off at any UK Pentatonic pop-up, or mail-in via takeback label. Recovery route: steel body enters industrial recycling (not closed-loop); silicone lid is down-cycled into playground surfacing granulate.",
+          "score": 0.7428865432739258,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-luna-bottle"
+        },
+        {
+          "text": "Material: 304 stainless steel with 65% recycled content. Source: mix of post-consumer scrap (mostly end-of-life appliances) and pre-consumer mill scrap. EPD (Environmental Product Declaration) available on request. Used in: Luna Water Bottle body, Nomad Kite Harness v3 spreader bar (316 variant with 55% recycled).",
+          "score": 0.4257005751132965,
+          "source": "pentatonic-memory",
+          "doc_id": "material-steel-304-recycled"
+        },
+        {
+          "text": "Material: 100% recycled PET felt. Feedstock: post-consumer PET bottles (UK kerbside collection). Approx 12 bottles per 13\" laptop sleeve, 18 bottles per 15\" laptop sleeve. No virgin polyester added. Recyclable at end-of-life via the Haven take-back programme.",
+          "score": 0.38561904430389404,
+          "source": "pentatonic-memory",
+          "doc_id": "material-pet-felt-recycled"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 122.69044300774112,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 247,
+      "query_tokens": 13,
+      "context_tokens": 234,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "pla-home-compost",
+      "query": "Can I compost a Loop coffee cup at home?",
+      "answer": "Material: PLA (polylactic acid). Bioplastic derived from corn starch (US Midwest feedstock for our supply). Industrially compostable under EN13432 (60\u00b0C, 60% humidity, 12 weeks). NOT home-compostable and NOT recyclable through standard plastic streams. Degradation threshold: 60\u00b0C \u2014 avoid hot liquids for direct-contact applications. Used in: Loop Reusable Coffee Cup body.\n---\nEN13432: European standard for industrially compostable packaging. Requires disintegration within 12 weeks and biodegradation within 6 months under industrial composting conditions (typically 58\u00b0C \u00b1 2\u00b0C). Does not imply home-compostability. Materials meeting EN13432: PLA-CORN (Loop Cup), PBAT-STARCH (Root Bin Liners).\n---\nMaterial: PBAT (polybutylene adipate terephthalate) + corn starch biopolymer. Industrially compostable (EN13432). Home-compostability: NO \u2014 requires industrial temperatures. Used in: Root Bio Bin Liners. Regulatory note: accepted in most UK local-authority food-waste streams that accept certified compostable bags, but some authorities reject all bag types \u2014 check locally.",
+      "hits": [
+        {
+          "text": "Material: PLA (polylactic acid). Bioplastic derived from corn starch (US Midwest feedstock for our supply). Industrially compostable under EN13432 (60\u00b0C, 60% humidity, 12 weeks). NOT home-compostable and NOT recyclable through standard plastic streams. Degradation threshold: 60\u00b0C \u2014 avoid hot liquids for direct-contact applications. Used in: Loop Reusable Coffee Cup body.",
+          "score": 0.5999925136566162,
+          "source": "pentatonic-memory",
+          "doc_id": "material-pla-plant"
+        },
+        {
+          "text": "EN13432: European standard for industrially compostable packaging. Requires disintegration within 12 weeks and biodegradation within 6 months under industrial composting conditions (typically 58\u00b0C \u00b1 2\u00b0C). Does not imply home-compostability. Materials meeting EN13432: PLA-CORN (Loop Cup), PBAT-STARCH (Root Bin Liners).",
+          "score": 0.48798254132270813,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-en13432"
+        },
+        {
+          "text": "Material: PBAT (polybutylene adipate terephthalate) + corn starch biopolymer. Industrially compostable (EN13432). Home-compostability: NO \u2014 requires industrial temperatures. Used in: Root Bio Bin Liners. Regulatory note: accepted in most UK local-authority food-waste streams that accept certified compostable bags, but some authorities reject all bag types \u2014 check locally.",
+          "score": 0.3906592130661011,
+          "source": "pentatonic-memory",
+          "doc_id": "material-pbat-starch"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 117.49583698110655,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 259,
+      "query_tokens": 10,
+      "context_tokens": 249,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "pla-hot-drinks",
+      "query": "Can I put hot coffee in a Loop cup?",
+      "answer": "Material: PLA (polylactic acid). Bioplastic derived from corn starch (US Midwest feedstock for our supply). Industrially compostable under EN13432 (60\u00b0C, 60% humidity, 12 weeks). NOT home-compostable and NOT recyclable through standard plastic streams. Degradation threshold: 60\u00b0C \u2014 avoid hot liquids for direct-contact applications. Used in: Loop Reusable Coffee Cup body.\n---\nEN13432: European standard for industrially compostable packaging. Requires disintegration within 12 weeks and biodegradation within 6 months under industrial composting conditions (typically 58\u00b0C \u00b1 2\u00b0C). Does not imply home-compostability. Materials meeting EN13432: PLA-CORN (Loop Cup), PBAT-STARCH (Root Bin Liners).\n---\nTake-back programme \u2014 Nomad Kite Harness v3 (NMD-HRN-V3). Accepted condition: worn but repairable or end-of-life. Credit: 25% of original price. Alternative: repair-not-replace via the Nomad repair service (\u00a325 flat fee). Recovery route: ghost-net nylon is mechanically recycled back into new harness shells \u2014 closed-loop. EVA foam padding is NOT recovered (currently sent to energy-from-waste).",
+      "hits": [
+        {
+          "text": "Material: PLA (polylactic acid). Bioplastic derived from corn starch (US Midwest feedstock for our supply). Industrially compostable under EN13432 (60\u00b0C, 60% humidity, 12 weeks). NOT home-compostable and NOT recyclable through standard plastic streams. Degradation threshold: 60\u00b0C \u2014 avoid hot liquids for direct-contact applications. Used in: Loop Reusable Coffee Cup body.",
+          "score": 0.556439995765686,
+          "source": "pentatonic-memory",
+          "doc_id": "material-pla-plant"
+        },
+        {
+          "text": "EN13432: European standard for industrially compostable packaging. Requires disintegration within 12 weeks and biodegradation within 6 months under industrial composting conditions (typically 58\u00b0C \u00b1 2\u00b0C). Does not imply home-compostability. Materials meeting EN13432: PLA-CORN (Loop Cup), PBAT-STARCH (Root Bin Liners).",
+          "score": 0.3441500663757324,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-en13432"
+        },
+        {
+          "text": "Take-back programme \u2014 Nomad Kite Harness v3 (NMD-HRN-V3). Accepted condition: worn but repairable or end-of-life. Credit: 25% of original price. Alternative: repair-not-replace via the Nomad repair service (\u00a325 flat fee). Recovery route: ghost-net nylon is mechanically recycled back into new harness shells \u2014 closed-loop. EVA foam padding is NOT recovered (currently sent to energy-from-waste).",
+          "score": 0.17527799308300018,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-kite-harness"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 118.2016359816771,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 265,
+      "query_tokens": 10,
+      "context_tokens": 255,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "pbat-local-authority",
+      "query": "Are Root bin liners accepted in UK council food-waste streams?",
+      "answer": "Material: PBAT (polybutylene adipate terephthalate) + corn starch biopolymer. Industrially compostable (EN13432). Home-compostability: NO \u2014 requires industrial temperatures. Used in: Root Bio Bin Liners. Regulatory note: accepted in most UK local-authority food-waste streams that accept certified compostable bags, but some authorities reject all bag types \u2014 check locally.\n---\nEN13432: European standard for industrially compostable packaging. Requires disintegration within 12 weeks and biodegradation within 6 months under industrial composting conditions (typically 58\u00b0C \u00b1 2\u00b0C). Does not imply home-compostability. Materials meeting EN13432: PLA-CORN (Loop Cup), PBAT-STARCH (Root Bin Liners).\n---\nTake-back programme \u2014 Luna Water Bottle 500ml (LUN-BTL-042). Accepted condition: any. Credit: 40% of original price as store credit (body) + 10% (lid, if returned intact). Process: drop-off at any UK Pentatonic pop-up, or mail-in via takeback label. Recovery route: steel body enters industrial recycling (not closed-loop); silicone lid is down-cycled into playground surfacing granulate.",
+      "hits": [
+        {
+          "text": "Material: PBAT (polybutylene adipate terephthalate) + corn starch biopolymer. Industrially compostable (EN13432). Home-compostability: NO \u2014 requires industrial temperatures. Used in: Root Bio Bin Liners. Regulatory note: accepted in most UK local-authority food-waste streams that accept certified compostable bags, but some authorities reject all bag types \u2014 check locally.",
+          "score": 0.6530179381370544,
+          "source": "pentatonic-memory",
+          "doc_id": "material-pbat-starch"
+        },
+        {
+          "text": "EN13432: European standard for industrially compostable packaging. Requires disintegration within 12 weeks and biodegradation within 6 months under industrial composting conditions (typically 58\u00b0C \u00b1 2\u00b0C). Does not imply home-compostability. Materials meeting EN13432: PLA-CORN (Loop Cup), PBAT-STARCH (Root Bin Liners).",
+          "score": 0.3650122880935669,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-en13432"
+        },
+        {
+          "text": "Take-back programme \u2014 Luna Water Bottle 500ml (LUN-BTL-042). Accepted condition: any. Credit: 40% of original price as store credit (body) + 10% (lid, if returned intact). Process: drop-off at any UK Pentatonic pop-up, or mail-in via takeback label. Recovery route: steel body enters industrial recycling (not closed-loop); silicone lid is down-cycled into playground surfacing granulate.",
+          "score": 0.2437605857849121,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-luna-bottle"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 124.21072801225819,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 269,
+      "query_tokens": 13,
+      "context_tokens": 256,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "ghost-net-source",
+      "query": "Which NGO supplies the ghost-net nylon for the Nomad Kite Harness?",
+      "answer": "Material: recycled nylon 6,6 from ghost nets. Feedstock: abandoned fishing nets retrieved by partner NGO (Healthy Seas, primarily Adriatic and Aegean waters). 92% recycled content, balance is processing aids. Tensile strength equivalent to virgin nylon 6,6. Used in: Nomad Kite Harness v3 outer shell.\n---\nTake-back programme \u2014 Nomad Kite Harness v3 (NMD-HRN-V3). Accepted condition: worn but repairable or end-of-life. Credit: 25% of original price. Alternative: repair-not-replace via the Nomad repair service (\u00a325 flat fee). Recovery route: ghost-net nylon is mechanically recycled back into new harness shells \u2014 closed-loop. EVA foam padding is NOT recovered (currently sent to energy-from-waste).\n---\nMaterial: 304 stainless steel with 65% recycled content. Source: mix of post-consumer scrap (mostly end-of-life appliances) and pre-consumer mill scrap. EPD (Environmental Product Declaration) available on request. Used in: Luna Water Bottle body, Nomad Kite Harness v3 spreader bar (316 variant with 55% recycled).",
+      "hits": [
+        {
+          "text": "Material: recycled nylon 6,6 from ghost nets. Feedstock: abandoned fishing nets retrieved by partner NGO (Healthy Seas, primarily Adriatic and Aegean waters). 92% recycled content, balance is processing aids. Tensile strength equivalent to virgin nylon 6,6. Used in: Nomad Kite Harness v3 outer shell.",
+          "score": 0.7283377051353455,
+          "source": "pentatonic-memory",
+          "doc_id": "material-nylon-ghost-net"
+        },
+        {
+          "text": "Take-back programme \u2014 Nomad Kite Harness v3 (NMD-HRN-V3). Accepted condition: worn but repairable or end-of-life. Credit: 25% of original price. Alternative: repair-not-replace via the Nomad repair service (\u00a325 flat fee). Recovery route: ghost-net nylon is mechanically recycled back into new harness shells \u2014 closed-loop. EVA foam padding is NOT recovered (currently sent to energy-from-waste).",
+          "score": 0.5987277626991272,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-kite-harness"
+        },
+        {
+          "text": "Material: 304 stainless steel with 65% recycled content. Source: mix of post-consumer scrap (mostly end-of-life appliances) and pre-consumer mill scrap. EPD (Environmental Product Declaration) available on request. Used in: Luna Water Bottle body, Nomad Kite Harness v3 spreader bar (316 variant with 55% recycled).",
+          "score": 0.40095099806785583,
+          "source": "pentatonic-memory",
+          "doc_id": "material-steel-304-recycled"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 123.56209798599593,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 253,
+      "query_tokens": 15,
+      "context_tokens": 238,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "kite-harness-foam-recovery",
+      "query": "Is the EVA foam padding in the Nomad Kite Harness recovered via take-back?",
+      "answer": "Take-back programme \u2014 Nomad Kite Harness v3 (NMD-HRN-V3). Accepted condition: worn but repairable or end-of-life. Credit: 25% of original price. Alternative: repair-not-replace via the Nomad repair service (\u00a325 flat fee). Recovery route: ghost-net nylon is mechanically recycled back into new harness shells \u2014 closed-loop. EVA foam padding is NOT recovered (currently sent to energy-from-waste).\n---\nMaterial: recycled nylon 6,6 from ghost nets. Feedstock: abandoned fishing nets retrieved by partner NGO (Healthy Seas, primarily Adriatic and Aegean waters). 92% recycled content, balance is processing aids. Tensile strength equivalent to virgin nylon 6,6. Used in: Nomad Kite Harness v3 outer shell.\n---\nMaterial: 304 stainless steel with 65% recycled content. Source: mix of post-consumer scrap (mostly end-of-life appliances) and pre-consumer mill scrap. EPD (Environmental Product Declaration) available on request. Used in: Luna Water Bottle body, Nomad Kite Harness v3 spreader bar (316 variant with 55% recycled).",
+      "hits": [
+        {
+          "text": "Take-back programme \u2014 Nomad Kite Harness v3 (NMD-HRN-V3). Accepted condition: worn but repairable or end-of-life. Credit: 25% of original price. Alternative: repair-not-replace via the Nomad repair service (\u00a325 flat fee). Recovery route: ghost-net nylon is mechanically recycled back into new harness shells \u2014 closed-loop. EVA foam padding is NOT recovered (currently sent to energy-from-waste).",
+          "score": 0.7535048723220825,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-kite-harness"
+        },
+        {
+          "text": "Material: recycled nylon 6,6 from ghost nets. Feedstock: abandoned fishing nets retrieved by partner NGO (Healthy Seas, primarily Adriatic and Aegean waters). 92% recycled content, balance is processing aids. Tensile strength equivalent to virgin nylon 6,6. Used in: Nomad Kite Harness v3 outer shell.",
+          "score": 0.5288693308830261,
+          "source": "pentatonic-memory",
+          "doc_id": "material-nylon-ghost-net"
+        },
+        {
+          "text": "Material: 304 stainless steel with 65% recycled content. Source: mix of post-consumer scrap (mostly end-of-life appliances) and pre-consumer mill scrap. EPD (Environmental Product Declaration) available on request. Used in: Luna Water Bottle body, Nomad Kite Harness v3 spreader bar (316 variant with 55% recycled).",
+          "score": 0.45828792452812195,
+          "source": "pentatonic-memory",
+          "doc_id": "material-steel-304-recycled"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 121.1606529832352,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 256,
+      "query_tokens": 18,
+      "context_tokens": 238,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "haven-sleeve-bottles-15",
+      "query": "Roughly how many plastic bottles go into a 15\" Haven Laptop Sleeve?",
+      "answer": "Material: 100% recycled PET felt. Feedstock: post-consumer PET bottles (UK kerbside collection). Approx 12 bottles per 13\" laptop sleeve, 18 bottles per 15\" laptop sleeve. No virgin polyester added. Recyclable at end-of-life via the Haven take-back programme.\n---\nTake-back programme \u2014 Haven Laptop Sleeves (HVN-SLV-13, HVN-SLV-15). Accepted condition: any. Credit: 30% of original price. Recovery route: rPET felt is shredded and reprocessed into non-woven interior linings for bag products. Closed-loop: PARTIALLY (same material, different product form).\n---\nGRS (Global Recycled Standard): third-party verification of recycled content, chain of custody, social and environmental practices, and chemical restrictions. Minimum 20% recycled content for a product to bear the GRS claim. Materials using GRS in our catalogue: rPP-OB (Atlas Phone Shell), rPET-FELT (Haven Sleeves).",
+      "hits": [
+        {
+          "text": "Material: 100% recycled PET felt. Feedstock: post-consumer PET bottles (UK kerbside collection). Approx 12 bottles per 13\" laptop sleeve, 18 bottles per 15\" laptop sleeve. No virgin polyester added. Recyclable at end-of-life via the Haven take-back programme.",
+          "score": 0.720193088054657,
+          "source": "pentatonic-memory",
+          "doc_id": "material-pet-felt-recycled"
+        },
+        {
+          "text": "Take-back programme \u2014 Haven Laptop Sleeves (HVN-SLV-13, HVN-SLV-15). Accepted condition: any. Credit: 30% of original price. Recovery route: rPET felt is shredded and reprocessed into non-woven interior linings for bag products. Closed-loop: PARTIALLY (same material, different product form).",
+          "score": 0.5128933191299438,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-haven-sleeve"
+        },
+        {
+          "text": "GRS (Global Recycled Standard): third-party verification of recycled content, chain of custody, social and environmental practices, and chemical restrictions. Minimum 20% recycled content for a product to bear the GRS claim. Materials using GRS in our catalogue: rPP-OB (Atlas Phone Shell), rPET-FELT (Haven Sleeves).",
+          "score": 0.3579912483692169,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-grs"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 119.05210700933821,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 228,
+      "query_tokens": 17,
+      "context_tokens": 211,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "cert-c2c-tiers",
+      "query": "What are the tiers of Cradle to Cradle certification?",
+      "answer": "Cradle to Cradle Certified: multi-attribute product certification covering material health, material reutilisation, renewable energy, water stewardship, and social fairness. Tiers (lowest to highest): Bronze, Silver, Gold, Platinum. Our holders: Atlas Phone Shell (Bronze).\n---\nMaterial: recycled ocean-bound polypropylene (rPP-OB). Feedstock: polypropylene waste collected within 50km of coastlines before it enters waterways. Certification: Global Recycled Standard (GRS) and OceanCycle. Typical recycled content: 95-99% (process additives make up the balance). Applications in our catalogue: Atlas Phone Shell (68% of shell mass), Luna bottle accessory clip.\n---\nMaterial: GOTS-certified organic cotton. Grown without synthetic pesticides or fertilisers. GOTS (Global Organic Textile Standard) also covers dyeing, finishing, and social criteria. Our supply: Portuguese mill CITEVE-certified, closed-loop water recycling. Used in: Pentatonic Crew Tee (100%), Canvas Tote Bag Large (100%).",
+      "hits": [
+        {
+          "text": "Cradle to Cradle Certified: multi-attribute product certification covering material health, material reutilisation, renewable energy, water stewardship, and social fairness. Tiers (lowest to highest): Bronze, Silver, Gold, Platinum. Our holders: Atlas Phone Shell (Bronze).",
+          "score": 0.674982488155365,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-cradle-to-cradle"
+        },
+        {
+          "text": "Material: recycled ocean-bound polypropylene (rPP-OB). Feedstock: polypropylene waste collected within 50km of coastlines before it enters waterways. Certification: Global Recycled Standard (GRS) and OceanCycle. Typical recycled content: 95-99% (process additives make up the balance). Applications in our catalogue: Atlas Phone Shell (68% of shell mass), Luna bottle accessory clip.",
+          "score": 0.25120842456817627,
+          "source": "pentatonic-memory",
+          "doc_id": "material-rpp-ocean"
+        },
+        {
+          "text": "Material: GOTS-certified organic cotton. Grown without synthetic pesticides or fertilisers. GOTS (Global Organic Textile Standard) also covers dyeing, finishing, and social criteria. Our supply: Portuguese mill CITEVE-certified, closed-loop water recycling. Used in: Pentatonic Crew Tee (100%), Canvas Tote Bag Large (100%).",
+          "score": 0.257526159286499,
+          "source": "pentatonic-memory",
+          "doc_id": "material-organic-cotton-gots"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 124.65522799175233,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 231,
+      "query_tokens": 12,
+      "context_tokens": 219,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "cert-c2c-our-products",
+      "query": "Which product in our catalogue holds a Cradle to Cradle certification?",
+      "answer": "Cradle to Cradle Certified: multi-attribute product certification covering material health, material reutilisation, renewable energy, water stewardship, and social fairness. Tiers (lowest to highest): Bronze, Silver, Gold, Platinum. Our holders: Atlas Phone Shell (Bronze).\n---\nMaterial: recycled ocean-bound polypropylene (rPP-OB). Feedstock: polypropylene waste collected within 50km of coastlines before it enters waterways. Certification: Global Recycled Standard (GRS) and OceanCycle. Typical recycled content: 95-99% (process additives make up the balance). Applications in our catalogue: Atlas Phone Shell (68% of shell mass), Luna bottle accessory clip.\n---\nGRS (Global Recycled Standard): third-party verification of recycled content, chain of custody, social and environmental practices, and chemical restrictions. Minimum 20% recycled content for a product to bear the GRS claim. Materials using GRS in our catalogue: rPP-OB (Atlas Phone Shell), rPET-FELT (Haven Sleeves).",
+      "hits": [
+        {
+          "text": "Cradle to Cradle Certified: multi-attribute product certification covering material health, material reutilisation, renewable energy, water stewardship, and social fairness. Tiers (lowest to highest): Bronze, Silver, Gold, Platinum. Our holders: Atlas Phone Shell (Bronze).",
+          "score": 0.5800541043281555,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-cradle-to-cradle"
+        },
+        {
+          "text": "Material: recycled ocean-bound polypropylene (rPP-OB). Feedstock: polypropylene waste collected within 50km of coastlines before it enters waterways. Certification: Global Recycled Standard (GRS) and OceanCycle. Typical recycled content: 95-99% (process additives make up the balance). Applications in our catalogue: Atlas Phone Shell (68% of shell mass), Luna bottle accessory clip.",
+          "score": 0.37584781646728516,
+          "source": "pentatonic-memory",
+          "doc_id": "material-rpp-ocean"
+        },
+        {
+          "text": "GRS (Global Recycled Standard): third-party verification of recycled content, chain of custody, social and environmental practices, and chemical restrictions. Minimum 20% recycled content for a product to bear the GRS claim. Materials using GRS in our catalogue: rPP-OB (Atlas Phone Shell), rPET-FELT (Haven Sleeves).",
+          "score": 0.356991171836853,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-grs"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 118.00192200462334,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 232,
+      "query_tokens": 14,
+      "context_tokens": 218,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "cert-grs-threshold",
+      "query": "What's the minimum recycled content for the GRS claim?",
+      "answer": "GRS (Global Recycled Standard): third-party verification of recycled content, chain of custody, social and environmental practices, and chemical restrictions. Minimum 20% recycled content for a product to bear the GRS claim. Materials using GRS in our catalogue: rPP-OB (Atlas Phone Shell), rPET-FELT (Haven Sleeves).\n---\nMaterial: recycled ocean-bound polypropylene (rPP-OB). Feedstock: polypropylene waste collected within 50km of coastlines before it enters waterways. Certification: Global Recycled Standard (GRS) and OceanCycle. Typical recycled content: 95-99% (process additives make up the balance). Applications in our catalogue: Atlas Phone Shell (68% of shell mass), Luna bottle accessory clip.\n---\nMaterial: 304 stainless steel with 65% recycled content. Source: mix of post-consumer scrap (mostly end-of-life appliances) and pre-consumer mill scrap. EPD (Environmental Product Declaration) available on request. Used in: Luna Water Bottle body, Nomad Kite Harness v3 spreader bar (316 variant with 55% recycled).",
+      "hits": [
+        {
+          "text": "GRS (Global Recycled Standard): third-party verification of recycled content, chain of custody, social and environmental practices, and chemical restrictions. Minimum 20% recycled content for a product to bear the GRS claim. Materials using GRS in our catalogue: rPP-OB (Atlas Phone Shell), rPET-FELT (Haven Sleeves).",
+          "score": 0.7092241048812866,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-grs"
+        },
+        {
+          "text": "Material: recycled ocean-bound polypropylene (rPP-OB). Feedstock: polypropylene waste collected within 50km of coastlines before it enters waterways. Certification: Global Recycled Standard (GRS) and OceanCycle. Typical recycled content: 95-99% (process additives make up the balance). Applications in our catalogue: Atlas Phone Shell (68% of shell mass), Luna bottle accessory clip.",
+          "score": 0.4388394057750702,
+          "source": "pentatonic-memory",
+          "doc_id": "material-rpp-ocean"
+        },
+        {
+          "text": "Material: 304 stainless steel with 65% recycled content. Source: mix of post-consumer scrap (mostly end-of-life appliances) and pre-consumer mill scrap. EPD (Environmental Product Declaration) available on request. Used in: Luna Water Bottle body, Nomad Kite Harness v3 spreader bar (316 variant with 55% recycled).",
+          "score": 0.2874589264392853,
+          "source": "pentatonic-memory",
+          "doc_id": "material-steel-304-recycled"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 117.17146699083969,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 245,
+      "query_tokens": 12,
+      "context_tokens": 233,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "cert-en13432-temp",
+      "query": "What industrial composting temperature does EN13432 require?",
+      "answer": "EN13432: European standard for industrially compostable packaging. Requires disintegration within 12 weeks and biodegradation within 6 months under industrial composting conditions (typically 58\u00b0C \u00b1 2\u00b0C). Does not imply home-compostability. Materials meeting EN13432: PLA-CORN (Loop Cup), PBAT-STARCH (Root Bin Liners).\n---\nMaterial: PBAT (polybutylene adipate terephthalate) + corn starch biopolymer. Industrially compostable (EN13432). Home-compostability: NO \u2014 requires industrial temperatures. Used in: Root Bio Bin Liners. Regulatory note: accepted in most UK local-authority food-waste streams that accept certified compostable bags, but some authorities reject all bag types \u2014 check locally.\n---\nMaterial: PLA (polylactic acid). Bioplastic derived from corn starch (US Midwest feedstock for our supply). Industrially compostable under EN13432 (60\u00b0C, 60% humidity, 12 weeks). NOT home-compostable and NOT recyclable through standard plastic streams. Degradation threshold: 60\u00b0C \u2014 avoid hot liquids for direct-contact applications. Used in: Loop Reusable Coffee Cup body.",
+      "hits": [
+        {
+          "text": "EN13432: European standard for industrially compostable packaging. Requires disintegration within 12 weeks and biodegradation within 6 months under industrial composting conditions (typically 58\u00b0C \u00b1 2\u00b0C). Does not imply home-compostability. Materials meeting EN13432: PLA-CORN (Loop Cup), PBAT-STARCH (Root Bin Liners).",
+          "score": 0.7106086015701294,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-en13432"
+        },
+        {
+          "text": "Material: PBAT (polybutylene adipate terephthalate) + corn starch biopolymer. Industrially compostable (EN13432). Home-compostability: NO \u2014 requires industrial temperatures. Used in: Root Bio Bin Liners. Regulatory note: accepted in most UK local-authority food-waste streams that accept certified compostable bags, but some authorities reject all bag types \u2014 check locally.",
+          "score": 0.44312480092048645,
+          "source": "pentatonic-memory",
+          "doc_id": "material-pbat-starch"
+        },
+        {
+          "text": "Material: PLA (polylactic acid). Bioplastic derived from corn starch (US Midwest feedstock for our supply). Industrially compostable under EN13432 (60\u00b0C, 60% humidity, 12 weeks). NOT home-compostable and NOT recyclable through standard plastic streams. Degradation threshold: 60\u00b0C \u2014 avoid hot liquids for direct-contact applications. Used in: Loop Reusable Coffee Cup body.",
+          "score": 0.3974917531013489,
+          "source": "pentatonic-memory",
+          "doc_id": "material-pla-plant"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 122.66165899927728,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 260,
+      "query_tokens": 11,
+      "context_tokens": 249,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "reg-uk-epr-scope",
+      "query": "Is Pentatonic in scope for UK EPR packaging reporting?",
+      "answer": "UK Extended Producer Responsibility (EPR) for packaging: from 2025, packaging producers must report and pay fees based on the weight and recyclability of packaging placed on the UK market. Modulated fees favour recyclable formats. Reporting threshold: \u00a31M turnover AND 25 tonnes of packaging/year. Pentatonic: IN SCOPE. Our filings: due every 6 months.\n---\nCalifornia SB 54 (Plastic Pollution Prevention and Packaging Producer Responsibility Act, 2022): requires all packaging sold in California to be recyclable or compostable by 2032, with 65% recycling rate and 25% source reduction. PRO (Producer Responsibility Organisation) fees apply. Pentatonic: IN SCOPE for US-bound shipments to California.\n---\nEU Ecodesign for Sustainable Products Regulation (ESPR): framework regulation (2024) introducing Digital Product Passports (DPPs), ecodesign requirements, and destruction-of-unsold-goods restrictions. First delegated acts expected 2026 for textiles, electronics, batteries. Pentatonic: PREPARING DPPs for textile and electronics accessory lines.",
+      "hits": [
+        {
+          "text": "UK Extended Producer Responsibility (EPR) for packaging: from 2025, packaging producers must report and pay fees based on the weight and recyclability of packaging placed on the UK market. Modulated fees favour recyclable formats. Reporting threshold: \u00a31M turnover AND 25 tonnes of packaging/year. Pentatonic: IN SCOPE. Our filings: due every 6 months.",
+          "score": 0.7774648070335388,
+          "source": "pentatonic-memory",
+          "doc_id": "reg-uk-epr"
+        },
+        {
+          "text": "California SB 54 (Plastic Pollution Prevention and Packaging Producer Responsibility Act, 2022): requires all packaging sold in California to be recyclable or compostable by 2032, with 65% recycling rate and 25% source reduction. PRO (Producer Responsibility Organisation) fees apply. Pentatonic: IN SCOPE for US-bound shipments to California.",
+          "score": 0.5754667520523071,
+          "source": "pentatonic-memory",
+          "doc_id": "reg-ca-sb54"
+        },
+        {
+          "text": "EU Ecodesign for Sustainable Products Regulation (ESPR): framework regulation (2024) introducing Digital Product Passports (DPPs), ecodesign requirements, and destruction-of-unsold-goods restrictions. First delegated acts expected 2026 for textiles, electronics, batteries. Pentatonic: PREPARING DPPs for textile and electronics accessory lines.",
+          "score": 0.4601591229438782,
+          "source": "pentatonic-memory",
+          "doc_id": "reg-eu-espr"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 151.14819398149848,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 240,
+      "query_tokens": 13,
+      "context_tokens": 227,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "reg-espr-dpp",
+      "query": "What are Digital Product Passports and when do they start applying?",
+      "answer": "EU Ecodesign for Sustainable Products Regulation (ESPR): framework regulation (2024) introducing Digital Product Passports (DPPs), ecodesign requirements, and destruction-of-unsold-goods restrictions. First delegated acts expected 2026 for textiles, electronics, batteries. Pentatonic: PREPARING DPPs for textile and electronics accessory lines.\n---\nCradle to Cradle Certified: multi-attribute product certification covering material health, material reutilisation, renewable energy, water stewardship, and social fairness. Tiers (lowest to highest): Bronze, Silver, Gold, Platinum. Our holders: Atlas Phone Shell (Bronze).\n---\nGRS (Global Recycled Standard): third-party verification of recycled content, chain of custody, social and environmental practices, and chemical restrictions. Minimum 20% recycled content for a product to bear the GRS claim. Materials using GRS in our catalogue: rPP-OB (Atlas Phone Shell), rPET-FELT (Haven Sleeves).",
+      "hits": [
+        {
+          "text": "EU Ecodesign for Sustainable Products Regulation (ESPR): framework regulation (2024) introducing Digital Product Passports (DPPs), ecodesign requirements, and destruction-of-unsold-goods restrictions. First delegated acts expected 2026 for textiles, electronics, batteries. Pentatonic: PREPARING DPPs for textile and electronics accessory lines.",
+          "score": 0.6394791007041931,
+          "source": "pentatonic-memory",
+          "doc_id": "reg-eu-espr"
+        },
+        {
+          "text": "Cradle to Cradle Certified: multi-attribute product certification covering material health, material reutilisation, renewable energy, water stewardship, and social fairness. Tiers (lowest to highest): Bronze, Silver, Gold, Platinum. Our holders: Atlas Phone Shell (Bronze).",
+          "score": 0.20145484805107117,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-cradle-to-cradle"
+        },
+        {
+          "text": "GRS (Global Recycled Standard): third-party verification of recycled content, chain of custody, social and environmental practices, and chemical restrictions. Minimum 20% recycled content for a product to bear the GRS claim. Materials using GRS in our catalogue: rPP-OB (Atlas Phone Shell), rPET-FELT (Haven Sleeves).",
+          "score": 0.1975991576910019,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-grs"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 227.2387290140614,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 219,
+      "query_tokens": 13,
+      "context_tokens": 206,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "reg-ca-sb54-deadline",
+      "query": "By when must packaging sold in California be recyclable or compostable?",
+      "answer": "California SB 54 (Plastic Pollution Prevention and Packaging Producer Responsibility Act, 2022): requires all packaging sold in California to be recyclable or compostable by 2032, with 65% recycling rate and 25% source reduction. PRO (Producer Responsibility Organisation) fees apply. Pentatonic: IN SCOPE for US-bound shipments to California.\n---\nUK Extended Producer Responsibility (EPR) for packaging: from 2025, packaging producers must report and pay fees based on the weight and recyclability of packaging placed on the UK market. Modulated fees favour recyclable formats. Reporting threshold: \u00a31M turnover AND 25 tonnes of packaging/year. Pentatonic: IN SCOPE. Our filings: due every 6 months.\n---\nEN13432: European standard for industrially compostable packaging. Requires disintegration within 12 weeks and biodegradation within 6 months under industrial composting conditions (typically 58\u00b0C \u00b1 2\u00b0C). Does not imply home-compostability. Materials meeting EN13432: PLA-CORN (Loop Cup), PBAT-STARCH (Root Bin Liners).",
+      "hits": [
+        {
+          "text": "California SB 54 (Plastic Pollution Prevention and Packaging Producer Responsibility Act, 2022): requires all packaging sold in California to be recyclable or compostable by 2032, with 65% recycling rate and 25% source reduction. PRO (Producer Responsibility Organisation) fees apply. Pentatonic: IN SCOPE for US-bound shipments to California.",
+          "score": 0.6578054428100586,
+          "source": "pentatonic-memory",
+          "doc_id": "reg-ca-sb54"
+        },
+        {
+          "text": "UK Extended Producer Responsibility (EPR) for packaging: from 2025, packaging producers must report and pay fees based on the weight and recyclability of packaging placed on the UK market. Modulated fees favour recyclable formats. Reporting threshold: \u00a31M turnover AND 25 tonnes of packaging/year. Pentatonic: IN SCOPE. Our filings: due every 6 months.",
+          "score": 0.36639103293418884,
+          "source": "pentatonic-memory",
+          "doc_id": "reg-uk-epr"
+        },
+        {
+          "text": "EN13432: European standard for industrially compostable packaging. Requires disintegration within 12 weeks and biodegradation within 6 months under industrial composting conditions (typically 58\u00b0C \u00b1 2\u00b0C). Does not imply home-compostability. Materials meeting EN13432: PLA-CORN (Loop Cup), PBAT-STARCH (Root Bin Liners).",
+          "score": 0.3397800326347351,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-en13432"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 167.85096400417387,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 241,
+      "query_tokens": 14,
+      "context_tokens": 227,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "reg-lithium-return",
+      "query": "Can lithium-containing devices be returned through our standard take-back label?",
+      "answer": "Lithium cell regulation: devices containing lithium cells are subject to UN 3480/3481 transport rules and cannot be returned via standard take-back labels. Pentatonic's policy: take-back for devices with lithium cells requires a dedicated labelled pack and courier pickup (not drop-in). Current catalogue impact: none (we do not sell lithium-containing products).\n---\nTake-back programme \u2014 Atlas Phone Shell (ATL-PHN-001). Accepted condition: any, including broken. Credit: 50% of original purchase price as store credit. Process: free returns label at pentatonic.com/takeback/ATL-PHN-001. Recovery route: shell is mechanically shredded, rPP-OB fraction recovered and fed back into the next production run. Closed-loop: YES.\n---\nTake-back programme \u2014 Luna Water Bottle 500ml (LUN-BTL-042). Accepted condition: any. Credit: 40% of original price as store credit (body) + 10% (lid, if returned intact). Process: drop-off at any UK Pentatonic pop-up, or mail-in via takeback label. Recovery route: steel body enters industrial recycling (not closed-loop); silicone lid is down-cycled into playground surfacing granulate.",
+      "hits": [
+        {
+          "text": "Lithium cell regulation: devices containing lithium cells are subject to UN 3480/3481 transport rules and cannot be returned via standard take-back labels. Pentatonic's policy: take-back for devices with lithium cells requires a dedicated labelled pack and courier pickup (not drop-in). Current catalogue impact: none (we do not sell lithium-containing products).",
+          "score": 0.6862860918045044,
+          "source": "pentatonic-memory",
+          "doc_id": "reg-hazardous-lithium"
+        },
+        {
+          "text": "Take-back programme \u2014 Atlas Phone Shell (ATL-PHN-001). Accepted condition: any, including broken. Credit: 50% of original purchase price as store credit. Process: free returns label at pentatonic.com/takeback/ATL-PHN-001. Recovery route: shell is mechanically shredded, rPP-OB fraction recovered and fed back into the next production run. Closed-loop: YES.",
+          "score": 0.3144684135913849,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-atlas-phone"
+        },
+        {
+          "text": "Take-back programme \u2014 Luna Water Bottle 500ml (LUN-BTL-042). Accepted condition: any. Credit: 40% of original price as store credit (body) + 10% (lid, if returned intact). Process: drop-off at any UK Pentatonic pop-up, or mail-in via takeback label. Recovery route: steel body enters industrial recycling (not closed-loop); silicone lid is down-cycled into playground surfacing granulate.",
+          "score": 0.3503788709640503,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-luna-bottle"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 123.69219597894698,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 267,
+      "query_tokens": 13,
+      "context_tokens": 254,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "closed-loop-threshold",
+      "query": "At what mass-recovery percentage is a SKU considered closed-loop in our system?",
+      "answer": "Product lifecycle stages in our system: Design \u2192 Materials sourcing \u2192 Manufacturing \u2192 Distribution \u2192 Use \u2192 End-of-use \u2192 Take-back \u2192 Recovery \u2192 (back to Materials sourcing or to Disposal). Each stage emits TES events the memory stack can index. Lifecycle closure: a SKU is 'closed-loop' when >80% of its mass re-enters Materials sourcing.\n---\nTake-back programme \u2014 Haven Laptop Sleeves (HVN-SLV-13, HVN-SLV-15). Accepted condition: any. Credit: 30% of original price. Recovery route: rPET felt is shredded and reprocessed into non-woven interior linings for bag products. Closed-loop: PARTIALLY (same material, different product form).\n---\nTake-back programme \u2014 Atlas Phone Shell (ATL-PHN-001). Accepted condition: any, including broken. Credit: 50% of original purchase price as store credit. Process: free returns label at pentatonic.com/takeback/ATL-PHN-001. Recovery route: shell is mechanically shredded, rPP-OB fraction recovered and fed back into the next production run. Closed-loop: YES.",
+      "hits": [
+        {
+          "text": "Product lifecycle stages in our system: Design \u2192 Materials sourcing \u2192 Manufacturing \u2192 Distribution \u2192 Use \u2192 End-of-use \u2192 Take-back \u2192 Recovery \u2192 (back to Materials sourcing or to Disposal). Each stage emits TES events the memory stack can index. Lifecycle closure: a SKU is 'closed-loop' when >80% of its mass re-enters Materials sourcing.",
+          "score": 0.5609380006790161,
+          "source": "pentatonic-memory",
+          "doc_id": "lifecycle-stages"
+        },
+        {
+          "text": "Take-back programme \u2014 Haven Laptop Sleeves (HVN-SLV-13, HVN-SLV-15). Accepted condition: any. Credit: 30% of original price. Recovery route: rPET felt is shredded and reprocessed into non-woven interior linings for bag products. Closed-loop: PARTIALLY (same material, different product form).",
+          "score": 0.36261260509490967,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-haven-sleeve"
+        },
+        {
+          "text": "Take-back programme \u2014 Atlas Phone Shell (ATL-PHN-001). Accepted condition: any, including broken. Credit: 50% of original purchase price as store credit. Process: free returns label at pentatonic.com/takeback/ATL-PHN-001. Recovery route: shell is mechanically shredded, rPP-OB fraction recovered and fed back into the next production run. Closed-loop: YES.",
+          "score": 0.36854949593544006,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-atlas-phone"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 125.86408699280582,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 249,
+      "query_tokens": 16,
+      "context_tokens": 233,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "rubric-customer-greenwash-claim",
+      "query": "A customer asks: 'Are your Loop cups just the same as plastic cups but with a greener label?' Write an honest response.",
+      "answer": "Material: PLA (polylactic acid). Bioplastic derived from corn starch (US Midwest feedstock for our supply). Industrially compostable under EN13432 (60\u00b0C, 60% humidity, 12 weeks). NOT home-compostable and NOT recyclable through standard plastic streams. Degradation threshold: 60\u00b0C \u2014 avoid hot liquids for direct-contact applications. Used in: Loop Reusable Coffee Cup body.\n---\nEN13432: European standard for industrially compostable packaging. Requires disintegration within 12 weeks and biodegradation within 6 months under industrial composting conditions (typically 58\u00b0C \u00b1 2\u00b0C). Does not imply home-compostability. Materials meeting EN13432: PLA-CORN (Loop Cup), PBAT-STARCH (Root Bin Liners).\n---\nMaterial: GOTS-certified organic cotton. Grown without synthetic pesticides or fertilisers. GOTS (Global Organic Textile Standard) also covers dyeing, finishing, and social criteria. Our supply: Portuguese mill CITEVE-certified, closed-loop water recycling. Used in: Pentatonic Crew Tee (100%), Canvas Tote Bag Large (100%).",
+      "hits": [
+        {
+          "text": "Material: PLA (polylactic acid). Bioplastic derived from corn starch (US Midwest feedstock for our supply). Industrially compostable under EN13432 (60\u00b0C, 60% humidity, 12 weeks). NOT home-compostable and NOT recyclable through standard plastic streams. Degradation threshold: 60\u00b0C \u2014 avoid hot liquids for direct-contact applications. Used in: Loop Reusable Coffee Cup body.",
+          "score": 0.467894971370697,
+          "source": "pentatonic-memory",
+          "doc_id": "material-pla-plant"
+        },
+        {
+          "text": "EN13432: European standard for industrially compostable packaging. Requires disintegration within 12 weeks and biodegradation within 6 months under industrial composting conditions (typically 58\u00b0C \u00b1 2\u00b0C). Does not imply home-compostability. Materials meeting EN13432: PLA-CORN (Loop Cup), PBAT-STARCH (Root Bin Liners).",
+          "score": 0.31806501746177673,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-en13432"
+        },
+        {
+          "text": "Material: GOTS-certified organic cotton. Grown without synthetic pesticides or fertilisers. GOTS (Global Organic Textile Standard) also covers dyeing, finishing, and social criteria. Our supply: Portuguese mill CITEVE-certified, closed-loop water recycling. Used in: Pentatonic Crew Tee (100%), Canvas Tote Bag Large (100%).",
+          "score": 0.2167273461818695,
+          "source": "pentatonic-memory",
+          "doc_id": "material-organic-cotton-gots"
+        }
+      ],
+      "correct": false,
+      "score": 0.5,
+      "grading_notes": "judge=0.50 \u2014 The answer clearly states that Loop cups are PLA and acknowledges the industrial compostability but misses the crucial p",
+      "search_time_ms": 124.63596399175003,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 264,
+      "query_tokens": 27,
+      "context_tokens": 237,
+      "judge_tokens_in": 592,
+      "judge_tokens_out": 48,
+      "judge_latency_ms": 1083.4475809633732
+    },
+    {
+      "task_id": "rubric-full-takeback-story-atlas",
+      "query": "Walk me through the complete material journey of an Atlas Phone Shell returned via take-back.",
+      "answer": "Take-back programme \u2014 Atlas Phone Shell (ATL-PHN-001). Accepted condition: any, including broken. Credit: 50% of original purchase price as store credit. Process: free returns label at pentatonic.com/takeback/ATL-PHN-001. Recovery route: shell is mechanically shredded, rPP-OB fraction recovered and fed back into the next production run. Closed-loop: YES.\n---\nCradle to Cradle Certified: multi-attribute product certification covering material health, material reutilisation, renewable energy, water stewardship, and social fairness. Tiers (lowest to highest): Bronze, Silver, Gold, Platinum. Our holders: Atlas Phone Shell (Bronze).\n---\nMaterial: recycled ocean-bound polypropylene (rPP-OB). Feedstock: polypropylene waste collected within 50km of coastlines before it enters waterways. Certification: Global Recycled Standard (GRS) and OceanCycle. Typical recycled content: 95-99% (process additives make up the balance). Applications in our catalogue: Atlas Phone Shell (68% of shell mass), Luna bottle accessory clip.",
+      "hits": [
+        {
+          "text": "Take-back programme \u2014 Atlas Phone Shell (ATL-PHN-001). Accepted condition: any, including broken. Credit: 50% of original purchase price as store credit. Process: free returns label at pentatonic.com/takeback/ATL-PHN-001. Recovery route: shell is mechanically shredded, rPP-OB fraction recovered and fed back into the next production run. Closed-loop: YES.",
+          "score": 0.693593442440033,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-atlas-phone"
+        },
+        {
+          "text": "Cradle to Cradle Certified: multi-attribute product certification covering material health, material reutilisation, renewable energy, water stewardship, and social fairness. Tiers (lowest to highest): Bronze, Silver, Gold, Platinum. Our holders: Atlas Phone Shell (Bronze).",
+          "score": 0.46858692169189453,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-cradle-to-cradle"
+        },
+        {
+          "text": "Material: recycled ocean-bound polypropylene (rPP-OB). Feedstock: polypropylene waste collected within 50km of coastlines before it enters waterways. Certification: Global Recycled Standard (GRS) and OceanCycle. Typical recycled content: 95-99% (process additives make up the balance). Applications in our catalogue: Atlas Phone Shell (68% of shell mass), Luna bottle accessory clip.",
+          "score": 0.44680625200271606,
+          "source": "pentatonic-memory",
+          "doc_id": "material-rpp-ocean"
+        }
+      ],
+      "correct": false,
+      "score": 0.5,
+      "grading_notes": "judge=0.50 \u2014 The answer covers stages 2-3 (50% store credit issued and shell is mechanically shredded) but lacks information on the r",
+      "search_time_ms": 128.0854009964969,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 248,
+      "query_tokens": 17,
+      "context_tokens": 231,
+      "judge_tokens_in": 559,
+      "judge_tokens_out": 46,
+      "judge_latency_ms": 1084.0106250047684
+    },
+    {
+      "task_id": "rubric-regulatory-scope-briefing",
+      "query": "Give me a short regulatory briefing on what applies to Pentatonic in the UK, EU, and California.",
+      "answer": "EU Ecodesign for Sustainable Products Regulation (ESPR): framework regulation (2024) introducing Digital Product Passports (DPPs), ecodesign requirements, and destruction-of-unsold-goods restrictions. First delegated acts expected 2026 for textiles, electronics, batteries. Pentatonic: PREPARING DPPs for textile and electronics accessory lines.\n---\nCalifornia SB 54 (Plastic Pollution Prevention and Packaging Producer Responsibility Act, 2022): requires all packaging sold in California to be recyclable or compostable by 2032, with 65% recycling rate and 25% source reduction. PRO (Producer Responsibility Organisation) fees apply. Pentatonic: IN SCOPE for US-bound shipments to California.\n---\nLithium cell regulation: devices containing lithium cells are subject to UN 3480/3481 transport rules and cannot be returned via standard take-back labels. Pentatonic's policy: take-back for devices with lithium cells requires a dedicated labelled pack and courier pickup (not drop-in). Current catalogue impact: none (we do not sell lithium-containing products).",
+      "hits": [
+        {
+          "text": "EU Ecodesign for Sustainable Products Regulation (ESPR): framework regulation (2024) introducing Digital Product Passports (DPPs), ecodesign requirements, and destruction-of-unsold-goods restrictions. First delegated acts expected 2026 for textiles, electronics, batteries. Pentatonic: PREPARING DPPs for textile and electronics accessory lines.",
+          "score": 0.41547873616218567,
+          "source": "pentatonic-memory",
+          "doc_id": "reg-eu-espr"
+        },
+        {
+          "text": "California SB 54 (Plastic Pollution Prevention and Packaging Producer Responsibility Act, 2022): requires all packaging sold in California to be recyclable or compostable by 2032, with 65% recycling rate and 25% source reduction. PRO (Producer Responsibility Organisation) fees apply. Pentatonic: IN SCOPE for US-bound shipments to California.",
+          "score": 0.4902128577232361,
+          "source": "pentatonic-memory",
+          "doc_id": "reg-ca-sb54"
+        },
+        {
+          "text": "Lithium cell regulation: devices containing lithium cells are subject to UN 3480/3481 transport rules and cannot be returned via standard take-back labels. Pentatonic's policy: take-back for devices with lithium cells requires a dedicated labelled pack and courier pickup (not drop-in). Current catalogue impact: none (we do not sell lithium-containing products).",
+          "score": 0.36130332946777344,
+          "source": "pentatonic-memory",
+          "doc_id": "reg-hazardous-lithium"
+        }
+      ],
+      "correct": false,
+      "score": 0.8,
+      "grading_notes": "judge=0.80 \u2014 Covered two out of three jurisdictions accurately, but missed UK EPR packaging reporting details.",
+      "search_time_ms": 126.33425000240095,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 243,
+      "query_tokens": 22,
+      "context_tokens": 221,
+      "judge_tokens_in": 572,
+      "judge_tokens_out": 32,
+      "judge_latency_ms": 658.5470380187035
+    },
+    {
+      "task_id": "entity-closed-loop-skus",
+      "query": "Which SKUs in our catalogue achieve closed-loop material recovery?",
+      "answer": "Product lifecycle stages in our system: Design \u2192 Materials sourcing \u2192 Manufacturing \u2192 Distribution \u2192 Use \u2192 End-of-use \u2192 Take-back \u2192 Recovery \u2192 (back to Materials sourcing or to Disposal). Each stage emits TES events the memory stack can index. Lifecycle closure: a SKU is 'closed-loop' when >80% of its mass re-enters Materials sourcing.\n---\nTake-back programme \u2014 Haven Laptop Sleeves (HVN-SLV-13, HVN-SLV-15). Accepted condition: any. Credit: 30% of original price. Recovery route: rPET felt is shredded and reprocessed into non-woven interior linings for bag products. Closed-loop: PARTIALLY (same material, different product form).\n---\nMaterial: GOTS-certified organic cotton. Grown without synthetic pesticides or fertilisers. GOTS (Global Organic Textile Standard) also covers dyeing, finishing, and social criteria. Our supply: Portuguese mill CITEVE-certified, closed-loop water recycling. Used in: Pentatonic Crew Tee (100%), Canvas Tote Bag Large (100%).",
+      "hits": [
+        {
+          "text": "Product lifecycle stages in our system: Design \u2192 Materials sourcing \u2192 Manufacturing \u2192 Distribution \u2192 Use \u2192 End-of-use \u2192 Take-back \u2192 Recovery \u2192 (back to Materials sourcing or to Disposal). Each stage emits TES events the memory stack can index. Lifecycle closure: a SKU is 'closed-loop' when >80% of its mass re-enters Materials sourcing.",
+          "score": 0.5431143045425415,
+          "source": "pentatonic-memory",
+          "doc_id": "lifecycle-stages"
+        },
+        {
+          "text": "Take-back programme \u2014 Haven Laptop Sleeves (HVN-SLV-13, HVN-SLV-15). Accepted condition: any. Credit: 30% of original price. Recovery route: rPET felt is shredded and reprocessed into non-woven interior linings for bag products. Closed-loop: PARTIALLY (same material, different product form).",
+          "score": 0.49504008889198303,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-haven-sleeve"
+        },
+        {
+          "text": "Material: GOTS-certified organic cotton. Grown without synthetic pesticides or fertilisers. GOTS (Global Organic Textile Standard) also covers dyeing, finishing, and social criteria. Our supply: Portuguese mill CITEVE-certified, closed-loop water recycling. Used in: Pentatonic Crew Tee (100%), Canvas Tote Bag Large (100%).",
+          "score": 0.40049946308135986,
+          "source": "pentatonic-memory",
+          "doc_id": "material-organic-cotton-gots"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "no expected_substrings set",
+      "search_time_ms": 126.95574399549514,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 233,
+      "query_tokens": 12,
+      "context_tokens": 221,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "entity-home-compostable",
+      "query": "List any materials in our catalogue that are home-compostable.",
+      "answer": "Material: PBAT (polybutylene adipate terephthalate) + corn starch biopolymer. Industrially compostable (EN13432). Home-compostability: NO \u2014 requires industrial temperatures. Used in: Root Bio Bin Liners. Regulatory note: accepted in most UK local-authority food-waste streams that accept certified compostable bags, but some authorities reject all bag types \u2014 check locally.\n---\nEN13432: European standard for industrially compostable packaging. Requires disintegration within 12 weeks and biodegradation within 6 months under industrial composting conditions (typically 58\u00b0C \u00b1 2\u00b0C). Does not imply home-compostability. Materials meeting EN13432: PLA-CORN (Loop Cup), PBAT-STARCH (Root Bin Liners).\n---\nMaterial: PLA (polylactic acid). Bioplastic derived from corn starch (US Midwest feedstock for our supply). Industrially compostable under EN13432 (60\u00b0C, 60% humidity, 12 weeks). NOT home-compostable and NOT recyclable through standard plastic streams. Degradation threshold: 60\u00b0C \u2014 avoid hot liquids for direct-contact applications. Used in: Loop Reusable Coffee Cup body.",
+      "hits": [
+        {
+          "text": "Material: PBAT (polybutylene adipate terephthalate) + corn starch biopolymer. Industrially compostable (EN13432). Home-compostability: NO \u2014 requires industrial temperatures. Used in: Root Bio Bin Liners. Regulatory note: accepted in most UK local-authority food-waste streams that accept certified compostable bags, but some authorities reject all bag types \u2014 check locally.",
+          "score": 0.49938520789146423,
+          "source": "pentatonic-memory",
+          "doc_id": "material-pbat-starch"
+        },
+        {
+          "text": "EN13432: European standard for industrially compostable packaging. Requires disintegration within 12 weeks and biodegradation within 6 months under industrial composting conditions (typically 58\u00b0C \u00b1 2\u00b0C). Does not imply home-compostability. Materials meeting EN13432: PLA-CORN (Loop Cup), PBAT-STARCH (Root Bin Liners).",
+          "score": 0.450564444065094,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-en13432"
+        },
+        {
+          "text": "Material: PLA (polylactic acid). Bioplastic derived from corn starch (US Midwest feedstock for our supply). Industrially compostable under EN13432 (60\u00b0C, 60% humidity, 12 weeks). NOT home-compostable and NOT recyclable through standard plastic streams. Degradation threshold: 60\u00b0C \u2014 avoid hot liquids for direct-contact applications. Used in: Loop Reusable Coffee Cup body.",
+          "score": 0.48974719643592834,
+          "source": "pentatonic-memory",
+          "doc_id": "material-pla-plant"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/3: ['none']; forbidden substring(s) present: ['PLA', 'PBAT']",
+      "search_time_ms": 131.41335101681761,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 262,
+      "query_tokens": 13,
+      "context_tokens": 249,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    }
+  ]
+}

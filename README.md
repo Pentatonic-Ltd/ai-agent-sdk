@@ -27,7 +27,7 @@ Two products that share one TES account, one install line, and one dashboard:
 
 | Product | What it does | When you want it |
 |---|---|---|
-| **Memory** | Persistent, searchable memory for your AI agent — semantic + keyword retrieval, distillation, decay, repo onboarding. Runs locally (Docker) or hosted (TES). | You want your agent to remember conversations, preferences, and codebase context across sessions. |
+| **Memory** | Persistent, searchable memory for your AI agent — 7-layer hybrid retrieval (BM25 + vector + KG + reranker), repo onboarding via references. Runs locally (Docker) or hosted (TES). | You want your agent to remember conversations, preferences, and codebase context across sessions. |
 | **Observability** | Wrap your LLM client and capture every call — tokens, tool calls, latency, content. Events flow to TES for the dashboard, analytics, and search attribution. | You want to know what your agent is actually doing in production. |
 
 Both products are sold separately, but you can use either, both, or neither. Plugins for **Claude Code** and **OpenClaw** install everything at once if you'd rather skip the SDK glue.
@@ -44,10 +44,9 @@ Both products are sold separately, but you can use either, both, or neither. Plu
 
 - [TES — the platform](#tes--the-platform)
 - [Memory](#memory)
-  - [Hosted (cloud)](#hosted-cloud)
   - [Local (self-hosted)](#local-self-hosted)
+  - [Hosted (cloud)](#hosted-cloud)
   - [Use as a library](#use-as-a-library)
-  - [Distilled memory](#distilled-memory)
 - [Observability](#observability)
   - [Wrap your LLM client](#wrap-your-llm-client)
   - [Supported providers](#supported-providers)
@@ -87,16 +86,132 @@ To check connection state later: `npx @pentatonic-ai/ai-agent-sdk whoami`. To po
 
 ## Memory
 
-Persistent, searchable memory for AI agents. Multi-signal retrieval (vector + BM25 + recency + frequency), HyDE query expansion, atomic-fact distillation, and four memory layers (episodic, semantic, procedural, working).
+Persistent, searchable memory for AI agents. Backed by a 7-layer hybrid retrieval engine — BM25 keyword (L0), core files (L1), HybridRAG orchestrator (L2), Knowledge Graph entities (L3), vector index (L4), comms-namespace vectors (L5), and a document store with cross-encoder reranker (L6). Reciprocal Rank Fusion stitches them at query time.
 
-Two deployment modes — same API, same plugins, same library:
+Same engine, same wire format (`/store`, `/search`, `/forget`, `/store-batch`, `/health`), two deployment modes:
+
+### Local (self-hosted)
+
+Run the full engine stack on your own machine via Docker. No API keys, no cloud, fully offline. Embeddings come from your local Ollama; quality depends on the model you pull (768d `nomic-embed-text` is the default and works fine on a laptop).
+
+**Prerequisites**
+
+- Docker + Docker Compose v2
+- Ollama installed on the host (https://ollama.com)
+- A pulled embedding model: `ollama pull nomic-embed-text`
+
+If you'll run Claude Code (or anything else) inside a Docker container that needs to reach the engine, **make Ollama listen on all interfaces** so containers can reach it via `host.docker.internal`:
+
+```bash
+sudo mkdir -p /etc/systemd/system/ollama.service.d
+echo -e '[Service]\nEnvironment="OLLAMA_HOST=0.0.0.0:11434"' \
+  | sudo tee /etc/systemd/system/ollama.service.d/override.conf
+sudo systemctl daemon-reload
+sudo systemctl restart ollama
+```
+
+**Bring up the engine**
+
+```bash
+git clone https://github.com/Pentatonic-Ltd/ai-agent-sdk.git
+cd ai-agent-sdk/packages/memory-engine
+
+# Default .env points at Ollama on the host. Edit if your Ollama is
+# elsewhere or you want to use a higher-quality model (e.g. mxbai-embed-large
+# at 1024d → set EMBED_DIM=1024 and EMBED_MODEL_NAME=mxbai-embed-large).
+cat > .env <<'EOF'
+PME_NV_EMBED_ENABLED=false
+NV_EMBED_URL=http://host.docker.internal:11434/v1/embeddings
+EMBED_MODEL_NAME=nomic-embed-text
+EMBED_DIM=768
+OLLAMA_DIM=768
+PME_OLLAMA_URL=http://host.docker.internal:11434/api/embeddings
+PME_EMBED_MODEL=nomic-embed-text
+L5_OLLAMA_EMBED_URL=http://host.docker.internal:11434/api/embed
+L5_OLLAMA_EMBED_MODEL=nomic-embed-text
+PME_HYDE_ENABLED=false
+PME_RERANK_ENABLED=true
+PME_PORT=8099
+CLIENT_ID=local
+NEO4J_AUTH=neo4j/local-dev-pw
+NEO4J_PASSWORD=local-dev-pw
+EOF
+
+docker compose up -d --scale nv-embed=0
+```
+
+First run pulls images and builds engine containers — ~10–15 min. Subsequent restarts are seconds.
+
+**Verify**
+
+```bash
+curl -s http://localhost:8099/health | jq
+# Status should be "ok" or "degraded" with most layers reporting ok.
+
+curl -sX POST http://localhost:8099/store \
+  -H "content-type: application/json" \
+  -d '{"content":"hello memory","metadata":{"arena":"local"}}' | jq
+
+curl -sX POST http://localhost:8099/search \
+  -H "content-type: application/json" \
+  -d '{"query":"hello","limit":3,"min_score":0.001}' | jq
+```
+
+If `/search` returns the row from `/store`, the engine is live.
+
+**Connect Claude Code**
+
+The `tes-memory` plugin's hooks already speak the engine's wire format. Two steps:
+
+1. Install the plugin (once):
+   ```
+   /plugin marketplace add Pentatonic-Ltd/ai-agent-sdk
+   /plugin install tes-memory@pentatonic-ai
+   ```
+2. Point it at your local engine. Edit `~/.claude-pentatonic/tes-memory.local.md` (create if missing):
+   ```yaml
+   ---
+   mode: local
+   memory_url: http://localhost:8099
+   ---
+   ```
+3. Reload: `/reload-plugins` (or restart Claude Code if status reports stale state — MCP server processes need a full restart to pick up plugin updates).
+
+Verify:
+
+```
+/tes-memory:tes-status
+```
+
+Should report `✓ Connected to local memory engine`. Now every prompt auto-searches engine memory and every turn auto-stores. The footer `🧠 Matched N memories from Pentatonic Memory` shows hits.
+
+**Seed memory from your codebase or docs (optional)**
+
+Drop the cold-start problem on day one by pre-populating the engine with references to your code/docs:
+
+```bash
+MEMORY_ENGINE_URL=http://localhost:8099 \
+  npx @pentatonic-ai/ai-agent-sdk ingest ~/code/my-project
+```
+
+References-mode by default — stores path + signature pointers, not full file contents. See [Repository Onboarding](#repository-onboarding-corpus-ingest) for details.
+
+**Tuning**
+
+Change embedding model: pull a different one, edit `EMBED_MODEL_NAME` + `EMBED_DIM` in `.env`, then `docker compose down -v && docker compose up -d --scale nv-embed=0` (the `-v` is required because Milvus collections are dim-locked at creation; switching dims means recreating).
+
+| Model | Dim | Notes |
+|---|---|---|
+| `nomic-embed-text` (default) | 768 | Smallest; works on any laptop |
+| `mxbai-embed-large` | 1024 | Better recall; ~600 MB download |
+| `nv-embed-v2` (via gateway) | 4096 | Production-grade; needs a hosted endpoint or GPU |
 
 ### Hosted (cloud)
 
-Run on Pentatonic's infrastructure. Higher-dimensional embeddings (NV-Embed-v2, 4096d), per-tenant Postgres, team-wide shared memory, the dashboard.
+Run on Pentatonic's infrastructure. NV-Embed-v2 (4096d) embeddings via the AI gateway, managed Postgres/Neo4j/Qdrant/Milvus, dashboard. The engine still ships in this repo — hosted just deploys it for you.
 
 ```bash
-# 1. Get a TES account (see [TES — the platform](#tes--the-platform))
+# 1. Get a TES account
 npx @pentatonic-ai/ai-agent-sdk login
 
 # 2. Install the SDK
@@ -104,46 +219,22 @@ npm install @pentatonic-ai/ai-agent-sdk
 # or: pip install pentatonic-ai-agent-sdk
 ```
 
-That's it — memory operations now go through TES.
-
-### Local (self-hosted)
-
-Run the full stack on your own machine. PostgreSQL + pgvector + Ollama in Docker. No API keys, no cloud. Pi 5 with 8GB RAM works fine (`nomic-embed-text` ~300MB + `llama3.2:3b` ~2GB).
-
-```bash
-npx @pentatonic-ai/ai-agent-sdk memory
-```
-
-This starts Postgres + pgvector, Ollama, and the memory server. It pulls embedding and chat models, and writes the local config.
-
-Change models:
-
-```bash
-EMBEDDING_MODEL=mxbai-embed-large LLM_MODEL=qwen2.5:7b npx @pentatonic-ai/ai-agent-sdk memory
-```
+Memory operations route through TES → engine. No client-side change between local and hosted.
 
 ### Use as a library
 
 ```javascript
-import { createMemorySystem } from '@pentatonic-ai/ai-agent-sdk/memory';
+import { engineAdapter, ingestCorpus } from '@pentatonic-ai/ai-agent-sdk/memory/corpus';
 
-const memory = createMemorySystem({
-  db: pgPool,
-  embedding: { url: 'http://localhost:11434/v1', model: 'nomic-embed-text' },
-  llm: { url: 'http://localhost:11434/v1', model: 'llama3.2:3b' },
+const adapter = engineAdapter({
+  engineUrl: 'http://localhost:8099',
+  arena: 'my-app',
 });
-
-await memory.migrate();
-await memory.ensureLayers('my-app');
-await memory.ingest('User prefers dark mode', { clientId: 'my-app' });
-const results = await memory.search('preferences', { clientId: 'my-app' });
+await adapter.init();
+await adapter.ingestChunk('User prefers dark mode', { kind: 'note' });
 ```
 
-### Distilled memory
-
-A background LLM pass extracts atomic facts from each raw turn and stores each as its own node in the semantic layer, linked back to the source. A query like *"what does Phil drink?"* matches *"Phil drinks cortado"* more reliably than a mixed paragraph covering food, drinks, and hobbies. Default-on; the raw turn is still preserved.
-
-> **Store latency note (v0.5.4+):** on the local memory server, `store_memory` now awaits distillation before returning instead of running it fire-and-forget. This fixed a bug where distillation was being killed mid-flight (atoms never got embeddings, so they were unreachable by semantic search), but it means stores now take as long as your configured LLM takes to produce atoms — typically 5–30s on `llama3.2:3b`, up to the `chat()` timeout ceiling (60s default, overridable via `opts.timeout`). Cloudflare Worker deployments pass `ctx.waitUntil` and still return fast. Set `opts.distill: false` on the ingest call if you want the old fast-return behaviour at the cost of no atoms.
+For raw `/search` and `/store`, just `fetch()` against `${engineUrl}/search` etc. The wire format is documented in `packages/memory-engine/docs/MIGRATION.md`.
 
 ---
 
@@ -211,30 +302,31 @@ If you use Claude Code or OpenClaw, the plugin gives you both products at once �
 
 Works with both local and hosted memory. Install once, switch modes via config.
 
-For hosted TES, run `login` first so credentials exist when the plugin starts up:
-
-```bash
-npx @pentatonic-ai/ai-agent-sdk login
-```
-
-Then in Claude Code:
-
 ```
 /plugin marketplace add Pentatonic-Ltd/ai-agent-sdk
 /plugin install tes-memory@pentatonic-ai
 ```
 
-The plugin's MCP server, hooks, and tools auto-discover the credentials at `~/.config/tes/credentials.json`. To verify the connection later, ask Claude `/tes-memory:tes-status`.
+**Local engine** — bring up the engine first ([Memory > Local](#local-self-hosted)), then point the plugin at it. Edit `~/.claude-pentatonic/tes-memory.local.md`:
 
-For local memory:
-```bash
-npx @pentatonic-ai/ai-agent-sdk memory
+```yaml
+---
+mode: local
+memory_url: http://localhost:8099
+---
 ```
 
-**What it tracks:**
-- Every conversation turn — user messages, assistant responses, tool calls, duration
-- Automatic memory search — relevant memories injected as context on every prompt
-- Automatic memory storage — every turn stored with embeddings and HyDE queries
+**Hosted TES** — run `login` once, the plugin auto-discovers `~/.config/tes/credentials.json`:
+
+```bash
+npx @pentatonic-ai/ai-agent-sdk login
+```
+
+Either way, verify with `/tes-memory:tes-status` in Claude Code. The plugin's MCP server, hooks, and tools all read the same config.
+
+**What it tracks (auto, every turn):**
+- Memory search at prompt time — relevant memories injected as context
+- Memory store at turn end — every conversation turn persisted
 - Token usage — input, output, cache read, cache creation tokens per turn
 
 ### OpenClaw
@@ -257,7 +349,7 @@ Or use the CLI directly:
 openclaw pentatonic-memory local
 ```
 
-**What it does:** OpenClaw's context engine hooks fire on every lifecycle event — `ingest` stores user/assistant messages with embeddings + HyDE + distillation; `assemble` injects relevant memories as system-prompt context before every model run; `compact` runs the decay cycle when the context window fills; `after-turn` consolidates high-access memories into the semantic layer. Plus agent-callable tools: `memory_search`, `memory_store`, `memory_layers`.
+**What it does:** OpenClaw's context engine hooks fire on every lifecycle event — `ingest` stores user/assistant messages via the engine's `/store` endpoint (BM25 + vector + KG indexing in parallel); `assemble` calls `/search` to inject relevant memories as system-prompt context; `compact` and `after-turn` are managed by the engine's own decay/consolidation. Plus agent-callable tools: `memory_search`, `memory_store`, `memory_layers`.
 
 After setup, config lives in `~/.openclaw/pentatonic-memory.json`. To switch modes, run setup again or edit directly.
 
@@ -271,11 +363,7 @@ You can also configure via `openclaw.json`:
       "pentatonic-memory": {
         "enabled": true,
         "config": {
-          "database_url": "postgres://memory:memory@localhost:5433/memory",
-          "embedding_url": "http://localhost:11435/v1",
-          "embedding_model": "nomic-embed-text",
-          "llm_url": "http://localhost:11435/v1",
-          "llm_model": "llama3.2:3b"
+          "memory_url": "http://localhost:8099"
         }
       }
     }
@@ -404,9 +492,11 @@ import { normalizeResponse } from "@pentatonic-ai/ai-agent-sdk";
 const { content, model, usage, toolCalls } = normalizeResponse(openaiResponse);
 ```
 
-### `createMemorySystem(deps)` — Memory
+### `engineAdapter(config)` — Memory
 
-Returns a memory instance with `.migrate()`, `.ensureLayers(clientId)`, `.ingest(content, opts)`, `.search(query, opts)`, and more. See [Use as a library](#use-as-a-library).
+Thin HTTP client for the memory engine. `config = { engineUrl, arena, apiKey? }`. Returns `{ ingestChunk(content, metadata), deleteByCorpusFile(repoAbs, relPath), init() }`. See [Use as a library](#use-as-a-library).
+
+For raw `/store` / `/search` calls, just `fetch()` against `${engineUrl}` directly — the wire format is documented in `packages/memory-engine/docs/MIGRATION.md`.
 
 ---
 
@@ -432,9 +522,9 @@ npx @pentatonic-ai/ai-agent-sdk doctor --path local
 What gets checked:
 
 - **Universal** — Node version, disk space, SDK config-file permissions
-- **Local Memory** — Postgres + pgvector + migrations, embedding/LLM endpoints, memory server port
+- **Local engine** — engine `/health`, per-layer health (L0–L6), embedding endpoint reachability
 - **Hosted TES** — endpoint reachable, API key authenticates
-- **Self-hosted platform** — HybridRAG, Qdrant, Neo4j, vLLM (each optional, skipped when its env var is unset)
+- **Plugin config** — `tes-memory.local.md` parses, `memory_url` reachable
 
 ### Plugins
 
@@ -466,24 +556,27 @@ See [`packages/doctor/README.md`](packages/doctor/README.md) for the full plugin
 ## Architecture
 
 ```
-                    Your code
-                        |
-        +---------------+---------------+
-        |                               |
-   Memory product              Observability product
-   (createMemorySystem)         (TESClient.wrap)
-        |                               |
-        |                               |
-   +----+----+                          |
-   |         |                          |
- Local    Hosted ---------------------- TES
- (Docker)              (Cloudflare cloud)
-   |                          |
-PG+pgvector              PG, R2, Queues,
-+ Ollama                 Workers, Modules
-                         (deep-memory,
-                          conversation-
-                          analytics, …)
+                    Your code / Claude Code plugin / OpenClaw plugin
+                                  |
+              +-------------------+--------------------+
+              |                                        |
+         Memory product                        Observability product
+         (engine HTTP API)                     (TESClient.wrap)
+              |                                        |
+              | POST /store /search /forget            | CHAT_TURN events
+              ▼                                        ▼
+      +----------------+                       +-----------------+
+      | memory engine  |                       |       TES       |
+      |  (compat shim) |                       | (Cloudflare)    |
+      +----------------+                       |  Workers, R2,   |
+              |                                |  Queues, Pages  |
+   +----------+----------+                     +--------+--------+
+   |                     |                              |
+ Local                Hosted ---------------------------+
+ (your machine)    (Pentatonic-managed)
+   |                     |
+docker compose      AWS/GCP container cluster
++ host Ollama       + AI gateway (NV-Embed-v2)
 ```
 
 Plugins (Claude Code, OpenClaw) are lightweight integrations on top of both products — they call into memory and emit observability events on the user's behalf.

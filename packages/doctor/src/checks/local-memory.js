@@ -1,17 +1,23 @@
 /**
- * Local Memory path checks.
+ * Local memory engine checks.
  *
- * Targets the stack started by `npx @pentatonic-ai/ai-agent-sdk memory`:
- *   - PostgreSQL with pgvector
- *   - Ollama (or any OpenAI-compatible embedding + chat endpoint)
- *   - Memory MCP server on PORT (default 3333)
+ * Targets the engine stack started by:
+ *   cd packages/memory-engine && docker compose up -d
  *
- * Configuration is read from env vars used by packages/memory/src/server.js
- * (DATABASE_URL, EMBEDDING_URL/MODEL, LLM_URL/MODEL, PORT, API_KEY) so this
- * stays drift-free with the actual server.
+ * The engine exposes a compat HTTP shim on port 8099 (or whatever
+ * memory_url is set to in the user's plugin config). All checks are
+ * just HTTP calls + plugin-config parsing — no direct Postgres/pg_vector
+ * probing. The legacy Postgres+Ollama checks were removed when the
+ * v0.5.x in-process memory server was deprecated.
  */
 
+import { existsSync, readFileSync } from "node:fs";
+import { homedir } from "node:os";
+import { join } from "node:path";
+
 import { SEVERITY } from "../index.js";
+
+const DEFAULT_ENGINE_URL = "http://localhost:8099";
 
 async function fetchWithTimeout(url, opts = {}, timeoutMs = 5000) {
   return await fetch(url, {
@@ -20,271 +26,233 @@ async function fetchWithTimeout(url, opts = {}, timeoutMs = 5000) {
   });
 }
 
-function checkPostgres() {
-  return {
-    name: "postgres reachable",
-    severity: SEVERITY.CRITICAL,
-    run: async () => {
-      const dsn = process.env.DATABASE_URL;
-      if (!dsn) {
-        return {
-          ok: false,
-          msg: "DATABASE_URL not set",
-        };
-      }
-      // Lazy-import pg so users on hosted/platform paths don't pay the cost.
-      let pg;
-      try {
-        pg = (await import("pg")).default;
-      } catch {
-        return {
-          ok: false,
-          msg: "'pg' not installed — run `npm install pg`",
-        };
-      }
-      const client = new pg.Client({ connectionString: dsn });
-      try {
-        await client.connect();
-        const v = await client.query("SELECT version()");
-        return {
-          ok: true,
-          msg: v.rows[0].version.split(",")[0],
-          detail: { version: v.rows[0].version },
-        };
-      } catch (err) {
-        return {
-          ok: false,
-          msg: err.message,
-        };
-      } finally {
-        await client.end().catch(() => {});
-      }
-    },
-  };
+function parseFrontmatter(content) {
+  const m = content.match(/^---\n([\s\S]*?)\n---/);
+  if (!m) return null;
+  const out = {};
+  for (const line of m[1].split("\n")) {
+    const kv = line.match(/^(\w+):\s*(.+)$/);
+    if (kv) out[kv[1]] = kv[2].trim();
+  }
+  return out;
 }
 
-function checkPgvector() {
-  return {
-    name: "pgvector extension",
-    severity: SEVERITY.CRITICAL,
-    run: async () => {
-      const dsn = process.env.DATABASE_URL;
-      if (!dsn) return { ok: false, msg: "DATABASE_URL not set" };
-      let pg;
-      try {
-        pg = (await import("pg")).default;
-      } catch {
-        return { ok: false, msg: "'pg' not installed" };
-      }
-      const client = new pg.Client({ connectionString: dsn });
-      try {
-        await client.connect();
-        const r = await client.query(
-          "SELECT extversion FROM pg_extension WHERE extname='vector'"
-        );
-        if (!r.rowCount) {
-          return {
-            ok: false,
-            msg: "pgvector not installed — run CREATE EXTENSION vector",
-          };
-        }
-        return {
-          ok: true,
-          msg: `pgvector ${r.rows[0].extversion}`,
-          detail: { version: r.rows[0].extversion },
-        };
-      } catch (err) {
-        return { ok: false, msg: err.message };
-      } finally {
-        await client.end().catch(() => {});
-      }
-    },
-  };
+function findPluginConfig() {
+  const candidates = [
+    process.env.CLAUDE_CONFIG_DIR,
+    join(homedir(), ".claude-pentatonic"),
+    join(homedir(), ".claude"),
+  ].filter(Boolean);
+  for (const dir of candidates) {
+    const p = join(dir, "tes-memory.local.md");
+    if (existsSync(p)) return p;
+  }
+  return null;
 }
 
-function checkMigrations() {
+function resolveEngineUrl() {
+  // 1. env var override
+  if (process.env.MEMORY_ENGINE_URL) return process.env.MEMORY_ENGINE_URL;
+  // 2. plugin config
+  const cfgPath = findPluginConfig();
+  if (cfgPath) {
+    try {
+      const fm = parseFrontmatter(readFileSync(cfgPath, "utf-8"));
+      if (fm?.mode === "local" && fm.memory_url) return fm.memory_url;
+    } catch {
+      // fall through
+    }
+  }
+  // 3. default
+  return DEFAULT_ENGINE_URL;
+}
+
+function checkPluginConfig() {
   return {
-    name: "schema migrations applied",
+    name: "plugin config (tes-memory.local.md)",
     severity: SEVERITY.WARNING,
     run: async () => {
-      const dsn = process.env.DATABASE_URL;
-      if (!dsn) return { ok: false, msg: "DATABASE_URL not set" };
-      let pg;
-      try {
-        pg = (await import("pg")).default;
-      } catch {
-        return { ok: false, msg: "'pg' not installed" };
-      }
-      const client = new pg.Client({ connectionString: dsn });
-      try {
-        await client.connect();
-        // The migration runner creates schema_migrations on first apply.
-        const r = await client.query(
-          "SELECT count(*) AS n FROM schema_migrations"
-        );
-        const n = parseInt(r.rows[0].n, 10);
-        if (n === 0) {
-          return {
-            ok: false,
-            msg: "schema_migrations is empty — start the memory server to run migrations",
-          };
-        }
-        return { ok: true, msg: `${n} migrations applied`, detail: { n } };
-      } catch (err) {
-        if (/relation .* does not exist/.test(err.message)) {
-          return {
-            ok: false,
-            msg: "schema_migrations table missing — start the memory server first",
-          };
-        }
-        return { ok: false, msg: err.message };
-      } finally {
-        await client.end().catch(() => {});
-      }
-    },
-  };
-}
-
-function checkEmbeddingEndpoint() {
-  return {
-    name: "embedding endpoint",
-    severity: SEVERITY.CRITICAL,
-    run: async () => {
-      const url = process.env.EMBEDDING_URL;
-      const model = process.env.EMBEDDING_MODEL;
-      if (!url || !model) {
+      const cfgPath = findPluginConfig();
+      if (!cfgPath) {
         return {
           ok: false,
-          msg: "EMBEDDING_URL or EMBEDDING_MODEL not set",
+          msg: "no tes-memory.local.md found — run `npx @pentatonic-ai/ai-agent-sdk config local`",
         };
       }
-      // Probe with a 1-token embed call against the OpenAI-compatible API.
+      let fm;
       try {
-        const headers = { "Content-Type": "application/json" };
-        if (process.env.API_KEY) {
-          headers.Authorization = `Bearer ${process.env.API_KEY}`;
-        }
-        const res = await fetchWithTimeout(
-          `${url.replace(/\/$/, "")}/embeddings`,
-          {
-            method: "POST",
-            headers,
-            body: JSON.stringify({ model, input: "ping" }),
-          }
-        );
-        if (!res.ok) {
-          const body = await res.text().catch(() => "");
-          return {
-            ok: false,
-            msg: `HTTP ${res.status}: ${body.slice(0, 120)}`,
-          };
-        }
-        const data = await res.json();
-        const dim = data.data?.[0]?.embedding?.length;
-        if (!dim) {
-          return {
-            ok: false,
-            msg: "endpoint responded but returned no embedding",
-          };
-        }
-        return {
-          ok: true,
-          msg: `${model} ok (${dim}-dim)`,
-          detail: { url, model, dim },
-        };
+        fm = parseFrontmatter(readFileSync(cfgPath, "utf-8"));
       } catch (err) {
-        return { ok: false, msg: err.message };
+        return { ok: false, msg: `${cfgPath}: ${err.message}` };
       }
-    },
-  };
-}
-
-function checkLlmEndpoint() {
-  return {
-    name: "llm endpoint",
-    severity: SEVERITY.CRITICAL,
-    run: async () => {
-      const url = process.env.LLM_URL;
-      const model = process.env.LLM_MODEL;
-      if (!url || !model) {
+      if (!fm) {
+        return { ok: false, msg: `${cfgPath}: no parseable frontmatter` };
+      }
+      if (fm.mode !== "local") {
         return {
           ok: false,
-          msg: "LLM_URL or LLM_MODEL not set",
+          msg: `${cfgPath}: mode is "${fm.mode || "(unset)"}" — expected "local"`,
+          detail: { mode: fm.mode, path: cfgPath },
         };
       }
-      // /models is cheap and present on every OpenAI-compatible server.
+      if (!fm.memory_url) {
+        return {
+          ok: false,
+          msg: `${cfgPath}: memory_url not set`,
+          detail: { path: cfgPath },
+        };
+      }
+      return {
+        ok: true,
+        msg: `${fm.memory_url} (${cfgPath})`,
+        detail: { memory_url: fm.memory_url, path: cfgPath },
+      };
+    },
+  };
+}
+
+function checkEngineHealth() {
+  return {
+    name: "engine /health",
+    severity: SEVERITY.CRITICAL,
+    run: async () => {
+      const url = resolveEngineUrl();
       try {
-        const headers = {};
-        if (process.env.API_KEY) {
-          headers.Authorization = `Bearer ${process.env.API_KEY}`;
-        }
-        const res = await fetchWithTimeout(
-          `${url.replace(/\/$/, "")}/models`,
-          { headers }
-        );
+        const res = await fetchWithTimeout(`${url.replace(/\/$/, "")}/health`);
         if (!res.ok) {
-          return { ok: false, msg: `HTTP ${res.status}` };
+          return { ok: false, msg: `HTTP ${res.status} from ${url}/health` };
         }
         const data = await res.json();
-        const ids = (data.data || []).map((m) => m.id);
-        if (model && !ids.includes(model)) {
-          return {
-            ok: false,
-            msg: `${model} not loaded; available: ${ids.slice(0, 3).join(", ")}`,
-            detail: { url, requested: model, available: ids },
-          };
-        }
         return {
           ok: true,
-          msg: `${model} loaded`,
-          detail: { url, model },
+          msg: `${data.engine || "engine"} v${data.version || "?"} (${data.status})`,
+          detail: data,
         };
       } catch (err) {
-        return { ok: false, msg: err.message };
+        return {
+          ok: false,
+          msg: `${url}/health unreachable: ${err.message}`,
+          detail: { url },
+        };
       }
     },
   };
 }
 
-function checkMemoryServer() {
+function checkEngineLayers() {
   return {
-    name: "memory server",
+    name: "engine layers (L0–L6)",
     severity: SEVERITY.WARNING,
     run: async () => {
-      // The MCP server uses stdio by default but exposes PORT for HTTP/SSE.
-      // If PORT isn't bound we can't probe — that's not an error, just info.
-      const port = process.env.PORT || "3333";
-      const url = `http://127.0.0.1:${port}/`;
+      const url = resolveEngineUrl();
       try {
-        const res = await fetchWithTimeout(url, {}, 2000);
-        return {
-          ok: true,
-          msg: `port ${port} reachable (HTTP ${res.status})`,
-          detail: { url, status: res.status },
-        };
-      } catch (err) {
-        // Connection refused is the common case when the server is run
-        // via stdio only — surface as info so users aren't alarmed.
-        if (/ECONNREFUSED|fetch failed/.test(err.message)) {
+        const res = await fetchWithTimeout(`${url.replace(/\/$/, "")}/health`);
+        if (!res.ok) return { ok: false, msg: `HTTP ${res.status}` };
+        const data = await res.json();
+        const layers = data.layers || {};
+        const expected = ["l0", "l1", "l2", "l3", "l4", "l5", "l6"];
+        const okList = [];
+        const degradedList = [];
+        for (const k of expected) {
+          const status = layers[k];
+          if (status === "ok") okList.push(k);
+          else if (status) degradedList.push(`${k}=${status}`);
+        }
+        if (degradedList.length === 0) {
           return {
             ok: true,
-            msg: `port ${port} not bound (running via stdio? — skipped)`,
-            detail: { url },
+            msg: `${okList.length}/7 ok`,
+            detail: { layers },
           };
         }
+        return {
+          ok: false,
+          msg: `${okList.length}/7 ok; degraded: ${degradedList.join(", ")}`,
+          detail: { layers },
+        };
+      } catch (err) {
         return { ok: false, msg: err.message };
       }
+    },
+  };
+}
+
+function checkEmbeddingPath() {
+  // Surfaces the engine's view of nv_embed (the URL it points at). If
+  // that's "unreachable" or "http 4xx/5xx", L4/L5/L6 indexing won't work.
+  // The engine reports this in /health under layers.nv_embed.
+  return {
+    name: "embedding endpoint (engine→external)",
+    severity: SEVERITY.WARNING,
+    run: async () => {
+      const url = resolveEngineUrl();
+      try {
+        const res = await fetchWithTimeout(`${url.replace(/\/$/, "")}/health`);
+        if (!res.ok) return { ok: false, msg: `engine /health HTTP ${res.status}` };
+        const data = await res.json();
+        const nv = data.layers?.nv_embed;
+        if (nv === "ok") {
+          return { ok: true, msg: "reachable" };
+        }
+        if (!nv) {
+          return {
+            ok: false,
+            msg: "engine /health did not report nv_embed status",
+          };
+        }
+        return {
+          ok: false,
+          msg: `nv_embed=${nv} — L4/L5/L6 indexing will fail. Check NV_EMBED_URL in packages/memory-engine/.env`,
+          detail: { nv_embed: nv },
+        };
+      } catch (err) {
+        return { ok: false, msg: err.message };
+      }
+    },
+  };
+}
+
+function checkOllamaBindIfPresent() {
+  // If the user is using Ollama as their embedding backend AND running
+  // the engine in Docker, Ollama needs to be bound on all interfaces so
+  // containers can reach it via host.docker.internal. Common gotcha.
+  // We probe by checking whether Ollama is listening on something other
+  // than 127.0.0.1 — we can't directly read systemd config, so we fall
+  // back to probing 0.0.0.0:11434 from the host (which always works if
+  // any interface is listening) vs trying to detect the bind address.
+  //
+  // Approach: hit /api/tags. If reachable on 127.0.0.1, Ollama is up;
+  // we then warn if the user is in a Docker context (engine reachable)
+  // because that's the configuration where the bind matters.
+  return {
+    name: "Ollama bind config (if used)",
+    severity: SEVERITY.INFO,
+    run: async () => {
+      try {
+        const res = await fetchWithTimeout(
+          "http://127.0.0.1:11434/api/tags",
+          {},
+          1500
+        );
+        if (!res.ok) return { ok: true, msg: "Ollama not reachable on 127.0.0.1 — skipping (not used?)" };
+      } catch {
+        return { ok: true, msg: "Ollama not running locally — skipping" };
+      }
+      // Ollama IS running on host. Warn the user about the bind config.
+      return {
+        ok: true,
+        msg: "Ollama running on host. If engine is containerised, ensure OLLAMA_HOST=0.0.0.0:11434 (see README)",
+      };
     },
   };
 }
 
 export function localMemoryChecks() {
   return [
-    checkPostgres(),
-    checkPgvector(),
-    checkMigrations(),
-    checkEmbeddingEndpoint(),
-    checkLlmEndpoint(),
-    checkMemoryServer(),
+    checkPluginConfig(),
+    checkEngineHealth(),
+    checkEngineLayers(),
+    checkEmbeddingPath(),
+    checkOllamaBindIfPresent(),
   ];
 }

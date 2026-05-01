@@ -1,6 +1,6 @@
 {
   "name": "@pentatonic-ai/ai-agent-sdk",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "TES SDK — LLM observability and lifecycle tracking via Pentatonic Thing Event System. Track token usage, tool calls, and conversations. Manage things through event-sourced lifecycle stages with AI enrichment and vector search.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -25,6 +25,7 @@
     "src",
     "bin",
     "packages/memory",
+    "packages/memory-engine",
     "packages/doctor",
     "build.js",
     "README.md",

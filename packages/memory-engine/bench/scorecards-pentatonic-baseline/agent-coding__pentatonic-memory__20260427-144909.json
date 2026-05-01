@@ -1,0 +1,1115 @@
+{
+  "bench": "agent-coding",
+  "stack": "pentatonic-memory",
+  "n_tasks": 22,
+  "n_correct": 14,
+  "accuracy": 0.6363636363636364,
+  "mean_score": 0.7272727272727273,
+  "p50_search_ms": 23.723827995127067,
+  "p95_search_ms": 31.46001180721214,
+  "total_tokens_in": 0,
+  "total_tokens_out": 0,
+  "total_usd": 0.0,
+  "by_tag": {
+    "api-signature": {
+      "n": 3,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "bug-fix-recall": {
+      "n": 3,
+      "mean_score": 0.8333333333333334,
+      "accuracy": 0.6666666666666666
+    },
+    "deprecation": {
+      "n": 3,
+      "mean_score": 0.3333333333333333,
+      "accuracy": 0.3333333333333333
+    },
+    "config-recall": {
+      "n": 3,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "pr-rationale": {
+      "n": 2,
+      "mean_score": 0.5,
+      "accuracy": 0.0
+    },
+    "cross-file-refactor": {
+      "n": 2,
+      "mean_score": 0.5,
+      "accuracy": 0.5
+    },
+    "stack-trace-match": {
+      "n": 1,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "temporal": {
+      "n": 2,
+      "mean_score": 0.5,
+      "accuracy": 0.5
+    },
+    "contradiction": {
+      "n": 1,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "rubric": {
+      "n": 2,
+      "mean_score": 0.75,
+      "accuracy": 0.5
+    }
+  },
+  "extra": {
+    "ingest_ms": 23966.172009008005,
+    "grading": "substring",
+    "limit": 3,
+    "tokens": {
+      "corpus_tokens": 5164,
+      "query_tokens": 339,
+      "context_tokens": 11496,
+      "retrieval_tokens": 11835,
+      "naive_tokens": 113947,
+      "saved_tokens": 102112,
+      "reduction_pct": 0.8961359228413209,
+      "mean_retrieval_tokens_per_task": 537.9545454545455,
+      "tokenizer": "cl100k_base",
+      "per_task": {
+        "api-invoice-signature": {
+          "query": 18,
+          "context": 510,
+          "retrieval": 528,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "api-search-shape": {
+          "query": 16,
+          "context": 458,
+          "retrieval": 474,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "api-invoice-amount-type": {
+          "query": 16,
+          "context": 545,
+          "retrieval": 561,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "bugfix-stripe-rounding": {
+          "query": 10,
+          "context": 542,
+          "retrieval": 552,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "bugfix-webhook-dup": {
+          "query": 10,
+          "context": 538,
+          "retrieval": 548,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "bugfix-rounding-direction": {
+          "query": 19,
+          "context": 500,
+          "retrieval": 519,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "deprecation-v1": {
+          "query": 11,
+          "context": 481,
+          "retrieval": 492,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "deprecation-hs256": {
+          "query": 11,
+          "context": 577,
+          "retrieval": 588,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "deprecation-search-tuple": {
+          "query": 13,
+          "context": 458,
+          "retrieval": 471,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "config-retry-policy-base": {
+          "query": 15,
+          "context": 524,
+          "retrieval": 539,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "config-session-ttl": {
+          "query": 14,
+          "context": 558,
+          "retrieval": 572,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "config-search-hybrid-weight": {
+          "query": 11,
+          "context": 458,
+          "retrieval": 469,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "pr-rationale-retry": {
+          "query": 19,
+          "context": 569,
+          "retrieval": 588,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "pr-rationale-jwt-cleanup": {
+          "query": 13,
+          "context": 558,
+          "retrieval": 571,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "cross-ref-invoicing": {
+          "query": 14,
+          "context": 551,
+          "retrieval": 565,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "cross-ref-ratelimit": {
+          "query": 15,
+          "context": 505,
+          "retrieval": 520,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "stack-trace-webhook": {
+          "query": 21,
+          "context": 527,
+          "retrieval": 548,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "temporal-numpy": {
+          "query": 11,
+          "context": 515,
+          "retrieval": 526,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "temporal-on-call": {
+          "query": 20,
+          "context": 572,
+          "retrieval": 592,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "contradiction-algorithm": {
+          "query": 16,
+          "context": 506,
+          "retrieval": 522,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "rubric-security-advice": {
+          "query": 25,
+          "context": 506,
+          "retrieval": 531,
+          "judge_in": 819,
+          "judge_out": 42,
+          "judge_latency_ms": 1898.8169969916344
+        },
+        "rubric-incident-lesson": {
+          "query": 21,
+          "context": 538,
+          "retrieval": 559,
+          "judge_in": 831,
+          "judge_out": 33,
+          "judge_latency_ms": 1775.7281960248947
+        }
+      },
+      "judge_tokens_in": 1650,
+      "judge_tokens_out": 75,
+      "judge_calls": 2,
+      "judge_mean_latency_ms": 1837.2725965082645
+    },
+    "cost_usd": {
+      "assumed_completion_tokens_per_task": 100,
+      "rates": {
+        "input_per_1k": 0.0025,
+        "output_per_1k": 0.01,
+        "model": "gpt-4o"
+      },
+      "retrieval_usd_in": 0.029587500000000003,
+      "retrieval_usd_out": 0.022,
+      "retrieval_usd_total": 0.0515875,
+      "naive_usd_total": 0.3068675,
+      "saved_usd": 0.25528,
+      "saved_usd_per_1k_tasks": 11.603636363636365
+    }
+  },
+  "task_results": [
+    {
+      "task_id": "api-invoice-signature",
+      "query": "What's the request body shape for POST /v2/invoices on billing-svc?",
+      "answer": "## billing-svc: POST /v2/invoices\n\nCreate an invoice for a customer.\n\n**Request body:**\n```json\n{\"customer_id\": \"cus_abc\", \"amount_cents\": 1299, \"currency\": \"gbp\", \"description\": \"Annual plan\"}\n```\n\n**Responses:**\n- `201` \u2014 invoice created: `{\"id\": \"inv_xyz\", \"status\": \"draft\", \"pdf_url\": \"...\"}`\n- `400` \u2014 validation error\n- `404` \u2014 customer not found\n- `409` \u2014 duplicate idempotency_key\n\n**Headers:**\n- `Idempotency-Key` (optional, required for retries)\n\nAmounts MUST be integers (cents). Passing float amounts returns 400.\n---\n# Cross-reference: invoicing pipeline\n\nEnd-to-end path for an invoice being paid:\n\n1. `billing-svc` creates the invoice (see POST /v2/invoices, api-billing-invoice)\n2. Customer pays via Stripe portal (no internal code path)\n3. Stripe posts a `invoice.payment_succeeded` webhook to billing-svc\n4. `billing/webhooks.py::handle_webhook` verifies signature, enqueues\n   internal `InvoicePaid` event on `order-svc`\n5. `order-svc` marks order as paid, emits `OrderPaid` on pubsub\n6. `reporting-svc` consumes `OrderPaid` for financial reports\n7. `email-svc` consumes `OrderPaid` for the receipt email\n\nOn webhook signature errors, see runbook-billing.\n---\n# billing-svc README\n\nService owner: jordan. On-call: billing-oncall@example.com.\n\n## Environment\n- `STRIPE_API_KEY` (required)\n- `STRIPE_WEBHOOK_SECRET` (required)\n- `BILLING_DB_URL` (required)\n- `BILLING_STRIPE_RETRY_POLICY_BASE_MS` (default 200)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_MS` (default 8000)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_RETRIES` (default 5)\n\n## Key modules\n- `billing/stripe_client.py` \u2014 wraps stripe-python, adds retry + idempotency\n- `billing/webhooks.py` \u2014 Stripe webhook endpoint, signed and idempotent\n- `billing/invoicing.py` \u2014 PDF invoice generation (weasyprint)\n\nSee ARCHITECTURE.md for the full picture.",
+      "hits": [
+        {
+          "text": "## billing-svc: POST /v2/invoices\n\nCreate an invoice for a customer.\n\n**Request body:**\n```json\n{\"customer_id\": \"cus_abc\", \"amount_cents\": 1299, \"currency\": \"gbp\", \"description\": \"Annual plan\"}\n```\n\n**Responses:**\n- `201` \u2014 invoice created: `{\"id\": \"inv_xyz\", \"status\": \"draft\", \"pdf_url\": \"...\"}`\n- `400` \u2014 validation error\n- `404` \u2014 customer not found\n- `409` \u2014 duplicate idempotency_key\n\n**Headers",
+          "score": 0.5234486235427094,
+          "source": "pentatonic-memory",
+          "doc_id": "api-billing-invoice"
+        },
+        {
+          "text": "# Cross-reference: invoicing pipeline\n\nEnd-to-end path for an invoice being paid:\n\n1. `billing-svc` creates the invoice (see POST /v2/invoices, api-billing-invoice)\n2. Customer pays via Stripe portal (no internal code path)\n3. Stripe posts a `invoice.payment_succeeded` webhook to billing-svc\n4. `billing/webhooks.py::handle_webhook` verifies signature, enqueues\n   internal `InvoicePaid` event on `o",
+          "score": 0.5128006379857712,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        },
+        {
+          "text": "# billing-svc README\n\nService owner: jordan. On-call: billing-oncall@example.com.\n\n## Environment\n- `STRIPE_API_KEY` (required)\n- `STRIPE_WEBHOOK_SECRET` (required)\n- `BILLING_DB_URL` (required)\n- `BILLING_STRIPE_RETRY_POLICY_BASE_MS` (default 200)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_MS` (default 8000)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_RETRIES` (default 5)\n\n## Key modules\n- `billing/stripe_client.",
+          "score": 0.4950212144232699,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-billing"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 32.146587007446215,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 528,
+      "query_tokens": 18,
+      "context_tokens": 510,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "api-search-shape",
+      "query": "What's the response shape of POST /v3/search on search-svc?",
+      "answer": "## search-svc: POST /v3/search\n\nVector + keyword hybrid search.\n\n**Request body:**\n```json\n{\"query\": \"widget\", \"collection\": \"products\", \"limit\": 20, \"filter\": {\"category\": \"electronics\"}}\n```\n\n**Responses:**\n- `200` \u2014 `{\"results\": [{\"id\": \"p_123\", \"score\": 0.81, \"payload\": {...}}, ...], \"total\": 42}`\n- `400` \u2014 malformed filter\n- `429` \u2014 rate-limited\n\n**Notes:**\n- Results are ranked by hybrid (0.6 vector + 0.4 BM25) \u2014 override with\n  `hybrid_weight` in the body (0.0 = pure BM25, 1.0 = pure vector).\n- Max limit is 100 (hard cap in config).\n---\n# search-svc README\n\nOwner: alex. On-call: search-oncall@example.com.\n\n## SDK\n```python\nfrom search_sdk import SearchClient\nclient = SearchClient(url=os.environ['SEARCH_URL'])\nresults = client.search(query='widget', limit=20)\nfor r in results:\n    print(r['id'], r['score'], r['payload']['title'])\n```\nNOTE: pre-c3d4e5f6 the return shape was `list[tuple[int, float]]`. If you\nsee that in an old service, it's using the legacy SDK \u2014 upgrade to\nsearch-sdk >= 3.0.\n\n## Environment\n- `SEARCH_URL` (default: http://search-svc.internal:8080)\n- `SEARCH_API_KEY` (required)\n- `QDRANT_COLLECTION` (default: 'products')\n---\nPR #52: Migrate /search call-sites to new result shape\nAuthor: alex\nStatus: merged\n\nFollow-up to the vector-db switch in c3d4e5f6. 14 call-sites updated to\nread .score / .payload instead of tuple indexing. Most were in\nrecommendations-svc. Caught one in ops-dashboard that was still using\nresult[0] \u2014 would have silently broken the live dashboard after deploy.\nMerged 2026-02-21.",
+      "hits": [
+        {
+          "text": "## search-svc: POST /v3/search\n\nVector + keyword hybrid search.\n\n**Request body:**\n```json\n{\"query\": \"widget\", \"collection\": \"products\", \"limit\": 20, \"filter\": {\"category\": \"electronics\"}}\n```\n\n**Responses:**\n- `200` \u2014 `{\"results\": [{\"id\": \"p_123\", \"score\": 0.81, \"payload\": {...}}, ...], \"total\": 42}`\n- `400` \u2014 malformed filter\n- `429` \u2014 rate-limited\n\n**Notes:**\n- Results are ranked by hybrid (0.6",
+          "score": 0.6493952468588011,
+          "source": "pentatonic-memory",
+          "doc_id": "api-search-query"
+        },
+        {
+          "text": "# search-svc README\n\nOwner: alex. On-call: search-oncall@example.com.\n\n## SDK\n```python\nfrom search_sdk import SearchClient\nclient = SearchClient(url=os.environ['SEARCH_URL'])\nresults = client.search(query='widget', limit=20)\nfor r in results:\n    print(r['id'], r['score'], r['payload']['title'])\n```\nNOTE: pre-c3d4e5f6 the return shape was `list[tuple[int, float]]`. If you\nsee that in an old servi",
+          "score": 0.6397569972936464,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-search"
+        },
+        {
+          "text": "PR #52: Migrate /search call-sites to new result shape\nAuthor: alex\nStatus: merged\n\nFollow-up to the vector-db switch in c3d4e5f6. 14 call-sites updated to\nread .score / .payload instead of tuple indexing. Most were in\nrecommendations-svc. Caught one in ops-dashboard that was still using\nresult[0] \u2014 would have silently broken the live dashboard after deploy.\nMerged 2026-02-21.",
+          "score": 0.6232839044452452,
+          "source": "pentatonic-memory",
+          "doc_id": "pr-52-search-migration"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 27.56941900588572,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 474,
+      "query_tokens": 16,
+      "context_tokens": 458,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "api-invoice-amount-type",
+      "query": "When calling POST /v2/invoices, must amount be integer or float?",
+      "answer": "## billing-svc: POST /v2/invoices\n\nCreate an invoice for a customer.\n\n**Request body:**\n```json\n{\"customer_id\": \"cus_abc\", \"amount_cents\": 1299, \"currency\": \"gbp\", \"description\": \"Annual plan\"}\n```\n\n**Responses:**\n- `201` \u2014 invoice created: `{\"id\": \"inv_xyz\", \"status\": \"draft\", \"pdf_url\": \"...\"}`\n- `400` \u2014 validation error\n- `404` \u2014 customer not found\n- `409` \u2014 duplicate idempotency_key\n\n**Headers:**\n- `Idempotency-Key` (optional, required for retries)\n\nAmounts MUST be integers (cents). Passing float amounts returns 400.\n---\n# billing/stripe_client.py (excerpt)\n\n```python\nimport math\nimport stripe\n\nclass StripeClient:\n    def __init__(self, api_key: str, retry_policy: dict | None = None):\n        stripe.api_key = api_key\n        self.retry_policy = retry_policy or {'base_ms': 200, 'max_ms': 8000, 'max_retries': 5, 'jitter': True}\n\n    @staticmethod\n    def _to_cents(amount: float) -> int:\n        # Floor towards zero so we never overcharge (see a1b2c3d4).\n        sign = 1 if amount >= 0 else -1\n        return sign * math.floor(abs(amount) * 100)\n\n    def charge(self, *, customer_id: str, amount: float, currency: str = 'gbp') -> dict:\n        return self._with_retry(\n            lambda: stripe.Charge.create(\n                customer=customer_id,\n                amount=self._to_cents(amount),\n                currency=currency,\n            )\n        )\n```\n---\n# Cross-reference: invoicing pipeline\n\nEnd-to-end path for an invoice being paid:\n\n1. `billing-svc` creates the invoice (see POST /v2/invoices, api-billing-invoice)\n2. Customer pays via Stripe portal (no internal code path)\n3. Stripe posts a `invoice.payment_succeeded` webhook to billing-svc\n4. `billing/webhooks.py::handle_webhook` verifies signature, enqueues\n   internal `InvoicePaid` event on `order-svc`\n5. `order-svc` marks order as paid, emits `OrderPaid` on pubsub\n6. `reporting-svc` consumes `OrderPaid` for financial reports\n7. `email-svc` consumes `OrderPaid` for the receipt email\n\nOn webhook signature error",
+      "hits": [
+        {
+          "text": "## billing-svc: POST /v2/invoices\n\nCreate an invoice for a customer.\n\n**Request body:**\n```json\n{\"customer_id\": \"cus_abc\", \"amount_cents\": 1299, \"currency\": \"gbp\", \"description\": \"Annual plan\"}\n```\n\n**Responses:**\n- `201` \u2014 invoice created: `{\"id\": \"inv_xyz\", \"status\": \"draft\", \"pdf_url\": \"...\"}`\n- `400` \u2014 validation error\n- `404` \u2014 customer not found\n- `409` \u2014 duplicate idempotency_key\n\n**Headers",
+          "score": 0.6491271421290412,
+          "source": "pentatonic-memory",
+          "doc_id": "api-billing-invoice"
+        },
+        {
+          "text": "# billing/stripe_client.py (excerpt)\n\n```python\nimport math\nimport stripe\n\nclass StripeClient:\n    def __init__(self, api_key: str, retry_policy: dict | None = None):\n        stripe.api_key = api_key\n        self.retry_policy = retry_policy or {'base_ms': 200, 'max_ms': 8000, 'max_retries': 5, 'jitter': True}\n\n    @staticmethod\n    def _to_cents(amount: float) -> int:\n        # Floor towards zero ",
+          "score": 0.6309107760595571,
+          "source": "pentatonic-memory",
+          "doc_id": "code-stripe-client"
+        },
+        {
+          "text": "# Cross-reference: invoicing pipeline\n\nEnd-to-end path for an invoice being paid:\n\n1. `billing-svc` creates the invoice (see POST /v2/invoices, api-billing-invoice)\n2. Customer pays via Stripe portal (no internal code path)\n3. Stripe posts a `invoice.payment_succeeded` webhook to billing-svc\n4. `billing/webhooks.py::handle_webhook` verifies signature, enqueues\n   internal `InvoicePaid` event on `o",
+          "score": 0.6220265628484812,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 25.806121004279703,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 561,
+      "query_tokens": 16,
+      "context_tokens": 545,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "bugfix-stripe-rounding",
+      "query": "Which commit fixed the stripe float-amount bug?",
+      "answer": "# Incident 2026-03-02: billing-svc webhook signature errors\n\n**Severity:** SEV-2\n**Duration:** 2026-03-02 14:15 UTC \u2192 14:22 UTC (7 min)\n**Impact:** Stripe webhooks dropped during the window; 3 payment events\nnot ingested. Replayed via Stripe dashboard at 14:30.\n\n**Root cause:** STRIPE_WEBHOOK_SECRET was rotated in vault at 14:10. Pods\ndon't watch vault live; the new secret only loaded on restart.\n\n**Fix:** kubectl rollout restart deployment/billing-svc at 14:20. Normal\noperation resumed 14:22.\n\n**Action items:**\n1. Add webhook-secret rotation to the release checklist \u2014 force a rollout\n   restart when the secret changes. (jordan, done 2026-03-04.)\n2. Investigate vault-secrets-operator for live-reload (priya, tracking).\n\n**Lesson:** any rotated secret that's only read at startup needs an explicit\npod-restart step. We'll codify this in the runbook.\n---\n# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but pods didn't reload\nuntil restart. See incident post-mortem in ops/incidents/2026-03-02-webhook.md.\n---\n# billing/stripe_client.py (excerpt)\n\n```python\nimport math\nimport stripe\n\nclass StripeClient:\n    def __init__(self, api_key: str, retry_policy: dict | None = None):\n        stripe.api_key = api_key\n        self.retry_policy = retry_policy or {'base_ms': 200, 'max_ms': 8000, 'max_retries': 5, 'jitter': True}\n\n    @staticmethod\n    def _to_cents(amount: float) -> int:\n        # Floor towards zero so we never overcharge (see a1b2c3d4).\n        sign = 1 if amount >= 0 else -1\n        return sign * math.floor(abs(amount) * 100)\n\n    def charge(self, *, customer_id: str, amount: float, currency: str = 'gbp') -> dict:\n        return s",
+      "hits": [
+        {
+          "text": "# Incident 2026-03-02: billing-svc webhook signature errors\n\n**Severity:** SEV-2\n**Duration:** 2026-03-02 14:15 UTC \u2192 14:22 UTC (7 min)\n**Impact:** Stripe webhooks dropped during the window; 3 payment events\nnot ingested. Replayed via Stripe dashboard at 14:30.\n\n**Root cause:** STRIPE_WEBHOOK_SECRET was rotated in vault at 14:10. Pods\ndon't watch vault live; the new secret only loaded on restart.\n",
+          "score": 0.6340595841514459,
+          "source": "pentatonic-memory",
+          "doc_id": "incident-2026-03-02-webhook"
+        },
+        {
+          "text": "# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but po",
+          "score": 0.6304819950864657,
+          "source": "pentatonic-memory",
+          "doc_id": "runbook-billing"
+        },
+        {
+          "text": "# billing/stripe_client.py (excerpt)\n\n```python\nimport math\nimport stripe\n\nclass StripeClient:\n    def __init__(self, api_key: str, retry_policy: dict | None = None):\n        stripe.api_key = api_key\n        self.retry_policy = retry_policy or {'base_ms': 200, 'max_ms': 8000, 'max_retries': 5, 'jitter': True}\n\n    @staticmethod\n    def _to_cents(amount: float) -> int:\n        # Floor towards zero ",
+          "score": 0.6261928813329707,
+          "source": "pentatonic-memory",
+          "doc_id": "code-stripe-client"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 20.16072001424618,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 552,
+      "query_tokens": 10,
+      "context_tokens": 542,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "bugfix-webhook-dup",
+      "query": "How did we fix the duplicate Stripe webhook handling?",
+      "answer": "# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but pods didn't reload\nuntil restart. See incident post-mortem in ops/incidents/2026-03-02-webhook.md.\n---\n# Incident 2026-03-02: billing-svc webhook signature errors\n\n**Severity:** SEV-2\n**Duration:** 2026-03-02 14:15 UTC \u2192 14:22 UTC (7 min)\n**Impact:** Stripe webhooks dropped during the window; 3 payment events\nnot ingested. Replayed via Stripe dashboard at 14:30.\n\n**Root cause:** STRIPE_WEBHOOK_SECRET was rotated in vault at 14:10. Pods\ndon't watch vault live; the new secret only loaded on restart.\n\n**Fix:** kubectl rollout restart deployment/billing-svc at 14:20. Normal\noperation resumed 14:22.\n\n**Action items:**\n1. Add webhook-secret rotation to the release checklist \u2014 force a rollout\n   restart when the secret changes. (jordan, done 2026-03-04.)\n2. Investigate vault-secrets-operator for live-reload (priya, tracking).\n\n**Lesson:** any rotated secret that's only read at startup needs an explicit\npod-restart step. We'll codify this in the runbook.\n---\n# billing-svc README\n\nService owner: jordan. On-call: billing-oncall@example.com.\n\n## Environment\n- `STRIPE_API_KEY` (required)\n- `STRIPE_WEBHOOK_SECRET` (required)\n- `BILLING_DB_URL` (required)\n- `BILLING_STRIPE_RETRY_POLICY_BASE_MS` (default 200)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_MS` (default 8000)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_RETRIES` (default 5)\n\n## Key modules\n- `billing/stripe_client.py` \u2014 wraps stripe-python, adds retry + idempotency\n- `billing/webhooks.py` \u2014 Stripe webhook endpoint, signed and idempotent\n- `billing/invoicing.py` \u2014 PDF invoice generation (weasyprint)\n\nSee ARCHITECTURE.md for the full picture.",
+      "hits": [
+        {
+          "text": "# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but po",
+          "score": 0.6652784013702207,
+          "source": "pentatonic-memory",
+          "doc_id": "runbook-billing"
+        },
+        {
+          "text": "# Incident 2026-03-02: billing-svc webhook signature errors\n\n**Severity:** SEV-2\n**Duration:** 2026-03-02 14:15 UTC \u2192 14:22 UTC (7 min)\n**Impact:** Stripe webhooks dropped during the window; 3 payment events\nnot ingested. Replayed via Stripe dashboard at 14:30.\n\n**Root cause:** STRIPE_WEBHOOK_SECRET was rotated in vault at 14:10. Pods\ndon't watch vault live; the new secret only loaded on restart.\n",
+          "score": 0.6526478911682948,
+          "source": "pentatonic-memory",
+          "doc_id": "incident-2026-03-02-webhook"
+        },
+        {
+          "text": "# billing-svc README\n\nService owner: jordan. On-call: billing-oncall@example.com.\n\n## Environment\n- `STRIPE_API_KEY` (required)\n- `STRIPE_WEBHOOK_SECRET` (required)\n- `BILLING_DB_URL` (required)\n- `BILLING_STRIPE_RETRY_POLICY_BASE_MS` (default 200)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_MS` (default 8000)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_RETRIES` (default 5)\n\n## Key modules\n- `billing/stripe_client.",
+          "score": 0.619938009454783,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-billing"
+        }
+      ],
+      "correct": false,
+      "score": 0.5,
+      "grading_notes": "missing 1/2: ['webhook_events']",
+      "search_time_ms": 17.374802991980687,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 548,
+      "query_tokens": 10,
+      "context_tokens": 538,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "bugfix-rounding-direction",
+      "query": "When converting a float amount to cents, do we round up, down, or to nearest?",
+      "answer": "# billing/stripe_client.py (excerpt)\n\n```python\nimport math\nimport stripe\n\nclass StripeClient:\n    def __init__(self, api_key: str, retry_policy: dict | None = None):\n        stripe.api_key = api_key\n        self.retry_policy = retry_policy or {'base_ms': 200, 'max_ms': 8000, 'max_retries': 5, 'jitter': True}\n\n    @staticmethod\n    def _to_cents(amount: float) -> int:\n        # Floor towards zero so we never overcharge (see a1b2c3d4).\n        sign = 1 if amount >= 0 else -1\n        return sign * math.floor(abs(amount) * 100)\n\n    def charge(self, *, customer_id: str, amount: float, currency: str = 'gbp') -> dict:\n        return self._with_retry(\n            lambda: stripe.Charge.create(\n                customer=customer_id,\n                amount=self._to_cents(amount),\n                currency=currency,\n            )\n        )\n```\n---\nPR #52: Migrate /search call-sites to new result shape\nAuthor: alex\nStatus: merged\n\nFollow-up to the vector-db switch in c3d4e5f6. 14 call-sites updated to\nread .score / .payload instead of tuple indexing. Most were in\nrecommendations-svc. Caught one in ops-dashboard that was still using\nresult[0] \u2014 would have silently broken the live dashboard after deploy.\nMerged 2026-02-21.\n---\n# search-svc README\n\nOwner: alex. On-call: search-oncall@example.com.\n\n## SDK\n```python\nfrom search_sdk import SearchClient\nclient = SearchClient(url=os.environ['SEARCH_URL'])\nresults = client.search(query='widget', limit=20)\nfor r in results:\n    print(r['id'], r['score'], r['payload']['title'])\n```\nNOTE: pre-c3d4e5f6 the return shape was `list[tuple[int, float]]`. If you\nsee that in an old service, it's using the legacy SDK \u2014 upgrade to\nsearch-sdk >= 3.0.\n\n## Environment\n- `SEARCH_URL` (default: http://search-svc.internal:8080)\n- `SEARCH_API_KEY` (required)\n- `QDRANT_COLLECTION` (default: 'products')",
+      "hits": [
+        {
+          "text": "# billing/stripe_client.py (excerpt)\n\n```python\nimport math\nimport stripe\n\nclass StripeClient:\n    def __init__(self, api_key: str, retry_policy: dict | None = None):\n        stripe.api_key = api_key\n        self.retry_policy = retry_policy or {'base_ms': 200, 'max_ms': 8000, 'max_retries': 5, 'jitter': True}\n\n    @staticmethod\n    def _to_cents(amount: float) -> int:\n        # Floor towards zero ",
+          "score": 0.6101332294217348,
+          "source": "pentatonic-memory",
+          "doc_id": "code-stripe-client"
+        },
+        {
+          "text": "PR #52: Migrate /search call-sites to new result shape\nAuthor: alex\nStatus: merged\n\nFollow-up to the vector-db switch in c3d4e5f6. 14 call-sites updated to\nread .score / .payload instead of tuple indexing. Most were in\nrecommendations-svc. Caught one in ops-dashboard that was still using\nresult[0] \u2014 would have silently broken the live dashboard after deploy.\nMerged 2026-02-21.",
+          "score": 0.5819129164283284,
+          "source": "pentatonic-memory",
+          "doc_id": "pr-52-search-migration"
+        },
+        {
+          "text": "# search-svc README\n\nOwner: alex. On-call: search-oncall@example.com.\n\n## SDK\n```python\nfrom search_sdk import SearchClient\nclient = SearchClient(url=os.environ['SEARCH_URL'])\nresults = client.search(query='widget', limit=20)\nfor r in results:\n    print(r['id'], r['score'], r['payload']['title'])\n```\nNOTE: pre-c3d4e5f6 the return shape was `list[tuple[int, float]]`. If you\nsee that in an old servi",
+          "score": 0.5732720961433274,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-search"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 21.919121994869784,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 519,
+      "query_tokens": 19,
+      "context_tokens": 500,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "deprecation-v1",
+      "query": "Are the /api/v1/ endpoints still supported?",
+      "answer": "PR #52: Migrate /search call-sites to new result shape\nAuthor: alex\nStatus: merged\n\nFollow-up to the vector-db switch in c3d4e5f6. 14 call-sites updated to\nread .score / .payload instead of tuple indexing. Most were in\nrecommendations-svc. Caught one in ops-dashboard that was still using\nresult[0] \u2014 would have silently broken the live dashboard after deploy.\nMerged 2026-02-21.\n---\n# auth-svc README\n\nOwner: priya. On-call: auth-oncall@example.com.\n\n## Environment\n- `JWT_PRIVATE_KEY_PATH` (required, RS256 PEM)\n- `JWT_PUBLIC_KEY_PATH` (required, RS256 PEM)\n- `JWT_ISSUER` (default: 'https://auth.example.com')\n- `SESSION_TTL_MINUTES` (default: 60)\n- `REFRESH_TTL_DAYS` (default: 30)\n\n**Do not use HS256**. The migration in b2c3d4e5 removed all HS256 paths.\n\n## Public API\n- `POST /v2/login {email, password}` \u2192 `{access_token, refresh_token}`\n- `POST /v2/refresh {refresh_token}` \u2192 `{access_token}`\n- `POST /v2/revoke {refresh_token}` \u2192 204\n- `GET /v2/.well-known/jwks.json` \u2014 the public JWKS for downstream services\n---\n# search-svc README\n\nOwner: alex. On-call: search-oncall@example.com.\n\n## SDK\n```python\nfrom search_sdk import SearchClient\nclient = SearchClient(url=os.environ['SEARCH_URL'])\nresults = client.search(query='widget', limit=20)\nfor r in results:\n    print(r['id'], r['score'], r['payload']['title'])\n```\nNOTE: pre-c3d4e5f6 the return shape was `list[tuple[int, float]]`. If you\nsee that in an old service, it's using the legacy SDK \u2014 upgrade to\nsearch-sdk >= 3.0.\n\n## Environment\n- `SEARCH_URL` (default: http://search-svc.internal:8080)\n- `SEARCH_API_KEY` (required)\n- `QDRANT_COLLECTION` (default: 'products')",
+      "hits": [
+        {
+          "text": "PR #52: Migrate /search call-sites to new result shape\nAuthor: alex\nStatus: merged\n\nFollow-up to the vector-db switch in c3d4e5f6. 14 call-sites updated to\nread .score / .payload instead of tuple indexing. Most were in\nrecommendations-svc. Caught one in ops-dashboard that was still using\nresult[0] \u2014 would have silently broken the live dashboard after deploy.\nMerged 2026-02-21.",
+          "score": 0.5884919119283378,
+          "source": "pentatonic-memory",
+          "doc_id": "pr-52-search-migration"
+        },
+        {
+          "text": "# auth-svc README\n\nOwner: priya. On-call: auth-oncall@example.com.\n\n## Environment\n- `JWT_PRIVATE_KEY_PATH` (required, RS256 PEM)\n- `JWT_PUBLIC_KEY_PATH` (required, RS256 PEM)\n- `JWT_ISSUER` (default: 'https://auth.example.com')\n- `SESSION_TTL_MINUTES` (default: 60)\n- `REFRESH_TTL_DAYS` (default: 30)\n\n**Do not use HS256**. The migration in b2c3d4e5 removed all HS256 paths.\n\n## Public API\n- `POST /",
+          "score": 0.5864806843871985,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-auth"
+        },
+        {
+          "text": "# search-svc README\n\nOwner: alex. On-call: search-oncall@example.com.\n\n## SDK\n```python\nfrom search_sdk import SearchClient\nclient = SearchClient(url=os.environ['SEARCH_URL'])\nresults = client.search(query='widget', limit=20)\nfor r in results:\n    print(r['id'], r['score'], r['payload']['title'])\n```\nNOTE: pre-c3d4e5f6 the return shape was `list[tuple[int, float]]`. If you\nsee that in an old servi",
+          "score": 0.5826976459817697,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-search"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['410']",
+      "search_time_ms": 20.105327013880014,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 492,
+      "query_tokens": 11,
+      "context_tokens": 481,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "deprecation-hs256",
+      "query": "Can auth-svc still accept HS256 JWTs?",
+      "answer": "# auth-svc README\n\nOwner: priya. On-call: auth-oncall@example.com.\n\n## Environment\n- `JWT_PRIVATE_KEY_PATH` (required, RS256 PEM)\n- `JWT_PUBLIC_KEY_PATH` (required, RS256 PEM)\n- `JWT_ISSUER` (default: 'https://auth.example.com')\n- `SESSION_TTL_MINUTES` (default: 60)\n- `REFRESH_TTL_DAYS` (default: 30)\n\n**Do not use HS256**. The migration in b2c3d4e5 removed all HS256 paths.\n\n## Public API\n- `POST /v2/login {email, password}` \u2192 `{access_token, refresh_token}`\n- `POST /v2/refresh {refresh_token}` \u2192 `{access_token}`\n- `POST /v2/revoke {refresh_token}` \u2192 204\n- `GET /v2/.well-known/jwks.json` \u2014 the public JWKS for downstream services\n---\n# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but pods didn't reload\nuntil restart. See incident post-mortem in ops/incidents/2026-03-02-webhook.md.\n---\n# monorepo ARCHITECTURE.md\n\n## Services\n- **gateway** \u2014 edge reverse proxy, terminates TLS, routes to services\n- **auth-svc** \u2014 JWT mint + verify, OIDC provider (RS256 since b2c3d4e5)\n- **billing-svc** \u2014 Stripe integration, invoicing, webhooks\n- **search-svc** \u2014 vector + BM25 hybrid search (vector-db backend since c3d4e5f6)\n- **order-svc** \u2014 order lifecycle\n- **email-svc** \u2014 transactional email (SendGrid)\n- **reporting-svc** \u2014 financial + ops dashboards\n\n## Inter-service RPC\nProtobuf over gRPC for hot paths (order/billing/auth). JSON over HTTP for\nplatform ops (admin panel, health checks). See ADR-007.\n\n## Language/runtime\n- Python 3.12 minimum (ADR-011)\n- Node 20 LTS for the gateway only (historical)\n- Go for the sealed-secrets operator\n\n## Data\n- Postgres 16 per-service\n- Redis for rate limits + ephemeral queues\n- Vector-DB for search vectors\n- S3 for",
+      "hits": [
+        {
+          "text": "# auth-svc README\n\nOwner: priya. On-call: auth-oncall@example.com.\n\n## Environment\n- `JWT_PRIVATE_KEY_PATH` (required, RS256 PEM)\n- `JWT_PUBLIC_KEY_PATH` (required, RS256 PEM)\n- `JWT_ISSUER` (default: 'https://auth.example.com')\n- `SESSION_TTL_MINUTES` (default: 60)\n- `REFRESH_TTL_DAYS` (default: 30)\n\n**Do not use HS256**. The migration in b2c3d4e5 removed all HS256 paths.\n\n## Public API\n- `POST /",
+          "score": 0.6733812697159586,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-auth"
+        },
+        {
+          "text": "# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but po",
+          "score": 0.626365947146506,
+          "source": "pentatonic-memory",
+          "doc_id": "runbook-billing"
+        },
+        {
+          "text": "# monorepo ARCHITECTURE.md\n\n## Services\n- **gateway** \u2014 edge reverse proxy, terminates TLS, routes to services\n- **auth-svc** \u2014 JWT mint + verify, OIDC provider (RS256 since b2c3d4e5)\n- **billing-svc** \u2014 Stripe integration, invoicing, webhooks\n- **search-svc** \u2014 vector + BM25 hybrid search (vector-db backend since c3d4e5f6)\n- **order-svc** \u2014 order lifecycle\n- **email-svc** \u2014 transactional email (Send",
+          "score": 0.6090713787319404,
+          "source": "pentatonic-memory",
+          "doc_id": "arch-overview"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 24.6878860052675,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 588,
+      "query_tokens": 11,
+      "context_tokens": 577,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "deprecation-search-tuple",
+      "query": "What does SearchClient.search() return today \u2014 tuples or dicts?",
+      "answer": "# search-svc README\n\nOwner: alex. On-call: search-oncall@example.com.\n\n## SDK\n```python\nfrom search_sdk import SearchClient\nclient = SearchClient(url=os.environ['SEARCH_URL'])\nresults = client.search(query='widget', limit=20)\nfor r in results:\n    print(r['id'], r['score'], r['payload']['title'])\n```\nNOTE: pre-c3d4e5f6 the return shape was `list[tuple[int, float]]`. If you\nsee that in an old service, it's using the legacy SDK \u2014 upgrade to\nsearch-sdk >= 3.0.\n\n## Environment\n- `SEARCH_URL` (default: http://search-svc.internal:8080)\n- `SEARCH_API_KEY` (required)\n- `QDRANT_COLLECTION` (default: 'products')\n---\nPR #52: Migrate /search call-sites to new result shape\nAuthor: alex\nStatus: merged\n\nFollow-up to the vector-db switch in c3d4e5f6. 14 call-sites updated to\nread .score / .payload instead of tuple indexing. Most were in\nrecommendations-svc. Caught one in ops-dashboard that was still using\nresult[0] \u2014 would have silently broken the live dashboard after deploy.\nMerged 2026-02-21.\n---\n## search-svc: POST /v3/search\n\nVector + keyword hybrid search.\n\n**Request body:**\n```json\n{\"query\": \"widget\", \"collection\": \"products\", \"limit\": 20, \"filter\": {\"category\": \"electronics\"}}\n```\n\n**Responses:**\n- `200` \u2014 `{\"results\": [{\"id\": \"p_123\", \"score\": 0.81, \"payload\": {...}}, ...], \"total\": 42}`\n- `400` \u2014 malformed filter\n- `429` \u2014 rate-limited\n\n**Notes:**\n- Results are ranked by hybrid (0.6 vector + 0.4 BM25) \u2014 override with\n  `hybrid_weight` in the body (0.0 = pure BM25, 1.0 = pure vector).\n- Max limit is 100 (hard cap in config).",
+      "hits": [
+        {
+          "text": "# search-svc README\n\nOwner: alex. On-call: search-oncall@example.com.\n\n## SDK\n```python\nfrom search_sdk import SearchClient\nclient = SearchClient(url=os.environ['SEARCH_URL'])\nresults = client.search(query='widget', limit=20)\nfor r in results:\n    print(r['id'], r['score'], r['payload']['title'])\n```\nNOTE: pre-c3d4e5f6 the return shape was `list[tuple[int, float]]`. If you\nsee that in an old servi",
+          "score": 0.6626000593379382,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-search"
+        },
+        {
+          "text": "PR #52: Migrate /search call-sites to new result shape\nAuthor: alex\nStatus: merged\n\nFollow-up to the vector-db switch in c3d4e5f6. 14 call-sites updated to\nread .score / .payload instead of tuple indexing. Most were in\nrecommendations-svc. Caught one in ops-dashboard that was still using\nresult[0] \u2014 would have silently broken the live dashboard after deploy.\nMerged 2026-02-21.",
+          "score": 0.6277946915240228,
+          "source": "pentatonic-memory",
+          "doc_id": "pr-52-search-migration"
+        },
+        {
+          "text": "## search-svc: POST /v3/search\n\nVector + keyword hybrid search.\n\n**Request body:**\n```json\n{\"query\": \"widget\", \"collection\": \"products\", \"limit\": 20, \"filter\": {\"category\": \"electronics\"}}\n```\n\n**Responses:**\n- `200` \u2014 `{\"results\": [{\"id\": \"p_123\", \"score\": 0.81, \"payload\": {...}}, ...], \"total\": 42}`\n- `400` \u2014 malformed filter\n- `429` \u2014 rate-limited\n\n**Notes:**\n- Results are ranked by hybrid (0.6",
+          "score": 0.6237372786079042,
+          "source": "pentatonic-memory",
+          "doc_id": "api-search-query"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['dict']",
+      "search_time_ms": 26.071515982039273,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 471,
+      "query_tokens": 13,
+      "context_tokens": 458,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "config-retry-policy-base",
+      "query": "What's the default stripe retry base delay in ms on billing-svc?",
+      "answer": "# billing-svc README\n\nService owner: jordan. On-call: billing-oncall@example.com.\n\n## Environment\n- `STRIPE_API_KEY` (required)\n- `STRIPE_WEBHOOK_SECRET` (required)\n- `BILLING_DB_URL` (required)\n- `BILLING_STRIPE_RETRY_POLICY_BASE_MS` (default 200)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_MS` (default 8000)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_RETRIES` (default 5)\n\n## Key modules\n- `billing/stripe_client.py` \u2014 wraps stripe-python, adds retry + idempotency\n- `billing/webhooks.py` \u2014 Stripe webhook endpoint, signed and idempotent\n- `billing/invoicing.py` \u2014 PDF invoice generation (weasyprint)\n\nSee ARCHITECTURE.md for the full picture.\n---\n# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but pods didn't reload\nuntil restart. See incident post-mortem in ops/incidents/2026-03-02-webhook.md.\n---\n# billing/stripe_client.py (excerpt)\n\n```python\nimport math\nimport stripe\n\nclass StripeClient:\n    def __init__(self, api_key: str, retry_policy: dict | None = None):\n        stripe.api_key = api_key\n        self.retry_policy = retry_policy or {'base_ms': 200, 'max_ms': 8000, 'max_retries': 5, 'jitter': True}\n\n    @staticmethod\n    def _to_cents(amount: float) -> int:\n        # Floor towards zero so we never overcharge (see a1b2c3d4).\n        sign = 1 if amount >= 0 else -1\n        return sign * math.floor(abs(amount) * 100)\n\n    def charge(self, *, customer_id: str, amount: float, currency: str = 'gbp') -> dict:\n        return self._with_retry(\n            lambda: stripe.Charge.create(\n                customer=customer_id,\n                amount=self._to_cents(amount),\n                currency=currency,\n            )\n        )\n```",
+      "hits": [
+        {
+          "text": "# billing-svc README\n\nService owner: jordan. On-call: billing-oncall@example.com.\n\n## Environment\n- `STRIPE_API_KEY` (required)\n- `STRIPE_WEBHOOK_SECRET` (required)\n- `BILLING_DB_URL` (required)\n- `BILLING_STRIPE_RETRY_POLICY_BASE_MS` (default 200)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_MS` (default 8000)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_RETRIES` (default 5)\n\n## Key modules\n- `billing/stripe_client.",
+          "score": 0.6641875127767956,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-billing"
+        },
+        {
+          "text": "# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but po",
+          "score": 0.6449784142751414,
+          "source": "pentatonic-memory",
+          "doc_id": "runbook-billing"
+        },
+        {
+          "text": "# billing/stripe_client.py (excerpt)\n\n```python\nimport math\nimport stripe\n\nclass StripeClient:\n    def __init__(self, api_key: str, retry_policy: dict | None = None):\n        stripe.api_key = api_key\n        self.retry_policy = retry_policy or {'base_ms': 200, 'max_ms': 8000, 'max_retries': 5, 'jitter': True}\n\n    @staticmethod\n    def _to_cents(amount: float) -> int:\n        # Floor towards zero ",
+          "score": 0.6355303653702338,
+          "source": "pentatonic-memory",
+          "doc_id": "code-stripe-client"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 24.91915298742242,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 539,
+      "query_tokens": 15,
+      "context_tokens": 524,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "config-session-ttl",
+      "query": "What's the default SESSION_TTL_MINUTES on auth-svc?",
+      "answer": "# auth-svc README\n\nOwner: priya. On-call: auth-oncall@example.com.\n\n## Environment\n- `JWT_PRIVATE_KEY_PATH` (required, RS256 PEM)\n- `JWT_PUBLIC_KEY_PATH` (required, RS256 PEM)\n- `JWT_ISSUER` (default: 'https://auth.example.com')\n- `SESSION_TTL_MINUTES` (default: 60)\n- `REFRESH_TTL_DAYS` (default: 30)\n\n**Do not use HS256**. The migration in b2c3d4e5 removed all HS256 paths.\n\n## Public API\n- `POST /v2/login {email, password}` \u2192 `{access_token, refresh_token}`\n- `POST /v2/refresh {refresh_token}` \u2192 `{access_token}`\n- `POST /v2/revoke {refresh_token}` \u2192 204\n- `GET /v2/.well-known/jwks.json` \u2014 the public JWKS for downstream services\n---\n# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but pods didn't reload\nuntil restart. See incident post-mortem in ops/incidents/2026-03-02-webhook.md.\n---\n# Incident 2026-03-02: billing-svc webhook signature errors\n\n**Severity:** SEV-2\n**Duration:** 2026-03-02 14:15 UTC \u2192 14:22 UTC (7 min)\n**Impact:** Stripe webhooks dropped during the window; 3 payment events\nnot ingested. Replayed via Stripe dashboard at 14:30.\n\n**Root cause:** STRIPE_WEBHOOK_SECRET was rotated in vault at 14:10. Pods\ndon't watch vault live; the new secret only loaded on restart.\n\n**Fix:** kubectl rollout restart deployment/billing-svc at 14:20. Normal\noperation resumed 14:22.\n\n**Action items:**\n1. Add webhook-secret rotation to the release checklist \u2014 force a rollout\n   restart when the secret changes. (jordan, done 2026-03-04.)\n2. Investigate vault-secrets-operator for live-reload (priya, tracking).\n\n**Lesson:** any rotated secret that's only read at startup needs an explicit\npod-restart step. We'll codify this in the runbook.",
+      "hits": [
+        {
+          "text": "# auth-svc README\n\nOwner: priya. On-call: auth-oncall@example.com.\n\n## Environment\n- `JWT_PRIVATE_KEY_PATH` (required, RS256 PEM)\n- `JWT_PUBLIC_KEY_PATH` (required, RS256 PEM)\n- `JWT_ISSUER` (default: 'https://auth.example.com')\n- `SESSION_TTL_MINUTES` (default: 60)\n- `REFRESH_TTL_DAYS` (default: 30)\n\n**Do not use HS256**. The migration in b2c3d4e5 removed all HS256 paths.\n\n## Public API\n- `POST /",
+          "score": 0.8868297332722167,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-auth"
+        },
+        {
+          "text": "# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but po",
+          "score": 0.6156977309295835,
+          "source": "pentatonic-memory",
+          "doc_id": "runbook-billing"
+        },
+        {
+          "text": "# Incident 2026-03-02: billing-svc webhook signature errors\n\n**Severity:** SEV-2\n**Duration:** 2026-03-02 14:15 UTC \u2192 14:22 UTC (7 min)\n**Impact:** Stripe webhooks dropped during the window; 3 payment events\nnot ingested. Replayed via Stripe dashboard at 14:30.\n\n**Root cause:** STRIPE_WEBHOOK_SECRET was rotated in vault at 14:10. Pods\ndon't watch vault live; the new secret only loaded on restart.\n",
+          "score": 0.6086505214346937,
+          "source": "pentatonic-memory",
+          "doc_id": "incident-2026-03-02-webhook"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 26.754050981253386,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 572,
+      "query_tokens": 14,
+      "context_tokens": 558,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "config-search-hybrid-weight",
+      "query": "What's the default hybrid_weight for search-svc?",
+      "answer": "## search-svc: POST /v3/search\n\nVector + keyword hybrid search.\n\n**Request body:**\n```json\n{\"query\": \"widget\", \"collection\": \"products\", \"limit\": 20, \"filter\": {\"category\": \"electronics\"}}\n```\n\n**Responses:**\n- `200` \u2014 `{\"results\": [{\"id\": \"p_123\", \"score\": 0.81, \"payload\": {...}}, ...], \"total\": 42}`\n- `400` \u2014 malformed filter\n- `429` \u2014 rate-limited\n\n**Notes:**\n- Results are ranked by hybrid (0.6 vector + 0.4 BM25) \u2014 override with\n  `hybrid_weight` in the body (0.0 = pure BM25, 1.0 = pure vector).\n- Max limit is 100 (hard cap in config).\n---\n# search-svc README\n\nOwner: alex. On-call: search-oncall@example.com.\n\n## SDK\n```python\nfrom search_sdk import SearchClient\nclient = SearchClient(url=os.environ['SEARCH_URL'])\nresults = client.search(query='widget', limit=20)\nfor r in results:\n    print(r['id'], r['score'], r['payload']['title'])\n```\nNOTE: pre-c3d4e5f6 the return shape was `list[tuple[int, float]]`. If you\nsee that in an old service, it's using the legacy SDK \u2014 upgrade to\nsearch-sdk >= 3.0.\n\n## Environment\n- `SEARCH_URL` (default: http://search-svc.internal:8080)\n- `SEARCH_API_KEY` (required)\n- `QDRANT_COLLECTION` (default: 'products')\n---\nPR #52: Migrate /search call-sites to new result shape\nAuthor: alex\nStatus: merged\n\nFollow-up to the vector-db switch in c3d4e5f6. 14 call-sites updated to\nread .score / .payload instead of tuple indexing. Most were in\nrecommendations-svc. Caught one in ops-dashboard that was still using\nresult[0] \u2014 would have silently broken the live dashboard after deploy.\nMerged 2026-02-21.",
+      "hits": [
+        {
+          "text": "## search-svc: POST /v3/search\n\nVector + keyword hybrid search.\n\n**Request body:**\n```json\n{\"query\": \"widget\", \"collection\": \"products\", \"limit\": 20, \"filter\": {\"category\": \"electronics\"}}\n```\n\n**Responses:**\n- `200` \u2014 `{\"results\": [{\"id\": \"p_123\", \"score\": 0.81, \"payload\": {...}}, ...], \"total\": 42}`\n- `400` \u2014 malformed filter\n- `429` \u2014 rate-limited\n\n**Notes:**\n- Results are ranked by hybrid (0.6",
+          "score": 0.6699708397910742,
+          "source": "pentatonic-memory",
+          "doc_id": "api-search-query"
+        },
+        {
+          "text": "# search-svc README\n\nOwner: alex. On-call: search-oncall@example.com.\n\n## SDK\n```python\nfrom search_sdk import SearchClient\nclient = SearchClient(url=os.environ['SEARCH_URL'])\nresults = client.search(query='widget', limit=20)\nfor r in results:\n    print(r['id'], r['score'], r['payload']['title'])\n```\nNOTE: pre-c3d4e5f6 the return shape was `list[tuple[int, float]]`. If you\nsee that in an old servi",
+          "score": 0.6453127346775563,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-search"
+        },
+        {
+          "text": "PR #52: Migrate /search call-sites to new result shape\nAuthor: alex\nStatus: merged\n\nFollow-up to the vector-db switch in c3d4e5f6. 14 call-sites updated to\nread .score / .payload instead of tuple indexing. Most were in\nrecommendations-svc. Caught one in ops-dashboard that was still using\nresult[0] \u2014 would have silently broken the live dashboard after deploy.\nMerged 2026-02-21.",
+          "score": 0.6129850651583699,
+          "source": "pentatonic-memory",
+          "doc_id": "pr-52-search-migration"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 20.51944300183095,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 469,
+      "query_tokens": 11,
+      "context_tokens": 458,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "pr-rationale-retry",
+      "query": "Why did PR #47 choose base=200ms for stripe retries rather than 500ms?",
+      "answer": "# billing/stripe_client.py (excerpt)\n\n```python\nimport math\nimport stripe\n\nclass StripeClient:\n    def __init__(self, api_key: str, retry_policy: dict | None = None):\n        stripe.api_key = api_key\n        self.retry_policy = retry_policy or {'base_ms': 200, 'max_ms': 8000, 'max_retries': 5, 'jitter': True}\n\n    @staticmethod\n    def _to_cents(amount: float) -> int:\n        # Floor towards zero so we never overcharge (see a1b2c3d4).\n        sign = 1 if amount >= 0 else -1\n        return sign * math.floor(abs(amount) * 100)\n\n    def charge(self, *, customer_id: str, amount: float, currency: str = 'gbp') -> dict:\n        return self._with_retry(\n            lambda: stripe.Charge.create(\n                customer=customer_id,\n                amount=self._to_cents(amount),\n                currency=currency,\n            )\n        )\n```\n---\n# billing-svc README\n\nService owner: jordan. On-call: billing-oncall@example.com.\n\n## Environment\n- `STRIPE_API_KEY` (required)\n- `STRIPE_WEBHOOK_SECRET` (required)\n- `BILLING_DB_URL` (required)\n- `BILLING_STRIPE_RETRY_POLICY_BASE_MS` (default 200)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_MS` (default 8000)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_RETRIES` (default 5)\n\n## Key modules\n- `billing/stripe_client.py` \u2014 wraps stripe-python, adds retry + idempotency\n- `billing/webhooks.py` \u2014 Stripe webhook endpoint, signed and idempotent\n- `billing/invoicing.py` \u2014 PDF invoice generation (weasyprint)\n\nSee ARCHITECTURE.md for the full picture.\n---\n# auth-svc README\n\nOwner: priya. On-call: auth-oncall@example.com.\n\n## Environment\n- `JWT_PRIVATE_KEY_PATH` (required, RS256 PEM)\n- `JWT_PUBLIC_KEY_PATH` (required, RS256 PEM)\n- `JWT_ISSUER` (default: 'https://auth.example.com')\n- `SESSION_TTL_MINUTES` (default: 60)\n- `REFRESH_TTL_DAYS` (default: 30)\n\n**Do not use HS256**. The migration in b2c3d4e5 removed all HS256 paths.\n\n## Public API\n- `POST /v2/login {email, password}` \u2192 `{access_token, refresh_token}`\n- `POST /v2/refresh {refresh_token}` \u2192 `{access_token}`",
+      "hits": [
+        {
+          "text": "# billing/stripe_client.py (excerpt)\n\n```python\nimport math\nimport stripe\n\nclass StripeClient:\n    def __init__(self, api_key: str, retry_policy: dict | None = None):\n        stripe.api_key = api_key\n        self.retry_policy = retry_policy or {'base_ms': 200, 'max_ms': 8000, 'max_retries': 5, 'jitter': True}\n\n    @staticmethod\n    def _to_cents(amount: float) -> int:\n        # Floor towards zero ",
+          "score": 0.6442610719830753,
+          "source": "pentatonic-memory",
+          "doc_id": "code-stripe-client"
+        },
+        {
+          "text": "# billing-svc README\n\nService owner: jordan. On-call: billing-oncall@example.com.\n\n## Environment\n- `STRIPE_API_KEY` (required)\n- `STRIPE_WEBHOOK_SECRET` (required)\n- `BILLING_DB_URL` (required)\n- `BILLING_STRIPE_RETRY_POLICY_BASE_MS` (default 200)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_MS` (default 8000)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_RETRIES` (default 5)\n\n## Key modules\n- `billing/stripe_client.",
+          "score": 0.6375518535975762,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-billing"
+        },
+        {
+          "text": "# auth-svc README\n\nOwner: priya. On-call: auth-oncall@example.com.\n\n## Environment\n- `JWT_PRIVATE_KEY_PATH` (required, RS256 PEM)\n- `JWT_PUBLIC_KEY_PATH` (required, RS256 PEM)\n- `JWT_ISSUER` (default: 'https://auth.example.com')\n- `SESSION_TTL_MINUTES` (default: 60)\n- `REFRESH_TTL_DAYS` (default: 30)\n\n**Do not use HS256**. The migration in b2c3d4e5 removed all HS256 paths.\n\n## Public API\n- `POST /",
+          "score": 0.6105348147054268,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-auth"
+        }
+      ],
+      "correct": false,
+      "score": 0.5,
+      "grading_notes": "missing 1/2: ['conservative']",
+      "search_time_ms": 23.105117987142876,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 588,
+      "query_tokens": 19,
+      "context_tokens": 569,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "pr-rationale-jwt-cleanup",
+      "query": "What did PR #61 clean up and why was it safe?",
+      "answer": "# auth-svc README\n\nOwner: priya. On-call: auth-oncall@example.com.\n\n## Environment\n- `JWT_PRIVATE_KEY_PATH` (required, RS256 PEM)\n- `JWT_PUBLIC_KEY_PATH` (required, RS256 PEM)\n- `JWT_ISSUER` (default: 'https://auth.example.com')\n- `SESSION_TTL_MINUTES` (default: 60)\n- `REFRESH_TTL_DAYS` (default: 30)\n\n**Do not use HS256**. The migration in b2c3d4e5 removed all HS256 paths.\n\n## Public API\n- `POST /v2/login {email, password}` \u2192 `{access_token, refresh_token}`\n- `POST /v2/refresh {refresh_token}` \u2192 `{access_token}`\n- `POST /v2/revoke {refresh_token}` \u2192 204\n- `GET /v2/.well-known/jwks.json` \u2014 the public JWKS for downstream services\n---\n# Incident 2026-03-02: billing-svc webhook signature errors\n\n**Severity:** SEV-2\n**Duration:** 2026-03-02 14:15 UTC \u2192 14:22 UTC (7 min)\n**Impact:** Stripe webhooks dropped during the window; 3 payment events\nnot ingested. Replayed via Stripe dashboard at 14:30.\n\n**Root cause:** STRIPE_WEBHOOK_SECRET was rotated in vault at 14:10. Pods\ndon't watch vault live; the new secret only loaded on restart.\n\n**Fix:** kubectl rollout restart deployment/billing-svc at 14:20. Normal\noperation resumed 14:22.\n\n**Action items:**\n1. Add webhook-secret rotation to the release checklist \u2014 force a rollout\n   restart when the secret changes. (jordan, done 2026-03-04.)\n2. Investigate vault-secrets-operator for live-reload (priya, tracking).\n\n**Lesson:** any rotated secret that's only read at startup needs an explicit\npod-restart step. We'll codify this in the runbook.\n---\n# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but pods didn't reload\nuntil restart. See incident post-mortem in ops/incidents/2026-03-02-webhook.md.",
+      "hits": [
+        {
+          "text": "# auth-svc README\n\nOwner: priya. On-call: auth-oncall@example.com.\n\n## Environment\n- `JWT_PRIVATE_KEY_PATH` (required, RS256 PEM)\n- `JWT_PUBLIC_KEY_PATH` (required, RS256 PEM)\n- `JWT_ISSUER` (default: 'https://auth.example.com')\n- `SESSION_TTL_MINUTES` (default: 60)\n- `REFRESH_TTL_DAYS` (default: 30)\n\n**Do not use HS256**. The migration in b2c3d4e5 removed all HS256 paths.\n\n## Public API\n- `POST /",
+          "score": 0.5771770068053738,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-auth"
+        },
+        {
+          "text": "# Incident 2026-03-02: billing-svc webhook signature errors\n\n**Severity:** SEV-2\n**Duration:** 2026-03-02 14:15 UTC \u2192 14:22 UTC (7 min)\n**Impact:** Stripe webhooks dropped during the window; 3 payment events\nnot ingested. Replayed via Stripe dashboard at 14:30.\n\n**Root cause:** STRIPE_WEBHOOK_SECRET was rotated in vault at 14:10. Pods\ndon't watch vault live; the new secret only loaded on restart.\n",
+          "score": 0.5745496565957877,
+          "source": "pentatonic-memory",
+          "doc_id": "incident-2026-03-02-webhook"
+        },
+        {
+          "text": "# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but po",
+          "score": 0.5713664267039132,
+          "source": "pentatonic-memory",
+          "doc_id": "runbook-billing"
+        }
+      ],
+      "correct": false,
+      "score": 0.5,
+      "grading_notes": "missing 1/2: ['JWT_SECRET']",
+      "search_time_ms": 19.333734991960227,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 571,
+      "query_tokens": 13,
+      "context_tokens": 558,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "cross-ref-invoicing",
+      "query": "After Stripe posts invoice.payment_succeeded, which services consume the event?",
+      "answer": "# Cross-reference: invoicing pipeline\n\nEnd-to-end path for an invoice being paid:\n\n1. `billing-svc` creates the invoice (see POST /v2/invoices, api-billing-invoice)\n2. Customer pays via Stripe portal (no internal code path)\n3. Stripe posts a `invoice.payment_succeeded` webhook to billing-svc\n4. `billing/webhooks.py::handle_webhook` verifies signature, enqueues\n   internal `InvoicePaid` event on `order-svc`\n5. `order-svc` marks order as paid, emits `OrderPaid` on pubsub\n6. `reporting-svc` consumes `OrderPaid` for financial reports\n7. `email-svc` consumes `OrderPaid` for the receipt email\n\nOn webhook signature errors, see runbook-billing.\n---\n# billing-svc README\n\nService owner: jordan. On-call: billing-oncall@example.com.\n\n## Environment\n- `STRIPE_API_KEY` (required)\n- `STRIPE_WEBHOOK_SECRET` (required)\n- `BILLING_DB_URL` (required)\n- `BILLING_STRIPE_RETRY_POLICY_BASE_MS` (default 200)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_MS` (default 8000)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_RETRIES` (default 5)\n\n## Key modules\n- `billing/stripe_client.py` \u2014 wraps stripe-python, adds retry + idempotency\n- `billing/webhooks.py` \u2014 Stripe webhook endpoint, signed and idempotent\n- `billing/invoicing.py` \u2014 PDF invoice generation (weasyprint)\n\nSee ARCHITECTURE.md for the full picture.\n---\n# billing/stripe_client.py (excerpt)\n\n```python\nimport math\nimport stripe\n\nclass StripeClient:\n    def __init__(self, api_key: str, retry_policy: dict | None = None):\n        stripe.api_key = api_key\n        self.retry_policy = retry_policy or {'base_ms': 200, 'max_ms': 8000, 'max_retries': 5, 'jitter': True}\n\n    @staticmethod\n    def _to_cents(amount: float) -> int:\n        # Floor towards zero so we never overcharge (see a1b2c3d4).\n        sign = 1 if amount >= 0 else -1\n        return sign * math.floor(abs(amount) * 100)\n\n    def charge(self, *, customer_id: str, amount: float, currency: str = 'gbp') -> dict:\n        return self._with_retry(\n            lambda: stripe.Charge.create(\n                cust",
+      "hits": [
+        {
+          "text": "# Cross-reference: invoicing pipeline\n\nEnd-to-end path for an invoice being paid:\n\n1. `billing-svc` creates the invoice (see POST /v2/invoices, api-billing-invoice)\n2. Customer pays via Stripe portal (no internal code path)\n3. Stripe posts a `invoice.payment_succeeded` webhook to billing-svc\n4. `billing/webhooks.py::handle_webhook` verifies signature, enqueues\n   internal `InvoicePaid` event on `o",
+          "score": 0.6602750059501441,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        },
+        {
+          "text": "# billing-svc README\n\nService owner: jordan. On-call: billing-oncall@example.com.\n\n## Environment\n- `STRIPE_API_KEY` (required)\n- `STRIPE_WEBHOOK_SECRET` (required)\n- `BILLING_DB_URL` (required)\n- `BILLING_STRIPE_RETRY_POLICY_BASE_MS` (default 200)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_MS` (default 8000)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_RETRIES` (default 5)\n\n## Key modules\n- `billing/stripe_client.",
+          "score": 0.637876650269287,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-billing"
+        },
+        {
+          "text": "# billing/stripe_client.py (excerpt)\n\n```python\nimport math\nimport stripe\n\nclass StripeClient:\n    def __init__(self, api_key: str, retry_policy: dict | None = None):\n        stripe.api_key = api_key\n        self.retry_policy = retry_policy or {'base_ms': 200, 'max_ms': 8000, 'max_retries': 5, 'jitter': True}\n\n    @staticmethod\n    def _to_cents(amount: float) -> int:\n        # Floor towards zero ",
+          "score": 0.6285438325236996,
+          "source": "pentatonic-memory",
+          "doc_id": "code-stripe-client"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 23.52536199032329,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 565,
+      "query_tokens": 14,
+      "context_tokens": 551,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "cross-ref-ratelimit",
+      "query": "Where does the shared rate-limit lib live and what's the method signature?",
+      "answer": "# billing-svc README\n\nService owner: jordan. On-call: billing-oncall@example.com.\n\n## Environment\n- `STRIPE_API_KEY` (required)\n- `STRIPE_WEBHOOK_SECRET` (required)\n- `BILLING_DB_URL` (required)\n- `BILLING_STRIPE_RETRY_POLICY_BASE_MS` (default 200)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_MS` (default 8000)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_RETRIES` (default 5)\n\n## Key modules\n- `billing/stripe_client.py` \u2014 wraps stripe-python, adds retry + idempotency\n- `billing/webhooks.py` \u2014 Stripe webhook endpoint, signed and idempotent\n- `billing/invoicing.py` \u2014 PDF invoice generation (weasyprint)\n\nSee ARCHITECTURE.md for the full picture.\n---\n# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but pods didn't reload\nuntil restart. See incident post-mortem in ops/incidents/2026-03-02-webhook.md.\n---\n# auth-svc README\n\nOwner: priya. On-call: auth-oncall@example.com.\n\n## Environment\n- `JWT_PRIVATE_KEY_PATH` (required, RS256 PEM)\n- `JWT_PUBLIC_KEY_PATH` (required, RS256 PEM)\n- `JWT_ISSUER` (default: 'https://auth.example.com')\n- `SESSION_TTL_MINUTES` (default: 60)\n- `REFRESH_TTL_DAYS` (default: 30)\n\n**Do not use HS256**. The migration in b2c3d4e5 removed all HS256 paths.\n\n## Public API\n- `POST /v2/login {email, password}` \u2192 `{access_token, refresh_token}`\n- `POST /v2/refresh {refresh_token}` \u2192 `{access_token}`\n- `POST /v2/revoke {refresh_token}` \u2192 204\n- `GET /v2/.well-known/jwks.json` \u2014 the public JWKS for downstream services",
+      "hits": [
+        {
+          "text": "# billing-svc README\n\nService owner: jordan. On-call: billing-oncall@example.com.\n\n## Environment\n- `STRIPE_API_KEY` (required)\n- `STRIPE_WEBHOOK_SECRET` (required)\n- `BILLING_DB_URL` (required)\n- `BILLING_STRIPE_RETRY_POLICY_BASE_MS` (default 200)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_MS` (default 8000)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_RETRIES` (default 5)\n\n## Key modules\n- `billing/stripe_client.",
+          "score": 0.6127739554707295,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-billing"
+        },
+        {
+          "text": "# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but po",
+          "score": 0.6119995587510915,
+          "source": "pentatonic-memory",
+          "doc_id": "runbook-billing"
+        },
+        {
+          "text": "# auth-svc README\n\nOwner: priya. On-call: auth-oncall@example.com.\n\n## Environment\n- `JWT_PRIVATE_KEY_PATH` (required, RS256 PEM)\n- `JWT_PUBLIC_KEY_PATH` (required, RS256 PEM)\n- `JWT_ISSUER` (default: 'https://auth.example.com')\n- `SESSION_TTL_MINUTES` (default: 60)\n- `REFRESH_TTL_DAYS` (default: 30)\n\n**Do not use HS256**. The migration in b2c3d4e5 removed all HS256 paths.\n\n## Public API\n- `POST /",
+          "score": 0.609809810293523,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-auth"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['shared/rate_limit.py', 'allow']",
+      "search_time_ms": 23.320078995311633,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 520,
+      "query_tokens": 15,
+      "context_tokens": 505,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "stack-trace-webhook",
+      "query": "If a SignatureVerificationError happens on billing-svc webhook, what's the most likely cause and fix?",
+      "answer": "# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but pods didn't reload\nuntil restart. See incident post-mortem in ops/incidents/2026-03-02-webhook.md.\n---\n# Incident 2026-03-02: billing-svc webhook signature errors\n\n**Severity:** SEV-2\n**Duration:** 2026-03-02 14:15 UTC \u2192 14:22 UTC (7 min)\n**Impact:** Stripe webhooks dropped during the window; 3 payment events\nnot ingested. Replayed via Stripe dashboard at 14:30.\n\n**Root cause:** STRIPE_WEBHOOK_SECRET was rotated in vault at 14:10. Pods\ndon't watch vault live; the new secret only loaded on restart.\n\n**Fix:** kubectl rollout restart deployment/billing-svc at 14:20. Normal\noperation resumed 14:22.\n\n**Action items:**\n1. Add webhook-secret rotation to the release checklist \u2014 force a rollout\n   restart when the secret changes. (jordan, done 2026-03-04.)\n2. Investigate vault-secrets-operator for live-reload (priya, tracking).\n\n**Lesson:** any rotated secret that's only read at startup needs an explicit\npod-restart step. We'll codify this in the runbook.\n---\n# Cross-reference: invoicing pipeline\n\nEnd-to-end path for an invoice being paid:\n\n1. `billing-svc` creates the invoice (see POST /v2/invoices, api-billing-invoice)\n2. Customer pays via Stripe portal (no internal code path)\n3. Stripe posts a `invoice.payment_succeeded` webhook to billing-svc\n4. `billing/webhooks.py::handle_webhook` verifies signature, enqueues\n   internal `InvoicePaid` event on `order-svc`\n5. `order-svc` marks order as paid, emits `OrderPaid` on pubsub\n6. `reporting-svc` consumes `OrderPaid` for financial reports\n7. `email-svc` consumes `OrderPaid` for the receipt email\n\nOn webhook signature errors, see runbook-b",
+      "hits": [
+        {
+          "text": "# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but po",
+          "score": 0.7119100391751223,
+          "source": "pentatonic-memory",
+          "doc_id": "runbook-billing"
+        },
+        {
+          "text": "# Incident 2026-03-02: billing-svc webhook signature errors\n\n**Severity:** SEV-2\n**Duration:** 2026-03-02 14:15 UTC \u2192 14:22 UTC (7 min)\n**Impact:** Stripe webhooks dropped during the window; 3 payment events\nnot ingested. Replayed via Stripe dashboard at 14:30.\n\n**Root cause:** STRIPE_WEBHOOK_SECRET was rotated in vault at 14:10. Pods\ndon't watch vault live; the new secret only loaded on restart.\n",
+          "score": 0.6685187427620528,
+          "source": "pentatonic-memory",
+          "doc_id": "incident-2026-03-02-webhook"
+        },
+        {
+          "text": "# Cross-reference: invoicing pipeline\n\nEnd-to-end path for an invoice being paid:\n\n1. `billing-svc` creates the invoice (see POST /v2/invoices, api-billing-invoice)\n2. Customer pays via Stripe portal (no internal code path)\n3. Stripe posts a `invoice.payment_succeeded` webhook to billing-svc\n4. `billing/webhooks.py::handle_webhook` verifies signature, enqueues\n   internal `InvoicePaid` event on `o",
+          "score": 0.6557678973037321,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 23.922293999930844,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 548,
+      "query_tokens": 21,
+      "context_tokens": 527,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "temporal-numpy",
+      "query": "Why was numpy upgraded to 1.26 recently?",
+      "answer": "PR #52: Migrate /search call-sites to new result shape\nAuthor: alex\nStatus: merged\n\nFollow-up to the vector-db switch in c3d4e5f6. 14 call-sites updated to\nread .score / .payload instead of tuple indexing. Most were in\nrecommendations-svc. Caught one in ops-dashboard that was still using\nresult[0] \u2014 would have silently broken the live dashboard after deploy.\nMerged 2026-02-21.\n---\n# auth-svc README\n\nOwner: priya. On-call: auth-oncall@example.com.\n\n## Environment\n- `JWT_PRIVATE_KEY_PATH` (required, RS256 PEM)\n- `JWT_PUBLIC_KEY_PATH` (required, RS256 PEM)\n- `JWT_ISSUER` (default: 'https://auth.example.com')\n- `SESSION_TTL_MINUTES` (default: 60)\n- `REFRESH_TTL_DAYS` (default: 30)\n\n**Do not use HS256**. The migration in b2c3d4e5 removed all HS256 paths.\n\n## Public API\n- `POST /v2/login {email, password}` \u2192 `{access_token, refresh_token}`\n- `POST /v2/refresh {refresh_token}` \u2192 `{access_token}`\n- `POST /v2/revoke {refresh_token}` \u2192 204\n- `GET /v2/.well-known/jwks.json` \u2014 the public JWKS for downstream services\n---\n# Feature flags (ops/flags.yaml)\n\nflags:\n  billing.new_invoice_pdf:\n    default: false\n    description: 'Use the new weasyprint-based PDF renderer (vs the legacy wkhtmltopdf).'\n    owner: jordan\n    target_audience:\n      - enterprise_customers: 100%\n      - retail_customers: 20%  # canary\n\n  search.hybrid_v2:\n    default: true\n    description: 'Use the hybrid (vector + BM25) search path. Rollback key if vector-db melts.'\n    owner: alex\n    target_audience:\n      - all: 100%\n\n  auth.mfa_required:\n    default: false\n    description: 'Require TOTP MFA on login. Staged rollout to admin accounts first.'\n    owner: priya\n    target_audience:\n      - admin_users: 100%\n      - paying_users: 0%  # not yet\n      - free_users: 0%",
+      "hits": [
+        {
+          "text": "PR #52: Migrate /search call-sites to new result shape\nAuthor: alex\nStatus: merged\n\nFollow-up to the vector-db switch in c3d4e5f6. 14 call-sites updated to\nread .score / .payload instead of tuple indexing. Most were in\nrecommendations-svc. Caught one in ops-dashboard that was still using\nresult[0] \u2014 would have silently broken the live dashboard after deploy.\nMerged 2026-02-21.",
+          "score": 0.6055320123739515,
+          "source": "pentatonic-memory",
+          "doc_id": "pr-52-search-migration"
+        },
+        {
+          "text": "# auth-svc README\n\nOwner: priya. On-call: auth-oncall@example.com.\n\n## Environment\n- `JWT_PRIVATE_KEY_PATH` (required, RS256 PEM)\n- `JWT_PUBLIC_KEY_PATH` (required, RS256 PEM)\n- `JWT_ISSUER` (default: 'https://auth.example.com')\n- `SESSION_TTL_MINUTES` (default: 60)\n- `REFRESH_TTL_DAYS` (default: 30)\n\n**Do not use HS256**. The migration in b2c3d4e5 removed all HS256 paths.\n\n## Public API\n- `POST /",
+          "score": 0.6027458380600648,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-auth"
+        },
+        {
+          "text": "# Feature flags (ops/flags.yaml)\n\nflags:\n  billing.new_invoice_pdf:\n    default: false\n    description: 'Use the new weasyprint-based PDF renderer (vs the legacy wkhtmltopdf).'\n    owner: jordan\n    target_audience:\n      - enterprise_customers: 100%\n      - retail_customers: 20%  # canary\n\n  search.hybrid_v2:\n    default: true\n    description: 'Use the hybrid (vector + BM25) search path. Rollback",
+          "score": 0.5953137468578912,
+          "source": "pentatonic-memory",
+          "doc_id": "flags-feature"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['Python 3.12', 'wheels']",
+      "search_time_ms": 19.953389011789113,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 526,
+      "query_tokens": 11,
+      "context_tokens": 515,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "temporal-on-call",
+      "query": "Who is the primary on-call for the week of April 15\u201321, 2026?",
+      "answer": "# On-call rotation April 2026\n\n| Week | Primary | Secondary |\n|------|---------|-----------|\n| Apr 1\u20137   | jordan | priya |\n| Apr 8\u201314  | priya  | alex  |\n| Apr 15\u201321 | alex   | jordan |\n| Apr 22\u201328 | jordan | priya |\n| Apr 29\u201330 | priya  | alex  |\n\nHandoff: Mondays 10:00 UTC, #on-call channel. Previous week's primary\nruns through the incident log.\n\nEscalation path: primary \u2192 secondary \u2192 engineering manager (kim) \u2192 CTO.\n---\n# auth-svc README\n\nOwner: priya. On-call: auth-oncall@example.com.\n\n## Environment\n- `JWT_PRIVATE_KEY_PATH` (required, RS256 PEM)\n- `JWT_PUBLIC_KEY_PATH` (required, RS256 PEM)\n- `JWT_ISSUER` (default: 'https://auth.example.com')\n- `SESSION_TTL_MINUTES` (default: 60)\n- `REFRESH_TTL_DAYS` (default: 30)\n\n**Do not use HS256**. The migration in b2c3d4e5 removed all HS256 paths.\n\n## Public API\n- `POST /v2/login {email, password}` \u2192 `{access_token, refresh_token}`\n- `POST /v2/refresh {refresh_token}` \u2192 `{access_token}`\n- `POST /v2/revoke {refresh_token}` \u2192 204\n- `GET /v2/.well-known/jwks.json` \u2014 the public JWKS for downstream services\n---\n# Incident 2026-03-02: billing-svc webhook signature errors\n\n**Severity:** SEV-2\n**Duration:** 2026-03-02 14:15 UTC \u2192 14:22 UTC (7 min)\n**Impact:** Stripe webhooks dropped during the window; 3 payment events\nnot ingested. Replayed via Stripe dashboard at 14:30.\n\n**Root cause:** STRIPE_WEBHOOK_SECRET was rotated in vault at 14:10. Pods\ndon't watch vault live; the new secret only loaded on restart.\n\n**Fix:** kubectl rollout restart deployment/billing-svc at 14:20. Normal\noperation resumed 14:22.\n\n**Action items:**\n1. Add webhook-secret rotation to the release checklist \u2014 force a rollout\n   restart when the secret changes. (jordan, done 2026-03-04.)\n2. Investigate vault-secrets-operator for live-reload (priya, tracking).\n\n**Lesson:** any rotated secret that's only read at startup needs an explicit\npod-restart step. We'll codify this in the runbook.",
+      "hits": [
+        {
+          "text": "# On-call rotation April 2026\n\n| Week | Primary | Secondary |\n|------|---------|-----------|\n| Apr 1\u20137   | jordan | priya |\n| Apr 8\u201314  | priya  | alex  |\n| Apr 15\u201321 | alex   | jordan |\n| Apr 22\u201328 | jordan | priya |\n| Apr 29\u201330 | priya  | alex  |\n\nHandoff: Mondays 10:00 UTC, #on-call channel. Previous week's primary\nruns through the incident log.\n\nEscalation path: primary \u2192 secondary \u2192 engineeri",
+          "score": 0.7794018626150157,
+          "source": "pentatonic-memory",
+          "doc_id": "on-call-rotation"
+        },
+        {
+          "text": "# auth-svc README\n\nOwner: priya. On-call: auth-oncall@example.com.\n\n## Environment\n- `JWT_PRIVATE_KEY_PATH` (required, RS256 PEM)\n- `JWT_PUBLIC_KEY_PATH` (required, RS256 PEM)\n- `JWT_ISSUER` (default: 'https://auth.example.com')\n- `SESSION_TTL_MINUTES` (default: 60)\n- `REFRESH_TTL_DAYS` (default: 30)\n\n**Do not use HS256**. The migration in b2c3d4e5 removed all HS256 paths.\n\n## Public API\n- `POST /",
+          "score": 0.5821010124125434,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-auth"
+        },
+        {
+          "text": "# Incident 2026-03-02: billing-svc webhook signature errors\n\n**Severity:** SEV-2\n**Duration:** 2026-03-02 14:15 UTC \u2192 14:22 UTC (7 min)\n**Impact:** Stripe webhooks dropped during the window; 3 payment events\nnot ingested. Replayed via Stripe dashboard at 14:30.\n\n**Root cause:** STRIPE_WEBHOOK_SECRET was rotated in vault at 14:10. Pods\ndon't watch vault live; the new secret only loaded on restart.\n",
+          "score": 0.5789362698521102,
+          "source": "pentatonic-memory",
+          "doc_id": "incident-2026-03-02-webhook"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 24.065143981715664,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 592,
+      "query_tokens": 20,
+      "context_tokens": 572,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "contradiction-algorithm",
+      "query": "Which JWT signing algorithm does auth-svc use \u2014 HS256 or RS256?",
+      "answer": "# auth-svc README\n\nOwner: priya. On-call: auth-oncall@example.com.\n\n## Environment\n- `JWT_PRIVATE_KEY_PATH` (required, RS256 PEM)\n- `JWT_PUBLIC_KEY_PATH` (required, RS256 PEM)\n- `JWT_ISSUER` (default: 'https://auth.example.com')\n- `SESSION_TTL_MINUTES` (default: 60)\n- `REFRESH_TTL_DAYS` (default: 30)\n\n**Do not use HS256**. The migration in b2c3d4e5 removed all HS256 paths.\n\n## Public API\n- `POST /v2/login {email, password}` \u2192 `{access_token, refresh_token}`\n- `POST /v2/refresh {refresh_token}` \u2192 `{access_token}`\n- `POST /v2/revoke {refresh_token}` \u2192 204\n- `GET /v2/.well-known/jwks.json` \u2014 the public JWKS for downstream services\n---\n# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but pods didn't reload\nuntil restart. See incident post-mortem in ops/incidents/2026-03-02-webhook.md.\n---\n# billing-svc README\n\nService owner: jordan. On-call: billing-oncall@example.com.\n\n## Environment\n- `STRIPE_API_KEY` (required)\n- `STRIPE_WEBHOOK_SECRET` (required)\n- `BILLING_DB_URL` (required)\n- `BILLING_STRIPE_RETRY_POLICY_BASE_MS` (default 200)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_MS` (default 8000)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_RETRIES` (default 5)\n\n## Key modules\n- `billing/stripe_client.py` \u2014 wraps stripe-python, adds retry + idempotency\n- `billing/webhooks.py` \u2014 Stripe webhook endpoint, signed and idempotent\n- `billing/invoicing.py` \u2014 PDF invoice generation (weasyprint)\n\nSee ARCHITECTURE.md for the full picture.",
+      "hits": [
+        {
+          "text": "# auth-svc README\n\nOwner: priya. On-call: auth-oncall@example.com.\n\n## Environment\n- `JWT_PRIVATE_KEY_PATH` (required, RS256 PEM)\n- `JWT_PUBLIC_KEY_PATH` (required, RS256 PEM)\n- `JWT_ISSUER` (default: 'https://auth.example.com')\n- `SESSION_TTL_MINUTES` (default: 60)\n- `REFRESH_TTL_DAYS` (default: 30)\n\n**Do not use HS256**. The migration in b2c3d4e5 removed all HS256 paths.\n\n## Public API\n- `POST /",
+          "score": 0.6794511051998786,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-auth"
+        },
+        {
+          "text": "# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but po",
+          "score": 0.6399190695023318,
+          "source": "pentatonic-memory",
+          "doc_id": "runbook-billing"
+        },
+        {
+          "text": "# billing-svc README\n\nService owner: jordan. On-call: billing-oncall@example.com.\n\n## Environment\n- `STRIPE_API_KEY` (required)\n- `STRIPE_WEBHOOK_SECRET` (required)\n- `BILLING_DB_URL` (required)\n- `BILLING_STRIPE_RETRY_POLICY_BASE_MS` (default 200)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_MS` (default 8000)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_RETRIES` (default 5)\n\n## Key modules\n- `billing/stripe_client.",
+          "score": 0.6194263270592827,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-billing"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 22.98831701045856,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 522,
+      "query_tokens": 16,
+      "context_tokens": 506,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "rubric-security-advice",
+      "query": "A new engineer asks: can I add HS256 as a fallback for older clients in auth-svc? Advise them.",
+      "answer": "# auth-svc README\n\nOwner: priya. On-call: auth-oncall@example.com.\n\n## Environment\n- `JWT_PRIVATE_KEY_PATH` (required, RS256 PEM)\n- `JWT_PUBLIC_KEY_PATH` (required, RS256 PEM)\n- `JWT_ISSUER` (default: 'https://auth.example.com')\n- `SESSION_TTL_MINUTES` (default: 60)\n- `REFRESH_TTL_DAYS` (default: 30)\n\n**Do not use HS256**. The migration in b2c3d4e5 removed all HS256 paths.\n\n## Public API\n- `POST /v2/login {email, password}` \u2192 `{access_token, refresh_token}`\n- `POST /v2/refresh {refresh_token}` \u2192 `{access_token}`\n- `POST /v2/revoke {refresh_token}` \u2192 204\n- `GET /v2/.well-known/jwks.json` \u2014 the public JWKS for downstream services\n---\n# billing-svc README\n\nService owner: jordan. On-call: billing-oncall@example.com.\n\n## Environment\n- `STRIPE_API_KEY` (required)\n- `STRIPE_WEBHOOK_SECRET` (required)\n- `BILLING_DB_URL` (required)\n- `BILLING_STRIPE_RETRY_POLICY_BASE_MS` (default 200)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_MS` (default 8000)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_RETRIES` (default 5)\n\n## Key modules\n- `billing/stripe_client.py` \u2014 wraps stripe-python, adds retry + idempotency\n- `billing/webhooks.py` \u2014 Stripe webhook endpoint, signed and idempotent\n- `billing/invoicing.py` \u2014 PDF invoice generation (weasyprint)\n\nSee ARCHITECTURE.md for the full picture.\n---\n# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but pods didn't reload\nuntil restart. See incident post-mortem in ops/incidents/2026-03-02-webhook.md.",
+      "hits": [
+        {
+          "text": "# auth-svc README\n\nOwner: priya. On-call: auth-oncall@example.com.\n\n## Environment\n- `JWT_PRIVATE_KEY_PATH` (required, RS256 PEM)\n- `JWT_PUBLIC_KEY_PATH` (required, RS256 PEM)\n- `JWT_ISSUER` (default: 'https://auth.example.com')\n- `SESSION_TTL_MINUTES` (default: 60)\n- `REFRESH_TTL_DAYS` (default: 30)\n\n**Do not use HS256**. The migration in b2c3d4e5 removed all HS256 paths.\n\n## Public API\n- `POST /",
+          "score": 0.6589155108095069,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-auth"
+        },
+        {
+          "text": "# billing-svc README\n\nService owner: jordan. On-call: billing-oncall@example.com.\n\n## Environment\n- `STRIPE_API_KEY` (required)\n- `STRIPE_WEBHOOK_SECRET` (required)\n- `BILLING_DB_URL` (required)\n- `BILLING_STRIPE_RETRY_POLICY_BASE_MS` (default 200)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_MS` (default 8000)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_RETRIES` (default 5)\n\n## Key modules\n- `billing/stripe_client.",
+          "score": 0.6223584514709991,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-billing"
+        },
+        {
+          "text": "# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but po",
+          "score": 0.6204836039661172,
+          "source": "pentatonic-memory",
+          "doc_id": "runbook-billing"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "judge=1.00 \u2014 The answer explicitly says no / don't / avoid HS256 and cites that all services only hold the public key since the RS256",
+      "search_time_ms": 26.804178982274607,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 531,
+      "query_tokens": 25,
+      "context_tokens": 506,
+      "judge_tokens_in": 819,
+      "judge_tokens_out": 42,
+      "judge_latency_ms": 1898.8169969916344
+    },
+    {
+      "task_id": "rubric-incident-lesson",
+      "query": "We saw SignatureVerificationError in billing-svc logs right after a secret rotation. What's our SOP?",
+      "answer": "# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but pods didn't reload\nuntil restart. See incident post-mortem in ops/incidents/2026-03-02-webhook.md.\n---\n# Incident 2026-03-02: billing-svc webhook signature errors\n\n**Severity:** SEV-2\n**Duration:** 2026-03-02 14:15 UTC \u2192 14:22 UTC (7 min)\n**Impact:** Stripe webhooks dropped during the window; 3 payment events\nnot ingested. Replayed via Stripe dashboard at 14:30.\n\n**Root cause:** STRIPE_WEBHOOK_SECRET was rotated in vault at 14:10. Pods\ndon't watch vault live; the new secret only loaded on restart.\n\n**Fix:** kubectl rollout restart deployment/billing-svc at 14:20. Normal\noperation resumed 14:22.\n\n**Action items:**\n1. Add webhook-secret rotation to the release checklist \u2014 force a rollout\n   restart when the secret changes. (jordan, done 2026-03-04.)\n2. Investigate vault-secrets-operator for live-reload (priya, tracking).\n\n**Lesson:** any rotated secret that's only read at startup needs an explicit\npod-restart step. We'll codify this in the runbook.\n---\n# billing-svc README\n\nService owner: jordan. On-call: billing-oncall@example.com.\n\n## Environment\n- `STRIPE_API_KEY` (required)\n- `STRIPE_WEBHOOK_SECRET` (required)\n- `BILLING_DB_URL` (required)\n- `BILLING_STRIPE_RETRY_POLICY_BASE_MS` (default 200)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_MS` (default 8000)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_RETRIES` (default 5)\n\n## Key modules\n- `billing/stripe_client.py` \u2014 wraps stripe-python, adds retry + idempotency\n- `billing/webhooks.py` \u2014 Stripe webhook endpoint, signed and idempotent\n- `billing/invoicing.py` \u2014 PDF invoice generation (weasyprint)\n\nSee ARCHITECTURE.md for the full picture.",
+      "hits": [
+        {
+          "text": "# billing-svc runbook: webhook signature errors\n\nSymptom: logs show `stripe.error.SignatureVerificationError`.\n\nDiagnosis:\n1. Confirm the webhook endpoint URL matches Stripe dashboard\n2. Check `STRIPE_WEBHOOK_SECRET` matches the secret in Stripe dashboard\n3. If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n\nWe hit this on 2026-03-02 14:15 UTC \u2014 secret rotated but po",
+          "score": 0.6796027221698456,
+          "source": "pentatonic-memory",
+          "doc_id": "runbook-billing"
+        },
+        {
+          "text": "# Incident 2026-03-02: billing-svc webhook signature errors\n\n**Severity:** SEV-2\n**Duration:** 2026-03-02 14:15 UTC \u2192 14:22 UTC (7 min)\n**Impact:** Stripe webhooks dropped during the window; 3 payment events\nnot ingested. Replayed via Stripe dashboard at 14:30.\n\n**Root cause:** STRIPE_WEBHOOK_SECRET was rotated in vault at 14:10. Pods\ndon't watch vault live; the new secret only loaded on restart.\n",
+          "score": 0.6541125046797448,
+          "source": "pentatonic-memory",
+          "doc_id": "incident-2026-03-02-webhook"
+        },
+        {
+          "text": "# billing-svc README\n\nService owner: jordan. On-call: billing-oncall@example.com.\n\n## Environment\n- `STRIPE_API_KEY` (required)\n- `STRIPE_WEBHOOK_SECRET` (required)\n- `BILLING_DB_URL` (required)\n- `BILLING_STRIPE_RETRY_POLICY_BASE_MS` (default 200)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_MS` (default 8000)\n- `BILLING_STRIPE_RETRY_POLICY_MAX_RETRIES` (default 5)\n\n## Key modules\n- `billing/stripe_client.",
+          "score": 0.6314274357753429,
+          "source": "pentatonic-memory",
+          "doc_id": "readme-billing"
+        }
+      ],
+      "correct": false,
+      "score": 0.5,
+      "grading_notes": "judge=0.50 \u2014 The answer mentions a pod restart but does not explicitly reference that secrets only load at pod startup.",
+      "search_time_ms": 24.85710399923846,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 559,
+      "query_tokens": 21,
+      "context_tokens": 538,
+      "judge_tokens_in": 831,
+      "judge_tokens_out": 33,
+      "judge_latency_ms": 1775.7281960248947
+    }
+  ]
+}

@@ -199,8 +199,43 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
 
   // tes_status is always runnable — its whole purpose is to report
-  // whether the plugin is configured + whether creds still validate.
+  // whether the plugin is configured + whether the backend is healthy.
   if (name === "tes_status") {
+    // Local mode: ping the engine /health endpoint
+    if (config?.mode === "local" && config?.memory_url) {
+      try {
+        const res = await fetch(`${config.memory_url}/health`, {
+          signal: AbortSignal.timeout(5000),
+        });
+        if (!res.ok) {
+          return {
+            content: [{ type: "text", text: `Status: local engine at ${config.memory_url} returned HTTP ${res.status}.` }],
+          };
+        }
+        const health = await res.json();
+        const layers = health.layers || {};
+        const okCount = Object.values(layers).filter((s) => s === "ok").length;
+        const total = Object.keys(layers).length;
+        return {
+          content: [
+            {
+              type: "text",
+              text:
+                `✓ Connected to local memory engine\n` +
+                `  URL: ${config.memory_url}\n` +
+                `  Engine: ${health.engine || "unknown"} v${health.version || "?"}\n` +
+                `  Layers healthy: ${okCount}/${total}\n` +
+                `  Memories stored: ${health.memories ?? "?"}\n`,
+            },
+          ],
+        };
+      } catch (err) {
+        return {
+          content: [{ type: "text", text: `Status: local engine at ${config.memory_url} unreachable (${err.message}).` }],
+        };
+      }
+    }
+    // Hosted mode: existing TES path
     if (
       !config?.tes_endpoint ||
       !config?.tes_api_key ||
@@ -248,6 +283,70 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           },
         ],
       };
+    }
+  }
+
+  // Local mode: route MCP tool calls through engine HTTP API
+  if (config?.mode === "local" && config?.memory_url) {
+    try {
+      if (name === "search_memories") {
+        const res = await fetch(`${config.memory_url}/search`, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            query: args.query,
+            limit: args.limit || 10,
+            min_score: 0.001,
+          }),
+          signal: AbortSignal.timeout(15000),
+        });
+        if (!res.ok) {
+          return { content: [{ type: "text", text: `Search failed: HTTP ${res.status}` }] };
+        }
+        const data = await res.json();
+        const memories = data.results || [];
+        if (!memories.length) {
+          return { content: [{ type: "text", text: `No memories found for: "${args.query}"` }] };
+        }
+        const formatted = memories
+          .map((m, i) => `${i + 1}. [${Math.round((m.similarity || 0) * 100)}% match · ${m.engine_layer || "?"}] ${m.content}`)
+          .join("\n\n");
+        return {
+          content: [{ type: "text", text: `Found ${memories.length} relevant memories:\n\n${formatted}` }],
+        };
+      }
+
+      if (name === "store_memory") {
+        const meta = {
+          ...(args.metadata || {}),
+          source: "claude-code-plugin",
+          arena: config.arena || "default",
+        };
+        const res = await fetch(`${config.memory_url}/store`, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ content: args.content, metadata: meta }),
+          signal: AbortSignal.timeout(15000),
+        });
+        if (!res.ok) {
+          return { content: [{ type: "text", text: `Store failed: HTTP ${res.status}` }] };
+        }
+        const data = await res.json();
+        return {
+          content: [{ type: "text", text: `Stored memory (${data.id}): "${(data.content || args.content).substring(0, 100)}..."` }],
+        };
+      }
+
+      if (name === "list_memory_layers") {
+        // Engine doesn't model memory_layers as TES does. Return the
+        // same four-layer canonical list for client back-compat.
+        const layers = ["episodic", "semantic", "procedural", "working"];
+        return {
+          content: [{ type: "text", text: layers.map((l) => `${l}: managed by engine (no per-layer count)`).join("\n") }],
+        };
+      }
+    } catch (err) {
+      return { content: [{ type: "text", text: `Local engine error: ${err.message}` }] };
     }
   }
 

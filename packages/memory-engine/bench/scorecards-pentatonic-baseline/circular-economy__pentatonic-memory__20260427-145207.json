@@ -1,0 +1,894 @@
+{
+  "bench": "circular-economy",
+  "stack": "pentatonic-memory",
+  "n_tasks": 25,
+  "n_correct": 10,
+  "accuracy": 0.4,
+  "mean_score": 0.42,
+  "p50_search_ms": 27.48094199341722,
+  "p95_search_ms": 32.77066470764112,
+  "total_tokens_in": 0,
+  "total_tokens_out": 0,
+  "total_usd": 0.0,
+  "by_tag": {
+    "factoid": {
+      "n": 14,
+      "mean_score": 0.5,
+      "accuracy": 0.5
+    },
+    "material": {
+      "n": 8,
+      "mean_score": 0.125,
+      "accuracy": 0.125
+    },
+    "takeback": {
+      "n": 6,
+      "mean_score": 0.5833333333333334,
+      "accuracy": 0.5
+    },
+    "lifecycle": {
+      "n": 2,
+      "mean_score": 0.5,
+      "accuracy": 0.5
+    },
+    "multi-fact": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "policy": {
+      "n": 3,
+      "mean_score": 0.3333333333333333,
+      "accuracy": 0.3333333333333333
+    },
+    "certification": {
+      "n": 4,
+      "mean_score": 0.75,
+      "accuracy": 0.75
+    },
+    "multi-doc": {
+      "n": 2,
+      "mean_score": 0.5,
+      "accuracy": 0.5
+    },
+    "regulation": {
+      "n": 5,
+      "mean_score": 0.6,
+      "accuracy": 0.6
+    },
+    "concept": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "rubric": {
+      "n": 3,
+      "mean_score": 0.16666666666666666,
+      "accuracy": 0.0
+    },
+    "honesty": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "multi-hop": {
+      "n": 2,
+      "mean_score": 0.25,
+      "accuracy": 0.0
+    },
+    "entity": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "negative": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    }
+  },
+  "extra": {
+    "ingest_ms": 11691.628797998419,
+    "grading": "substring",
+    "limit": 3,
+    "tokens": {
+      "corpus_tokens": 1459,
+      "query_tokens": 359,
+      "context_tokens": 1025,
+      "retrieval_tokens": 1384,
+      "naive_tokens": 36834,
+      "saved_tokens": 35450,
+      "reduction_pct": 0.9624260194385622,
+      "mean_retrieval_tokens_per_task": 55.36,
+      "tokenizer": "cl100k_base",
+      "per_task": {
+        "atlas-material-source": {
+          "query": 15,
+          "context": 0,
+          "retrieval": 15,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "atlas-takeback-credit": {
+          "query": 15,
+          "context": 0,
+          "retrieval": 15,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "atlas-closed-loop": {
+          "query": 8,
+          "context": 85,
+          "retrieval": 93,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "luna-takeback-split": {
+          "query": 16,
+          "context": 0,
+          "retrieval": 16,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "luna-silicone-fate": {
+          "query": 13,
+          "context": 95,
+          "retrieval": 108,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "pla-home-compost": {
+          "query": 10,
+          "context": 88,
+          "retrieval": 98,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "pla-hot-drinks": {
+          "query": 10,
+          "context": 0,
+          "retrieval": 10,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "pbat-local-authority": {
+          "query": 13,
+          "context": 0,
+          "retrieval": 13,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "ghost-net-source": {
+          "query": 15,
+          "context": 0,
+          "retrieval": 15,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "kite-harness-foam-recovery": {
+          "query": 18,
+          "context": 91,
+          "retrieval": 109,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "haven-sleeve-bottles-15": {
+          "query": 17,
+          "context": 0,
+          "retrieval": 17,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "cert-c2c-tiers": {
+          "query": 12,
+          "context": 58,
+          "retrieval": 70,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "cert-c2c-our-products": {
+          "query": 14,
+          "context": 58,
+          "retrieval": 72,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "cert-grs-threshold": {
+          "query": 12,
+          "context": 72,
+          "retrieval": 84,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "cert-en13432-temp": {
+          "query": 11,
+          "context": 85,
+          "retrieval": 96,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "reg-uk-epr-scope": {
+          "query": 13,
+          "context": 78,
+          "retrieval": 91,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "reg-espr-dpp": {
+          "query": 13,
+          "context": 0,
+          "retrieval": 13,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "reg-ca-sb54-deadline": {
+          "query": 14,
+          "context": 73,
+          "retrieval": 87,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "reg-lithium-return": {
+          "query": 13,
+          "context": 72,
+          "retrieval": 85,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "closed-loop-threshold": {
+          "query": 16,
+          "context": 0,
+          "retrieval": 16,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "rubric-customer-greenwash-claim": {
+          "query": 27,
+          "context": 0,
+          "retrieval": 27,
+          "judge_in": 355,
+          "judge_out": 62,
+          "judge_latency_ms": 1281.8933610022068
+        },
+        "rubric-full-takeback-story-atlas": {
+          "query": 17,
+          "context": 85,
+          "retrieval": 102,
+          "judge_in": 413,
+          "judge_out": 46,
+          "judge_latency_ms": 1095.577819019556
+        },
+        "rubric-regulatory-scope-briefing": {
+          "query": 22,
+          "context": 0,
+          "retrieval": 22,
+          "judge_in": 351,
+          "judge_out": 38,
+          "judge_latency_ms": 745.5519150197506
+        },
+        "entity-closed-loop-skus": {
+          "query": 12,
+          "context": 0,
+          "retrieval": 12,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "entity-home-compostable": {
+          "query": 13,
+          "context": 85,
+          "retrieval": 98,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        }
+      },
+      "judge_tokens_in": 1119,
+      "judge_tokens_out": 146,
+      "judge_calls": 3,
+      "judge_mean_latency_ms": 1041.007698347171
+    },
+    "cost_usd": {
+      "assumed_completion_tokens_per_task": 100,
+      "rates": {
+        "input_per_1k": 0.0025,
+        "output_per_1k": 0.01,
+        "model": "gpt-4o"
+      },
+      "retrieval_usd_in": 0.00346,
+      "retrieval_usd_out": 0.025,
+      "retrieval_usd_total": 0.028460000000000003,
+      "naive_usd_total": 0.11708500000000002,
+      "saved_usd": 0.08862500000000002,
+      "saved_usd_per_1k_tasks": 3.545000000000001
+    }
+  },
+  "task_results": [
+    {
+      "task_id": "atlas-material-source",
+      "query": "Where does the recycled polypropylene in the Atlas Phone Shell come from?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 3/3: ['ocean-bound', '50km', 'coastlines']",
+      "search_time_ms": 29.875653999624774,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 15,
+      "query_tokens": 15,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "atlas-takeback-credit",
+      "query": "What credit do I get for returning an Atlas Phone Shell via take-back?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['50%']",
+      "search_time_ms": 27.204331010580063,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 15,
+      "query_tokens": 15,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "atlas-closed-loop",
+      "query": "Is the Atlas Phone Shell closed-loop?",
+      "answer": "Take-back programme \u2014 Atlas Phone Shell (ATL-PHN-001). Accepted condition: any, including broken. Credit: 50% of original purchase price as store credit. Process: free returns label at pentatonic.com/takeback/ATL-PHN-001. Recovery route: shell is mechanically shredded, rPP-OB fraction recovered and fed back into the next production run. Closed-loop: YES.",
+      "hits": [
+        {
+          "text": "Take-back programme \u2014 Atlas Phone Shell (ATL-PHN-001). Accepted condition: any, including broken. Credit: 50% of original purchase price as store credit. Process: free returns label at pentatonic.com/takeback/ATL-PHN-001. Recovery route: shell is mechanically shredded, rPP-OB fraction recovered and fed back into the next production run. Closed-loop: YES.",
+          "score": 0.7255719755593892,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-atlas-phone"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 26.919080992229283,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 93,
+      "query_tokens": 8,
+      "context_tokens": 85,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "luna-takeback-split",
+      "query": "How is the take-back credit split between body and lid for the Luna bottle?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['40%', '10%']",
+      "search_time_ms": 31.533285975456238,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 16,
+      "query_tokens": 16,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "luna-silicone-fate",
+      "query": "What happens to the Luna bottle's silicone lid after take-back?",
+      "answer": "Take-back programme \u2014 Luna Water Bottle 500ml (LUN-BTL-042). Accepted condition: any. Credit: 40% of original price as store credit (body) + 10% (lid, if returned intact). Process: drop-off at any UK Pentatonic pop-up, or mail-in via takeback label. Recovery route: steel body enters industrial recycling (not closed-loop); silicone lid is down-cycled into playground surfacing granulate.",
+      "hits": [
+        {
+          "text": "Take-back programme \u2014 Luna Water Bottle 500ml (LUN-BTL-042). Accepted condition: any. Credit: 40% of original price as store credit (body) + 10% (lid, if returned intact). Process: drop-off at any UK Pentatonic pop-up, or mail-in via takeback label. Recovery route: steel body enters industrial recycling (not closed-loop); silicone lid is down-cycled into playground surfacing granulate.",
+          "score": 0.5304672081450654,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-luna-bottle"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 32.17602800577879,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 108,
+      "query_tokens": 13,
+      "context_tokens": 95,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "pla-home-compost",
+      "query": "Can I compost a Loop coffee cup at home?",
+      "answer": "Material: PLA (polylactic acid). Bioplastic derived from corn starch (US Midwest feedstock for our supply). Industrially compostable under EN13432 (60\u00b0C, 60% humidity, 12 weeks). NOT home-compostable and NOT recyclable through standard plastic streams. Degradation threshold: 60\u00b0C \u2014 avoid hot liquids for direct-contact applications. Used in: Loop Reusable Coffee Cup body.",
+      "hits": [
+        {
+          "text": "Material: PLA (polylactic acid). Bioplastic derived from corn starch (US Midwest feedstock for our supply). Industrially compostable under EN13432 (60\u00b0C, 60% humidity, 12 weeks). NOT home-compostable and NOT recyclable through standard plastic streams. Degradation threshold: 60\u00b0C \u2014 avoid hot liquids for direct-contact applications. Used in: Loop Reusable Coffee Cup body.",
+          "score": 0.7333944698730844,
+          "source": "pentatonic-memory",
+          "doc_id": "material-pla-plant"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 27.48094199341722,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 98,
+      "query_tokens": 10,
+      "context_tokens": 88,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "pla-hot-drinks",
+      "query": "Can I put hot coffee in a Loop cup?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['60\u00b0C', 'avoid hot']",
+      "search_time_ms": 25.262823997763917,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 10,
+      "query_tokens": 10,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "pbat-local-authority",
+      "query": "Are Root bin liners accepted in UK council food-waste streams?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['most', 'check locally']",
+      "search_time_ms": 24.665570992510766,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 13,
+      "query_tokens": 13,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "ghost-net-source",
+      "query": "Which NGO supplies the ghost-net nylon for the Nomad Kite Harness?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['Healthy Seas']",
+      "search_time_ms": 29.78819701820612,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 15,
+      "query_tokens": 15,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "kite-harness-foam-recovery",
+      "query": "Is the EVA foam padding in the Nomad Kite Harness recovered via take-back?",
+      "answer": "Take-back programme \u2014 Nomad Kite Harness v3 (NMD-HRN-V3). Accepted condition: worn but repairable or end-of-life. Credit: 25% of original price. Alternative: repair-not-replace via the Nomad repair service (\u00a325 flat fee). Recovery route: ghost-net nylon is mechanically recycled back into new harness shells \u2014 closed-loop. EVA foam padding is NOT recovered (currently sent to energy-from-waste).",
+      "hits": [
+        {
+          "text": "Take-back programme \u2014 Nomad Kite Harness v3 (NMD-HRN-V3). Accepted condition: worn but repairable or end-of-life. Credit: 25% of original price. Alternative: repair-not-replace via the Nomad repair service (\u00a325 flat fee). Recovery route: ghost-net nylon is mechanically recycled back into new harness shells \u2014 closed-loop. EVA foam padding is NOT recovered (currently sent to energy-from-waste).",
+          "score": 0.7871008236065192,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-kite-harness"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 31.17753900005482,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 109,
+      "query_tokens": 18,
+      "context_tokens": 91,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "haven-sleeve-bottles-15",
+      "query": "Roughly how many plastic bottles go into a 15\" Haven Laptop Sleeve?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['18']",
+      "search_time_ms": 26.507524016778916,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 17,
+      "query_tokens": 17,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "cert-c2c-tiers",
+      "query": "What are the tiers of Cradle to Cradle certification?",
+      "answer": "Cradle to Cradle Certified: multi-attribute product certification covering material health, material reutilisation, renewable energy, water stewardship, and social fairness. Tiers (lowest to highest): Bronze, Silver, Gold, Platinum. Our holders: Atlas Phone Shell (Bronze).",
+      "hits": [
+        {
+          "text": "Cradle to Cradle Certified: multi-attribute product certification covering material health, material reutilisation, renewable energy, water stewardship, and social fairness. Tiers (lowest to highest): Bronze, Silver, Gold, Platinum. Our holders: Atlas Phone Shell (Bronze).",
+          "score": 0.7877394509195181,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-cradle-to-cradle"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 24.01597998687066,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 70,
+      "query_tokens": 12,
+      "context_tokens": 58,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "cert-c2c-our-products",
+      "query": "Which product in our catalogue holds a Cradle to Cradle certification?",
+      "answer": "Cradle to Cradle Certified: multi-attribute product certification covering material health, material reutilisation, renewable energy, water stewardship, and social fairness. Tiers (lowest to highest): Bronze, Silver, Gold, Platinum. Our holders: Atlas Phone Shell (Bronze).",
+      "hits": [
+        {
+          "text": "Cradle to Cradle Certified: multi-attribute product certification covering material health, material reutilisation, renewable energy, water stewardship, and social fairness. Tiers (lowest to highest): Bronze, Silver, Gold, Platinum. Our holders: Atlas Phone Shell (Bronze).",
+          "score": 0.580276930908043,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-cradle-to-cradle"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 24.92099697701633,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 72,
+      "query_tokens": 14,
+      "context_tokens": 58,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "cert-grs-threshold",
+      "query": "What's the minimum recycled content for the GRS claim?",
+      "answer": "GRS (Global Recycled Standard): third-party verification of recycled content, chain of custody, social and environmental practices, and chemical restrictions. Minimum 20% recycled content for a product to bear the GRS claim. Materials using GRS in our catalogue: rPP-OB (Atlas Phone Shell), rPET-FELT (Haven Sleeves).",
+      "hits": [
+        {
+          "text": "GRS (Global Recycled Standard): third-party verification of recycled content, chain of custody, social and environmental practices, and chemical restrictions. Minimum 20% recycled content for a product to bear the GRS claim. Materials using GRS in our catalogue: rPP-OB (Atlas Phone Shell), rPET-FELT (Haven Sleeves).",
+          "score": 0.7916210271663773,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-grs"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 23.015954007860273,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 84,
+      "query_tokens": 12,
+      "context_tokens": 72,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "cert-en13432-temp",
+      "query": "What industrial composting temperature does EN13432 require?",
+      "answer": "Material: PBAT (polybutylene adipate terephthalate) + corn starch biopolymer. Industrially compostable (EN13432). Home-compostability: NO \u2014 requires industrial temperatures. Used in: Root Bio Bin Liners. Regulatory note: accepted in most UK local-authority food-waste streams that accept certified compostable bags, but some authorities reject all bag types \u2014 check locally.",
+      "hits": [
+        {
+          "text": "Material: PBAT (polybutylene adipate terephthalate) + corn starch biopolymer. Industrially compostable (EN13432). Home-compostability: NO \u2014 requires industrial temperatures. Used in: Root Bio Bin Liners. Regulatory note: accepted in most UK local-authority food-waste streams that accept certified compostable bags, but some authorities reject all bag types \u2014 check locally.",
+          "score": 0.7422245635590629,
+          "source": "pentatonic-memory",
+          "doc_id": "material-pbat-starch"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['58', '60']",
+      "search_time_ms": 20.66308300709352,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 96,
+      "query_tokens": 11,
+      "context_tokens": 85,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "reg-uk-epr-scope",
+      "query": "Is Pentatonic in scope for UK EPR packaging reporting?",
+      "answer": "UK Extended Producer Responsibility (EPR) for packaging: from 2025, packaging producers must report and pay fees based on the weight and recyclability of packaging placed on the UK market. Modulated fees favour recyclable formats. Reporting threshold: \u00a31M turnover AND 25 tonnes of packaging/year. Pentatonic: IN SCOPE. Our filings: due every 6 months.",
+      "hits": [
+        {
+          "text": "UK Extended Producer Responsibility (EPR) for packaging: from 2025, packaging producers must report and pay fees based on the weight and recyclability of packaging placed on the UK market. Modulated fees favour recyclable formats. Reporting threshold: \u00a31M turnover AND 25 tonnes of packaging/year. Pentatonic: IN SCOPE. Our filings: due every 6 months.",
+          "score": 0.7782274756985779,
+          "source": "pentatonic-memory",
+          "doc_id": "reg-uk-epr"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 21.614981000311673,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 91,
+      "query_tokens": 13,
+      "context_tokens": 78,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "reg-espr-dpp",
+      "query": "What are Digital Product Passports and when do they start applying?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['ESPR', '2026']",
+      "search_time_ms": 24.717538995901123,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 13,
+      "query_tokens": 13,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "reg-ca-sb54-deadline",
+      "query": "By when must packaging sold in California be recyclable or compostable?",
+      "answer": "California SB 54 (Plastic Pollution Prevention and Packaging Producer Responsibility Act, 2022): requires all packaging sold in California to be recyclable or compostable by 2032, with 65% recycling rate and 25% source reduction. PRO (Producer Responsibility Organisation) fees apply. Pentatonic: IN SCOPE for US-bound shipments to California.",
+      "hits": [
+        {
+          "text": "California SB 54 (Plastic Pollution Prevention and Packaging Producer Responsibility Act, 2022): requires all packaging sold in California to be recyclable or compostable by 2032, with 65% recycling rate and 25% source reduction. PRO (Producer Responsibility Organisation) fees apply. Pentatonic: IN SCOPE for US-bound shipments to California.",
+          "score": 0.5522683088380467,
+          "source": "pentatonic-memory",
+          "doc_id": "reg-ca-sb54"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 30.33506599604152,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 87,
+      "query_tokens": 14,
+      "context_tokens": 73,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "reg-lithium-return",
+      "query": "Can lithium-containing devices be returned through our standard take-back label?",
+      "answer": "Lithium cell regulation: devices containing lithium cells are subject to UN 3480/3481 transport rules and cannot be returned via standard take-back labels. Pentatonic's policy: take-back for devices with lithium cells requires a dedicated labelled pack and courier pickup (not drop-in). Current catalogue impact: none (we do not sell lithium-containing products).",
+      "hits": [
+        {
+          "text": "Lithium cell regulation: devices containing lithium cells are subject to UN 3480/3481 transport rules and cannot be returned via standard take-back labels. Pentatonic's policy: take-back for devices with lithium cells requires a dedicated labelled pack and courier pickup (not drop-in). Current catalogue impact: none (we do not sell lithium-containing products).",
+          "score": 0.7893983902041972,
+          "source": "pentatonic-memory",
+          "doc_id": "reg-hazardous-lithium"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 27.972067007794976,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 85,
+      "query_tokens": 13,
+      "context_tokens": 72,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "closed-loop-threshold",
+      "query": "At what mass-recovery percentage is a SKU considered closed-loop in our system?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['80%']",
+      "search_time_ms": 29.058508982416242,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 16,
+      "query_tokens": 16,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "rubric-customer-greenwash-claim",
+      "query": "A customer asks: 'Are your Loop cups just the same as plastic cups but with a greener label?' Write an honest response.",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "judge=0.00 \u2014 The agent's response does not acknowledge that PLA is industrially compostable but NOT home-compostable or recyclable vi",
+      "search_time_ms": 29.882213013479486,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 27,
+      "query_tokens": 27,
+      "context_tokens": 0,
+      "judge_tokens_in": 355,
+      "judge_tokens_out": 62,
+      "judge_latency_ms": 1281.8933610022068
+    },
+    {
+      "task_id": "rubric-full-takeback-story-atlas",
+      "query": "Walk me through the complete material journey of an Atlas Phone Shell returned via take-back.",
+      "answer": "Take-back programme \u2014 Atlas Phone Shell (ATL-PHN-001). Accepted condition: any, including broken. Credit: 50% of original purchase price as store credit. Process: free returns label at pentatonic.com/takeback/ATL-PHN-001. Recovery route: shell is mechanically shredded, rPP-OB fraction recovered and fed back into the next production run. Closed-loop: YES.",
+      "hits": [
+        {
+          "text": "Take-back programme \u2014 Atlas Phone Shell (ATL-PHN-001). Accepted condition: any, including broken. Credit: 50% of original purchase price as store credit. Process: free returns label at pentatonic.com/takeback/ATL-PHN-001. Recovery route: shell is mechanically shredded, rPP-OB fraction recovered and fed back into the next production run. Closed-loop: YES.",
+          "score": 0.558707344294221,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-atlas-phone"
+        }
+      ],
+      "correct": false,
+      "score": 0.5,
+      "grading_notes": "judge=0.50 \u2014 The answer covers stages 1 (take-back programme) and 4 (shell is mechanically shredded), but lacks details on the recove",
+      "search_time_ms": 31.778311997186393,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 102,
+      "query_tokens": 17,
+      "context_tokens": 85,
+      "judge_tokens_in": 413,
+      "judge_tokens_out": 46,
+      "judge_latency_ms": 1095.577819019556
+    },
+    {
+      "task_id": "rubric-regulatory-scope-briefing",
+      "query": "Give me a short regulatory briefing on what applies to Pentatonic in the UK, EU, and California.",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "judge=0.00 \u2014 The agent failed to mention any of the three jurisdictions (UK, EU, California) and instead provided an unrelated answer",
+      "search_time_ms": 33.02550900843926,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 22,
+      "query_tokens": 22,
+      "context_tokens": 0,
+      "judge_tokens_in": 351,
+      "judge_tokens_out": 38,
+      "judge_latency_ms": 745.5519150197506
+    },
+    {
+      "task_id": "entity-closed-loop-skus",
+      "query": "Which SKUs in our catalogue achieve closed-loop material recovery?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "no expected_substrings set",
+      "search_time_ms": 29.39699200214818,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 12,
+      "query_tokens": 12,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "entity-home-compostable",
+      "query": "List any materials in our catalogue that are home-compostable.",
+      "answer": "Material: PBAT (polybutylene adipate terephthalate) + corn starch biopolymer. Industrially compostable (EN13432). Home-compostability: NO \u2014 requires industrial temperatures. Used in: Root Bio Bin Liners. Regulatory note: accepted in most UK local-authority food-waste streams that accept certified compostable bags, but some authorities reject all bag types \u2014 check locally.",
+      "hits": [
+        {
+          "text": "Material: PBAT (polybutylene adipate terephthalate) + corn starch biopolymer. Industrially compostable (EN13432). Home-compostability: NO \u2014 requires industrial temperatures. Used in: Root Bio Bin Liners. Regulatory note: accepted in most UK local-authority food-waste streams that accept certified compostable bags, but some authorities reject all bag types \u2014 check locally.",
+          "score": 0.5324476747882344,
+          "source": "pentatonic-memory",
+          "doc_id": "material-pbat-starch"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/3: ['NOT home-compostable', 'none']; forbidden substring(s) present: ['PBAT']",
+      "search_time_ms": 24.964277021354064,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 98,
+      "query_tokens": 13,
+      "context_tokens": 85,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    }
+  ]
+}

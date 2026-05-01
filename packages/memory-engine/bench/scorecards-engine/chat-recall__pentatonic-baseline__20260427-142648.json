@@ -1,0 +1,819 @@
+{
+  "bench": "chat-recall",
+  "stack": "pentatonic-baseline",
+  "n_tasks": 16,
+  "n_correct": 16,
+  "accuracy": 1.0,
+  "mean_score": 1.0,
+  "p50_search_ms": 1125.783211493399,
+  "p95_search_ms": 2792.650751012843,
+  "total_tokens_in": 0,
+  "total_tokens_out": 0,
+  "total_usd": 0.0,
+  "by_tag": {
+    "factoid": {
+      "n": 6,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "owner": {
+      "n": 4,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "temporal": {
+      "n": 4,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "contradiction": {
+      "n": 2,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "status": {
+      "n": 4,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "multi-hop": {
+      "n": 4,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    }
+  },
+  "extra": {
+    "ingest_ms": 64355.045720003545,
+    "grading": "substring",
+    "limit": 3,
+    "tokens": {
+      "corpus_tokens": 513,
+      "query_tokens": 140,
+      "context_tokens": 803,
+      "retrieval_tokens": 943,
+      "naive_tokens": 8348,
+      "saved_tokens": 7405,
+      "reduction_pct": 0.8870388116914231,
+      "mean_retrieval_tokens_per_task": 58.9375,
+      "tokenizer": "cl100k_base",
+      "per_task": {
+        "who-owns-atlas": {
+          "query": 5,
+          "context": 36,
+          "retrieval": 41,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "who-owns-borealis": {
+          "query": 7,
+          "context": 46,
+          "retrieval": 53,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "who-owns-cirrus": {
+          "query": 6,
+          "context": 42,
+          "retrieval": 48,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "who-owns-dune": {
+          "query": 6,
+          "context": 41,
+          "retrieval": 47,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "current-deadline-atlas": {
+          "query": 8,
+          "context": 74,
+          "retrieval": 82,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "current-deadline-borealis": {
+          "query": 10,
+          "context": 53,
+          "retrieval": 63,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "current-deadline-cirrus": {
+          "query": 9,
+          "context": 62,
+          "retrieval": 71,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "current-deadline-dune": {
+          "query": 9,
+          "context": 48,
+          "retrieval": 57,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "status-atlas": {
+          "query": 8,
+          "context": 44,
+          "retrieval": 52,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "status-borealis": {
+          "query": 10,
+          "context": 42,
+          "retrieval": 52,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "status-cirrus": {
+          "query": 9,
+          "context": 49,
+          "retrieval": 58,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "status-dune": {
+          "query": 9,
+          "context": 42,
+          "retrieval": 51,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "multihop-atlas": {
+          "query": 10,
+          "context": 56,
+          "retrieval": 66,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "multihop-borealis": {
+          "query": 12,
+          "context": 53,
+          "retrieval": 65,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "multihop-cirrus": {
+          "query": 11,
+          "context": 67,
+          "retrieval": 78,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "multihop-dune": {
+          "query": 11,
+          "context": 48,
+          "retrieval": 59,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        }
+      },
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_calls": 0,
+      "judge_mean_latency_ms": 0.0
+    },
+    "cost_usd": {
+      "assumed_completion_tokens_per_task": 100,
+      "rates": {
+        "input_per_1k": 0.0025,
+        "output_per_1k": 0.01,
+        "model": "gpt-4o"
+      },
+      "retrieval_usd_in": 0.0023575,
+      "retrieval_usd_out": 0.016,
+      "retrieval_usd_total": 0.0183575,
+      "naive_usd_total": 0.03687,
+      "saved_usd": 0.0185125,
+      "saved_usd_per_1k_tasks": 1.1570312500000002
+    }
+  },
+  "task_results": [
+    {
+      "task_id": "who-owns-atlas",
+      "query": "Who owns project Atlas?",
+      "answer": "Alice: I'll own project Atlas. Kickoff this week.\n---\nAlice: I'll own project Atlas. Kickoff this week.\n---\nAlice: Atlas status \u2014 on track.",
+      "hits": [
+        {
+          "text": "Alice: I'll own project Atlas. Kickoff this week.",
+          "score": 0.7395,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-assign-atlas"
+        },
+        {
+          "text": "Alice: I'll own project Atlas. Kickoff this week.",
+          "score": 0.6881,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "chat-assign-atlas"
+        },
+        {
+          "text": "Alice: Atlas status \u2014 on track.",
+          "score": 0.62,
+          "source": "pentatonic-baseline",
+          "doc_id": "status-atlas-m1"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 2792.650751012843,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 41,
+      "query_tokens": 5,
+      "context_tokens": 36,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "who-owns-borealis",
+      "query": "Who owns project Borealis?",
+      "answer": "Clara: I'll own project Borealis. Kickoff this week.\n---\nClara: I'll own project Borealis. Kickoff this week.\n---\nClara: Borealis status \u2014 blocked on vendor.",
+      "hits": [
+        {
+          "text": "Clara: I'll own project Borealis. Kickoff this week.",
+          "score": 0.7648,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-assign-borealis"
+        },
+        {
+          "text": "Clara: I'll own project Borealis. Kickoff this week.",
+          "score": 0.6883,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "chat-assign-borealis"
+        },
+        {
+          "text": "Clara: Borealis status \u2014 blocked on vendor.",
+          "score": 0.5686,
+          "source": "pentatonic-baseline",
+          "doc_id": "status-borealis-m2"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1167.0277139928658,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 53,
+      "query_tokens": 7,
+      "context_tokens": 46,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "who-owns-cirrus",
+      "query": "Who owns project Cirrus?",
+      "answer": "Diego: I'll own project Cirrus. Kickoff this week.\n---\nDiego: I'll own project Cirrus. Kickoff this week.\n---\nDiego: Cirrus status \u2014 scoping.",
+      "hits": [
+        {
+          "text": "Diego: I'll own project Cirrus. Kickoff this week.",
+          "score": 0.7758,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-assign-cirrus"
+        },
+        {
+          "text": "Diego: I'll own project Cirrus. Kickoff this week.",
+          "score": 0.6908,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "chat-assign-cirrus"
+        },
+        {
+          "text": "Diego: Cirrus status \u2014 scoping.",
+          "score": 0.6237,
+          "source": "pentatonic-baseline",
+          "doc_id": "status-cirrus-m3"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1094.0878769906703,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 48,
+      "query_tokens": 6,
+      "context_tokens": 42,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "who-owns-dune",
+      "query": "Who owns project Dune?",
+      "answer": "Farid: I'll own project Dune. Kickoff this week.\n---\nFarid: I'll own project Dune. Kickoff this week.\n---\nFarid: Dune status \u2014 launched.",
+      "hits": [
+        {
+          "text": "Farid: I'll own project Dune. Kickoff this week.",
+          "score": 0.7892,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-assign-dune"
+        },
+        {
+          "text": "Farid: I'll own project Dune. Kickoff this week.",
+          "score": 0.7043,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "chat-assign-dune"
+        },
+        {
+          "text": "Farid: Dune status \u2014 launched.",
+          "score": 0.5987,
+          "source": "pentatonic-baseline",
+          "doc_id": "status-dune-m4"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1064.0079930017237,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 47,
+      "query_tokens": 6,
+      "context_tokens": 41,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "current-deadline-atlas",
+      "query": "What is the current deadline for Atlas?",
+      "answer": "Alice: Update \u2014 Atlas deadline has been moved to 2026-03-17. Latest one supersedes earlier guidance.\n---\nAlice: Update \u2014 Atlas deadline has been moved to 2026-03-17. Latest one supersedes earlier guidance.\n---\nAlice: Target delivery for Atlas is 2026-03-14. Please pencil it in.",
+      "hits": [
+        {
+          "text": "Alice: Update \u2014 Atlas deadline has been moved to 2026-03-17. Latest one supersedes earlier guidance.",
+          "score": 0.7384,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-deadline2-atlas"
+        },
+        {
+          "text": "Alice: Update \u2014 Atlas deadline has been moved to 2026-03-17. Latest one supersedes earlier guidance.",
+          "score": 0.6794,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "chat-deadline2-atlas"
+        },
+        {
+          "text": "Alice: Target delivery for Atlas is 2026-03-14. Please pencil it in.",
+          "score": 0.6703,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-deadline1-atlas"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1233.0802179931197,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 82,
+      "query_tokens": 8,
+      "context_tokens": 74,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "current-deadline-borealis",
+      "query": "What is the current deadline for Borealis?",
+      "answer": "Clara: Target delivery for Borealis is 2026-02-28. Please pencil it in.\n---\nClara: Borealis status \u2014 blocked on vendor.\n---\nClara: I'll own project Borealis. Kickoff this week.",
+      "hits": [
+        {
+          "text": "Clara: Target delivery for Borealis is 2026-02-28. Please pencil it in.",
+          "score": 0.6554,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-deadline1-borealis"
+        },
+        {
+          "text": "Clara: Borealis status \u2014 blocked on vendor.",
+          "score": 0.5875,
+          "source": "pentatonic-baseline",
+          "doc_id": "status-borealis-m2"
+        },
+        {
+          "text": "Clara: I'll own project Borealis. Kickoff this week.",
+          "score": 0.5874,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-assign-borealis"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1080.975874006981,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 63,
+      "query_tokens": 10,
+      "context_tokens": 53,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "current-deadline-cirrus",
+      "query": "What is the current deadline for Cirrus?",
+      "answer": "Diego: Update \u2014 Cirrus deadline has been moved to 2026-04-08. Latest one supersedes earlier guidance.\n---\nDiego: Target delivery for Cirrus is 2026-04-01. Please pencil it in.\n---\nDiego: Cirrus status \u2014 scoping.",
+      "hits": [
+        {
+          "text": "Diego: Update \u2014 Cirrus deadline has been moved to 2026-04-08. Latest one supersedes earlier guidance.",
+          "score": 0.7547,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-deadline2-cirrus"
+        },
+        {
+          "text": "Diego: Target delivery for Cirrus is 2026-04-01. Please pencil it in.",
+          "score": 0.727,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-deadline1-cirrus"
+        },
+        {
+          "text": "Diego: Cirrus status \u2014 scoping.",
+          "score": 0.6648,
+          "source": "pentatonic-baseline",
+          "doc_id": "status-cirrus-m3"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1158.1688209844287,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 71,
+      "query_tokens": 9,
+      "context_tokens": 62,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "current-deadline-dune",
+      "query": "What is the current deadline for Dune?",
+      "answer": "Farid: Target delivery for Dune is 2026-05-20. Please pencil it in.\n---\nFarid: I'll own project Dune. Kickoff this week.\n---\nFarid: Dune status \u2014 launched.",
+      "hits": [
+        {
+          "text": "Farid: Target delivery for Dune is 2026-05-20. Please pencil it in.",
+          "score": 0.7046,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-deadline1-dune"
+        },
+        {
+          "text": "Farid: I'll own project Dune. Kickoff this week.",
+          "score": 0.5789,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-assign-dune"
+        },
+        {
+          "text": "Farid: Dune status \u2014 launched.",
+          "score": 0.5647,
+          "source": "pentatonic-baseline",
+          "doc_id": "status-dune-m4"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1098.5507189761847,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 57,
+      "query_tokens": 9,
+      "context_tokens": 48,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "status-atlas",
+      "query": "What's the latest status of Atlas?",
+      "answer": "Alice: Atlas status \u2014 on track.\n---\nAlice: Atlas status \u2014 on track.\n---\nAlice: Update \u2014 Atlas deadline has been moved to 2026-03-17. Latest one supersedes earlier guidance.",
+      "hits": [
+        {
+          "text": "Alice: Atlas status \u2014 on track.",
+          "score": 0.7563,
+          "source": "pentatonic-baseline",
+          "doc_id": "status-atlas-m1"
+        },
+        {
+          "text": "Alice: Atlas status \u2014 on track.",
+          "score": 0.7149,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "status-atlas-m1"
+        },
+        {
+          "text": "Alice: Update \u2014 Atlas deadline has been moved to 2026-03-17. Latest one supersedes earlier guidance.",
+          "score": 0.6697,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-deadline2-atlas"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1126.3183399860281,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 52,
+      "query_tokens": 8,
+      "context_tokens": 44,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "status-borealis",
+      "query": "What's the latest status of Borealis?",
+      "answer": "Clara: Borealis status \u2014 blocked on vendor.\n---\nClara: Borealis status \u2014 blocked on vendor.\n---\nClara: I'll own project Borealis. Kickoff this week.",
+      "hits": [
+        {
+          "text": "Clara: Borealis status \u2014 blocked on vendor.",
+          "score": 0.6973,
+          "source": "pentatonic-baseline",
+          "doc_id": "status-borealis-m2"
+        },
+        {
+          "text": "Clara: Borealis status \u2014 blocked on vendor.",
+          "score": 0.6638,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "status-borealis-m2"
+        },
+        {
+          "text": "Clara: I'll own project Borealis. Kickoff this week.",
+          "score": 0.6623,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-assign-borealis"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1205.3974389855284,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 52,
+      "query_tokens": 10,
+      "context_tokens": 42,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "status-cirrus",
+      "query": "What's the latest status of Cirrus?",
+      "answer": "Diego: Cirrus status \u2014 scoping.\n---\nDiego: Target delivery for Cirrus is 2026-04-01. Please pencil it in.\n---\nDiego: I'll own project Cirrus. Kickoff this week.",
+      "hits": [
+        {
+          "text": "Diego: Cirrus status \u2014 scoping.",
+          "score": 0.7422,
+          "source": "pentatonic-baseline",
+          "doc_id": "status-cirrus-m3"
+        },
+        {
+          "text": "Diego: Target delivery for Cirrus is 2026-04-01. Please pencil it in.",
+          "score": 0.7086,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-deadline1-cirrus"
+        },
+        {
+          "text": "Diego: I'll own project Cirrus. Kickoff this week.",
+          "score": 0.6911,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-assign-cirrus"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1125.2480830007698,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 58,
+      "query_tokens": 9,
+      "context_tokens": 49,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "status-dune",
+      "query": "What's the latest status of Dune?",
+      "answer": "Farid: Dune status \u2014 launched.\n---\nFarid: Dune status \u2014 launched.\n---\nFarid: Target delivery for Dune is 2026-05-20. Please pencil it in.",
+      "hits": [
+        {
+          "text": "Farid: Dune status \u2014 launched.",
+          "score": 0.6785,
+          "source": "pentatonic-baseline",
+          "doc_id": "status-dune-m4"
+        },
+        {
+          "text": "Farid: Dune status \u2014 launched.",
+          "score": 0.6539,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "status-dune-m4"
+        },
+        {
+          "text": "Farid: Target delivery for Dune is 2026-05-20. Please pencil it in.",
+          "score": 0.6538,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-deadline1-dune"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1171.0565309913363,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 51,
+      "query_tokens": 9,
+      "context_tokens": 42,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "multihop-atlas",
+      "query": "Who owns Atlas and what is its current deadline?",
+      "answer": "Alice: Update \u2014 Atlas deadline has been moved to 2026-03-17. Latest one supersedes earlier guidance.\n---\nAlice: Atlas status \u2014 on track.\n---\nAlice: Target delivery for Atlas is 2026-03-14. Please pencil it in.",
+      "hits": [
+        {
+          "text": "Alice: Update \u2014 Atlas deadline has been moved to 2026-03-17. Latest one supersedes earlier guidance.",
+          "score": 0.6769,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-deadline2-atlas"
+        },
+        {
+          "text": "Alice: Atlas status \u2014 on track.",
+          "score": 0.6421,
+          "source": "pentatonic-baseline",
+          "doc_id": "status-atlas-m1"
+        },
+        {
+          "text": "Alice: Target delivery for Atlas is 2026-03-14. Please pencil it in.",
+          "score": 0.6357,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-deadline1-atlas"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1122.7682839962654,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 66,
+      "query_tokens": 10,
+      "context_tokens": 56,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "multihop-borealis",
+      "query": "Who owns Borealis and what is its current deadline?",
+      "answer": "Clara: I'll own project Borealis. Kickoff this week.\n---\nClara: Target delivery for Borealis is 2026-02-28. Please pencil it in.\n---\nClara: Borealis status \u2014 blocked on vendor.",
+      "hits": [
+        {
+          "text": "Clara: I'll own project Borealis. Kickoff this week.",
+          "score": 0.6402,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-assign-borealis"
+        },
+        {
+          "text": "Clara: Target delivery for Borealis is 2026-02-28. Please pencil it in.",
+          "score": 0.6212,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-deadline1-borealis"
+        },
+        {
+          "text": "Clara: Borealis status \u2014 blocked on vendor.",
+          "score": 0.5911,
+          "source": "pentatonic-baseline",
+          "doc_id": "status-borealis-m2"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1122.615259984741,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 65,
+      "query_tokens": 12,
+      "context_tokens": 53,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "multihop-cirrus",
+      "query": "Who owns Cirrus and what is its current deadline?",
+      "answer": "Diego: Update \u2014 Cirrus deadline has been moved to 2026-04-08. Latest one supersedes earlier guidance.\n---\nDiego: Target delivery for Cirrus is 2026-04-01. Please pencil it in.\n---\nDiego: I'll own project Cirrus. Kickoff this week.",
+      "hits": [
+        {
+          "text": "Diego: Update \u2014 Cirrus deadline has been moved to 2026-04-08. Latest one supersedes earlier guidance.",
+          "score": 0.6848,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-deadline2-cirrus"
+        },
+        {
+          "text": "Diego: Target delivery for Cirrus is 2026-04-01. Please pencil it in.",
+          "score": 0.6752,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-deadline1-cirrus"
+        },
+        {
+          "text": "Diego: I'll own project Cirrus. Kickoff this week.",
+          "score": 0.6549,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-assign-cirrus"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1120.0645309872925,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 78,
+      "query_tokens": 11,
+      "context_tokens": 67,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "multihop-dune",
+      "query": "Who owns Dune and what is its current deadline?",
+      "answer": "Farid: I'll own project Dune. Kickoff this week.\n---\nFarid: Target delivery for Dune is 2026-05-20. Please pencil it in.\n---\nFarid: Dune status \u2014 launched.",
+      "hits": [
+        {
+          "text": "Farid: I'll own project Dune. Kickoff this week.",
+          "score": 0.6696,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-assign-dune"
+        },
+        {
+          "text": "Farid: Target delivery for Dune is 2026-05-20. Please pencil it in.",
+          "score": 0.6538,
+          "source": "pentatonic-baseline",
+          "doc_id": "chat-deadline1-dune"
+        },
+        {
+          "text": "Farid: Dune status \u2014 launched.",
+          "score": 0.6101,
+          "source": "pentatonic-baseline",
+          "doc_id": "status-dune-m4"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1201.8343300151173,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 59,
+      "query_tokens": 11,
+      "context_tokens": 48,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    }
+  ]
+}

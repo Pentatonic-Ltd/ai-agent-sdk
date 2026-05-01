@@ -6,7 +6,7 @@
  * formatting.
  */
 
-import { resolve, basename } from "node:path";
+import { resolve } from "node:path";
 import { existsSync, readFileSync } from "node:fs";
 import { promises as fsp } from "node:fs";
 import { execFileSync } from "node:child_process";
@@ -19,6 +19,7 @@ import {
   ingestPaths,
   estimateCorpus,
   hostedAdapter,
+  engineAdapter,
   loadState,
   saveState,
   defaultStatePath,
@@ -64,16 +65,80 @@ function resolveTenant() {
   return null;
 }
 
+/**
+ * Read the Claude Code plugin config (tes-memory.local.md) to discover
+ * which memory backend the user has configured. Single source of truth
+ * for `tes ingest` so it routes the same way the plugin's hooks do.
+ *
+ * Returns: { mode: "local"|"hosted", memory_url?, tes_endpoint?, … } or null.
+ */
+function readPluginConfig() {
+  const candidates = [
+    process.env.CLAUDE_CONFIG_DIR,
+    join(homedir(), ".claude-pentatonic"),
+    join(homedir(), ".claude"),
+  ].filter(Boolean);
+  for (const dir of candidates) {
+    const p = join(dir, "tes-memory.local.md");
+    if (!existsSync(p)) continue;
+    try {
+      const content = readFileSync(p, "utf-8");
+      const m = content.match(/^---\n([\s\S]*?)\n---/);
+      if (!m) continue;
+      const out = { _path: p };
+      for (const line of m[1].split("\n")) {
+        const kv = line.match(/^(\w+):\s*(.+)$/);
+        if (kv) out[kv[1]] = kv[2].trim();
+      }
+      return out;
+    } catch {
+      continue;
+    }
+  }
+  return null;
+}
+
 function buildAdapterOrFail() {
+  // 1. Env-var override (CI / scripts / explicit). Highest precedence.
+  const envEngineUrl =
+    process.env.MEMORY_ENGINE_URL || process.env.PENTATONIC_ENGINE_URL || null;
+  if (envEngineUrl) {
+    const arena =
+      process.env.MEMORY_ARENA ||
+      process.env.PENTATONIC_CLIENT_ID ||
+      process.env.TES_CLIENT_ID ||
+      "default";
+    return {
+      tenant: { source: "env-engine", engineUrl: envEngineUrl, arena },
+      adapter: engineAdapter({
+        engineUrl: envEngineUrl,
+        arena,
+        apiKey: process.env.MEMORY_ENGINE_API_KEY || null,
+      }),
+    };
+  }
+
+  // 2. Plugin config — same source of truth as the Claude Code hooks.
+  const pluginConfig = readPluginConfig();
+  if (pluginConfig?.mode === "local" && pluginConfig.memory_url) {
+    const arena = pluginConfig.client_id || "default";
+    return {
+      tenant: { source: `plugin-config (${pluginConfig._path})`, engineUrl: pluginConfig.memory_url, arena },
+      adapter: engineAdapter({ engineUrl: pluginConfig.memory_url, arena }),
+    };
+  }
+
+  // 3. Hosted/TES path: env vars + ~/.config/tes/credentials.json.
   const tenant = resolveTenant();
   if (!tenant) {
     process.stderr.write(
-      "Error: TES tenant not configured.\n\n" +
-        "  Set environment variables:\n" +
-        "    export TES_ENDPOINT=https://your-co.api.pentatonic.com\n" +
-        "    export TES_CLIENT_ID=your-co\n" +
-        "    export TES_API_KEY=tes_your-co_xxxxx\n\n" +
-        "  Or run: npx @pentatonic-ai/ai-agent-sdk init\n"
+      "Error: no memory backend configured.\n\n" +
+        "  Configure with one of:\n" +
+        "    npx @pentatonic-ai/ai-agent-sdk config local       # local engine\n" +
+        "    npx @pentatonic-ai/ai-agent-sdk login              # hosted TES\n\n" +
+        "  Or set env vars directly:\n" +
+        "    MEMORY_ENGINE_URL=http://localhost:8099\n" +
+        "    TES_ENDPOINT=… TES_CLIENT_ID=… TES_API_KEY=…\n"
     );
     return null;
   }

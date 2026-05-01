@@ -1,0 +1,243 @@
+name: pentatonic-memory-engine
+
+# pentatonic-memory-engine v0.1
+#
+# Drop-in HTTP-compatible replacement for `pentatonic-memory` v0.5,
+# backed by the 7-layer hybrid retrieval engine.
+#
+# Bring up:        docker compose up -d
+# API surface:     http://localhost:8099  (matches pentatonic-memory v0.5)
+# Health:          curl http://localhost:8099/health
+#
+# Layers:
+#   l0 (in-process)  — BM25 over SQLite FTS5 (inside L2 + L6)
+#   l1 (in-process)  — Always-loaded core files (inside L2)
+#   l2  :8031        — HybridRAG proxy (RRF fusion)
+#   l3  :7474        — Knowledge Graph (Neo4j Community)
+#   l4  :8042        — sqlite-vec vector index
+#   l5  :8034        — Milvus comms layer
+#   l6  :8037        — Document store + cross-encoder reranker
+#   compat :8099     — pentatonic-memory v0.5 API translation shim
+#
+#   nv-embed :8041   — NV-Embed-v2 4096d embedding service
+#
+# The nv-embed service requires a GPU. If running without GPU,
+# override NV_EMBED_URL to point at an external embedding endpoint:
+#   - OpenAI's /v1/embeddings (text-embedding-3-large)
+#   - the Pentatonic AI Gateway
+#   - any OpenAI-compat embedding endpoint
+
+x-engine-base: &engine-base
+  restart: unless-stopped
+  networks:
+    - engine-net
+
+services:
+  # --------------------------------------------------------------------
+  # NV-Embed-v2 — 4096-dim embedding service (GPU required)
+  # --------------------------------------------------------------------
+  nv-embed:
+    <<: *engine-base
+    build:
+      context: ./engine/services/nv-embed
+      dockerfile: Dockerfile
+    container_name: pme-nv-embed
+    ports: ["127.0.0.1:${PME_NV_EMBED_PORT:-8041}:8041"]
+    volumes:
+      - pme-nv-embed-cache:/cache
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8041/health',timeout=3)"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 120s
+
+  # --------------------------------------------------------------------
+  # L3 — Knowledge Graph (Neo4j Community)
+  # --------------------------------------------------------------------
+  l3:
+    <<: *engine-base
+    image: neo4j:5-community
+    container_name: pme-l3
+    ports:
+      - "127.0.0.1:${PME_L3_HTTP_PORT:-7475}:7474"   # HTTP browser
+      - "127.0.0.1:${PME_L3_BOLT_PORT:-7688}:7687"   # bolt protocol
+    environment:
+      NEO4J_AUTH: ${NEO4J_AUTH:-neo4j/local-dev-pw}
+      NEO4J_PLUGINS: '["apoc"]'
+      NEO4J_dbms_memory_heap_max__size: 512m
+    volumes:
+      - pme-l3-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:7474 >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+  # --------------------------------------------------------------------
+  # L4 — sqlite-vec sidecar
+  # --------------------------------------------------------------------
+  l4:
+    <<: *engine-base
+    build:
+      context: ./engine/services/l4
+      dockerfile: Dockerfile
+    container_name: pme-l4
+    # Default 18042 to avoid port collisions on 8042.
+    # Override via PME_L4_PORT for bench setups that intentionally replace it.
+    ports: ["127.0.0.1:${PME_L4_PORT:-18042}:8042"]
+    environment:
+      L4_NV_EMBED_URL: ${NV_EMBED_URL:-http://host.docker.internal:8041/v1/embeddings}
+      L4_EMBED_MODEL: ${EMBED_MODEL_NAME:-nv-embed-v2}
+      L4_EMBED_API_KEY: ${EMBED_API_KEY:-}
+      L4_EMBED_DIM: ${EMBED_DIM:-4096}
+      L4_DB_PATH: /data/vec.db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - pme-l4-data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; urllib.request.urlopen('http://localhost:8042/health',timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  # --------------------------------------------------------------------
+  # L5 — Qdrant comms layer
+  # --------------------------------------------------------------------
+  l5:
+    <<: *engine-base
+    build:
+      context: ./engine/services/l5
+      dockerfile: Dockerfile
+    container_name: pme-l5
+    # Default 18034 to avoid port collisions on 8034.
+    # Override via PME_L5_PORT for bench setups that intentionally replace it.
+    ports: ["127.0.0.1:${PME_L5_PORT:-18034}:8034"]
+    environment:
+      L5_NV_EMBED_URL: ${NV_EMBED_URL:-http://host.docker.internal:8041/v1/embeddings}
+      L5_EMBED_MODEL: ${EMBED_MODEL_NAME:-nv-embed-v2}
+      L5_EMBED_API_KEY: ${EMBED_API_KEY:-}
+      L5_EMBED_DIM: ${EMBED_DIM:-4096}
+      L5_OLLAMA_DIM: ${OLLAMA_DIM:-768}
+      L5_OLLAMA_EMBED_URL: ${L5_OLLAMA_EMBED_URL:-http://host.docker.internal:11434/api/embed}
+      L5_OLLAMA_EMBED_MODEL: ${L5_OLLAMA_EMBED_MODEL:-nomic-embed-text}
+      L5_DB_PATH: /data/comms.db
+      PME_WORKSPACE: /data/workspace
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - pme-l5-data:/data
+
+  # --------------------------------------------------------------------
+  # L6 — Document store + cross-encoder reranker
+  # --------------------------------------------------------------------
+  l6:
+    <<: *engine-base
+    build:
+      context: ./engine/services/l6
+      dockerfile: Dockerfile
+    container_name: pme-l6
+    # Default 18037 to avoid colliding with Spark Core L6 doc-store on 8037.
+    # Override via PME_L6_PORT for bench setups that intentionally replace it.
+    ports: ["127.0.0.1:${PME_L6_PORT:-18037}:8037"]
+    environment:
+      L6_NV_EMBED_URL: ${NV_EMBED_URL:-http://host.docker.internal:8041/v1/embeddings}
+      L6_EMBED_MODEL: ${EMBED_MODEL_NAME:-nv-embed-v2}
+      L6_EMBED_API_KEY: ${EMBED_API_KEY:-}
+      L6_EMBED_DIM: ${EMBED_DIM:-4096}
+      L6_DATA_DIR: /data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - pme-l6-data:/data
+
+  # --------------------------------------------------------------------
+  # L2 — HybridRAG orchestrator (RRF fusion across all layers)
+  # --------------------------------------------------------------------
+  l2:
+    <<: *engine-base
+    build:
+      context: ./engine/services/l2
+      dockerfile: Dockerfile
+    container_name: pme-l2
+    ports: ["127.0.0.1:${PME_L2_PORT:-8131}:8031"]
+    environment:
+      PME_NV_EMBED_URL: ${NV_EMBED_URL:-http://host.docker.internal:8041/v1/embeddings}
+      PME_NEO4J_URI: bolt://l3:7687
+      PME_NEO4J_PASSWORD: ${NEO4J_PASSWORD:-local-dev-pw}
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD:-local-dev-pw}
+      PME_L5_URL: http://l5:8034
+      PME_L6_URL: http://l6:8037
+      # HyDE off (deliberate — hurts precision on retrieval-graded benches)
+      PME_HYDE_ENABLED: "false"
+      # Cross-encoder reranker on (boosts top-K precision)
+      PME_RERANK_ENABLED: "true"
+      PME_WORKSPACE: /data/workspace
+      PME_QMD_DB: /data/qmd.sqlite
+      PME_MEMORY_DB: /data/workspace.db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - pme-l2-data:/data
+    depends_on:
+      l3: { condition: service_healthy }
+      l5: { condition: service_started }
+      l6: { condition: service_started }
+
+  # --------------------------------------------------------------------
+  # Compat shim — exposes pentatonic-memory v0.5 API on :8099
+  #
+  # Now routes /search through the L2 7-layer proxy by default. L6-only
+  # bypass (BYPASS_L2_PROXY=1) is still available for isolated testing.
+  # --------------------------------------------------------------------
+  compat:
+    <<: *engine-base
+    build:
+      context: ./compat
+      dockerfile: Dockerfile
+    container_name: pme-compat
+    ports:
+      - "127.0.0.1:${PME_PORT:-8099}:8099"
+    environment:
+      L0_URL: http://l2:8031
+      L2_PROXY_URL: http://l2:8031
+      L3_KG_URL: http://l3:7474
+      L4_VEC_URL: http://l4:8042
+      L5_MILVUS_URL: http://l5:8034
+      L6_DOC_URL: http://l6:8037
+      NV_EMBED_URL: ${NV_EMBED_URL:-http://host.docker.internal:8041/v1/embeddings}
+      CLIENT_ID: ${CLIENT_ID:-default}
+      BYPASS_L2_PROXY: ${BYPASS_L2_PROXY:-0}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      l2: { condition: service_started }
+      l4: { condition: service_started }
+      l5: { condition: service_started }
+      l6: { condition: service_started }
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8099/health',timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+
+networks:
+  engine-net:
+
+volumes:
+  pme-nv-embed-cache:
+  pme-l2-data:
+  pme-l3-data:
+  pme-l4-data:
+  pme-l5-data:
+  pme-l6-data:

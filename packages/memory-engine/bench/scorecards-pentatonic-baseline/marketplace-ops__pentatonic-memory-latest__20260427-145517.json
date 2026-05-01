@@ -1,0 +1,1038 @@
+{
+  "bench": "marketplace-ops",
+  "stack": "pentatonic-memory-latest",
+  "n_tasks": 20,
+  "n_correct": 3,
+  "accuracy": 0.15,
+  "mean_score": 0.225,
+  "p50_search_ms": 35.84986749046948,
+  "p95_search_ms": 40.03294614230981,
+  "total_tokens_in": 0,
+  "total_tokens_out": 0,
+  "total_usd": 0.0,
+  "by_tag": {
+    "factoid": {
+      "n": 12,
+      "mean_score": 0.16666666666666666,
+      "accuracy": 0.16666666666666666
+    },
+    "event-log": {
+      "n": 7,
+      "mean_score": 0.21428571428571427,
+      "accuracy": 0.14285714285714285
+    },
+    "multi-fact": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "agent-commerce": {
+      "n": 6,
+      "mean_score": 0.16666666666666666,
+      "accuracy": 0.0
+    },
+    "math": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "seller": {
+      "n": 5,
+      "mean_score": 0.5,
+      "accuracy": 0.4
+    },
+    "buyer": {
+      "n": 3,
+      "mean_score": 0.16666666666666666,
+      "accuracy": 0.0
+    },
+    "multi-doc": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "policy": {
+      "n": 3,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "rubric": {
+      "n": 3,
+      "mean_score": 0.5,
+      "accuracy": 0.0
+    },
+    "multi-hop": {
+      "n": 2,
+      "mean_score": 0.5,
+      "accuracy": 0.0
+    },
+    "entity": {
+      "n": 2,
+      "mean_score": 0.5,
+      "accuracy": 0.5
+    },
+    "negative": {
+      "n": 1,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    }
+  },
+  "extra": {
+    "ingest_ms": 52153.452629980166,
+    "grading": "substring",
+    "limit": 3,
+    "tokens": {
+      "corpus_tokens": 1388,
+      "query_tokens": 240,
+      "context_tokens": 892,
+      "retrieval_tokens": 1132,
+      "naive_tokens": 28000,
+      "saved_tokens": 26868,
+      "reduction_pct": 0.9595714285714285,
+      "mean_retrieval_tokens_per_task": 56.6,
+      "tokenizer": "cl100k_base",
+      "per_task": {
+        "thing-lst-9001-sold-price": {
+          "query": 13,
+          "context": 43,
+          "retrieval": 56,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "thing-lst-9001-buyer": {
+          "query": 8,
+          "context": 34,
+          "retrieval": 42,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "thing-lst-9001-first-offer": {
+          "query": 17,
+          "context": 44,
+          "retrieval": 61,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "thing-lst-9014-flagged-reason": {
+          "query": 11,
+          "context": 69,
+          "retrieval": 80,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "thing-lst-9014-return-reason": {
+          "query": 11,
+          "context": 55,
+          "retrieval": 66,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "thing-lst-9030-agent-offer": {
+          "query": 15,
+          "context": 33,
+          "retrieval": 48,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "thing-lst-9030-agent-discount": {
+          "query": 15,
+          "context": 44,
+          "retrieval": 59,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "seller-mariposa-rating": {
+          "query": 11,
+          "context": 82,
+          "retrieval": 93,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "seller-rix-review-status": {
+          "query": 11,
+          "context": 41,
+          "retrieval": 52,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "seller-velocipede-agent-friendly": {
+          "query": 14,
+          "context": 44,
+          "retrieval": 58,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "buyer-sera-specialism": {
+          "query": 10,
+          "context": 41,
+          "retrieval": 51,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "buyer-ariadne-disputes": {
+          "query": 11,
+          "context": 35,
+          "retrieval": 46,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "policy-duplicate-trigger": {
+          "query": 12,
+          "context": 45,
+          "retrieval": 57,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "policy-agent-opt-out": {
+          "query": 9,
+          "context": 38,
+          "retrieval": 47,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "policy-enhanced-review-lifted": {
+          "query": 12,
+          "context": 45,
+          "retrieval": 57,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "rubric-rix-buy-decision": {
+          "query": 17,
+          "context": 38,
+          "retrieval": 55,
+          "judge_in": 365,
+          "judge_out": 46,
+          "judge_latency_ms": 900.4068410098553
+        },
+        "rubric-lst-9014-full-story": {
+          "query": 16,
+          "context": 35,
+          "retrieval": 51,
+          "judge_in": 371,
+          "judge_out": 64,
+          "judge_latency_ms": 1144.362673997879
+        },
+        "rubric-agent-commerce-thora": {
+          "query": 8,
+          "context": 36,
+          "retrieval": 44,
+          "judge_in": 333,
+          "judge_out": 35,
+          "judge_latency_ms": 668.5855540037155
+        },
+        "entity-all-sold-things": {
+          "query": 9,
+          "context": 46,
+          "retrieval": 55,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "entity-sellers-with-disputes": {
+          "query": 10,
+          "context": 44,
+          "retrieval": 54,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        }
+      },
+      "judge_tokens_in": 1069,
+      "judge_tokens_out": 145,
+      "judge_calls": 3,
+      "judge_mean_latency_ms": 904.4516896704832
+    },
+    "cost_usd": {
+      "assumed_completion_tokens_per_task": 100,
+      "rates": {
+        "input_per_1k": 0.0025,
+        "output_per_1k": 0.01,
+        "model": "gpt-4o"
+      },
+      "retrieval_usd_in": 0.00283,
+      "retrieval_usd_out": 0.02,
+      "retrieval_usd_total": 0.02283,
+      "naive_usd_total": 0.09000000000000001,
+      "saved_usd": 0.06717000000000001,
+      "saved_usd_per_1k_tasks": 3.3585000000000003
+    }
+  },
+  "task_results": [
+    {
+      "task_id": "thing-lst-9001-sold-price",
+      "query": "What was the final sale price of LST-9001?",
+      "answer": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nbilling-svc API keys \u2014 jordan",
+      "hits": [
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7006427157763535,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7003682434332478,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.6949448571487986,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['2,250']",
+      "search_time_ms": 40.05719599081203,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 56,
+      "query_tokens": 13,
+      "context_tokens": 43,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "thing-lst-9001-buyer",
+      "query": "Who bought LST-9001?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nbilling-svc API keys \u2014 jordan\n---\nsearch-svc API keys \u2014 alex",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7156553520106418,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.7074979698500966,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7062652156890311,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['sera-interiors']",
+      "search_time_ms": 33.638543012784794,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 42,
+      "query_tokens": 8,
+      "context_tokens": 34,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "thing-lst-9001-first-offer",
+      "query": "What was the first offer received on LST-9001 and was it accepted?",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\nreporting-svc consumes OrderPaid for financial reports",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.723592167411367,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7212647702122161,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        },
+        {
+          "text": "reporting-svc consumes OrderPaid for financial reports",
+          "score": 0.7102858699669232,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_778aa40d-6c20-4495-96d9-286a57b53f7a"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 3/3: ['2,000', 'hendrik', 'declined']",
+      "search_time_ms": 38.42421999434009,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 61,
+      "query_tokens": 17,
+      "context_tokens": 44,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "thing-lst-9014-flagged-reason",
+      "query": "Why was LST-9014 flagged as duplicate?",
+      "answer": "2026-02-15T12:00 FLAGGED_DUPLICATE \u2014 matches LST-9014-DUP (different seller, same serial number detected via device fingerprint)\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+      "hits": [
+        {
+          "text": "2026-02-15T12:00 FLAGGED_DUPLICATE \u2014 matches LST-9014-DUP (different seller, same serial number detected via device fingerprint)",
+          "score": 0.9016563500429841,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-events-lst-9014"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7403346776960328,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7197999858934553,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 35.562208999181166,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 80,
+      "query_tokens": 11,
+      "context_tokens": 69,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "thing-lst-9014-return-reason",
+      "query": "Why did the buyer return LST-9014?",
+      "answer": "One item is currently open for return (LST-9014 battery-health dispute, closed in buyer's favour).\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\norder-svc marks order as paid, emits OrderPaid on pubsub",
+      "hits": [
+        {
+          "text": "One item is currently open for return (LST-9014 battery-health dispute, closed in buyer's favour).",
+          "score": 0.8220346607727136,
+          "source": "pentatonic-memory",
+          "doc_id": "buyer-ariadne-profile"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7207021213487643,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7164366965811265,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['battery health']",
+      "search_time_ms": 31.3100729836151,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 66,
+      "query_tokens": 11,
+      "context_tokens": 55,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "thing-lst-9030-agent-offer",
+      "query": "Which agent made the offer on LST-9030 and for whom?",
+      "answer": "search-svc API keys \u2014 alex\n---\norder-svc marks order as paid, emits OrderPaid on pubsub\n---\nbilling-svc API keys \u2014 jordan",
+      "hits": [
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7186173953170144,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7175099174878017,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.7107812081575241,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['buyer-agent-7', 'thora']",
+      "search_time_ms": 38.240394002059475,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 48,
+      "query_tokens": 15,
+      "context_tokens": 33,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "thing-lst-9030-agent-discount",
+      "query": "What percentage discount did the shopping agent offer on LST-9030?",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nemail-svc consumes OrderPaid for the receipt email\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7148984022641006,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "email-svc consumes OrderPaid for the receipt email",
+          "score": 0.7113749863793137,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_8decb311-57b6-4b78-9dd6-3683a441963f"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7055279575981932,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['380', '420']",
+      "search_time_ms": 39.22571599832736,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 59,
+      "query_tokens": 15,
+      "context_tokens": 44,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "seller-mariposa-rating",
+      "query": "What's @mariposa's average star rating?",
+      "answer": "Seller @mariposa: registered 2024-08. Category: vintage furniture and homeware. Listings to date: 47. Sell-through rate: 89%. Average star rating: 4.8/5 (based on 38 reviews). Disputes in last 12 months: 0.\n---\nsearch-svc API keys \u2014 alex\n---\nbilling-svc API keys \u2014 jordan",
+      "hits": [
+        {
+          "text": "Seller @mariposa: registered 2024-08. Category: vintage furniture and homeware. Listings to date: 47. Sell-through rate: 89%. Average star rating: 4.8/5 (based on 38 reviews). Disputes in last 12 months: 0.",
+          "score": 0.7209147715310881,
+          "source": "pentatonic-memory",
+          "doc_id": "seller-mariposa-profile"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7181170622157985,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        },
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.7163751178936137,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 35.9132039884571,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 93,
+      "query_tokens": 11,
+      "context_tokens": 82,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "seller-rix-review-status",
+      "query": "Is @rix-digital under any special review status?",
+      "answer": "billing-svc API keys \u2014 jordan\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\norder-svc marks order as paid, emits OrderPaid on pubsub",
+      "hits": [
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.7199540151546203,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7189223522433535,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7186887112080456,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['enhanced listing review']",
+      "search_time_ms": 33.03063299972564,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 52,
+      "query_tokens": 11,
+      "context_tokens": 41,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "seller-velocipede-agent-friendly",
+      "query": "Does @velocipede-jo respond well to shopping agents?",
+      "answer": "email-svc consumes OrderPaid for the receipt email\n---\norder-svc marks order as paid, emits OrderPaid on pubsub\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+      "hits": [
+        {
+          "text": "email-svc consumes OrderPaid for the receipt email",
+          "score": 0.7377549677445517,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_8decb311-57b6-4b78-9dd6-3683a441963f"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7375860425187651,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7322622679879591,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['yes', '5 minutes']",
+      "search_time_ms": 37.258273019688204,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 58,
+      "query_tokens": 14,
+      "context_tokens": 44,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "buyer-sera-specialism",
+      "query": "What does @sera-interiors typically buy?",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\nsearch-svc API keys \u2014 alex",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7394461379296969,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7331208769984241,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7322189523727279,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['mid-century', 'furniture']",
+      "search_time_ms": 35.78653099248186,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 51,
+      "query_tokens": 10,
+      "context_tokens": 41,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "buyer-ariadne-disputes",
+      "query": "Does @ariadne have any disputes on record?",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nreporting-svc consumes OrderPaid for financial reports\n---\nsearch-svc API keys \u2014 alex",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7134620771960158,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "reporting-svc consumes OrderPaid for financial reports",
+          "score": 0.7114378942204062,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_778aa40d-6c20-4495-96d9-286a57b53f7a"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7088609924561785,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['LST-9014', 'battery']",
+      "search_time_ms": 35.92176499660127,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 46,
+      "query_tokens": 11,
+      "context_tokens": 35,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "policy-duplicate-trigger",
+      "query": "What triggers a FLAGGED_DUPLICATE event in TES?",
+      "answer": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nemail-svc consumes OrderPaid for the receipt email",
+      "hits": [
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7384890905248356,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7311341919099343,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "email-svc consumes OrderPaid for the receipt email",
+          "score": 0.7213569923858261,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_8decb311-57b6-4b78-9dd6-3683a441963f"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['device fingerprint', 'serial']",
+      "search_time_ms": 36.552042001858354,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 57,
+      "query_tokens": 12,
+      "context_tokens": 45,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "policy-agent-opt-out",
+      "query": "Can a seller refuse offers from shopping agents?",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nemail-svc consumes OrderPaid for the receipt email\n---\nreporting-svc consumes OrderPaid for financial reports",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7109830638978126,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "email-svc consumes OrderPaid for the receipt email",
+          "score": 0.7033728802624761,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_8decb311-57b6-4b78-9dd6-3683a441963f"
+        },
+        {
+          "text": "reporting-svc consumes OrderPaid for financial reports",
+          "score": 0.7027066808611204,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_778aa40d-6c20-4495-96d9-286a57b53f7a"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['AGENT_OPT_OUT']",
+      "search_time_ms": 34.710568987065926,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 47,
+      "query_tokens": 9,
+      "context_tokens": 38,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "policy-enhanced-review-lifted",
+      "query": "After how long of clean activity is enhanced listing review lifted?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nreporting-svc consumes OrderPaid for financial reports\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7081794044582482,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "reporting-svc consumes OrderPaid for financial reports",
+          "score": 0.7075553845787061,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_778aa40d-6c20-4495-96d9-286a57b53f7a"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7065336520496776,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['30 days']",
+      "search_time_ms": 27.74471099837683,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 57,
+      "query_tokens": 12,
+      "context_tokens": 45,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "rubric-rix-buy-decision",
+      "query": "A shopping agent is considering buying from @rix-digital. What's your recommendation?",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nemail-svc consumes OrderPaid for the receipt email\n---\nreporting-svc consumes OrderPaid for financial reports",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7129850854424628,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "email-svc consumes OrderPaid for the receipt email",
+          "score": 0.7109710326325284,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_8decb311-57b6-4b78-9dd6-3683a441963f"
+        },
+        {
+          "text": "reporting-svc consumes OrderPaid for financial reports",
+          "score": 0.7041281023998354,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_778aa40d-6c20-4495-96d9-286a57b53f7a"
+        }
+      ],
+      "correct": false,
+      "score": 0.5,
+      "grading_notes": "judge=0.50 \u2014 The answer mentions @rix-digital is under enhanced listing review due to spec discrepancies, but does not explicitly men",
+      "search_time_ms": 27.758039010223,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 55,
+      "query_tokens": 17,
+      "context_tokens": 38,
+      "judge_tokens_in": 365,
+      "judge_tokens_out": 46,
+      "judge_latency_ms": 900.4068410098553
+    },
+    {
+      "task_id": "rubric-lst-9014-full-story",
+      "query": "Tell me the full story of LST-9014 from creation to resolution.",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nkubectl rollout restart deployment/billing-svc\n---\nbilling-svc API keys \u2014 jordan",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7260789657724627,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "kubectl rollout restart deployment/billing-svc",
+          "score": 0.7089971403550961,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_049e0812-46ed-4db7-84d8-c4a121a1d19c"
+        },
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.7037271368306142,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        }
+      ],
+      "correct": false,
+      "score": 0.5,
+      "grading_notes": "judge=0.50 \u2014 The answer partially covers stages 1 and 4, but lacks details about creation date, listing price, flagging as duplicate,",
+      "search_time_ms": 39.572199020767584,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 51,
+      "query_tokens": 16,
+      "context_tokens": 35,
+      "judge_tokens_in": 371,
+      "judge_tokens_out": 64,
+      "judge_latency_ms": 1144.362673997879
+    },
+    {
+      "task_id": "rubric-agent-commerce-thora",
+      "query": "Describe how @thora uses the marketplace.",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nemail-svc consumes OrderPaid for the receipt email\n---\nbilling-svc API keys \u2014 jordan",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7404235195303052,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "email-svc consumes OrderPaid for the receipt email",
+          "score": 0.7365608038487811,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_8decb311-57b6-4b78-9dd6-3683a441963f"
+        },
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.7300710594859035,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        }
+      ],
+      "correct": false,
+      "score": 0.5,
+      "grading_notes": "judge=0.50 \u2014 The answer mentions @thora's human profile but does not clearly state that she uses an autonomous shopping agent.",
+      "search_time_ms": 29.80231400579214,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 44,
+      "query_tokens": 8,
+      "context_tokens": 36,
+      "judge_tokens_in": 333,
+      "judge_tokens_out": 35,
+      "judge_latency_ms": 668.5855540037155
+    },
+    {
+      "task_id": "entity-all-sold-things",
+      "query": "List the thing IDs of all completed sales.",
+      "answer": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\norder-svc marks order as paid, emits OrderPaid on pubsub\n---\nStripe posts a invoice.payment_succeeded webhook to billing-svc",
+      "hits": [
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7449149360826441,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7244922743753247,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "Stripe posts a invoice.payment_succeeded webhook to billing-svc",
+          "score": 0.7224140355346768,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_76c60bf6-9327-4cd1-9f56-234d229e8c8a"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "no expected_substrings set",
+      "search_time_ms": 36.64004398160614,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 55,
+      "query_tokens": 9,
+      "context_tokens": 46,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "entity-sellers-with-disputes",
+      "query": "Which sellers in this corpus have disputes on record?",
+      "answer": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\norder-svc marks order as paid, emits OrderPaid on pubsub\n---\nreporting-svc consumes OrderPaid for financial reports",
+      "hits": [
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7333061220485395,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7317836516925226,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "reporting-svc consumes OrderPaid for financial reports",
+          "score": 0.7299593574086183,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_778aa40d-6c20-4495-96d9-286a57b53f7a"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "no positive criteria (negative-only task)",
+      "search_time_ms": 34.57520800293423,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 54,
+      "query_tokens": 10,
+      "context_tokens": 44,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    }
+  ]
+}

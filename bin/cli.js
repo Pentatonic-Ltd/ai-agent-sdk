@@ -1,10 +1,6 @@
 #!/usr/bin/env node
 
 import { createInterface } from "readline";
-import { execFileSync } from "child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
-import { join } from "path";
-import { homedir } from "os";
 
 const DEFAULT_ENDPOINT = "https://api.pentatonic.com";
 
@@ -31,10 +27,10 @@ function parseArgs() {
       flags.alert = true;
     } else if (a === "--no-plugins") {
       flags.noPlugins = true;
-    } else if (a === "--local") {
-      flags.local = true;
-    } else if (a === "--remote") {
-      flags.remote = true;
+    } else if (a === "--engine-url" && args[i + 1]) {
+      flags.engineUrl = args[++i];
+    } else if (a.startsWith("--engine-url=")) {
+      flags.engineUrl = a.split("=")[1];
     } else if (!a.startsWith("--")) {
       // First non-flag arg is the command; subsequent ones are subcommand
       // arguments handled by the dispatched cmd (e.g. `ingest <path>`).
@@ -77,124 +73,14 @@ function ask(question) {
   return new Promise((resolve) => rl.question(question, resolve));
 }
 
-function spinner(text) {
-  const frames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
-  let i = 0;
-  const id = setInterval(() => {
-    process.stdout.write(`\r${frames[i++ % frames.length]} ${text}`);
-  }, 80);
-  return {
-    stop(result) {
-      clearInterval(id);
-      process.stdout.write(`\r✓ ${result}\n`);
-    },
-    fail(msg) {
-      clearInterval(id);
-      process.stdout.write(`\r✗ ${msg}\n`);
-    },
-  };
-}
-
-async function setupLocalMemory() {
-  console.log(`\n  Local Memory Setup\n`);
-
-  // Check Docker
-  try {
-    execFileSync("docker", ["info"], { stdio: "pipe" });
-  } catch {
-    console.error("  Error: Docker is required. Install it from https://docker.com\n");
-    process.exit(1);
-  }
-
-  const memoryDir = new URL("../packages/memory", import.meta.url).pathname;
-
-  // Start infrastructure + memory server
-  const infraSpinner = spinner("Starting memory server + PostgreSQL + Ollama...");
-  try {
-    execFileSync("docker", ["compose", "up", "-d", "memory", "postgres", "ollama"], {
-      cwd: memoryDir,
-      stdio: "pipe",
-    });
-    infraSpinner.stop("Memory stack running!");
-  } catch (err) {
-    infraSpinner.fail(`Failed to start: ${err.message}`);
-    process.exit(1);
-  }
-
-  // Pull models
-  const embModel = process.env.EMBEDDING_MODEL || "nomic-embed-text";
-  const llmModel = process.env.LLM_MODEL || "llama3.2:3b";
-
-  const embSpinner = spinner(`Pulling ${embModel}...`);
-  try {
-    execFileSync("docker", ["compose", "exec", "ollama", "ollama", "pull", embModel], {
-      cwd: memoryDir,
-      stdio: "pipe",
-    });
-    embSpinner.stop(`${embModel} ready!`);
-  } catch {
-    embSpinner.fail(`Failed to pull ${embModel}. Run manually: docker compose exec ollama ollama pull ${embModel}`);
-  }
-
-  const llmSpinner = spinner(`Pulling ${llmModel}...`);
-  try {
-    execFileSync("docker", ["compose", "exec", "ollama", "ollama", "pull", llmModel], {
-      cwd: memoryDir,
-      stdio: "pipe",
-    });
-    llmSpinner.stop(`${llmModel} ready!`);
-  } catch {
-    llmSpinner.fail(`Failed to pull ${llmModel}. Run manually: docker compose exec ollama ollama pull ${llmModel}`);
-  }
-
-  // Write local config (warn if hosted config exists)
-  const configDir = join(homedir(), ".claude-pentatonic");
-  if (!existsSync(configDir)) {
-    mkdirSync(configDir, { recursive: true });
-  }
-
-  const configPath = join(configDir, "tes-memory.local.md");
-  if (existsSync(configPath)) {
-    const existing = readFileSync(configPath, "utf-8");
-    if (existing.includes("tes_endpoint") && !existing.includes("mode: local")) {
-      console.log("\n  ⚠ Hosted TES config detected. Switching to local mode will");
-      console.log("  disable hosted memory. To restore, run: npx @pentatonic-ai/ai-agent-sdk init\n");
-      const confirm = await ask("  Switch to local mode? (y/n): ");
-      if (confirm.toLowerCase() !== "y") {
-        console.log("  Cancelled. Hosted config unchanged.\n");
-        rl.close();
-        return;
-      }
-    }
-  }
-
-  writeFileSync(
-    configPath,
-    `---
-mode: local
-memory_url: http://localhost:3333
----
-`
-  );
-
-  console.log(`\n  Config written to ${configPath}`);
-
-  const sdkDir = new URL("..", import.meta.url).pathname;
-
-  console.log(`
-  Memory server: http://localhost:3333
-  Hooks are auto-configured to use local memory.
-
-  Install the plugin in Claude Code:
-    /plugin marketplace add Pentatonic-Ltd/ai-agent-sdk
-    /plugin install tes-memory@pentatonic-ai
-
-  You're ready! Every prompt auto-searches memory,
-  every turn auto-stores. No MCP setup needed.
-`);
-
-  rl.close();
-}
+// setupLocalMemory + its `spinner` helper were the legacy "bring up
+// Postgres + Ollama" wrapper for the in-process memory server. Removed
+// in favour of:
+//   - `tes config local`  → writes the plugin config + prints engine
+//                           bring-up instructions
+//   - `cd packages/memory-engine && docker compose up -d` → runs the
+//                           actual engine
+// `ask` is kept for any future interactive prompts.
 
 
 async function main() {
@@ -233,11 +119,23 @@ async function main() {
     process.exit(exitCode);
   }
 
-  // `memory` is kept as a shortcut to skip the local-or-remote question
-  // for users with that command in scripts/docs. New users should use init.
-  if (flags.command === "memory") {
-    await setupLocalMemory();
-    return;
+  // tes config <local|hosted|show> — point Claude Code's tes-memory
+  // plugin at a memory backend, or inspect what's configured. Each
+  // subcommand is a thin scaffold:
+  //   local  → write mode: local + memory_url; print engine bring-up steps
+  //   hosted → run the login flow (delegates to runLoginCommand)
+  //   show   → read and print the current plugin config
+  // Future: `tes config set <key> <value>` for engine env-var tweaks.
+  if (flags.command === "config") {
+    const sub = process.argv.slice(3).find((a) => !a.startsWith("--"));
+    const { runConfigCommand } = await import("./commands/config.js");
+    const { exitCode } = await runConfigCommand({
+      sub,
+      endpoint: TES_ENDPOINT,
+      engineUrl: flags.engineUrl,
+    });
+    rl.close();
+    process.exit(exitCode);
   }
 
   // Corpus subcommands — onboarding/repo ingest (spec 01)
@@ -268,17 +166,19 @@ async function main() {
     process.exit(code);
   }
 
-  if (flags.command !== "init") {
-    console.log(`
+  console.log(`
 @pentatonic-ai/ai-agent-sdk
 
 Usage:
-  npx @pentatonic-ai/ai-agent-sdk login                   Sign in with TES (browser-based OAuth)
+  npx @pentatonic-ai/ai-agent-sdk login                   First-time hosted setup: browser sign-in + writes credentials
   npx @pentatonic-ai/ai-agent-sdk whoami                  Show current login identity
-  npx @pentatonic-ai/ai-agent-sdk init                    [deprecated] Alias for 'login'
-  npx @pentatonic-ai/ai-agent-sdk init --local            Set up local Docker memory stack
-  npx @pentatonic-ai/ai-agent-sdk memory                  Shortcut for 'init --local'
+  npx @pentatonic-ai/ai-agent-sdk config <sub>            Configure memory backend; see 'config --help'
   npx @pentatonic-ai/ai-agent-sdk doctor                  Run health checks (exit 0/1/2)
+
+  config subcommands:
+    config local                                          Point plugin at a local memory engine
+    config hosted                                         Switch to hosted (delegates to login)
+    config show                                           Print current plugin config + creds
 
 Memory corpus (onboarding):
   npx @pentatonic-ai/ai-agent-sdk onboard                 Interactive: pick paths, ingest, install hooks
@@ -290,8 +190,8 @@ Memory corpus (onboarding):
   npx @pentatonic-ai/ai-agent-sdk corpus reset            Wipe local corpus state
   npx @pentatonic-ai/ai-agent-sdk install-git-hook        Install post-commit hook in cwd
 
-Tenant for corpus commands is read from these env vars:
-  TES_ENDPOINT, TES_CLIENT_ID, TES_API_KEY
+Corpus commands route to the backend configured via 'config' (local engine
+or hosted TES). Override with env vars: MEMORY_ENGINE_URL, TES_ENDPOINT, …
 
 doctor flags:
   --json                  Emit a JSON report
@@ -301,31 +201,8 @@ doctor flags:
   --timeout <ms>          Per-check timeout (default 10000)
 
 For docs, see https://api.pentatonic.com
-    `);
-    process.exit(0);
-  }
-
-  // init: --local still routes to setupLocalMemory (Docker stack —
-  // separate concern). Anything else (no flag, --remote, mode prompt)
-  // delegates to login via runInitAlias which emits a one-line
-  // deprecation warning. setupHostedTes (the old form-based hosted
-  // flow) is gone; init has been replaced by `login` for one major
-  // release, then `init` itself goes away.
-  if (flags.local && flags.remote) {
-    console.error("\n  Error: --local and --remote are mutually exclusive\n");
-    process.exit(1);
-  }
-  if (flags.local) {
-    await setupLocalMemory();
-    return;
-  }
-  // Non-local path → login alias.
-  const { runInitAlias } = await import("./commands/login.js");
-  const { exitCode } = await runInitAlias({
-    endpoint: TES_ENDPOINT,
-  });
-  rl.close();
-  process.exit(exitCode);
+  `);
+  process.exit(0);
 }
 
 main().catch((err) => {

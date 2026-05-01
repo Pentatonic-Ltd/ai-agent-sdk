@@ -1,0 +1,961 @@
+{
+  "bench": "product-catalogue",
+  "stack": "pentatonic-memory-latest",
+  "n_tasks": 18,
+  "n_correct": 8,
+  "accuracy": 0.4444444444444444,
+  "mean_score": 0.4861111111111111,
+  "p50_search_ms": 29.792192013701424,
+  "p95_search_ms": 39.145407994510606,
+  "total_tokens_in": 0,
+  "total_tokens_out": 0,
+  "total_usd": 0.0,
+  "by_tag": {
+    "factoid": {
+      "n": 10,
+      "mean_score": 0.725,
+      "accuracy": 0.7
+    },
+    "material": {
+      "n": 4,
+      "mean_score": 0.5,
+      "accuracy": 0.5
+    },
+    "spec": {
+      "n": 1,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "warranty": {
+      "n": 1,
+      "mean_score": 0.25,
+      "accuracy": 0.0
+    },
+    "inventory": {
+      "n": 3,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "compat": {
+      "n": 2,
+      "mean_score": 0.25,
+      "accuracy": 0.0
+    },
+    "multi-doc": {
+      "n": 3,
+      "mean_score": 0.5,
+      "accuracy": 0.3333333333333333
+    },
+    "care": {
+      "n": 1,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "policy": {
+      "n": 2,
+      "mean_score": 0.5,
+      "accuracy": 0.5
+    },
+    "pricing": {
+      "n": 2,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "multi-hop": {
+      "n": 2,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "math": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "rubric": {
+      "n": 3,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "recommendation": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "certification": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "entity": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    }
+  },
+  "extra": {
+    "ingest_ms": 45601.26005701022,
+    "grading": "substring",
+    "limit": 3,
+    "tokens": {
+      "corpus_tokens": 1845,
+      "query_tokens": 271,
+      "context_tokens": 1483,
+      "retrieval_tokens": 1754,
+      "naive_tokens": 33481,
+      "saved_tokens": 31727,
+      "reduction_pct": 0.9476120784922792,
+      "mean_retrieval_tokens_per_task": 97.44444444444444,
+      "tokenizer": "cl100k_base",
+      "per_task": {
+        "sku-atlas-material": {
+          "query": 11,
+          "context": 169,
+          "retrieval": 180,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "sku-luna-capacity": {
+          "query": 8,
+          "context": 169,
+          "retrieval": 177,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "sku-luna-warranty": {
+          "query": 9,
+          "context": 45,
+          "retrieval": 54,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "sku-kite-harness-out-of-stock": {
+          "query": 17,
+          "context": 37,
+          "retrieval": 54,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "sku-kite-harness-restock": {
+          "query": 17,
+          "context": 209,
+          "retrieval": 226,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "sku-tee-discontinued-sizes": {
+          "query": 13,
+          "context": 194,
+          "retrieval": 207,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "sku-sleeve-compat-14-mbp": {
+          "query": 16,
+          "context": 50,
+          "retrieval": 66,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "sku-coffee-cup-microwave": {
+          "query": 8,
+          "context": 184,
+          "retrieval": 192,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "sku-bin-liners-home-compost": {
+          "query": 11,
+          "context": 23,
+          "retrieval": 34,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "policy-custom-tote-return": {
+          "query": 10,
+          "context": 115,
+          "retrieval": 125,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "price-tee-subscription": {
+          "query": 14,
+          "context": 30,
+          "retrieval": 44,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "price-sleeve-diff": {
+          "query": 19,
+          "context": 46,
+          "retrieval": 65,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "multi-hop-kite-duotone": {
+          "query": 25,
+          "context": 31,
+          "retrieval": 56,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "multi-hop-takeback-credit": {
+          "query": 23,
+          "context": 37,
+          "retrieval": 60,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "rubric-recommend-kitesurf-bag": {
+          "query": 31,
+          "context": 31,
+          "retrieval": 62,
+          "judge_in": 373,
+          "judge_out": 27,
+          "judge_latency_ms": 886.3365219831467
+        },
+        "rubric-plastic-free-tee": {
+          "query": 11,
+          "context": 41,
+          "retrieval": 52,
+          "judge_in": 349,
+          "judge_out": 27,
+          "judge_latency_ms": 861.2519019842148
+        },
+        "rubric-cc-certified-items": {
+          "query": 14,
+          "context": 34,
+          "retrieval": 48,
+          "judge_in": 323,
+          "judge_out": 35,
+          "judge_latency_ms": 592.7986909747124
+        },
+        "entity-recycled-content-high": {
+          "query": 14,
+          "context": 38,
+          "retrieval": 52,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        }
+      },
+      "judge_tokens_in": 1045,
+      "judge_tokens_out": 89,
+      "judge_calls": 3,
+      "judge_mean_latency_ms": 780.1290383140246
+    },
+    "cost_usd": {
+      "assumed_completion_tokens_per_task": 100,
+      "rates": {
+        "input_per_1k": 0.0025,
+        "output_per_1k": 0.01,
+        "model": "gpt-4o"
+      },
+      "retrieval_usd_in": 0.004385,
+      "retrieval_usd_out": 0.018,
+      "retrieval_usd_total": 0.022385,
+      "naive_usd_total": 0.1017025,
+      "saved_usd": 0.0793175,
+      "saved_usd_per_1k_tasks": 4.406527777777778
+    }
+  },
+  "task_results": [
+    {
+      "task_id": "sku-atlas-material",
+      "query": "What's the material composition of the Atlas Phone Shell?",
+      "answer": "# Atlas Phone Shell \u2014 SKU ATL-PHN-001\n\n**Brand:** Atlas Circular\n**Category:** Mobile accessories / Phone cases\n**Compatible with:** iPhone 15, iPhone 15 Pro\n\n**Material composition:**\n- 68% recycled ocean-bound polypropylene\n- 24% recycled polycarbonate (post-consumer)\n- 8% natural calcium carbonate\n\n**Price:** \u00a329.00 GBP (standard) / \u00a324.00 (subscription)\n**Inventory:** 1,240 units in stock at UK fulfilment (Worthing DC)\n**Take-back:** Yes \u2014 returnable for 50% credit after 18 months\n**Certification:** Cradle to Cradle Bronze, MADE-BY Class B\n---\nbilling-svc API keys \u2014 jordan\n---\nsearch-svc API keys \u2014 alex",
+      "hits": [
+        {
+          "text": "# Atlas Phone Shell \u2014 SKU ATL-PHN-001\n\n**Brand:** Atlas Circular\n**Category:** Mobile accessories / Phone cases\n**Compatible with:** iPhone 15, iPhone 15 Pro\n\n**Material composition:**\n- 68% recycled ocean-bound polypropylene\n- 24% recycled polycarbonate (post-consumer)\n- 8% natural calcium carbonate\n\n**Price:** \u00a329.00 GBP (standard) / \u00a324.00 (subscription)\n**Inventory:** 1,240 units in stock at U",
+          "score": 0.7315541935691172,
+          "source": "pentatonic-memory",
+          "doc_id": "sku-atlas-phone-01"
+        },
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.6994823789082102,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.6981416575081894,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 32.12930998415686,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 180,
+      "query_tokens": 11,
+      "context_tokens": 169,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "sku-luna-capacity",
+      "query": "What capacity is the Luna water bottle?",
+      "answer": "# Luna Water Bottle 500ml \u2014 SKU LUN-BTL-042\n\n**Brand:** Luna\n**Category:** Drinkware / Bottles\n**Capacity:** 500ml\n\n**Material composition:**\n- 100% food-grade 304 stainless steel (65% recycled content)\n- Lid: bio-based silicone (sugarcane derivative)\n\n**Price:** \u00a318.50 GBP\n**Inventory:** 87 units in stock (UK), 412 units (EU DC Eindhoven)\n**Colours available:** Matte black, Sage green, Terracotta\n**Replacement parts:** Lid (\u00a33.50), Silicone seal (\u00a30.90)\n**Warranty:** Lifetime on body, 2 years on lid\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\nbilling.new_invoice_pdf",
+      "hits": [
+        {
+          "text": "# Luna Water Bottle 500ml \u2014 SKU LUN-BTL-042\n\n**Brand:** Luna\n**Category:** Drinkware / Bottles\n**Capacity:** 500ml\n\n**Material composition:**\n- 100% food-grade 304 stainless steel (65% recycled content)\n- Lid: bio-based silicone (sugarcane derivative)\n\n**Price:** \u00a318.50 GBP\n**Inventory:** 87 units in stock (UK), 412 units (EU DC Eindhoven)\n**Colours available:** Matte black, Sage green, Terracotta",
+          "score": 0.7476620620852907,
+          "source": "pentatonic-memory",
+          "doc_id": "sku-luna-bottle-42"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.6922887155889775,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        },
+        {
+          "text": "billing.new_invoice_pdf",
+          "score": 0.6899837133948777,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_ca8bdac3-12ca-4bae-b5a2-fb9c2d069173"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 28.959120012586936,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 177,
+      "query_tokens": 8,
+      "context_tokens": 169,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "sku-luna-warranty",
+      "query": "What's the warranty on the Luna bottle?",
+      "answer": "Reason: defective lid on Luna Water Bottle 500ml.\n---\norder-svc marks order as paid, emits OrderPaid on pubsub\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+      "hits": [
+        {
+          "text": "Reason: defective lid on Luna Water Bottle 500ml.",
+          "score": 0.6973111644759994,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_5c7f6891-f63a-4f9b-bd22-f9cd3494ece2"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.6928739599750502,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.6923489833962405,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        }
+      ],
+      "correct": false,
+      "score": 0.25,
+      "grading_notes": "missing 3/4: ['Lifetime', 'body', '2 years']",
+      "search_time_ms": 36.634856020100415,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 54,
+      "query_tokens": 9,
+      "context_tokens": 45,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "sku-kite-harness-out-of-stock",
+      "query": "Which size of the Nomad Kite Harness v3 is currently out of stock?",
+      "answer": "Nomad Kite Harness v3 M sold out\n---\nsearch-svc API keys \u2014 alex\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+      "hits": [
+        {
+          "text": "Nomad Kite Harness v3 M sold out",
+          "score": 0.7009975219550995,
+          "source": "pentatonic-memory",
+          "doc_id": "inventory-update-2026-04-15"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.6928082686168076,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.6920729476713338,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 39.145407994510606,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 54,
+      "query_tokens": 17,
+      "context_tokens": 37,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "sku-kite-harness-restock",
+      "query": "When does the Nomad Kite Harness v3 restock for XS and S?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\n# Nomad Kite Harness v3 \u2014 SKU NMD-HRN-V3\n\n**Brand:** Nomad Sports\n**Category:** Watersports / Kite surfing\n**Size range:** XS (26-28\"), S (28-30\"), M (30-32\"), L (32-34\"), XL (34-36\")\n\n**Material composition:**\n- Outer shell: 92% recycled nylon 6,6 (ghost-net source)\n- Foam padding: EVA (non-recycled)\n- Hardware: 316 stainless steel spreader bar\n\n**Price:** \u00a3145.00 GBP\n**Inventory:** M=out of stock, L=6 units, XL=12 units, XS/S=restock 2026-05-15\n**Repair service:** \u00a325 flat fee, turnaround 14 days\n**Compatibility:** F-One bar systems, North bar systems (adapter sold separately)\n---\nkubectl rollout restart deployment/billing-svc",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7336013286272791,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "# Nomad Kite Harness v3 \u2014 SKU NMD-HRN-V3\n\n**Brand:** Nomad Sports\n**Category:** Watersports / Kite surfing\n**Size range:** XS (26-28\"), S (28-30\"), M (30-32\"), L (32-34\"), XL (34-36\")\n\n**Material composition:**\n- Outer shell: 92% recycled nylon 6,6 (ghost-net source)\n- Foam padding: EVA (non-recycled)\n- Hardware: 316 stainless steel spreader bar\n\n**Price:** \u00a3145.00 GBP\n**Inventory:** M=out of stoc",
+          "score": 0.7293507801903829,
+          "source": "pentatonic-memory",
+          "doc_id": "sku-kite-harness-v3"
+        },
+        {
+          "text": "kubectl rollout restart deployment/billing-svc",
+          "score": 0.7200327904165044,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_049e0812-46ed-4db7-84d8-c4a121a1d19c"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 34.503188013331965,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 226,
+      "query_tokens": 17,
+      "context_tokens": 209,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "sku-tee-discontinued-sizes",
+      "query": "Which sizes of the Pentatonic Crew Tee Black are discontinued?",
+      "answer": "# Pentatonic Crew Tee Black \u2014 SKU PTT-TEE-BLK\n\n**Brand:** Pentatonic\n**Category:** Apparel / T-shirts\n**Fit:** Unisex regular\n**Size range:** XS, S, M, L, XL, XXL\n\n**Material composition:**\n- 100% GOTS-certified organic cotton, 180 gsm\n- Dyeing: low-impact reactive dye, closed-loop water system\n\n**Price:** \u00a328.00 GBP\n**Inventory:** S=48, M=136, L=94, XL=22, XS=0 (discontinued), XXL=0 (discontinued)\n**Country of origin:** Portugal (CITEVE-certified mill)\n**Care:** Wash cold, line dry; no tumble dry\n---\nPentatonic Crew Tee Black XXS/XXL discontinued\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+      "hits": [
+        {
+          "text": "# Pentatonic Crew Tee Black \u2014 SKU PTT-TEE-BLK\n\n**Brand:** Pentatonic\n**Category:** Apparel / T-shirts\n**Fit:** Unisex regular\n**Size range:** XS, S, M, L, XL, XXL\n\n**Material composition:**\n- 100% GOTS-certified organic cotton, 180 gsm\n- Dyeing: low-impact reactive dye, closed-loop water system\n\n**Price:** \u00a328.00 GBP\n**Inventory:** S=48, M=136, L=94, XL=22, XS=0 (discontinued), XXL=0 (discontinued",
+          "score": 0.7419536682983361,
+          "source": "pentatonic-memory",
+          "doc_id": "sku-cotton-tee-black"
+        },
+        {
+          "text": "Pentatonic Crew Tee Black XXS/XXL discontinued",
+          "score": 0.721743907904692,
+          "source": "pentatonic-memory",
+          "doc_id": "inventory-update-2026-04-15"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7033698130789997,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 24.991354992380366,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 207,
+      "query_tokens": 13,
+      "context_tokens": 194,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "sku-sleeve-compat-14-mbp",
+      "query": "Does the Haven Laptop Sleeve 13\" fit a 14\" MacBook Pro?",
+      "answer": "The Haven Laptop Sleeve does not fit a 14-inch MacBook Pro due to third-party dimensions exceeding 31.5cm.\n---\nThe user's laptop sleeve size is compatible with a 14-inch MacBook Pro.\n---\nsearch-svc API keys \u2014 alex",
+      "hits": [
+        {
+          "text": "The Haven Laptop Sleeve does not fit a 14-inch MacBook Pro due to third-party dimensions exceeding 31.5cm.",
+          "score": 0.7261165299002014,
+          "source": "pentatonic-memory",
+          "doc_id": "compat-laptop-sleeve-macbook-pro-14"
+        },
+        {
+          "text": "The user's laptop sleeve size is compatible with a 14-inch MacBook Pro.",
+          "score": 0.7027898525404869,
+          "source": "pentatonic-memory",
+          "doc_id": "compat-laptop-sleeve-macbook-pro-14"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.6821494342438669,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        }
+      ],
+      "correct": false,
+      "score": 0.5,
+      "grading_notes": "missing 1/2: ['15']",
+      "search_time_ms": 30.218572006560862,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 66,
+      "query_tokens": 16,
+      "context_tokens": 50,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "sku-coffee-cup-microwave",
+      "query": "Can I microwave the Loop coffee cup?",
+      "answer": "# Loop Reusable Coffee Cup 8oz \u2014 SKU LP-CUP-008\n\n**Brand:** Loop\n**Category:** Drinkware / Coffee\n**Capacity:** 8oz (240ml)\n\n**Material composition:**\n- Body: 100% plant-based PLA (corn-derived)\n- Silicone sleeve: food-grade silicone (not bio-based)\n- Lid: BPA-free polypropylene (recycled post-industrial)\n\n**Price:** \u00a312.50 GBP\n**Inventory:** 2,104 units UK, 1,876 units EU\n**Dishwasher safe:** Top rack only\n**Lifespan:** ~2 years regular use, then return for closed-loop composting\n**Note:** Not microwave-safe due to PLA degradation above 60\u00b0C.\n---\nUsed in: Loop Reusable Coffee Cup body\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+      "hits": [
+        {
+          "text": "# Loop Reusable Coffee Cup 8oz \u2014 SKU LP-CUP-008\n\n**Brand:** Loop\n**Category:** Drinkware / Coffee\n**Capacity:** 8oz (240ml)\n\n**Material composition:**\n- Body: 100% plant-based PLA (corn-derived)\n- Silicone sleeve: food-grade silicone (not bio-based)\n- Lid: BPA-free polypropylene (recycled post-industrial)\n\n**Price:** \u00a312.50 GBP\n**Inventory:** 2,104 units UK, 1,876 units EU\n**Dishwasher safe:** Top",
+          "score": 0.7047915334903309,
+          "source": "pentatonic-memory",
+          "doc_id": "sku-coffee-cup-reusable"
+        },
+        {
+          "text": "Used in: Loop Reusable Coffee Cup body",
+          "score": 0.7036784559543265,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_a4307cc8-b064-4449-8dc7-033eb22e3eb1"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.6979665008354474,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 26.823068008525297,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 192,
+      "query_tokens": 8,
+      "context_tokens": 184,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "sku-bin-liners-home-compost",
+      "query": "Are the Root bio bin liners home-compostable?",
+      "answer": "Used in Root Bio Bin Liners\n---\nNOT home-compostable\n---\nHome-compostability requires industrial temperatures",
+      "hits": [
+        {
+          "text": "Used in Root Bio Bin Liners",
+          "score": 0.709445264469953,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_88bd5ef3-ac4c-4d99-850c-8c45aab4f877"
+        },
+        {
+          "text": "NOT home-compostable",
+          "score": 0.6873024809704998,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_5075671c-8fd8-49e7-9587-485abf7b2f82"
+        },
+        {
+          "text": "Home-compostability requires industrial temperatures",
+          "score": 0.6824549395669162,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f6c7f0fd-1c5d-421f-93ce-c6d1c31e583c"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 25.088716007303447,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 34,
+      "query_tokens": 11,
+      "context_tokens": 23,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "policy-custom-tote-return",
+      "query": "Can I return a custom-printed tote bag?",
+      "answer": "# Returns policy\n\nAll unused items returnable within 30 days of delivery for full refund.\nItems returned after 30 days but under 90 days: store credit only.\nTake-back programme is separate \u2014 applies to any lifetime-warrantied item at end of useful life.\nExceptions: custom-printed items (e.g. custom tote bags) and consumables (e.g. bin liners) are final sale.\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\norder-svc marks order as paid, emits OrderPaid on pubsub",
+      "hits": [
+        {
+          "text": "# Returns policy\n\nAll unused items returnable within 30 days of delivery for full refund.\nItems returned after 30 days but under 90 days: store credit only.\nTake-back programme is separate \u2014 applies to any lifetime-warrantied item at end of useful life.\nExceptions: custom-printed items (e.g. custom tote bags) and consumables (e.g. bin liners) are final sale.\n",
+          "score": 0.7318615432069925,
+          "source": "pentatonic-memory",
+          "doc_id": "policy-returns-30day"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7025939344209113,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.685714168675108,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 27.799732983112335,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 125,
+      "query_tokens": 10,
+      "context_tokens": 115,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "price-tee-subscription",
+      "query": "What's the subscription price for the Luna water bottle compared to standard?",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nbilling.new_invoice_pdf\n---\nbilling-svc API keys \u2014 jordan",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7187337758022995,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "billing.new_invoice_pdf",
+          "score": 0.7017504939666374,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_ca8bdac3-12ca-4bae-b5a2-fb9c2d069173"
+        },
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.6970291528428944,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['18.50']",
+      "search_time_ms": 31.271957996068522,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 44,
+      "query_tokens": 14,
+      "context_tokens": 30,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "price-sleeve-diff",
+      "query": "How much more does the 15\" Haven Laptop Sleeve cost than the 13\" variant?",
+      "answer": "15\" laptop sleeve\n---\nThe Haven Laptop Sleeve does not fit a 14-inch MacBook Pro due to third-party dimensions exceeding 31.5cm.\n---\norder-svc marks order as paid, emits OrderPaid on pubsub",
+      "hits": [
+        {
+          "text": "15\" laptop sleeve",
+          "score": 0.6990206555450599,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_8fb1c0b1-9041-4204-ae86-ffedba958404"
+        },
+        {
+          "text": "The Haven Laptop Sleeve does not fit a 14-inch MacBook Pro due to third-party dimensions exceeding 31.5cm.",
+          "score": 0.6986175180116678,
+          "source": "pentatonic-memory",
+          "doc_id": "compat-laptop-sleeve-macbook-pro-14"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.6858934356046972,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['10']",
+      "search_time_ms": 28.63598198746331,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 65,
+      "query_tokens": 19,
+      "context_tokens": 46,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "multi-hop-kite-duotone",
+      "query": "I have a Duotone bar \u2014 will the Nomad Kite Harness v3 work with it out of the box?",
+      "answer": "billing-svc API keys \u2014 jordan\n---\nsearch-svc API keys \u2014 alex\n---\nStripe posts a invoice.payment_succeeded webhook to billing-svc",
+      "hits": [
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.6965538098263404,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.6864974270749059,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        },
+        {
+          "text": "Stripe posts a invoice.payment_succeeded webhook to billing-svc",
+          "score": 0.6749246946585903,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_76c60bf6-9327-4cd1-9f56-234d229e8c8a"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['adapter', 'Duotone']",
+      "search_time_ms": 32.39788900827989,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 56,
+      "query_tokens": 25,
+      "context_tokens": 31,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "multi-hop-takeback-credit",
+      "query": "If I return an Atlas Phone Shell via take-back after 2 years, how much store credit do I get?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nkubectl rollout restart deployment/billing-svc\n---\nemail-svc consumes OrderPaid for the receipt email",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7258603503673935,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "kubectl rollout restart deployment/billing-svc",
+          "score": 0.713401687368604,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_049e0812-46ed-4db7-84d8-c4a121a1d19c"
+        },
+        {
+          "text": "email-svc consumes OrderPaid for the receipt email",
+          "score": 0.7101615945965846,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_8decb311-57b6-4b78-9dd6-3683a441963f"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['14.50', '50%']",
+      "search_time_ms": 31.55402498668991,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 60,
+      "query_tokens": 23,
+      "context_tokens": 37,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "rubric-recommend-kitesurf-bag",
+      "query": "I'm heading to Worthing for a kite session and need to carry my 15\" MacBook and some kit. What would you recommend from the catalogue?",
+      "answer": "billing-svc API keys \u2014 jordan\n---\nsearch-svc API keys \u2014 alex\n---\nStripe posts a invoice.payment_succeeded webhook to billing-svc",
+      "hits": [
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.6698083530519248,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.6672376864393237,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        },
+        {
+          "text": "Stripe posts a invoice.payment_succeeded webhook to billing-svc",
+          "score": 0.6639449282102663,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_76c60bf6-9327-4cd1-9f56-234d229e8c8a"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "judge=0.00 \u2014 The agent's answer does not address the task query at all.",
+      "search_time_ms": 33.78428498399444,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 62,
+      "query_tokens": 31,
+      "context_tokens": 31,
+      "judge_tokens_in": 373,
+      "judge_tokens_out": 27,
+      "judge_latency_ms": 886.3365219831467
+    },
+    {
+      "task_id": "rubric-plastic-free-tee",
+      "query": "Which tees in the catalogue are completely plastic-free?",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nsearch-svc API keys \u2014 alex\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.6917861334892272,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.6903066977993149,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.6798537660432268,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "judge=0.00 \u2014 The agent's answer does not address the task query at all.",
+      "search_time_ms": 29.365812020841986,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 52,
+      "query_tokens": 11,
+      "context_tokens": 41,
+      "judge_tokens_in": 349,
+      "judge_tokens_out": 27,
+      "judge_latency_ms": 861.2519019842148
+    },
+    {
+      "task_id": "rubric-cc-certified-items",
+      "query": "Do any items in the catalogue have Cradle to Cradle certification?",
+      "answer": "Cradle to Cradle Certified\n---\nsearch-svc API keys \u2014 alex\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+      "hits": [
+        {
+          "text": "Cradle to Cradle Certified",
+          "score": 0.7258294892094391,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_0ce4a44a-3050-4463-a05c-9138b1524776"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7097413775359073,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7083036450592873,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "judge=0.00 \u2014 The answer does not specify the tier of certification, which is a required detail according to the rubric.",
+      "search_time_ms": 27.729604014893994,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 48,
+      "query_tokens": 14,
+      "context_tokens": 34,
+      "judge_tokens_in": 323,
+      "judge_tokens_out": 35,
+      "judge_latency_ms": 592.7986909747124
+    },
+    {
+      "task_id": "entity-recycled-content-high",
+      "query": "Which items in the catalogue use at least 50% recycled material?",
+      "answer": "email-svc consumes OrderPaid for the receipt email\n---\nreporting-svc consumes OrderPaid for financial reports\n---\norder-svc marks order as paid, emits OrderPaid on pubsub",
+      "hits": [
+        {
+          "text": "email-svc consumes OrderPaid for the receipt email",
+          "score": 0.7125966165026759,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_8decb311-57b6-4b78-9dd6-3683a441963f"
+        },
+        {
+          "text": "reporting-svc consumes OrderPaid for financial reports",
+          "score": 0.7119136086269425,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_778aa40d-6c20-4495-96d9-286a57b53f7a"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7070923566256655,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "no expected_substrings set",
+      "search_time_ms": 26.608890009811148,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 52,
+      "query_tokens": 14,
+      "context_tokens": 38,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    }
+  ]
+}

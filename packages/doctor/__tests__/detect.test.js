@@ -39,13 +39,9 @@ describe("detectPaths", () => {
     expect(paths.has(PATHS.PLATFORM)).toBe(true);
   });
 
-  it("detects local from full DSN trio", () => {
+  it("detects local from MEMORY_ENGINE_URL", () => {
     const paths = detectPaths({
-      env: {
-        DATABASE_URL: "postgres://x",
-        EMBEDDING_URL: "http://x/v1",
-        LLM_URL: "http://x/v1",
-      },
+      env: { MEMORY_ENGINE_URL: "http://localhost:8099" },
     });
     expect(paths.has(PATHS.LOCAL)).toBe(true);
   });
