@@ -18,6 +18,7 @@ Usage:
 """
 
 import argparse
+import logging
 import os
 import glob
 import hashlib

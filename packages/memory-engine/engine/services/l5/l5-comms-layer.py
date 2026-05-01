@@ -18,6 +18,7 @@ Usage:
 """
 
 import argparse
+import logging
 import os
 import glob
 import hashlib
@@ -43,6 +44,15 @@ CONTACTS_DIR = WORKSPACE / "memory" / "contacts"
 MEMORY_DIR = WORKSPACE / "memory"
 
 NV_EMBED_URL = os.environ.get("L5_NV_EMBED_URL", "http://localhost:8041/v1/embeddings")
+# Embedding model name sent in /v1/embeddings request body. Defaults to
+# the production NV-Embed-v2 name; override when pointing at a different
+# OpenAI-compat endpoint (e.g. Ollama with nomic-embed-text).
+EMBED_MODEL_NAME = os.environ.get("L5_EMBED_MODEL", "nv-embed-v2")
+# Optional Authorization: Bearer <key> for the primary embedding endpoint.
+EMBED_API_KEY = os.environ.get("L5_EMBED_API_KEY", "")
+
+def _embed_headers() -> dict:
+    return {"Authorization": f"Bearer {EMBED_API_KEY}"} if EMBED_API_KEY else {}
 # Ollama fallback path. URL/model can be overridden so the L5 container can
 # reach an Ollama instance running on the docker host (host.docker.internal)
 # or on a co-located service. Mirrors the env-var pattern used by L2.
@@ -50,8 +60,14 @@ OLLAMA_EMBED_URL = os.environ.get(
     "L5_OLLAMA_EMBED_URL", "http://localhost:11434/api/embed"
 )
 OLLAMA_EMBED_MODEL = os.environ.get("L5_OLLAMA_EMBED_MODEL", "nomic-embed-text")
-EMBED_DIM = 4096  # NV-Embed-v2 primary
-OLLAMA_DIM = 768
+# Vector dim. Default matches NV-Embed-v2; override for smaller-dim models
+# (e.g. 768 for nomic-embed-text, 1024 for mxbai-embed-large). Milvus
+# collections are created at this dim; existing data won't survive a dim
+# change — wipe the L5 volume to switch.
+EMBED_DIM = int(os.environ.get("L5_EMBED_DIM", "4096"))
+# Dim of the Ollama-fallback model. If equal to EMBED_DIM, the fallback
+# returns vectors as-is; if smaller, they're zero-padded to EMBED_DIM.
+OLLAMA_DIM = int(os.environ.get("L5_OLLAMA_DIM", "768"))
 CHUNK_SIZE = 512  # chars per chunk
 CHUNK_OVERLAP = 64
 BATCH_SIZE = 100  # embeddings per batch
@@ -83,7 +99,7 @@ def _embed_nv_batch(texts: list[str]) -> list[list[float]] | None:
         return []
     try:
         truncated = [t[:4000] for t in texts]
-        r = httpx.post(NV_EMBED_URL, json={"input": truncated}, timeout=120)
+        r = httpx.post(NV_EMBED_URL, headers=_embed_headers(), json={"input": truncated, "model": EMBED_MODEL_NAME}, timeout=120)
         r.raise_for_status()
         data = r.json()
         embeddings = [item["embedding"] for item in data["data"]]
@@ -97,7 +113,7 @@ def _embed_nv_batch(texts: list[str]) -> list[list[float]] | None:
 def _embed_nv_single(text: str) -> list[float] | None:
     """Embed single text via NV-Embed-v2 (4096-dim)."""
     try:
-        r = httpx.post(NV_EMBED_URL, json={"input": text[:4000]}, timeout=15)
+        r = httpx.post(NV_EMBED_URL, headers=_embed_headers(), json={"input": text[:4000], "model": EMBED_MODEL_NAME}, timeout=15)
         r.raise_for_status()
         data = r.json()
         emb = data["data"][0]["embedding"]
@@ -558,7 +574,7 @@ def serve(port=8034):
         t0 = _time.time()
         try:
             resp = httpx.post(
-                NV_EMBED_URL, json={"input": texts, "model": "nv-embed-v2"},
+                NV_EMBED_URL, headers=_embed_headers(), json={"input": texts, "model": EMBED_MODEL_NAME},
                 timeout=120,
             )
             resp.raise_for_status()

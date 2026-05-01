@@ -96,6 +96,9 @@ services:
     ports: ["127.0.0.1:${PME_L4_PORT:-18042}:8042"]
     environment:
       L4_NV_EMBED_URL: ${NV_EMBED_URL:-http://host.docker.internal:8041/v1/embeddings}
+      L4_EMBED_MODEL: ${EMBED_MODEL_NAME:-nv-embed-v2}
+      L4_EMBED_API_KEY: ${EMBED_API_KEY:-}
+      L4_EMBED_DIM: ${EMBED_DIM:-4096}
       L4_DB_PATH: /data/vec.db
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -121,6 +124,10 @@ services:
     ports: ["127.0.0.1:${PME_L5_PORT:-18034}:8034"]
     environment:
       L5_NV_EMBED_URL: ${NV_EMBED_URL:-http://host.docker.internal:8041/v1/embeddings}
+      L5_EMBED_MODEL: ${EMBED_MODEL_NAME:-nv-embed-v2}
+      L5_EMBED_API_KEY: ${EMBED_API_KEY:-}
+      L5_EMBED_DIM: ${EMBED_DIM:-4096}
+      L5_OLLAMA_DIM: ${OLLAMA_DIM:-768}
       L5_OLLAMA_EMBED_URL: ${L5_OLLAMA_EMBED_URL:-http://host.docker.internal:11434/api/embed}
       L5_OLLAMA_EMBED_MODEL: ${L5_OLLAMA_EMBED_MODEL:-nomic-embed-text}
       L5_DB_PATH: /data/comms.db
@@ -144,6 +151,9 @@ services:
     ports: ["127.0.0.1:${PME_L6_PORT:-18037}:8037"]
     environment:
       L6_NV_EMBED_URL: ${NV_EMBED_URL:-http://host.docker.internal:8041/v1/embeddings}
+      L6_EMBED_MODEL: ${EMBED_MODEL_NAME:-nv-embed-v2}
+      L6_EMBED_API_KEY: ${EMBED_API_KEY:-}
+      L6_EMBED_DIM: ${EMBED_DIM:-4096}
       L6_DATA_DIR: /data
     extra_hosts:
       - "host.docker.internal:host-gateway"

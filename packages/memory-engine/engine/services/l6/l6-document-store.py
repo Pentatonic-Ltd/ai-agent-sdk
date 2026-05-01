@@ -41,6 +41,11 @@ EMBED_MODEL = os.environ.get("L6_EMBED_MODEL", "nomic-embed-text")
 NV_EMBED_URL = os.environ.get("L6_NV_EMBED_URL", "http://localhost:8041/v1/embeddings")
 NV_EMBED_ENABLED = os.environ.get("L6_NV_EMBED_ENABLED", "true").lower() == "true"
 EMBED_DIM = int(os.environ.get("L6_EMBED_DIM", "4096"))
+# Optional Authorization: Bearer <key> for the embedding endpoint.
+EMBED_API_KEY = os.environ.get("L6_EMBED_API_KEY", "")
+
+def _embed_headers() -> dict:
+    return {"Authorization": f"Bearer {EMBED_API_KEY}"} if EMBED_API_KEY else {}
 COLLECTION_NAME = "documents"
 RRF_K = 60
 DEFAULT_PORT = 8037
@@ -873,7 +878,8 @@ def serve(port: int = DEFAULT_PORT):
         t0 = _time.time()
         try:
             resp = _httpx.post(
-                NV_EMBED_URL, json={"input": texts, "model": "nv-embed-v2"},
+                NV_EMBED_URL, headers=_embed_headers(),
+                json={"input": texts, "model": EMBED_MODEL},
                 timeout=120,
             )
             resp.raise_for_status()

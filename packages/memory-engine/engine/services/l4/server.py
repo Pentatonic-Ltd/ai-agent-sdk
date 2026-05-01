@@ -37,7 +37,17 @@ from pydantic import BaseModel
 
 DB_PATH = os.environ.get("L4_DB_PATH", "/data/vec.db")
 NV_EMBED_URL = os.environ.get("L4_NV_EMBED_URL", "http://nv-embed:8041/v1/embeddings")
+# Embedding model name sent in /v1/embeddings request body. Defaults to
+# the production NV-Embed-v2 name; override via env when pointing at a
+# different OpenAI-compat endpoint (e.g. Ollama with nomic-embed-text).
+EMBED_MODEL_NAME = os.environ.get("L4_EMBED_MODEL", "nv-embed-v2")
+# Optional Authorization: Bearer <key> for the embedding endpoint.
+# Set when calling a hosted gateway (e.g. pentatonic-ai-gateway). Empty = no auth.
+EMBED_API_KEY = os.environ.get("L4_EMBED_API_KEY", "")
 EMBED_DIM = int(os.environ.get("L4_EMBED_DIM", "4096"))
+
+def _embed_headers() -> dict:
+    return {"Authorization": f"Bearer {EMBED_API_KEY}"} if EMBED_API_KEY else {}
 
 
 # ----------------------------------------------------------------------
@@ -103,7 +113,8 @@ async def _embed_batch(texts: list[str]) -> list[list[float]]:
         return []
     resp = await _client().post(
         NV_EMBED_URL,
-        json={"input": texts, "model": "nv-embed-v2"},
+        headers=_embed_headers(),
+        json={"input": texts, "model": EMBED_MODEL_NAME},
         timeout=120.0,
     )
     resp.raise_for_status()
