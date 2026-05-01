@@ -1,0 +1,1278 @@
+{
+  "bench": "circular-economy",
+  "stack": "pentatonic-memory-latest",
+  "n_tasks": 25,
+  "n_correct": 8,
+  "accuracy": 0.32,
+  "mean_score": 0.3466666666666666,
+  "p50_search_ms": 32.229704986093566,
+  "p95_search_ms": 36.96155320503749,
+  "total_tokens_in": 0,
+  "total_tokens_out": 0,
+  "total_usd": 0.0,
+  "by_tag": {
+    "factoid": {
+      "n": 14,
+      "mean_score": 0.35714285714285715,
+      "accuracy": 0.35714285714285715
+    },
+    "material": {
+      "n": 8,
+      "mean_score": 0.20833333333333331,
+      "accuracy": 0.125
+    },
+    "takeback": {
+      "n": 6,
+      "mean_score": 0.3333333333333333,
+      "accuracy": 0.3333333333333333
+    },
+    "lifecycle": {
+      "n": 2,
+      "mean_score": 0.5,
+      "accuracy": 0.5
+    },
+    "multi-fact": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "policy": {
+      "n": 3,
+      "mean_score": 0.3333333333333333,
+      "accuracy": 0.3333333333333333
+    },
+    "certification": {
+      "n": 4,
+      "mean_score": 0.5,
+      "accuracy": 0.5
+    },
+    "multi-doc": {
+      "n": 2,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "regulation": {
+      "n": 5,
+      "mean_score": 0.6,
+      "accuracy": 0.6
+    },
+    "concept": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "rubric": {
+      "n": 3,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "honesty": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "multi-hop": {
+      "n": 2,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "entity": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "negative": {
+      "n": 1,
+      "mean_score": 0.6666666666666666,
+      "accuracy": 0.0
+    }
+  },
+  "extra": {
+    "ingest_ms": 63385.400133993244,
+    "grading": "substring",
+    "limit": 3,
+    "tokens": {
+      "corpus_tokens": 1459,
+      "query_tokens": 359,
+      "context_tokens": 1305,
+      "retrieval_tokens": 1664,
+      "naive_tokens": 36834,
+      "saved_tokens": 35170,
+      "reduction_pct": 0.9548243470706412,
+      "mean_retrieval_tokens_per_task": 66.56,
+      "tokenizer": "cl100k_base",
+      "per_task": {
+        "atlas-material-source": {
+          "query": 15,
+          "context": 37,
+          "retrieval": 52,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "atlas-takeback-credit": {
+          "query": 15,
+          "context": 35,
+          "retrieval": 50,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "atlas-closed-loop": {
+          "query": 8,
+          "context": 112,
+          "retrieval": 120,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "luna-takeback-split": {
+          "query": 16,
+          "context": 43,
+          "retrieval": 59,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "luna-silicone-fate": {
+          "query": 13,
+          "context": 49,
+          "retrieval": 62,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "pla-home-compost": {
+          "query": 10,
+          "context": 34,
+          "retrieval": 44,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "pla-hot-drinks": {
+          "query": 10,
+          "context": 36,
+          "retrieval": 46,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "pbat-local-authority": {
+          "query": 13,
+          "context": 40,
+          "retrieval": 53,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "ghost-net-source": {
+          "query": 15,
+          "context": 31,
+          "retrieval": 46,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "kite-harness-foam-recovery": {
+          "query": 18,
+          "context": 116,
+          "retrieval": 134,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "haven-sleeve-bottles-15": {
+          "query": 17,
+          "context": 44,
+          "retrieval": 61,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "cert-c2c-tiers": {
+          "query": 12,
+          "context": 43,
+          "retrieval": 55,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "cert-c2c-our-products": {
+          "query": 14,
+          "context": 41,
+          "retrieval": 55,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "cert-grs-threshold": {
+          "query": 12,
+          "context": 95,
+          "retrieval": 107,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "cert-en13432-temp": {
+          "query": 11,
+          "context": 48,
+          "retrieval": 59,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "reg-uk-epr-scope": {
+          "query": 13,
+          "context": 105,
+          "retrieval": 118,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "reg-espr-dpp": {
+          "query": 13,
+          "context": 31,
+          "retrieval": 44,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "reg-ca-sb54-deadline": {
+          "query": 14,
+          "context": 39,
+          "retrieval": 53,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "reg-lithium-return": {
+          "query": 13,
+          "context": 106,
+          "retrieval": 119,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "closed-loop-threshold": {
+          "query": 16,
+          "context": 37,
+          "retrieval": 53,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "rubric-customer-greenwash-claim": {
+          "query": 27,
+          "context": 44,
+          "retrieval": 71,
+          "judge_in": 400,
+          "judge_out": 29,
+          "judge_latency_ms": 653.5468610227108
+        },
+        "rubric-full-takeback-story-atlas": {
+          "query": 17,
+          "context": 35,
+          "retrieval": 52,
+          "judge_in": 363,
+          "judge_out": 46,
+          "judge_latency_ms": 960.7863810062408
+        },
+        "rubric-regulatory-scope-briefing": {
+          "query": 22,
+          "context": 43,
+          "retrieval": 65,
+          "judge_in": 395,
+          "judge_out": 35,
+          "judge_latency_ms": 703.8500519990921
+        },
+        "entity-closed-loop-skus": {
+          "query": 12,
+          "context": 35,
+          "retrieval": 47,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "entity-home-compostable": {
+          "query": 13,
+          "context": 26,
+          "retrieval": 39,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        }
+      },
+      "judge_tokens_in": 1158,
+      "judge_tokens_out": 110,
+      "judge_calls": 3,
+      "judge_mean_latency_ms": 772.7277646760145
+    },
+    "cost_usd": {
+      "assumed_completion_tokens_per_task": 100,
+      "rates": {
+        "input_per_1k": 0.0025,
+        "output_per_1k": 0.01,
+        "model": "gpt-4o"
+      },
+      "retrieval_usd_in": 0.0041600000000000005,
+      "retrieval_usd_out": 0.025,
+      "retrieval_usd_total": 0.029160000000000002,
+      "naive_usd_total": 0.11708500000000002,
+      "saved_usd": 0.08792500000000002,
+      "saved_usd_per_1k_tasks": 3.517000000000001
+    }
+  },
+  "task_results": [
+    {
+      "task_id": "atlas-material-source",
+      "query": "Where does the recycled polypropylene in the Atlas Phone Shell come from?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nemail-svc consumes OrderPaid for the receipt email\n---\nkubectl rollout restart deployment/billing-svc",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.717772584091517,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "email-svc consumes OrderPaid for the receipt email",
+          "score": 0.7059285047827621,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_8decb311-57b6-4b78-9dd6-3683a441963f"
+        },
+        {
+          "text": "kubectl rollout restart deployment/billing-svc",
+          "score": 0.7058531600945959,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_049e0812-46ed-4db7-84d8-c4a121a1d19c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 3/3: ['ocean-bound', '50km', 'coastlines']",
+      "search_time_ms": 33.91047302284278,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 52,
+      "query_tokens": 15,
+      "context_tokens": 37,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "atlas-takeback-credit",
+      "query": "What credit do I get for returning an Atlas Phone Shell via take-back?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nbilling-svc API keys \u2014 jordan\n---\nkubectl rollout restart deployment/billing-svc",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7343930024127078,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.7322204450410176,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        },
+        {
+          "text": "kubectl rollout restart deployment/billing-svc",
+          "score": 0.727235895615381,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_049e0812-46ed-4db7-84d8-c4a121a1d19c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['50%']",
+      "search_time_ms": 36.923238018061966,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 50,
+      "query_tokens": 15,
+      "context_tokens": 35,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "atlas-closed-loop",
+      "query": "Is the Atlas Phone Shell closed-loop?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nkubectl rollout restart deployment/billing-svc\n---\nTake-back programme \u2014 Atlas Phone Shell (ATL-PHN-001). Accepted condition: any, including broken. Credit: 50% of original purchase price as store credit. Process: free returns label at pentatonic.com/takeback/ATL-PHN-001. Recovery route: shell is mechanically shredded, rPP-OB fraction recovered and fed back into the next production run. Closed-loop: YES.",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7310814665451857,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "kubectl rollout restart deployment/billing-svc",
+          "score": 0.7215003819165545,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_049e0812-46ed-4db7-84d8-c4a121a1d19c"
+        },
+        {
+          "text": "Take-back programme \u2014 Atlas Phone Shell (ATL-PHN-001). Accepted condition: any, including broken. Credit: 50% of original purchase price as store credit. Process: free returns label at pentatonic.com/takeback/ATL-PHN-001. Recovery route: shell is mechanically shredded, rPP-OB fraction recovered and fed back into the next production run. Closed-loop: YES.",
+          "score": 0.7107398496991579,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-atlas-phone"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 30.080388009082526,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 120,
+      "query_tokens": 8,
+      "context_tokens": 112,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "luna-takeback-split",
+      "query": "How is the take-back credit split between body and lid for the Luna bottle?",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nemail-svc consumes OrderPaid for the receipt email",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7115161283985844,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7109313133232749,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "email-svc consumes OrderPaid for the receipt email",
+          "score": 0.7087783615859253,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_8decb311-57b6-4b78-9dd6-3683a441963f"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['40%', '10%']",
+      "search_time_ms": 30.672520981170237,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 59,
+      "query_tokens": 16,
+      "context_tokens": 43,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "luna-silicone-fate",
+      "query": "What happens to the Luna bottle's silicone lid after take-back?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\norder-svc marks order as paid, emits OrderPaid on pubsub",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7074845871712615,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.6897312378709735,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.6884294445687019,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['playground', 'surfacing']",
+      "search_time_ms": 34.277692990144715,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 62,
+      "query_tokens": 13,
+      "context_tokens": 49,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "pla-home-compost",
+      "query": "Can I compost a Loop coffee cup at home?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nsearch-svc API keys \u2014 alex\n---\nbilling-svc API keys \u2014 jordan",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.6853794275304081,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.6744533183538658,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        },
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.6727133801984494,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['NOT home-compostable', 'industrial']",
+      "search_time_ms": 27.47367398114875,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 44,
+      "query_tokens": 10,
+      "context_tokens": 34,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "pla-hot-drinks",
+      "query": "Can I put hot coffee in a Loop cup?",
+      "answer": "Used in: Loop Reusable Coffee Cup body\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nkubectl rollout restart deployment/billing-svc",
+      "hits": [
+        {
+          "text": "Used in: Loop Reusable Coffee Cup body",
+          "score": 0.6982296262258938,
+          "source": "pentatonic-memory",
+          "doc_id": "material-pla-plant"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.6892282168065307,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "kubectl rollout restart deployment/billing-svc",
+          "score": 0.672198393223188,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_049e0812-46ed-4db7-84d8-c4a121a1d19c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['60\u00b0C', 'avoid hot']",
+      "search_time_ms": 32.57425202173181,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 46,
+      "query_tokens": 10,
+      "context_tokens": 36,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "pbat-local-authority",
+      "query": "Are Root bin liners accepted in UK council food-waste streams?",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nStripe posts a invoice.payment_succeeded webhook to billing-svc\n---\nreporting-svc consumes OrderPaid for financial reports",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7035865148344783,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "Stripe posts a invoice.payment_succeeded webhook to billing-svc",
+          "score": 0.7016776112626507,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_76c60bf6-9327-4cd1-9f56-234d229e8c8a"
+        },
+        {
+          "text": "reporting-svc consumes OrderPaid for financial reports",
+          "score": 0.7014271425936577,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_778aa40d-6c20-4495-96d9-286a57b53f7a"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['most', 'check locally']",
+      "search_time_ms": 30.28504498070106,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 53,
+      "query_tokens": 13,
+      "context_tokens": 40,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "ghost-net-source",
+      "query": "Which NGO supplies the ghost-net nylon for the Nomad Kite Harness?",
+      "answer": "billing-svc API keys \u2014 jordan\n---\nsearch-svc API keys \u2014 alex\n---\nStripe posts a invoice.payment_succeeded webhook to billing-svc",
+      "hits": [
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.7028674257796388,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7010953433995578,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        },
+        {
+          "text": "Stripe posts a invoice.payment_succeeded webhook to billing-svc",
+          "score": 0.6987444364156061,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_76c60bf6-9327-4cd1-9f56-234d229e8c8a"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['Healthy Seas']",
+      "search_time_ms": 36.64102699258365,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 46,
+      "query_tokens": 15,
+      "context_tokens": 31,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "kite-harness-foam-recovery",
+      "query": "Is the EVA foam padding in the Nomad Kite Harness recovered via take-back?",
+      "answer": "Take-back programme \u2014 Nomad Kite Harness v3 (NMD-HRN-V3). Accepted condition: worn but repairable or end-of-life. Credit: 25% of original price. Alternative: repair-not-replace via the Nomad repair service (\u00a325 flat fee). Recovery route: ghost-net nylon is mechanically recycled back into new harness shells \u2014 closed-loop. EVA foam padding is NOT recovered (currently sent to energy-from-waste).\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nsearch-svc API keys \u2014 alex",
+      "hits": [
+        {
+          "text": "Take-back programme \u2014 Nomad Kite Harness v3 (NMD-HRN-V3). Accepted condition: worn but repairable or end-of-life. Credit: 25% of original price. Alternative: repair-not-replace via the Nomad repair service (\u00a325 flat fee). Recovery route: ghost-net nylon is mechanically recycled back into new harness shells \u2014 closed-loop. EVA foam padding is NOT recovered (currently sent to energy-from-waste).",
+          "score": 0.7696214428953514,
+          "source": "pentatonic-memory",
+          "doc_id": "takeback-kite-harness"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.708591139375945,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7027095257990065,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 36.57193901017308,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 134,
+      "query_tokens": 18,
+      "context_tokens": 116,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "haven-sleeve-bottles-15",
+      "query": "Roughly how many plastic bottles go into a 15\" Haven Laptop Sleeve?",
+      "answer": "18 bottles per 15\" laptop sleeve\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+      "hits": [
+        {
+          "text": "18 bottles per 15\" laptop sleeve",
+          "score": 0.7187293973607064,
+          "source": "pentatonic-memory",
+          "doc_id": "material-pet-felt-recycled"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.6813978441181031,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.6790929528783419,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 32.229704986093566,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 61,
+      "query_tokens": 17,
+      "context_tokens": 44,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "cert-c2c-tiers",
+      "query": "What are the tiers of Cradle to Cradle certification?",
+      "answer": "search-svc API keys \u2014 alex\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+      "hits": [
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7054974847784411,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7021982039205501,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7007000321209369,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 4/4: ['Bronze', 'Silver', 'Gold']",
+      "search_time_ms": 30.337461997987702,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 55,
+      "query_tokens": 12,
+      "context_tokens": 43,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "cert-c2c-our-products",
+      "query": "Which product in our catalogue holds a Cradle to Cradle certification?",
+      "answer": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\norder-svc marks order as paid, emits OrderPaid on pubsub\n---\nCradle to Cradle Certified",
+      "hits": [
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7320723215185255,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7263731271830014,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "Cradle to Cradle Certified",
+          "score": 0.7251890554635944,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-cradle-to-cradle"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['Atlas Phone Shell']",
+      "search_time_ms": 32.06962300464511,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 55,
+      "query_tokens": 14,
+      "context_tokens": 41,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "cert-grs-threshold",
+      "query": "What's the minimum recycled content for the GRS claim?",
+      "answer": "GRS (Global Recycled Standard): third-party verification of recycled content, chain of custody, social and environmental practices, and chemical restrictions. Minimum 20% recycled content for a product to bear the GRS claim. Materials using GRS in our catalogue: rPP-OB (Atlas Phone Shell), rPET-FELT (Haven Sleeves).\n---\nreporting-svc consumes OrderPaid for financial reports\n---\nemail-svc consumes OrderPaid for the receipt email",
+      "hits": [
+        {
+          "text": "GRS (Global Recycled Standard): third-party verification of recycled content, chain of custody, social and environmental practices, and chemical restrictions. Minimum 20% recycled content for a product to bear the GRS claim. Materials using GRS in our catalogue: rPP-OB (Atlas Phone Shell), rPET-FELT (Haven Sleeves).",
+          "score": 0.7797542678463447,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-grs"
+        },
+        {
+          "text": "reporting-svc consumes OrderPaid for financial reports",
+          "score": 0.7100348942211113,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_778aa40d-6c20-4495-96d9-286a57b53f7a"
+        },
+        {
+          "text": "email-svc consumes OrderPaid for the receipt email",
+          "score": 0.7099882905289688,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_8decb311-57b6-4b78-9dd6-3683a441963f"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 31.637842999771237,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 107,
+      "query_tokens": 12,
+      "context_tokens": 95,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "cert-en13432-temp",
+      "query": "What industrial composting temperature does EN13432 require?",
+      "answer": "search-svc API keys \u2014 alex\n---\nIndustrial composting conditions are typically between 58\u00b0C and 60\u00b0C.\n---\nIndustrially compostable under EN13432 (60\u00b0C, 60% humidity, 12 weeks)",
+      "hits": [
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7098324676699068,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        },
+        {
+          "text": "Industrial composting conditions are typically between 58\u00b0C and 60\u00b0C.",
+          "score": 0.7082228724004089,
+          "source": "pentatonic-memory",
+          "doc_id": "cert-en13432"
+        },
+        {
+          "text": "Industrially compostable under EN13432 (60\u00b0C, 60% humidity, 12 weeks)",
+          "score": 0.7044637528947185,
+          "source": "pentatonic-memory",
+          "doc_id": "material-pla-plant"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 28.975945024285465,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 59,
+      "query_tokens": 11,
+      "context_tokens": 48,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "reg-uk-epr-scope",
+      "query": "Is Pentatonic in scope for UK EPR packaging reporting?",
+      "answer": "UK Extended Producer Responsibility (EPR) for packaging: from 2025, packaging producers must report and pay fees based on the weight and recyclability of packaging placed on the UK market. Modulated fees favour recyclable formats. Reporting threshold: \u00a31M turnover AND 25 tonnes of packaging/year. Pentatonic: IN SCOPE. Our filings: due every 6 months.\n---\nreporting-svc consumes OrderPaid for financial reports\n---\norder-svc marks order as paid, emits OrderPaid on pubsub",
+      "hits": [
+        {
+          "text": "UK Extended Producer Responsibility (EPR) for packaging: from 2025, packaging producers must report and pay fees based on the weight and recyclability of packaging placed on the UK market. Modulated fees favour recyclable formats. Reporting threshold: \u00a31M turnover AND 25 tonnes of packaging/year. Pentatonic: IN SCOPE. Our filings: due every 6 months.",
+          "score": 0.7636955078087055,
+          "source": "pentatonic-memory",
+          "doc_id": "reg-uk-epr"
+        },
+        {
+          "text": "reporting-svc consumes OrderPaid for financial reports",
+          "score": 0.7278477202715807,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_778aa40d-6c20-4495-96d9-286a57b53f7a"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7233511443966896,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 29.966066009365022,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 118,
+      "query_tokens": 13,
+      "context_tokens": 105,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "reg-espr-dpp",
+      "query": "What are Digital Product Passports and when do they start applying?",
+      "answer": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\nbilling.new_invoice_pdf\n---\nsearch-svc API keys \u2014 alex",
+      "hits": [
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7360437766023968,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        },
+        {
+          "text": "billing.new_invoice_pdf",
+          "score": 0.7231612241667263,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_ca8bdac3-12ca-4bae-b5a2-fb9c2d069173"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7208368232900594,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['ESPR', '2026']",
+      "search_time_ms": 29.100234009092674,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 44,
+      "query_tokens": 13,
+      "context_tokens": 31,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "reg-ca-sb54-deadline",
+      "query": "By when must packaging sold in California be recyclable or compostable?",
+      "answer": "California SB 54 requires all packaging sold in California to be recyclable or compostable by 2032\n---\nemail-svc consumes OrderPaid for the receipt email\n---\nbilling.new_invoice_pdf",
+      "hits": [
+        {
+          "text": "California SB 54 requires all packaging sold in California to be recyclable or compostable by 2032",
+          "score": 0.7258111675299815,
+          "source": "pentatonic-memory",
+          "doc_id": "reg-ca-sb54"
+        },
+        {
+          "text": "email-svc consumes OrderPaid for the receipt email",
+          "score": 0.7082859621730703,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_8decb311-57b6-4b78-9dd6-3683a441963f"
+        },
+        {
+          "text": "billing.new_invoice_pdf",
+          "score": 0.7064729824939898,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_ca8bdac3-12ca-4bae-b5a2-fb9c2d069173"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 32.30167299625464,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 53,
+      "query_tokens": 14,
+      "context_tokens": 39,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "reg-lithium-return",
+      "query": "Can lithium-containing devices be returned through our standard take-back label?",
+      "answer": "Lithium cell regulation: devices containing lithium cells are subject to UN 3480/3481 transport rules and cannot be returned via standard take-back labels. Pentatonic's policy: take-back for devices with lithium cells requires a dedicated labelled pack and courier pickup (not drop-in). Current catalogue impact: none (we do not sell lithium-containing products).\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+      "hits": [
+        {
+          "text": "Lithium cell regulation: devices containing lithium cells are subject to UN 3480/3481 transport rules and cannot be returned via standard take-back labels. Pentatonic's policy: take-back for devices with lithium cells requires a dedicated labelled pack and courier pickup (not drop-in). Current catalogue impact: none (we do not sell lithium-containing products).",
+          "score": 0.7740864588286744,
+          "source": "pentatonic-memory",
+          "doc_id": "reg-hazardous-lithium"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7148047633975116,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.6989524168963428,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 32.68404499976896,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 119,
+      "query_tokens": 13,
+      "context_tokens": 106,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "closed-loop-threshold",
+      "query": "At what mass-recovery percentage is a SKU considered closed-loop in our system?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nkubectl rollout restart deployment/billing-svc\n---\nreporting-svc consumes OrderPaid for financial reports",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7480205138026356,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "kubectl rollout restart deployment/billing-svc",
+          "score": 0.7337613102429211,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_049e0812-46ed-4db7-84d8-c4a121a1d19c"
+        },
+        {
+          "text": "reporting-svc consumes OrderPaid for financial reports",
+          "score": 0.7232225784347823,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_778aa40d-6c20-4495-96d9-286a57b53f7a"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['80%']",
+      "search_time_ms": 36.26873600296676,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 53,
+      "query_tokens": 16,
+      "context_tokens": 37,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "rubric-customer-greenwash-claim",
+      "query": "A customer asks: 'Are your Loop cups just the same as plastic cups but with a greener label?' Write an honest response.",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nemail-svc consumes OrderPaid for the receipt email\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7258701666241831,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "email-svc consumes OrderPaid for the receipt email",
+          "score": 0.7257878423171912,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_8decb311-57b6-4b78-9dd6-3683a441963f"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7228502526867759,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "judge=0.00 \u2014 The answer does not address the customer's question about Loop cups at all.",
+      "search_time_ms": 35.61789699597284,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 71,
+      "query_tokens": 27,
+      "context_tokens": 44,
+      "judge_tokens_in": 400,
+      "judge_tokens_out": 29,
+      "judge_latency_ms": 653.5468610227108
+    },
+    {
+      "task_id": "rubric-full-takeback-story-atlas",
+      "query": "Walk me through the complete material journey of an Atlas Phone Shell returned via take-back.",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nkubectl rollout restart deployment/billing-svc\n---\nThe Atlas project is currently in development.",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7139806729827953,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "kubectl rollout restart deployment/billing-svc",
+          "score": 0.7042797692854087,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_049e0812-46ed-4db7-84d8-c4a121a1d19c"
+        },
+        {
+          "text": "The Atlas project is currently in development.",
+          "score": 0.7032975323621676,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_4597a5ae-4f71-4e63-a5be-7d7b130001ee"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "judge=0.00 \u2014 The answer does not cover any stages of the material journey of an Atlas Phone Shell returned via take-back, instead pro",
+      "search_time_ms": 36.97797399945557,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 52,
+      "query_tokens": 17,
+      "context_tokens": 35,
+      "judge_tokens_in": 363,
+      "judge_tokens_out": 46,
+      "judge_latency_ms": 960.7863810062408
+    },
+    {
+      "task_id": "rubric-regulatory-scope-briefing",
+      "query": "Give me a short regulatory briefing on what applies to Pentatonic in the UK, EU, and California.",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\norder-svc marks order as paid, emits OrderPaid on pubsub\n---\nreporting-svc consumes OrderPaid for financial reports",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7073277452568545,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7058599186870722,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "reporting-svc consumes OrderPaid for financial reports",
+          "score": 0.7057759064878902,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_778aa40d-6c20-4495-96d9-286a57b53f7a"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "judge=0.00 \u2014 The answer does not address the regulatory briefing query at all and instead appears to be related to Kubernetes command",
+      "search_time_ms": 34.713215980445966,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 65,
+      "query_tokens": 22,
+      "context_tokens": 43,
+      "judge_tokens_in": 395,
+      "judge_tokens_out": 35,
+      "judge_latency_ms": 703.8500519990921
+    },
+    {
+      "task_id": "entity-closed-loop-skus",
+      "query": "Which SKUs in our catalogue achieve closed-loop material recovery?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nkubectl rollout restart deployment/billing-svc\n---\nbilling-svc API keys \u2014 jordan",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.739307648997999,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "kubectl rollout restart deployment/billing-svc",
+          "score": 0.7293644391954482,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_049e0812-46ed-4db7-84d8-c4a121a1d19c"
+        },
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.7265604833960109,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "no expected_substrings set",
+      "search_time_ms": 31.940229993779212,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 47,
+      "query_tokens": 12,
+      "context_tokens": 35,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "entity-home-compostable",
+      "query": "List any materials in our catalogue that are home-compostable.",
+      "answer": "search-svc API keys \u2014 alex\n---\nreporting-svc consumes OrderPaid for financial reports\n---\nNOT home-compostable",
+      "hits": [
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.6961037697159256,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        },
+        {
+          "text": "reporting-svc consumes OrderPaid for financial reports",
+          "score": 0.6880397333304152,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_778aa40d-6c20-4495-96d9-286a57b53f7a"
+        },
+        {
+          "text": "NOT home-compostable",
+          "score": 0.6861630088900115,
+          "source": "pentatonic-memory",
+          "doc_id": "material-pla-plant"
+        }
+      ],
+      "correct": false,
+      "score": 0.6666666666666666,
+      "grading_notes": "missing 1/3: ['none']",
+      "search_time_ms": 29.149259004043415,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 39,
+      "query_tokens": 13,
+      "context_tokens": 26,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    }
+  ]
+}

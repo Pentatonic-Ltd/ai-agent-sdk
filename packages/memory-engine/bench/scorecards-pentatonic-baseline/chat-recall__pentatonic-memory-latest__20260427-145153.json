@@ -1,0 +1,819 @@
+{
+  "bench": "chat-recall",
+  "stack": "pentatonic-memory-latest",
+  "n_tasks": 16,
+  "n_correct": 0,
+  "accuracy": 0.0,
+  "mean_score": 0.0,
+  "p50_search_ms": 35.576166497776285,
+  "p95_search_ms": 37.78688400052488,
+  "total_tokens_in": 0,
+  "total_tokens_out": 0,
+  "total_usd": 0.0,
+  "by_tag": {
+    "factoid": {
+      "n": 6,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "owner": {
+      "n": 4,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "temporal": {
+      "n": 4,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "contradiction": {
+      "n": 2,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "status": {
+      "n": 4,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "multi-hop": {
+      "n": 4,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    }
+  },
+  "extra": {
+    "ingest_ms": 32138.345434999792,
+    "grading": "substring",
+    "limit": 3,
+    "tokens": {
+      "corpus_tokens": 513,
+      "query_tokens": 140,
+      "context_tokens": 630,
+      "retrieval_tokens": 770,
+      "naive_tokens": 8348,
+      "saved_tokens": 7578,
+      "reduction_pct": 0.907762338284619,
+      "mean_retrieval_tokens_per_task": 48.125,
+      "tokenizer": "cl100k_base",
+      "per_task": {
+        "who-owns-atlas": {
+          "query": 5,
+          "context": 34,
+          "retrieval": 39,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "who-owns-borealis": {
+          "query": 7,
+          "context": 34,
+          "retrieval": 41,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "who-owns-cirrus": {
+          "query": 6,
+          "context": 49,
+          "retrieval": 55,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "who-owns-dune": {
+          "query": 6,
+          "context": 31,
+          "retrieval": 37,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "current-deadline-atlas": {
+          "query": 8,
+          "context": 35,
+          "retrieval": 43,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "current-deadline-borealis": {
+          "query": 10,
+          "context": 34,
+          "retrieval": 44,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "current-deadline-cirrus": {
+          "query": 9,
+          "context": 42,
+          "retrieval": 51,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "current-deadline-dune": {
+          "query": 9,
+          "context": 31,
+          "retrieval": 40,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "status-atlas": {
+          "query": 8,
+          "context": 33,
+          "retrieval": 41,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "status-borealis": {
+          "query": 10,
+          "context": 42,
+          "retrieval": 52,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "status-cirrus": {
+          "query": 9,
+          "context": 50,
+          "retrieval": 59,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "status-dune": {
+          "query": 9,
+          "context": 35,
+          "retrieval": 44,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "multihop-atlas": {
+          "query": 10,
+          "context": 42,
+          "retrieval": 52,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "multihop-borealis": {
+          "query": 12,
+          "context": 50,
+          "retrieval": 62,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "multihop-cirrus": {
+          "query": 11,
+          "context": 50,
+          "retrieval": 61,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "multihop-dune": {
+          "query": 11,
+          "context": 38,
+          "retrieval": 49,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        }
+      },
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_calls": 0,
+      "judge_mean_latency_ms": 0.0
+    },
+    "cost_usd": {
+      "assumed_completion_tokens_per_task": 100,
+      "rates": {
+        "input_per_1k": 0.0025,
+        "output_per_1k": 0.01,
+        "model": "gpt-4o"
+      },
+      "retrieval_usd_in": 0.001925,
+      "retrieval_usd_out": 0.016,
+      "retrieval_usd_total": 0.017925,
+      "naive_usd_total": 0.03687,
+      "saved_usd": 0.018945,
+      "saved_usd_per_1k_tasks": 1.1840625
+    }
+  },
+  "task_results": [
+    {
+      "task_id": "who-owns-atlas",
+      "query": "Who owns project Atlas?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nbilling-svc API keys \u2014 jordan\n---\nsearch-svc API keys \u2014 alex",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7094495479744956,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.705149493119418,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.6992094186827446,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['Alice']",
+      "search_time_ms": 29.684740991797298,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 39,
+      "query_tokens": 5,
+      "context_tokens": 34,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "who-owns-borealis",
+      "query": "Who owns project Borealis?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nsearch-svc API keys \u2014 alex\n---\nbilling-svc API keys \u2014 jordan",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.6940128053794369,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.6928977121880233,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        },
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.6927844693031652,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['Clara']",
+      "search_time_ms": 27.342910005245358,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 41,
+      "query_tokens": 7,
+      "context_tokens": 34,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "who-owns-cirrus",
+      "query": "Who owns project Cirrus?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\norder-svc marks order as paid, emits OrderPaid on pubsub\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7071406152219076,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.6962335336552081,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.6938935982281584,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['Diego']",
+      "search_time_ms": 23.93999500782229,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 55,
+      "query_tokens": 6,
+      "context_tokens": 49,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "who-owns-dune",
+      "query": "Who owns project Dune?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nbilling.new_invoice_pdf\n---\nbilling-svc API keys \u2014 jordan",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.6957184482713455,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "billing.new_invoice_pdf",
+          "score": 0.6797076893489076,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_ca8bdac3-12ca-4bae-b5a2-fb9c2d069173"
+        },
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.6776694304617411,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['Farid']",
+      "search_time_ms": 25.87755100103095,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 37,
+      "query_tokens": 6,
+      "context_tokens": 31,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "current-deadline-atlas",
+      "query": "What is the current deadline for Atlas?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nbilling-svc API keys \u2014 jordan\n---\nkubectl rollout restart deployment/billing-svc",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7275709883182019,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.7167343487691263,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        },
+        {
+          "text": "kubectl rollout restart deployment/billing-svc",
+          "score": 0.7163043601685071,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_049e0812-46ed-4db7-84d8-c4a121a1d19c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['2026-03-17']",
+      "search_time_ms": 37.78688400052488,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 43,
+      "query_tokens": 8,
+      "context_tokens": 35,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "current-deadline-borealis",
+      "query": "What is the current deadline for Borealis?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nbilling-svc API keys \u2014 jordan\n---\nsearch-svc API keys \u2014 alex",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7083399225416024,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.6995845993743947,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.6989382834457598,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['2026-02-28']",
+      "search_time_ms": 37.3624479980208,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 44,
+      "query_tokens": 10,
+      "context_tokens": 34,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "current-deadline-cirrus",
+      "query": "What is the current deadline for Cirrus?",
+      "answer": "The user's latest Cirrus deadline is April 8, 2026.\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nkubectl rollout restart deployment/billing-svc",
+      "hits": [
+        {
+          "text": "The user's latest Cirrus deadline is April 8, 2026.",
+          "score": 0.7558460678895833,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-deadline2-cirrus"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7260960333461852,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "kubectl rollout restart deployment/billing-svc",
+          "score": 0.7114582739003221,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_049e0812-46ed-4db7-84d8-c4a121a1d19c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['2026-04-08']",
+      "search_time_ms": 33.95489399554208,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 51,
+      "query_tokens": 9,
+      "context_tokens": 42,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "current-deadline-dune",
+      "query": "What is the current deadline for Dune?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nbilling.new_invoice_pdf\n---\nkubectl rollout restart deployment/billing-svc",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7106671210223783,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "billing.new_invoice_pdf",
+          "score": 0.7030500225794961,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_ca8bdac3-12ca-4bae-b5a2-fb9c2d069173"
+        },
+        {
+          "text": "kubectl rollout restart deployment/billing-svc",
+          "score": 0.696777937772653,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_049e0812-46ed-4db7-84d8-c4a121a1d19c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['2026-05-20']",
+      "search_time_ms": 35.3459480102174,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 40,
+      "query_tokens": 9,
+      "context_tokens": 31,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "status-atlas",
+      "query": "What's the latest status of Atlas?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nThe Atlas project is currently in development.\n---\nsearch-svc API keys \u2014 alex",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7254432691030256,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "The Atlas project is currently in development.",
+          "score": 0.7171795355296468,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-deadline2-atlas"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7042820502266752,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['on track']",
+      "search_time_ms": 36.89389998908155,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 41,
+      "query_tokens": 8,
+      "context_tokens": 33,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "status-borealis",
+      "query": "What's the latest status of Borealis?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nsearch-svc API keys \u2014 alex\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.6994621643226522,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.6903014011152464,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.6872532831436886,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['blocked on vendor']",
+      "search_time_ms": 36.008898983709514,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 52,
+      "query_tokens": 10,
+      "context_tokens": 42,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "status-cirrus",
+      "query": "What's the latest status of Cirrus?",
+      "answer": "The user's latest Cirrus deadline is April 8, 2026.\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+      "hits": [
+        {
+          "text": "The user's latest Cirrus deadline is April 8, 2026.",
+          "score": 0.7447236868936458,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-deadline2-cirrus"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7199085720912451,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.701595044183101,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['scoping']",
+      "search_time_ms": 35.968545998912305,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 59,
+      "query_tokens": 9,
+      "context_tokens": 50,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "status-dune",
+      "query": "What's the latest status of Dune?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nbilling.new_invoice_pdf\n---\nStripe posts a invoice.payment_succeeded webhook to billing-svc",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7076256069009901,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "billing.new_invoice_pdf",
+          "score": 0.6999989250830485,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_ca8bdac3-12ca-4bae-b5a2-fb9c2d069173"
+        },
+        {
+          "text": "Stripe posts a invoice.payment_succeeded webhook to billing-svc",
+          "score": 0.6846413593936166,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_76c60bf6-9327-4cd1-9f56-234d229e8c8a"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['launched']",
+      "search_time_ms": 35.42196500347927,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 44,
+      "query_tokens": 9,
+      "context_tokens": 35,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "multihop-atlas",
+      "query": "Who owns Atlas and what is its current deadline?",
+      "answer": "The Atlas project is currently in development.\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nThe user's latest Cirrus deadline is April 8, 2026.",
+      "hits": [
+        {
+          "text": "The Atlas project is currently in development.",
+          "score": 0.7401179380365475,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-deadline2-atlas"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7272517964813692,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "The user's latest Cirrus deadline is April 8, 2026.",
+          "score": 0.7197845468232443,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-deadline2-cirrus"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['Alice', '2026-03-17']",
+      "search_time_ms": 35.946914984378964,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 52,
+      "query_tokens": 10,
+      "context_tokens": 42,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "multihop-borealis",
+      "query": "Who owns Borealis and what is its current deadline?",
+      "answer": "The user's latest Cirrus deadline is April 8, 2026.\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+      "hits": [
+        {
+          "text": "The user's latest Cirrus deadline is April 8, 2026.",
+          "score": 0.7312607039203609,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-deadline2-cirrus"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7117345215943829,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7061180599052448,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['Clara', '2026-02-28']",
+      "search_time_ms": 36.55060098390095,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 62,
+      "query_tokens": 12,
+      "context_tokens": 50,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "multihop-cirrus",
+      "query": "Who owns Cirrus and what is its current deadline?",
+      "answer": "The user's latest Cirrus deadline is April 8, 2026.\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+      "hits": [
+        {
+          "text": "The user's latest Cirrus deadline is April 8, 2026.",
+          "score": 0.7949980719613424,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-deadline2-cirrus"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7244226449863047,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7119401034180405,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['Diego', '2026-04-08']",
+      "search_time_ms": 35.7303679920733,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 61,
+      "query_tokens": 11,
+      "context_tokens": 50,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "multihop-dune",
+      "query": "Who owns Dune and what is its current deadline?",
+      "answer": "The user's latest Cirrus deadline is April 8, 2026.\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nbilling.new_invoice_pdf",
+      "hits": [
+        {
+          "text": "The user's latest Cirrus deadline is April 8, 2026.",
+          "score": 0.7311771760384164,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-deadline2-cirrus"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7118296546980413,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "billing.new_invoice_pdf",
+          "score": 0.6992845290215867,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_ca8bdac3-12ca-4bae-b5a2-fb9c2d069173"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['Farid', '2026-05-20']",
+      "search_time_ms": 35.289291001390666,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 49,
+      "query_tokens": 11,
+      "context_tokens": 38,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    }
+  ]
+}

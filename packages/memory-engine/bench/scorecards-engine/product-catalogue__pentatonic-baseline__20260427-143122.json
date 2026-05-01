@@ -1,0 +1,961 @@
+{
+  "bench": "product-catalogue",
+  "stack": "pentatonic-baseline",
+  "n_tasks": 18,
+  "n_correct": 13,
+  "accuracy": 0.7222222222222222,
+  "mean_score": 0.75,
+  "p50_search_ms": 1182.2879219980678,
+  "p95_search_ms": 4839.573773992015,
+  "total_tokens_in": 0,
+  "total_tokens_out": 0,
+  "total_usd": 0.0,
+  "by_tag": {
+    "factoid": {
+      "n": 10,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "material": {
+      "n": 4,
+      "mean_score": 0.5,
+      "accuracy": 0.5
+    },
+    "spec": {
+      "n": 1,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "warranty": {
+      "n": 1,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "inventory": {
+      "n": 3,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "compat": {
+      "n": 2,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "multi-doc": {
+      "n": 3,
+      "mean_score": 0.6666666666666666,
+      "accuracy": 0.6666666666666666
+    },
+    "care": {
+      "n": 1,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "policy": {
+      "n": 2,
+      "mean_score": 0.5,
+      "accuracy": 0.5
+    },
+    "pricing": {
+      "n": 2,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "multi-hop": {
+      "n": 2,
+      "mean_score": 0.5,
+      "accuracy": 0.5
+    },
+    "math": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "rubric": {
+      "n": 3,
+      "mean_score": 0.16666666666666666,
+      "accuracy": 0.0
+    },
+    "recommendation": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "certification": {
+      "n": 1,
+      "mean_score": 0.5,
+      "accuracy": 0.0
+    },
+    "entity": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    }
+  },
+  "extra": {
+    "ingest_ms": 52259.00924898451,
+    "grading": "substring",
+    "limit": 3,
+    "tokens": {
+      "corpus_tokens": 1845,
+      "query_tokens": 271,
+      "context_tokens": 6344,
+      "retrieval_tokens": 6615,
+      "naive_tokens": 33481,
+      "saved_tokens": 26866,
+      "reduction_pct": 0.8024252561154087,
+      "mean_retrieval_tokens_per_task": 367.5,
+      "tokenizer": "cl100k_base",
+      "per_task": {
+        "sku-atlas-material": {
+          "query": 11,
+          "context": 394,
+          "retrieval": 405,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "sku-luna-capacity": {
+          "query": 8,
+          "context": 454,
+          "retrieval": 462,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "sku-luna-warranty": {
+          "query": 9,
+          "context": 305,
+          "retrieval": 314,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "sku-kite-harness-out-of-stock": {
+          "query": 17,
+          "context": 356,
+          "retrieval": 373,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "sku-kite-harness-restock": {
+          "query": 17,
+          "context": 356,
+          "retrieval": 373,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "sku-tee-discontinued-sizes": {
+          "query": 13,
+          "context": 359,
+          "retrieval": 372,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "sku-sleeve-compat-14-mbp": {
+          "query": 16,
+          "context": 345,
+          "retrieval": 361,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "sku-coffee-cup-microwave": {
+          "query": 8,
+          "context": 438,
+          "retrieval": 446,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "sku-bin-liners-home-compost": {
+          "query": 11,
+          "context": 367,
+          "retrieval": 378,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "policy-custom-tote-return": {
+          "query": 10,
+          "context": 355,
+          "retrieval": 365,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "price-tee-subscription": {
+          "query": 14,
+          "context": 370,
+          "retrieval": 384,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "price-sleeve-diff": {
+          "query": 19,
+          "context": 345,
+          "retrieval": 364,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "multi-hop-kite-duotone": {
+          "query": 25,
+          "context": 321,
+          "retrieval": 346,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "multi-hop-takeback-credit": {
+          "query": 23,
+          "context": 368,
+          "retrieval": 391,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "rubric-recommend-kitesurf-bag": {
+          "query": 31,
+          "context": 294,
+          "retrieval": 325,
+          "judge_in": 635,
+          "judge_out": 43,
+          "judge_latency_ms": 1105.8280489742756
+        },
+        "rubric-plastic-free-tee": {
+          "query": 11,
+          "context": 236,
+          "retrieval": 247,
+          "judge_in": 543,
+          "judge_out": 26,
+          "judge_latency_ms": 761.6074280440807
+        },
+        "rubric-cc-certified-items": {
+          "query": 14,
+          "context": 374,
+          "retrieval": 388,
+          "judge_in": 662,
+          "judge_out": 44,
+          "judge_latency_ms": 852.7362680137157
+        },
+        "entity-recycled-content-high": {
+          "query": 14,
+          "context": 307,
+          "retrieval": 321,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        }
+      },
+      "judge_tokens_in": 1840,
+      "judge_tokens_out": 113,
+      "judge_calls": 3,
+      "judge_mean_latency_ms": 906.7239150106907
+    },
+    "cost_usd": {
+      "assumed_completion_tokens_per_task": 100,
+      "rates": {
+        "input_per_1k": 0.0025,
+        "output_per_1k": 0.01,
+        "model": "gpt-4o"
+      },
+      "retrieval_usd_in": 0.0165375,
+      "retrieval_usd_out": 0.018,
+      "retrieval_usd_total": 0.0345375,
+      "naive_usd_total": 0.1017025,
+      "saved_usd": 0.067165,
+      "saved_usd_per_1k_tasks": 3.731388888888889
+    }
+  },
+  "task_results": [
+    {
+      "task_id": "sku-atlas-material",
+      "query": "What's the material composition of the Atlas Phone Shell?",
+      "answer": "# Atlas Phone Shell \u2014 SKU ATL-PHN-001\n\n**Brand:** Atlas Circular\n**Category:** Mobile accessories / Phone cases\n**Compatible with:** iPhone 15, iPhone 15 Pro\n\n**Material composition:**\n- 68% recycled ocean-bound polypropylene\n- 24% recycled polycarbonate (post-consumer)\n- 8% natural calcium carbonate\n\n**Price:** \u00a329.00 GBP (standard) / \u00a324.00 (subscription)\n**Inventory:** 1,240 units in stock at UK fulfilment (Worthing DC)\n**Take-back:** Yes \u2014 returnable for 50% credit after 18 months\n**Certification:** Cradle to Cradle Bronze, MADE-BY Class B\n---\n# Atlas Phone Shell \u2014 SKU ATL-PHN-001\n\n**Brand:** Atlas Circular\n**Category:** Mobile accessories / Phone cases\n**Compatible with:** iPhone 15, iPhone 15 Pro\n\n**Material composition:**\n- 68% recycled ocean-bound polypropylene\n- 24% recycled polycarbonate (post-consumer)\n- 8% natural calcium carbonate\n\n**Price:** \u00a329.00 GBP (standard) / \u00a324.00 (subscription)\n**Inventory:** 1,240 units in stock at UK fulfilment (Worthing DC)\n**Take-back:** Yes \u2014 returnable for 50% credit after 18 months\n**Certific\n---\n# Inventory update \u2014 2026-04-15\n\nPentatonic Crew Tee Black XXS/XXL: discontinued, not restocking.\nNomad Kite Harness v3 M: sold out, restock ETA 2026-05-15.\nHaven Laptop Sleeve 15\": Oat and Ochre sold through, Charcoal only until SS27 refresh.\nAtlas Phone Shell: new batch inbound 2026-04-28, inventory will top up to ~3000 units.",
+      "hits": [
+        {
+          "text": "# Atlas Phone Shell \u2014 SKU ATL-PHN-001\n\n**Brand:** Atlas Circular\n**Category:** Mobile accessories / Phone cases\n**Compatible with:** iPhone 15, iPhone 15 Pro\n\n**Material composition:**\n- 68% recycled ocean-bound polypropylene\n- 24% recycled polycarbonate (post-consumer)\n- 8% natural calcium carbonate\n\n**Price:** \u00a329.00 GBP (standard) / \u00a324.00 (subscription)\n**Inventory:** 1,240 units in stock at U",
+          "score": 0.7433,
+          "source": "pentatonic-baseline",
+          "doc_id": "sku-atlas-phone-01"
+        },
+        {
+          "text": "# Atlas Phone Shell \u2014 SKU ATL-PHN-001\n\n**Brand:** Atlas Circular\n**Category:** Mobile accessories / Phone cases\n**Compatible with:** iPhone 15, iPhone 15 Pro\n\n**Material composition:**\n- 68% recycled ocean-bound polypropylene\n- 24% recycled polycarbonate (post-consumer)\n- 8% natural calcium carbonate\n\n**Price:** \u00a329.00 GBP (standard) / \u00a324.00 (subscription)\n**Inventory:** 1,240 units in stock at U",
+          "score": 0.7339,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "sku-atlas-phone-01"
+        },
+        {
+          "text": "# Inventory update \u2014 2026-04-15\n\nPentatonic Crew Tee Black XXS/XXL: discontinued, not restocking.\nNomad Kite Harness v3 M: sold out, restock ETA 2026-05-15.\nHaven Laptop Sleeve 15\": Oat and Ochre sold through, Charcoal only until SS27 refresh.\nAtlas Phone Shell: new batch inbound 2026-04-28, inventory will top up to ~3000 units.\n",
+          "score": 0.7045,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "inventory-update-2026-04-15"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1225.0367570086382,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 405,
+      "query_tokens": 11,
+      "context_tokens": 394,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "sku-luna-capacity",
+      "query": "What capacity is the Luna water bottle?",
+      "answer": "# Luna Water Bottle 500ml \u2014 SKU LUN-BTL-042\n\n**Brand:** Luna\n**Category:** Drinkware / Bottles\n**Capacity:** 500ml\n\n**Material composition:**\n- 100% food-grade 304 stainless steel (65% recycled content)\n- Lid: bio-based silicone (sugarcane derivative)\n\n**Price:** \u00a318.50 GBP\n**Inventory:** 87 units in stock (UK), 412 units (EU DC Eindhoven)\n**Colours available:** Matte black, Sage green, Terracotta\n**Replacement parts:** Lid (\u00a33.50), Silicone seal (\u00a30.90)\n**Warranty:** Lifetime on body, 2 years on lid\n---\n# Luna Water Bottle 500ml \u2014 SKU LUN-BTL-042\n\n**Brand:** Luna\n**Category:** Drinkware / Bottles\n**Capacity:** 500ml\n\n**Material composition:**\n- 100% food-grade 304 stainless steel (65% recycled content)\n- Lid: bio-based silicone (sugarcane derivative)\n\n**Price:** \u00a318.50 GBP\n**Inventory:** 87 units in stock (UK), 412 units (EU DC Eindhoven)\n**Colours available:** Matte black, Sage green, Terracotta\n**Replacement parts:** Lid (\u00a33.50), Silicone seal (\u00a30.90)\n**Warranty:** Lifetime on body, 2 years o\n---\n# Pentatonic Crew Tee Black \u2014 SKU PTT-TEE-BLK\n\n**Brand:** Pentatonic\n**Category:** Apparel / T-shirts\n**Fit:** Unisex regular\n**Size range:** XS, S, M, L, XL, XXL\n\n**Material composition:**\n- 100% GOTS-certified organic cotton, 180 gsm\n- Dyeing: low-impact reactive dye, closed-loop water system\n\n**Price:** \u00a328.00 GBP\n**Inventory:** S=48, M=136, L=94, XL=22, XS=0 (discontinued), XXL=0 (discontinued)\n**Country of origin:** Portugal (CITEVE-certified mill)\n**Care:** Wash cold, line dry; no tumble d",
+      "hits": [
+        {
+          "text": "# Luna Water Bottle 500ml \u2014 SKU LUN-BTL-042\n\n**Brand:** Luna\n**Category:** Drinkware / Bottles\n**Capacity:** 500ml\n\n**Material composition:**\n- 100% food-grade 304 stainless steel (65% recycled content)\n- Lid: bio-based silicone (sugarcane derivative)\n\n**Price:** \u00a318.50 GBP\n**Inventory:** 87 units in stock (UK), 412 units (EU DC Eindhoven)\n**Colours available:** Matte black, Sage green, Terracotta",
+          "score": 0.7378,
+          "source": "pentatonic-baseline",
+          "doc_id": "sku-luna-bottle-42"
+        },
+        {
+          "text": "# Luna Water Bottle 500ml \u2014 SKU LUN-BTL-042\n\n**Brand:** Luna\n**Category:** Drinkware / Bottles\n**Capacity:** 500ml\n\n**Material composition:**\n- 100% food-grade 304 stainless steel (65% recycled content)\n- Lid: bio-based silicone (sugarcane derivative)\n\n**Price:** \u00a318.50 GBP\n**Inventory:** 87 units in stock (UK), 412 units (EU DC Eindhoven)\n**Colours available:** Matte black, Sage green, Terracotta",
+          "score": 0.7039,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "sku-luna-bottle-42"
+        },
+        {
+          "text": "# Pentatonic Crew Tee Black \u2014 SKU PTT-TEE-BLK\n\n**Brand:** Pentatonic\n**Category:** Apparel / T-shirts\n**Fit:** Unisex regular\n**Size range:** XS, S, M, L, XL, XXL\n\n**Material composition:**\n- 100% GOTS-certified organic cotton, 180 gsm\n- Dyeing: low-impact reactive dye, closed-loop water system\n\n**Price:** \u00a328.00 GBP\n**Inventory:** S=48, M=136, L=94, XL=22, XS=0 (discontinued), XXL=0 (discontinued",
+          "score": 0.3892,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "sku-cotton-tee-black"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1211.9876430078875,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 462,
+      "query_tokens": 8,
+      "context_tokens": 454,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "sku-luna-warranty",
+      "query": "What's the warranty on the Luna bottle?",
+      "answer": "# Luna Water Bottle 500ml \u2014 SKU LUN-BTL-042\n\n**Brand:** Luna\n**Category:** Drinkware / Bottles\n**Capacity:** 500ml\n\n**Material composition:**\n- 100% food-grade 304 stainless steel (65% recycled content)\n- Lid: bio-based silicone (sugarcane derivative)\n\n**Price:** \u00a318.50 GBP\n**Inventory:** 87 units in stock (UK), 412 units (EU DC Eindhoven)\n**Colours available:** Matte black, Sage green, Terracotta\n**Replacement parts:** Lid (\u00a33.50), Silicone seal (\u00a30.90)\n**Warranty:** Lifetime on body, 2 years on lid\n---\n# Luna Water Bottle 500ml \u2014 SKU LUN-BTL-042\n\n**Brand:** Luna\n**Category:** Drinkware / Bottles\n**Capacity:** 500ml\n\n**Material composition:**\n- 100% food-grade 304 stainless steel (65% recycled content)\n- Lid: bio-based silicone (sugarcane derivative)\n\n**Price:** \u00a318.50 GBP\n**Inventory:** 87 units in stock (UK), 412 units (EU DC Eindhoven)\n**Colours available:** Matte black, Sage green, Terracotta\n**Replacement parts:** Lid (\u00a33.50), Silicone seal (\u00a30.90)\n**Warranty:** Lifetime on body, 2 years o\n---\n<!-- doc_id: sku-luna-bottle-42 -->",
+      "hits": [
+        {
+          "text": "# Luna Water Bottle 500ml \u2014 SKU LUN-BTL-042\n\n**Brand:** Luna\n**Category:** Drinkware / Bottles\n**Capacity:** 500ml\n\n**Material composition:**\n- 100% food-grade 304 stainless steel (65% recycled content)\n- Lid: bio-based silicone (sugarcane derivative)\n\n**Price:** \u00a318.50 GBP\n**Inventory:** 87 units in stock (UK), 412 units (EU DC Eindhoven)\n**Colours available:** Matte black, Sage green, Terracotta",
+          "score": 0.8090189114158035,
+          "source": "pentatonic-baseline",
+          "doc_id": "sku-luna-bottle-42"
+        },
+        {
+          "text": "# Luna Water Bottle 500ml \u2014 SKU LUN-BTL-042\n\n**Brand:** Luna\n**Category:** Drinkware / Bottles\n**Capacity:** 500ml\n\n**Material composition:**\n- 100% food-grade 304 stainless steel (65% recycled content)\n- Lid: bio-based silicone (sugarcane derivative)\n\n**Price:** \u00a318.50 GBP\n**Inventory:** 87 units in stock (UK), 412 units (EU DC Eindhoven)\n**Colours available:** Matte black, Sage green, Terracotta",
+          "score": 0.75,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "sku-luna-bottle-42"
+        },
+        {
+          "text": "<!-- doc_id: sku-luna-bottle-42 -->",
+          "score": 0.4098,
+          "source": "pentatonic-baseline:L6_documents",
+          "doc_id": "sku-luna-bottle-42"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 4839.573773992015,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 314,
+      "query_tokens": 9,
+      "context_tokens": 305,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "sku-kite-harness-out-of-stock",
+      "query": "Which size of the Nomad Kite Harness v3 is currently out of stock?",
+      "answer": "# Nomad Kite Harness v3 \u2014 SKU NMD-HRN-V3\n\n**Brand:** Nomad Sports\n**Category:** Watersports / Kite surfing\n**Size range:** XS (26-28\"), S (28-30\"), M (30-32\"), L (32-34\"), XL (34-36\")\n\n**Material composition:**\n- Outer shell: 92% recycled nylon 6,6 (ghost-net source)\n- Foam padding: EVA (non-recycled)\n- Hardware: 316 stainless steel spreader bar\n\n**Price:** \u00a3145.00 GBP\n**Inventory:** M=out of stock, L=6 units, XL=12 units, XS/S=restock 2026-05-15\n**Repair service:** \u00a325 flat fee, turnaround 14 days\n**Compatibility:** F-One bar systems, North bar systems (adapter sold separately)\n---\n# Inventory update \u2014 2026-04-15\n\nPentatonic Crew Tee Black XXS/XXL: discontinued, not restocking.\nNomad Kite Harness v3 M: sold out, restock ETA 2026-05-15.\nHaven Laptop Sleeve 15\": Oat and Ochre sold through, Charcoal only until SS27 refresh.\nAtlas Phone Shell: new batch inbound 2026-04-28, inventory will top up to ~3000 units.\n---\n# Compatibility note\n\nThe Nomad Kite Harness v3 (NMD-HRN-V3) ships with a standard spreader bar compatible with F-One and North bar systems. For Duotone or Core bar systems, the Duotone/Core adapter kit (NMD-ADPT-DC, \u00a3 18) is required.",
+      "hits": [
+        {
+          "text": "# Nomad Kite Harness v3 \u2014 SKU NMD-HRN-V3\n\n**Brand:** Nomad Sports\n**Category:** Watersports / Kite surfing\n**Size range:** XS (26-28\"), S (28-30\"), M (30-32\"), L (32-34\"), XL (34-36\")\n\n**Material composition:**\n- Outer shell: 92% recycled nylon 6,6 (ghost-net source)\n- Foam padding: EVA (non-recycled)\n- Hardware: 316 stainless steel spreader bar\n\n**Price:** \u00a3145.00 GBP\n**Inventory:** M=out of stoc",
+          "score": 0.7678,
+          "source": "pentatonic-baseline",
+          "doc_id": "sku-kite-harness-v3"
+        },
+        {
+          "text": "# Inventory update \u2014 2026-04-15\n\nPentatonic Crew Tee Black XXS/XXL: discontinued, not restocking.\nNomad Kite Harness v3 M: sold out, restock ETA 2026-05-15.\nHaven Laptop Sleeve 15\": Oat and Ochre sold through, Charcoal only until SS27 refresh.\nAtlas Phone Shell: new batch inbound 2026-04-28, inventory will top up to ~3000 units.\n",
+          "score": 0.7359,
+          "source": "pentatonic-baseline",
+          "doc_id": "inventory-update-2026-04-15"
+        },
+        {
+          "text": "# Compatibility note\n\nThe Nomad Kite Harness v3 (NMD-HRN-V3) ships with a standard spreader bar compatible with F-One and North bar systems. For Duotone or Core bar systems, the Duotone/Core adapter kit (NMD-ADPT-DC, \u00a3 18) is required.\n",
+          "score": 0.7684897824960022,
+          "source": "pentatonic-baseline",
+          "doc_id": "compat-kite-harness-bar"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1927.3625300265849,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 373,
+      "query_tokens": 17,
+      "context_tokens": 356,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "sku-kite-harness-restock",
+      "query": "When does the Nomad Kite Harness v3 restock for XS and S?",
+      "answer": "# Nomad Kite Harness v3 \u2014 SKU NMD-HRN-V3\n\n**Brand:** Nomad Sports\n**Category:** Watersports / Kite surfing\n**Size range:** XS (26-28\"), S (28-30\"), M (30-32\"), L (32-34\"), XL (34-36\")\n\n**Material composition:**\n- Outer shell: 92% recycled nylon 6,6 (ghost-net source)\n- Foam padding: EVA (non-recycled)\n- Hardware: 316 stainless steel spreader bar\n\n**Price:** \u00a3145.00 GBP\n**Inventory:** M=out of stock, L=6 units, XL=12 units, XS/S=restock 2026-05-15\n**Repair service:** \u00a325 flat fee, turnaround 14 days\n**Compatibility:** F-One bar systems, North bar systems (adapter sold separately)\n---\n# Inventory update \u2014 2026-04-15\n\nPentatonic Crew Tee Black XXS/XXL: discontinued, not restocking.\nNomad Kite Harness v3 M: sold out, restock ETA 2026-05-15.\nHaven Laptop Sleeve 15\": Oat and Ochre sold through, Charcoal only until SS27 refresh.\nAtlas Phone Shell: new batch inbound 2026-04-28, inventory will top up to ~3000 units.\n---\n# Compatibility note\n\nThe Nomad Kite Harness v3 (NMD-HRN-V3) ships with a standard spreader bar compatible with F-One and North bar systems. For Duotone or Core bar systems, the Duotone/Core adapter kit (NMD-ADPT-DC, \u00a3 18) is required.",
+      "hits": [
+        {
+          "text": "# Nomad Kite Harness v3 \u2014 SKU NMD-HRN-V3\n\n**Brand:** Nomad Sports\n**Category:** Watersports / Kite surfing\n**Size range:** XS (26-28\"), S (28-30\"), M (30-32\"), L (32-34\"), XL (34-36\")\n\n**Material composition:**\n- Outer shell: 92% recycled nylon 6,6 (ghost-net source)\n- Foam padding: EVA (non-recycled)\n- Hardware: 316 stainless steel spreader bar\n\n**Price:** \u00a3145.00 GBP\n**Inventory:** M=out of stoc",
+          "score": 0.7423,
+          "source": "pentatonic-baseline",
+          "doc_id": "sku-kite-harness-v3"
+        },
+        {
+          "text": "# Inventory update \u2014 2026-04-15\n\nPentatonic Crew Tee Black XXS/XXL: discontinued, not restocking.\nNomad Kite Harness v3 M: sold out, restock ETA 2026-05-15.\nHaven Laptop Sleeve 15\": Oat and Ochre sold through, Charcoal only until SS27 refresh.\nAtlas Phone Shell: new batch inbound 2026-04-28, inventory will top up to ~3000 units.\n",
+          "score": 0.7402,
+          "source": "pentatonic-baseline",
+          "doc_id": "inventory-update-2026-04-15"
+        },
+        {
+          "text": "# Compatibility note\n\nThe Nomad Kite Harness v3 (NMD-HRN-V3) ships with a standard spreader bar compatible with F-One and North bar systems. For Duotone or Core bar systems, the Duotone/Core adapter kit (NMD-ADPT-DC, \u00a3 18) is required.\n",
+          "score": 0.7546291463914065,
+          "source": "pentatonic-baseline",
+          "doc_id": "compat-kite-harness-bar"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1813.0832810129505,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 373,
+      "query_tokens": 17,
+      "context_tokens": 356,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "sku-tee-discontinued-sizes",
+      "query": "Which sizes of the Pentatonic Crew Tee Black are discontinued?",
+      "answer": "# Pentatonic Crew Tee Sage \u2014 SKU PTT-TEE-SGE\n\nAs PTT-TEE-BLK but in sage green. Same material composition, same mill.\n\n**Price:** \u00a328.00 GBP\n**Inventory:** S=12, M=38, L=44, XL=8, XS=0, XXL=0\n**Colour note:** Sage is a seasonal SS26 colourway \u2014 not restocked after sell-through.\n---\n# Pentatonic Crew Tee Black \u2014 SKU PTT-TEE-BLK\n\n**Brand:** Pentatonic\n**Category:** Apparel / T-shirts\n**Fit:** Unisex regular\n**Size range:** XS, S, M, L, XL, XXL\n\n**Material composition:**\n- 100% GOTS-certified organic cotton, 180 gsm\n- Dyeing: low-impact reactive dye, closed-loop water system\n\n**Price:** \u00a328.00 GBP\n**Inventory:** S=48, M=136, L=94, XL=22, XS=0 (discontinued), XXL=0 (discontinued)\n**Country of origin:** Portugal (CITEVE-certified mill)\n**Care:** Wash cold, line dry; no tumble dry\n---\n# Inventory update \u2014 2026-04-15\n\nPentatonic Crew Tee Black XXS/XXL: discontinued, not restocking.\nNomad Kite Harness v3 M: sold out, restock ETA 2026-05-15.\nHaven Laptop Sleeve 15\": Oat and Ochre sold through, Charcoal only until SS27 refresh.\nAtlas Phone Shell: new batch inbound 2026-04-28, inventory will top up to ~3000 units.",
+      "hits": [
+        {
+          "text": "# Pentatonic Crew Tee Sage \u2014 SKU PTT-TEE-SGE\n\nAs PTT-TEE-BLK but in sage green. Same material composition, same mill.\n\n**Price:** \u00a328.00 GBP\n**Inventory:** S=12, M=38, L=44, XL=8, XS=0, XXL=0\n**Colour note:** Sage is a seasonal SS26 colourway \u2014 not restocked after sell-through.\n",
+          "score": 0.7365,
+          "source": "pentatonic-baseline",
+          "doc_id": "sku-cotton-tee-sage"
+        },
+        {
+          "text": "# Pentatonic Crew Tee Black \u2014 SKU PTT-TEE-BLK\n\n**Brand:** Pentatonic\n**Category:** Apparel / T-shirts\n**Fit:** Unisex regular\n**Size range:** XS, S, M, L, XL, XXL\n\n**Material composition:**\n- 100% GOTS-certified organic cotton, 180 gsm\n- Dyeing: low-impact reactive dye, closed-loop water system\n\n**Price:** \u00a328.00 GBP\n**Inventory:** S=48, M=136, L=94, XL=22, XS=0 (discontinued), XXL=0 (discontinued",
+          "score": 0.7236,
+          "source": "pentatonic-baseline",
+          "doc_id": "sku-cotton-tee-black"
+        },
+        {
+          "text": "# Inventory update \u2014 2026-04-15\n\nPentatonic Crew Tee Black XXS/XXL: discontinued, not restocking.\nNomad Kite Harness v3 M: sold out, restock ETA 2026-05-15.\nHaven Laptop Sleeve 15\": Oat and Ochre sold through, Charcoal only until SS27 refresh.\nAtlas Phone Shell: new batch inbound 2026-04-28, inventory will top up to ~3000 units.\n",
+          "score": 0.7703437946339051,
+          "source": "pentatonic-baseline",
+          "doc_id": "inventory-update-2026-04-15"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 4034.265010006493,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 372,
+      "query_tokens": 13,
+      "context_tokens": 359,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "sku-sleeve-compat-14-mbp",
+      "query": "Does the Haven Laptop Sleeve 13\" fit a 14\" MacBook Pro?",
+      "answer": "# Compatibility note\n\nThe Haven Laptop Sleeve 13\" (HVN-SLV-13) does NOT fit the 14\" MacBook Pro \u2014 third-party dimensions exceed 31.5cm. Use the 15\" variant (HVN-SLV-15).\n---\n# Haven Laptop Sleeve 15\" \u2014 SKU HVN-SLV-15\n\nAs HVN-SLV-13 but for 15\"-16\" laptops. Same materials, same construction.\n\n**Fits:** 15\" MacBook Air, 16\" MacBook Pro, 15.6\" Dell XPS, 15\" ThinkPad\n**Price:** \u00a358.00 GBP (\u00a310 more than 13\" variant)\n**Inventory:** 89 units UK, 54 units EU\n**Colours available:** Charcoal only (Oat and Ochre sold through)\n---\n# Haven Laptop Sleeve 13\" \u2014 SKU HVN-SLV-13\n\n**Brand:** Haven\n**Category:** Bags / Laptop protection\n**Fits:** 13\" MacBook Air M2/M3, 13.6\" MacBook Air, 13\" Dell XPS, 13\" ThinkPad\n\n**Material composition:**\n- Outer: 100% recycled PET felt (from 12 plastic bottles per unit)\n- Inner lining: 100% post-consumer recycled polyester\n- YKK recycled-polyester zip\n\n**Price:** \u00a348.00 GBP\n**Inventory:** 238 units UK, 156 units EU\n**Colours available:** Charcoal, Oat, Ochre\n**Laptop diagonal max:** 13.6\" (third-party dimension 31.5cm \u00d7 22.5cm)",
+      "hits": [
+        {
+          "text": "# Compatibility note\n\nThe Haven Laptop Sleeve 13\" (HVN-SLV-13) does NOT fit the 14\" MacBook Pro \u2014 third-party dimensions exceed 31.5cm. Use the 15\" variant (HVN-SLV-15).\n",
+          "score": 0.8682,
+          "source": "pentatonic-baseline",
+          "doc_id": "compat-laptop-sleeve-macbook-pro-14"
+        },
+        {
+          "text": "# Haven Laptop Sleeve 15\" \u2014 SKU HVN-SLV-15\n\nAs HVN-SLV-13 but for 15\"-16\" laptops. Same materials, same construction.\n\n**Fits:** 15\" MacBook Air, 16\" MacBook Pro, 15.6\" Dell XPS, 15\" ThinkPad\n**Price:** \u00a358.00 GBP (\u00a310 more than 13\" variant)\n**Inventory:** 89 units UK, 54 units EU\n**Colours available:** Charcoal only (Oat and Ochre sold through)\n",
+          "score": 0.7554,
+          "source": "pentatonic-baseline",
+          "doc_id": "sku-laptop-sleeve-15"
+        },
+        {
+          "text": "# Haven Laptop Sleeve 13\" \u2014 SKU HVN-SLV-13\n\n**Brand:** Haven\n**Category:** Bags / Laptop protection\n**Fits:** 13\" MacBook Air M2/M3, 13.6\" MacBook Air, 13\" Dell XPS, 13\" ThinkPad\n\n**Material composition:**\n- Outer: 100% recycled PET felt (from 12 plastic bottles per unit)\n- Inner lining: 100% post-consumer recycled polyester\n- YKK recycled-polyester zip\n\n**Price:** \u00a348.00 GBP\n**Inventory:** 238 un",
+          "score": 0.7119,
+          "source": "pentatonic-baseline",
+          "doc_id": "sku-laptop-sleeve-13"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 3638.9658599800896,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 361,
+      "query_tokens": 16,
+      "context_tokens": 345,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "sku-coffee-cup-microwave",
+      "query": "Can I microwave the Loop coffee cup?",
+      "answer": "# Loop Reusable Coffee Cup 8oz \u2014 SKU LP-CUP-008\n\n**Brand:** Loop\n**Category:** Drinkware / Coffee\n**Capacity:** 8oz (240ml)\n\n**Material composition:**\n- Body: 100% plant-based PLA (corn-derived)\n- Silicone sleeve: food-grade silicone (not bio-based)\n- Lid: BPA-free polypropylene (recycled post-industrial)\n\n**Price:** \u00a312.50 GBP\n**Inventory:** 2,104 units UK, 1,876 units EU\n**Dishwasher safe:** Top rack only\n**Lifespan:** ~2 years regular use, then return for closed-loop composting\n**Note:** Not microwave-safe due to PLA degradation above 60\u00b0C.\n---\n# Loop Reusable Coffee Cup 8oz \u2014 SKU LP-CUP-008\n\n**Brand:** Loop\n**Category:** Drinkware / Coffee\n**Capacity:** 8oz (240ml)\n\n**Material composition:**\n- Body: 100% plant-based PLA (corn-derived)\n- Silicone sleeve: food-grade silicone (not bio-based)\n- Lid: BPA-free polypropylene (recycled post-industrial)\n\n**Price:** \u00a312.50 GBP\n**Inventory:** 2,104 units UK, 1,876 units EU\n**Dishwasher safe:** Top rack only\n**Lifespan:** ~2 years regular use, then return for closed-loop composting\n**Note:** Not\n---\n# Canvas Tote Bag Large \u2014 SKU CTB-LG-001\n\n**Brand:** Fern\n**Category:** Bags / Totes\n**Dimensions:** 38cm \u00d7 42cm \u00d7 12cm (handle drop 25cm)\n**Capacity:** 16 litres\n\n**Material composition:**\n- 100% organic cotton canvas, 340 gsm\n- Handles: woven cotton webbing, reinforced with bartack stitching\n\n**Price:** \u00a322.00 GBP\n**Inventory:** 1,580 units UK\n**Print options:** Blank, Logo, Custom (+\u00a35 per unit, MOQ 12)\n**Max load:** 15kg",
+      "hits": [
+        {
+          "text": "# Loop Reusable Coffee Cup 8oz \u2014 SKU LP-CUP-008\n\n**Brand:** Loop\n**Category:** Drinkware / Coffee\n**Capacity:** 8oz (240ml)\n\n**Material composition:**\n- Body: 100% plant-based PLA (corn-derived)\n- Silicone sleeve: food-grade silicone (not bio-based)\n- Lid: BPA-free polypropylene (recycled post-industrial)\n\n**Price:** \u00a312.50 GBP\n**Inventory:** 2,104 units UK, 1,876 units EU\n**Dishwasher safe:** Top",
+          "score": 0.6775,
+          "source": "pentatonic-baseline",
+          "doc_id": "sku-coffee-cup-reusable"
+        },
+        {
+          "text": "# Loop Reusable Coffee Cup 8oz \u2014 SKU LP-CUP-008\n\n**Brand:** Loop\n**Category:** Drinkware / Coffee\n**Capacity:** 8oz (240ml)\n\n**Material composition:**\n- Body: 100% plant-based PLA (corn-derived)\n- Silicone sleeve: food-grade silicone (not bio-based)\n- Lid: BPA-free polypropylene (recycled post-industrial)\n\n**Price:** \u00a312.50 GBP\n**Inventory:** 2,104 units UK, 1,876 units EU\n**Dishwasher safe:** Top",
+          "score": 0.6649,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "sku-coffee-cup-reusable"
+        },
+        {
+          "text": "# Canvas Tote Bag Large \u2014 SKU CTB-LG-001\n\n**Brand:** Fern\n**Category:** Bags / Totes\n**Dimensions:** 38cm \u00d7 42cm \u00d7 12cm (handle drop 25cm)\n**Capacity:** 16 litres\n\n**Material composition:**\n- 100% organic cotton canvas, 340 gsm\n- Handles: woven cotton webbing, reinforced with bartack stitching\n\n**Price:** \u00a322.00 GBP\n**Inventory:** 1,580 units UK\n**Print options:** Blank, Logo, Custom (+\u00a35 per unit",
+          "score": 0.4398,
+          "source": "pentatonic-baseline",
+          "doc_id": "sku-tote-canvas-large"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1191.9700440193992,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 446,
+      "query_tokens": 8,
+      "context_tokens": 438,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "sku-bin-liners-home-compost",
+      "query": "Are the Root bio bin liners home-compostable?",
+      "answer": "# Bio Bin Liners 30L (roll of 20) \u2014 SKU BBL-030-020\n\n**Brand:** Root\n**Category:** Home / Waste\n**Size:** 30 litres\n\n**Material composition:**\n- 100% PBAT + corn starch biopolymer\n- EN13432 certified industrially compostable\n- NOT home-compostable (requires industrial composting temperatures)\n\n**Price:** \u00a34.20 GBP per roll\n**Inventory:** 6,420 rolls UK, 2,100 rolls EU\n**Subscription:** Monthly auto-delivery available (\u00a33.60/roll)\n**Council scheme compatibility:** Check with your local authority\n---\n# Returns policy\n\nAll unused items returnable within 30 days of delivery for full refund.\nItems returned after 30 days but under 90 days: store credit only.\nTake-back programme is separate \u2014 applies to any lifetime-warrantied item at end of useful life.\nExceptions: custom-printed items (e.g. custom tote bags) and consumables (e.g. bin liners) are final sale.\n---\n# Loop Reusable Coffee Cup 8oz \u2014 SKU LP-CUP-008\n\n**Brand:** Loop\n**Category:** Drinkware / Coffee\n**Capacity:** 8oz (240ml)\n\n**Material composition:**\n- Body: 100% plant-based PLA (corn-derived)\n- Silicone sleeve: food-grade silicone (not bio-based)\n- Lid: BPA-free polypropylene (recycled post-industrial)\n\n**Price:** \u00a312.50 GBP\n**Inventory:** 2,104 units UK, 1,876 units EU\n**Dishwasher safe:** Top rack only\n**Lifespan:** ~2 years regular use, then return for closed-loop composting\n**Note:** Not",
+      "hits": [
+        {
+          "text": "# Bio Bin Liners 30L (roll of 20) \u2014 SKU BBL-030-020\n\n**Brand:** Root\n**Category:** Home / Waste\n**Size:** 30 litres\n\n**Material composition:**\n- 100% PBAT + corn starch biopolymer\n- EN13432 certified industrially compostable\n- NOT home-compostable (requires industrial composting temperatures)\n\n**Price:** \u00a34.20 GBP per roll\n**Inventory:** 6,420 rolls UK, 2,100 rolls EU\n**Subscription:** Monthly aut",
+          "score": 0.7387,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "sku-biodegradable-trash-bags"
+        },
+        {
+          "text": "# Returns policy\n\nAll unused items returnable within 30 days of delivery for full refund.\nItems returned after 30 days but under 90 days: store credit only.\nTake-back programme is separate \u2014 applies to any lifetime-warrantied item at end of useful life.\nExceptions: custom-printed items (e.g. custom tote bags) and consumables (e.g. bin liners) are final sale.\n",
+          "score": 0.4982,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "policy-returns-30day"
+        },
+        {
+          "text": "# Loop Reusable Coffee Cup 8oz \u2014 SKU LP-CUP-008\n\n**Brand:** Loop\n**Category:** Drinkware / Coffee\n**Capacity:** 8oz (240ml)\n\n**Material composition:**\n- Body: 100% plant-based PLA (corn-derived)\n- Silicone sleeve: food-grade silicone (not bio-based)\n- Lid: BPA-free polypropylene (recycled post-industrial)\n\n**Price:** \u00a312.50 GBP\n**Inventory:** 2,104 units UK, 1,876 units EU\n**Dishwasher safe:** Top",
+          "score": 0.3996,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "sku-coffee-cup-reusable"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1496.16486299783,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 378,
+      "query_tokens": 11,
+      "context_tokens": 367,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "policy-custom-tote-return",
+      "query": "Can I return a custom-printed tote bag?",
+      "answer": "# Canvas Tote Bag Large \u2014 SKU CTB-LG-001\n\n**Brand:** Fern\n**Category:** Bags / Totes\n**Dimensions:** 38cm \u00d7 42cm \u00d7 12cm (handle drop 25cm)\n**Capacity:** 16 litres\n\n**Material composition:**\n- 100% organic cotton canvas, 340 gsm\n- Handles: woven cotton webbing, reinforced with bartack stitching\n\n**Price:** \u00a322.00 GBP\n**Inventory:** 1,580 units UK\n**Print options:** Blank, Logo, Custom (+\u00a35 per unit, MOQ 12)\n**Max load:** 15kg\n---\n# Canvas Tote Bag Large \u2014 SKU CTB-LG-001\n\n**Brand:** Fern\n**Category:** Bags / Totes\n**Dimensions:** 38cm \u00d7 42cm \u00d7 12cm (handle drop 25cm)\n**Capacity:** 16 litres\n\n**Material composition:**\n- 100% organic cotton canvas, 340 gsm\n- Handles: woven cotton webbing, reinforced with bartack stitching\n\n**Price:** \u00a322.00 GBP\n**Inventory:** 1,580 units UK\n**Print options:** Blank, Logo, Custom (+\u00a35 per unit, MOQ 12)\n**Max load:** 15kg\n---\n# Returns policy\n\nAll unused items returnable within 30 days of delivery for full refund.\nItems returned after 30 days but under 90 days: store credit only.\nTake-back programme is separate \u2014 applies to any lifetime-warrantied item at end of useful life.\nExceptions: custom-printed items (e.g. custom tote bags) and consumables (e.g. bin liners) are final sale.",
+      "hits": [
+        {
+          "text": "# Canvas Tote Bag Large \u2014 SKU CTB-LG-001\n\n**Brand:** Fern\n**Category:** Bags / Totes\n**Dimensions:** 38cm \u00d7 42cm \u00d7 12cm (handle drop 25cm)\n**Capacity:** 16 litres\n\n**Material composition:**\n- 100% organic cotton canvas, 340 gsm\n- Handles: woven cotton webbing, reinforced with bartack stitching\n\n**Price:** \u00a322.00 GBP\n**Inventory:** 1,580 units UK\n**Print options:** Blank, Logo, Custom (+\u00a35 per unit",
+          "score": 0.7286657103477269,
+          "source": "pentatonic-baseline",
+          "doc_id": "sku-tote-canvas-large"
+        },
+        {
+          "text": "# Canvas Tote Bag Large \u2014 SKU CTB-LG-001\n\n**Brand:** Fern\n**Category:** Bags / Totes\n**Dimensions:** 38cm \u00d7 42cm \u00d7 12cm (handle drop 25cm)\n**Capacity:** 16 litres\n\n**Material composition:**\n- 100% organic cotton canvas, 340 gsm\n- Handles: woven cotton webbing, reinforced with bartack stitching\n\n**Price:** \u00a322.00 GBP\n**Inventory:** 1,580 units UK\n**Print options:** Blank, Logo, Custom (+\u00a35 per unit",
+          "score": 0.6998,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "sku-tote-canvas-large"
+        },
+        {
+          "text": "# Returns policy\n\nAll unused items returnable within 30 days of delivery for full refund.\nItems returned after 30 days but under 90 days: store credit only.\nTake-back programme is separate \u2014 applies to any lifetime-warrantied item at end of useful life.\nExceptions: custom-printed items (e.g. custom tote bags) and consumables (e.g. bin liners) are final sale.\n",
+          "score": 0.6825,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "policy-returns-30day"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 646.2245029979385,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 365,
+      "query_tokens": 10,
+      "context_tokens": 355,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "price-tee-subscription",
+      "query": "What's the subscription price for the Luna water bottle compared to standard?",
+      "answer": "# Luna Water Bottle 500ml \u2014 SKU LUN-BTL-042\n\n**Brand:** Luna\n**Category:** Drinkware / Bottles\n**Capacity:** 500ml\n\n**Material composition:**\n- 100% food-grade 304 stainless steel (65% recycled content)\n- Lid: bio-based silicone (sugarcane derivative)\n\n**Price:** \u00a318.50 GBP\n**Inventory:** 87 units in stock (UK), 412 units (EU DC Eindhoven)\n**Colours available:** Matte black, Sage green, Terracotta\n**Replacement parts:** Lid (\u00a33.50), Silicone seal (\u00a30.90)\n**Warranty:** Lifetime on body, 2 years on lid\n---\n# Luna Water Bottle 500ml \u2014 SKU LUN-BTL-042\n\n**Brand:** Luna\n**Category:** Drinkware / Bottles\n**Capacity:** 500ml\n\n**Material composition:**\n- 100% food-grade 304 stainless steel (65% recycled content)\n- Lid: bio-based silicone (sugarcane derivative)\n\n**Price:** \u00a318.50 GBP\n**Inventory:** 87 units in stock (UK), 412 units (EU DC Eindhoven)\n**Colours available:** Matte black, Sage green, Terracotta\n**Replacement parts:** Lid (\u00a33.50), Silicone seal (\u00a30.90)\n**Warranty:** Lifetime on body, 2 years o\n---\n# Pricing tiers across catalogue\n\nStandard: list price as shown on PDP.\nSubscription: auto-ships every N weeks, typically 15% off standard.\nBulk (B2B): tiered discount starting at MOQ 50 units, call sales@pentatonic.com.\nTake-back credit: 50% of original price as store credit when returned via take-back programme.",
+      "hits": [
+        {
+          "text": "# Luna Water Bottle 500ml \u2014 SKU LUN-BTL-042\n\n**Brand:** Luna\n**Category:** Drinkware / Bottles\n**Capacity:** 500ml\n\n**Material composition:**\n- 100% food-grade 304 stainless steel (65% recycled content)\n- Lid: bio-based silicone (sugarcane derivative)\n\n**Price:** \u00a318.50 GBP\n**Inventory:** 87 units in stock (UK), 412 units (EU DC Eindhoven)\n**Colours available:** Matte black, Sage green, Terracotta",
+          "score": 0.6879,
+          "source": "pentatonic-baseline",
+          "doc_id": "sku-luna-bottle-42"
+        },
+        {
+          "text": "# Luna Water Bottle 500ml \u2014 SKU LUN-BTL-042\n\n**Brand:** Luna\n**Category:** Drinkware / Bottles\n**Capacity:** 500ml\n\n**Material composition:**\n- 100% food-grade 304 stainless steel (65% recycled content)\n- Lid: bio-based silicone (sugarcane derivative)\n\n**Price:** \u00a318.50 GBP\n**Inventory:** 87 units in stock (UK), 412 units (EU DC Eindhoven)\n**Colours available:** Matte black, Sage green, Terracotta",
+          "score": 0.6715,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "sku-luna-bottle-42"
+        },
+        {
+          "text": "# Pricing tiers across catalogue\n\nStandard: list price as shown on PDP.\nSubscription: auto-ships every N weeks, typically 15% off standard.\nBulk (B2B): tiered discount starting at MOQ 50 units, call sales@pentatonic.com.\nTake-back credit: 50% of original price as store credit when returned via take-back programme.\n",
+          "score": 0.5732,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "price-tiers-all"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1172.6057999767363,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 384,
+      "query_tokens": 14,
+      "context_tokens": 370,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "price-sleeve-diff",
+      "query": "How much more does the 15\" Haven Laptop Sleeve cost than the 13\" variant?",
+      "answer": "# Haven Laptop Sleeve 15\" \u2014 SKU HVN-SLV-15\n\nAs HVN-SLV-13 but for 15\"-16\" laptops. Same materials, same construction.\n\n**Fits:** 15\" MacBook Air, 16\" MacBook Pro, 15.6\" Dell XPS, 15\" ThinkPad\n**Price:** \u00a358.00 GBP (\u00a310 more than 13\" variant)\n**Inventory:** 89 units UK, 54 units EU\n**Colours available:** Charcoal only (Oat and Ochre sold through)\n---\n# Compatibility note\n\nThe Haven Laptop Sleeve 13\" (HVN-SLV-13) does NOT fit the 14\" MacBook Pro \u2014 third-party dimensions exceed 31.5cm. Use the 15\" variant (HVN-SLV-15).\n---\n# Haven Laptop Sleeve 13\" \u2014 SKU HVN-SLV-13\n\n**Brand:** Haven\n**Category:** Bags / Laptop protection\n**Fits:** 13\" MacBook Air M2/M3, 13.6\" MacBook Air, 13\" Dell XPS, 13\" ThinkPad\n\n**Material composition:**\n- Outer: 100% recycled PET felt (from 12 plastic bottles per unit)\n- Inner lining: 100% post-consumer recycled polyester\n- YKK recycled-polyester zip\n\n**Price:** \u00a348.00 GBP\n**Inventory:** 238 units UK, 156 units EU\n**Colours available:** Charcoal, Oat, Ochre\n**Laptop diagonal max:** 13.6\" (third-party dimension 31.5cm \u00d7 22.5cm)",
+      "hits": [
+        {
+          "text": "# Haven Laptop Sleeve 15\" \u2014 SKU HVN-SLV-15\n\nAs HVN-SLV-13 but for 15\"-16\" laptops. Same materials, same construction.\n\n**Fits:** 15\" MacBook Air, 16\" MacBook Pro, 15.6\" Dell XPS, 15\" ThinkPad\n**Price:** \u00a358.00 GBP (\u00a310 more than 13\" variant)\n**Inventory:** 89 units UK, 54 units EU\n**Colours available:** Charcoal only (Oat and Ochre sold through)\n",
+          "score": 0.8031,
+          "source": "pentatonic-baseline",
+          "doc_id": "sku-laptop-sleeve-15"
+        },
+        {
+          "text": "# Compatibility note\n\nThe Haven Laptop Sleeve 13\" (HVN-SLV-13) does NOT fit the 14\" MacBook Pro \u2014 third-party dimensions exceed 31.5cm. Use the 15\" variant (HVN-SLV-15).\n",
+          "score": 0.7241,
+          "source": "pentatonic-baseline",
+          "doc_id": "compat-laptop-sleeve-macbook-pro-14"
+        },
+        {
+          "text": "# Haven Laptop Sleeve 13\" \u2014 SKU HVN-SLV-13\n\n**Brand:** Haven\n**Category:** Bags / Laptop protection\n**Fits:** 13\" MacBook Air M2/M3, 13.6\" MacBook Air, 13\" Dell XPS, 13\" ThinkPad\n\n**Material composition:**\n- Outer: 100% recycled PET felt (from 12 plastic bottles per unit)\n- Inner lining: 100% post-consumer recycled polyester\n- YKK recycled-polyester zip\n\n**Price:** \u00a348.00 GBP\n**Inventory:** 238 un",
+          "score": 0.7763911506631298,
+          "source": "pentatonic-baseline",
+          "doc_id": "sku-laptop-sleeve-13"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1124.7834069945384,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 364,
+      "query_tokens": 19,
+      "context_tokens": 345,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "multi-hop-kite-duotone",
+      "query": "I have a Duotone bar \u2014 will the Nomad Kite Harness v3 work with it out of the box?",
+      "answer": "# Compatibility note\n\nThe Nomad Kite Harness v3 (NMD-HRN-V3) ships with a standard spreader bar compatible with F-One and North bar systems. For Duotone or Core bar systems, the Duotone/Core adapter kit (NMD-ADPT-DC, \u00a3 18) is required.\n---\n# Nomad Kite Harness v3 \u2014 SKU NMD-HRN-V3\n\n**Brand:** Nomad Sports\n**Category:** Watersports / Kite surfing\n**Size range:** XS (26-28\"), S (28-30\"), M (30-32\"), L (32-34\"), XL (34-36\")\n\n**Material composition:**\n- Outer shell: 92% recycled nylon 6,6 (ghost-net source)\n- Foam padding: EVA (non-recycled)\n- Hardware: 316 stainless steel spreader bar\n\n**Price:** \u00a3145.00 GBP\n**Inventory:** M=out of stock, L=6 units, XL=12 units, XS/S=restock 2026-05-15\n**Repair service:** \u00a325 flat fee, turnaround 14 days\n**Compatibility:** F-One bar systems, North bar systems (adapter sold separately)\n---\n# Compatibility note\n\nThe Nomad Kite Harness v3 (NMD-HRN-V3) ships with a standard spreader bar compatible with F-One and North bar systems. For Duotone or Core bar systems, the Duotone/Core adapter kit (NMD-ADPT-DC, \u00a3 18) is required.",
+      "hits": [
+        {
+          "text": "# Compatibility note\n\nThe Nomad Kite Harness v3 (NMD-HRN-V3) ships with a standard spreader bar compatible with F-One and North bar systems. For Duotone or Core bar systems, the Duotone/Core adapter kit (NMD-ADPT-DC, \u00a3 18) is required.\n",
+          "score": 0.8478,
+          "source": "pentatonic-baseline",
+          "doc_id": "compat-kite-harness-bar"
+        },
+        {
+          "text": "# Nomad Kite Harness v3 \u2014 SKU NMD-HRN-V3\n\n**Brand:** Nomad Sports\n**Category:** Watersports / Kite surfing\n**Size range:** XS (26-28\"), S (28-30\"), M (30-32\"), L (32-34\"), XL (34-36\")\n\n**Material composition:**\n- Outer shell: 92% recycled nylon 6,6 (ghost-net source)\n- Foam padding: EVA (non-recycled)\n- Hardware: 316 stainless steel spreader bar\n\n**Price:** \u00a3145.00 GBP\n**Inventory:** M=out of stoc",
+          "score": 0.7028,
+          "source": "pentatonic-baseline",
+          "doc_id": "sku-kite-harness-v3"
+        },
+        {
+          "text": "# Compatibility note\n\nThe Nomad Kite Harness v3 (NMD-HRN-V3) ships with a standard spreader bar compatible with F-One and North bar systems. For Duotone or Core bar systems, the Duotone/Core adapter kit (NMD-ADPT-DC, \u00a3 18) is required.\n",
+          "score": 0.75,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "compat-kite-harness-bar"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1137.9155610047746,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 346,
+      "query_tokens": 25,
+      "context_tokens": 321,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "multi-hop-takeback-credit",
+      "query": "If I return an Atlas Phone Shell via take-back after 2 years, how much store credit do I get?",
+      "answer": "# Atlas Phone Shell \u2014 SKU ATL-PHN-001\n\n**Brand:** Atlas Circular\n**Category:** Mobile accessories / Phone cases\n**Compatible with:** iPhone 15, iPhone 15 Pro\n\n**Material composition:**\n- 68% recycled ocean-bound polypropylene\n- 24% recycled polycarbonate (post-consumer)\n- 8% natural calcium carbonate\n\n**Price:** \u00a329.00 GBP (standard) / \u00a324.00 (subscription)\n**Inventory:** 1,240 units in stock at UK fulfilment (Worthing DC)\n**Take-back:** Yes \u2014 returnable for 50% credit after 18 months\n**Certification:** Cradle to Cradle Bronze, MADE-BY Class B\n---\n# Atlas Phone Shell \u2014 SKU ATL-PHN-001\n\n**Brand:** Atlas Circular\n**Category:** Mobile accessories / Phone cases\n**Compatible with:** iPhone 15, iPhone 15 Pro\n\n**Material composition:**\n- 68% recycled ocean-bound polypropylene\n- 24% recycled polycarbonate (post-consumer)\n- 8% natural calcium carbonate\n\n**Price:** \u00a329.00 GBP (standard) / \u00a324.00 (subscription)\n**Inventory:** 1,240 units in stock at UK fulfilment (Worthing DC)\n**Take-back:** Yes \u2014 returnable for 50% credit after 18 months\n**Certific\n---\n# Pricing tiers across catalogue\n\nStandard: list price as shown on PDP.\nSubscription: auto-ships every N weeks, typically 15% off standard.\nBulk (B2B): tiered discount starting at MOQ 50 units, call sales@pentatonic.com.\nTake-back credit: 50% of original price as store credit when returned via take-back programme.",
+      "hits": [
+        {
+          "text": "# Atlas Phone Shell \u2014 SKU ATL-PHN-001\n\n**Brand:** Atlas Circular\n**Category:** Mobile accessories / Phone cases\n**Compatible with:** iPhone 15, iPhone 15 Pro\n\n**Material composition:**\n- 68% recycled ocean-bound polypropylene\n- 24% recycled polycarbonate (post-consumer)\n- 8% natural calcium carbonate\n\n**Price:** \u00a329.00 GBP (standard) / \u00a324.00 (subscription)\n**Inventory:** 1,240 units in stock at U",
+          "score": 0.7349,
+          "source": "pentatonic-baseline",
+          "doc_id": "sku-atlas-phone-01"
+        },
+        {
+          "text": "# Atlas Phone Shell \u2014 SKU ATL-PHN-001\n\n**Brand:** Atlas Circular\n**Category:** Mobile accessories / Phone cases\n**Compatible with:** iPhone 15, iPhone 15 Pro\n\n**Material composition:**\n- 68% recycled ocean-bound polypropylene\n- 24% recycled polycarbonate (post-consumer)\n- 8% natural calcium carbonate\n\n**Price:** \u00a329.00 GBP (standard) / \u00a324.00 (subscription)\n**Inventory:** 1,240 units in stock at U",
+          "score": 0.75,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "sku-atlas-phone-01"
+        },
+        {
+          "text": "# Pricing tiers across catalogue\n\nStandard: list price as shown on PDP.\nSubscription: auto-ships every N weeks, typically 15% off standard.\nBulk (B2B): tiered discount starting at MOQ 50 units, call sales@pentatonic.com.\nTake-back credit: 50% of original price as store credit when returned via take-back programme.\n",
+          "score": 0.75,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "price-tiers-all"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/2: ['14.50']; forbidden substring(s) present: ['\u00a329', '\u00a324']",
+      "search_time_ms": 1128.3271799911745,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 391,
+      "query_tokens": 23,
+      "context_tokens": 368,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "rubric-recommend-kitesurf-bag",
+      "query": "I'm heading to Worthing for a kite session and need to carry my 15\" MacBook and some kit. What would you recommend from the catalogue?",
+      "answer": "# Atlas Phone Shell \u2014 SKU ATL-PHN-001\n\n**Brand:** Atlas Circular\n**Category:** Mobile accessories / Phone cases\n**Compatible with:** iPhone 15, iPhone 15 Pro\n\n**Material composition:**\n- 68% recycled ocean-bound polypropylene\n- 24% recycled polycarbonate (post-consumer)\n- 8% natural calcium carbonate\n\n**Price:** \u00a329.00 GBP (standard) / \u00a324.00 (subscription)\n**Inventory:** 1,240 units in stock at UK fulfilment (Worthing DC)\n**Take-back:** Yes \u2014 returnable for 50% credit after 18 months\n**Certification:** Cradle to Cradle Bronze, MADE-BY Class B\n---\n<!-- doc_id: customer-note-jareth-kiter -->\nCustomer note \u2014 Jareth Kim: kite surfer, Worthing-based. Typically orders kite-related gear. Previously flagged harness size L as correct.\n---\nAs HVN-SLV-13 but for 15\"-16\" laptops. Same materials, same construction.\n\n**Fits:** 15\" MacBook Air, 16\" MacBook Pro, 15.6\" Dell XPS, 15\" ThinkPad\n**Price:** \u00a358.00 GBP (\u00a310 more than 13\" variant)\n**Inventory:** 89 units UK, 54 units EU\n**Colours available:** Charcoal only (Oat and Ochre sold through)",
+      "hits": [
+        {
+          "text": "# Atlas Phone Shell \u2014 SKU ATL-PHN-001\n\n**Brand:** Atlas Circular\n**Category:** Mobile accessories / Phone cases\n**Compatible with:** iPhone 15, iPhone 15 Pro\n\n**Material composition:**\n- 68% recycled ocean-bound polypropylene\n- 24% recycled polycarbonate (post-consumer)\n- 8% natural calcium carbonate\n\n**Price:** \u00a329.00 GBP (standard) / \u00a324.00 (subscription)\n**Inventory:** 1,240 units in stock at U",
+          "score": 0.491,
+          "source": "pentatonic-baseline",
+          "doc_id": "sku-atlas-phone-01"
+        },
+        {
+          "text": "<!-- doc_id: customer-note-jareth-kiter -->\nCustomer note \u2014 Jareth Kim: kite surfer, Worthing-based. Typically orders kite-related gear. Previously flagged harness size L as correct.",
+          "score": 0.4255,
+          "source": "pentatonic-baseline:L6_documents",
+          "doc_id": "customer-note-jareth-kiter"
+        },
+        {
+          "text": "As HVN-SLV-13 but for 15\"-16\" laptops. Same materials, same construction.\n\n**Fits:** 15\" MacBook Air, 16\" MacBook Pro, 15.6\" Dell XPS, 15\" ThinkPad\n**Price:** \u00a358.00 GBP (\u00a310 more than 13\" variant)\n**Inventory:** 89 units UK, 54 units EU\n**Colours available:** Charcoal only (Oat and Ochre sold through)",
+          "score": 0.4177,
+          "source": "pentatonic-baseline:L6_documents",
+          "doc_id": "sku-laptop-sleeve-15"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "judge-error: judge did not return parseable JSON",
+      "search_time_ms": 1122.3908929969184,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 325,
+      "query_tokens": 31,
+      "context_tokens": 294,
+      "judge_tokens_in": 635,
+      "judge_tokens_out": 43,
+      "judge_latency_ms": 1105.8280489742756
+    },
+    {
+      "task_id": "rubric-plastic-free-tee",
+      "query": "Which tees in the catalogue are completely plastic-free?",
+      "answer": "# Pricing tiers across catalogue\n\nStandard: list price as shown on PDP.\nSubscription: auto-ships every N weeks, typically 15% off standard.\nBulk (B2B): tiered discount starting at MOQ 50 units, call sales@pentatonic.com.\nTake-back credit: 50% of original price as store credit when returned via take-back programme.\n---\n**Brand:** Pentatonic\n**Category:** Apparel / T-shirts\n**Fit:** Unisex regular\n**Size range:** XS, S, M, L, XL, XXL\n\n**Material composition:**\n- 100% GOTS-certified organic cotton, 180 gsm\n- Dyeing: low-impact reactive dye, closed-loop water system\n\n**Price:** \u00a328.00 GBP\n**Inventory:** S=48, M=136, L=94, XL=22, XS=0 (discontinued), XXL=0 (discontinued)\n**Country of origin:** Portugal (CITEVE-certified mill)\n**Care:** Wash cold, line dry; no tumble dry\n---\n<!-- doc_id: sku-cotton-tee-black -->",
+      "hits": [
+        {
+          "text": "# Pricing tiers across catalogue\n\nStandard: list price as shown on PDP.\nSubscription: auto-ships every N weeks, typically 15% off standard.\nBulk (B2B): tiered discount starting at MOQ 50 units, call sales@pentatonic.com.\nTake-back credit: 50% of original price as store credit when returned via take-back programme.\n",
+          "score": 0.478,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "price-tiers-all"
+        },
+        {
+          "text": "**Brand:** Pentatonic\n**Category:** Apparel / T-shirts\n**Fit:** Unisex regular\n**Size range:** XS, S, M, L, XL, XXL\n\n**Material composition:**\n- 100% GOTS-certified organic cotton, 180 gsm\n- Dyeing: low-impact reactive dye, closed-loop water system\n\n**Price:** \u00a328.00 GBP\n**Inventory:** S=48, M=136, L=94, XL=22, XS=0 (discontinued), XXL=0 (discontinued)\n**Country of origin:** Portugal (CITEVE-certi",
+          "score": 0.4328,
+          "source": "pentatonic-baseline:L6_documents",
+          "doc_id": "sku-cotton-tee-black"
+        },
+        {
+          "text": "<!-- doc_id: sku-cotton-tee-black -->",
+          "score": 0.4227,
+          "source": "pentatonic-baseline:L6_documents",
+          "doc_id": "sku-cotton-tee-black"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "judge=0.00 \u2014 The answer does not mention plastic-free tees at all.",
+      "search_time_ms": 1084.7309039963875,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 247,
+      "query_tokens": 11,
+      "context_tokens": 236,
+      "judge_tokens_in": 543,
+      "judge_tokens_out": 26,
+      "judge_latency_ms": 761.6074280440807
+    },
+    {
+      "task_id": "rubric-cc-certified-items",
+      "query": "Do any items in the catalogue have Cradle to Cradle certification?",
+      "answer": "# Atlas Phone Shell \u2014 SKU ATL-PHN-001\n\n**Brand:** Atlas Circular\n**Category:** Mobile accessories / Phone cases\n**Compatible with:** iPhone 15, iPhone 15 Pro\n\n**Material composition:**\n- 68% recycled ocean-bound polypropylene\n- 24% recycled polycarbonate (post-consumer)\n- 8% natural calcium carbonate\n\n**Price:** \u00a329.00 GBP (standard) / \u00a324.00 (subscription)\n**Inventory:** 1,240 units in stock at UK fulfilment (Worthing DC)\n**Take-back:** Yes \u2014 returnable for 50% credit after 18 months\n**Certific\n---\n# Atlas Phone Shell \u2014 SKU ATL-PHN-001\n\n**Brand:** Atlas Circular\n**Category:** Mobile accessories / Phone cases\n**Compatible with:** iPhone 15, iPhone 15 Pro\n\n**Material composition:**\n- 68% recycled ocean-bound polypropylene\n- 24% recycled polycarbonate (post-consumer)\n- 8% natural calcium carbonate\n\n**Price:** \u00a329.00 GBP (standard) / \u00a324.00 (subscription)\n**Inventory:** 1,240 units in stock at UK fulfilment (Worthing DC)\n**Take-back:** Yes \u2014 returnable for 50% credit after 18 months\n**Certification:** Cradle to Cradle Bronze, MADE-BY Class B\n---\n# Returns policy\n\nAll unused items returnable within 30 days of delivery for full refund.\nItems returned after 30 days but under 90 days: store credit only.\nTake-back programme is separate \u2014 applies to any lifetime-warrantied item at end of useful life.\nExceptions: custom-printed items (e.g. custom tote bags) and consumables (e.g. bin liners) are final sale.",
+      "hits": [
+        {
+          "text": "# Atlas Phone Shell \u2014 SKU ATL-PHN-001\n\n**Brand:** Atlas Circular\n**Category:** Mobile accessories / Phone cases\n**Compatible with:** iPhone 15, iPhone 15 Pro\n\n**Material composition:**\n- 68% recycled ocean-bound polypropylene\n- 24% recycled polycarbonate (post-consumer)\n- 8% natural calcium carbonate\n\n**Price:** \u00a329.00 GBP (standard) / \u00a324.00 (subscription)\n**Inventory:** 1,240 units in stock at U",
+          "score": 0.5961,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "sku-atlas-phone-01"
+        },
+        {
+          "text": "# Atlas Phone Shell \u2014 SKU ATL-PHN-001\n\n**Brand:** Atlas Circular\n**Category:** Mobile accessories / Phone cases\n**Compatible with:** iPhone 15, iPhone 15 Pro\n\n**Material composition:**\n- 68% recycled ocean-bound polypropylene\n- 24% recycled polycarbonate (post-consumer)\n- 8% natural calcium carbonate\n\n**Price:** \u00a329.00 GBP (standard) / \u00a324.00 (subscription)\n**Inventory:** 1,240 units in stock at U",
+          "score": 0.5699,
+          "source": "pentatonic-baseline",
+          "doc_id": "sku-atlas-phone-01"
+        },
+        {
+          "text": "# Returns policy\n\nAll unused items returnable within 30 days of delivery for full refund.\nItems returned after 30 days but under 90 days: store credit only.\nTake-back programme is separate \u2014 applies to any lifetime-warrantied item at end of useful life.\nExceptions: custom-printed items (e.g. custom tote bags) and consumables (e.g. bin liners) are final sale.\n",
+          "score": 0.5634,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "policy-returns-30day"
+        }
+      ],
+      "correct": false,
+      "score": 0.5,
+      "grading_notes": "judge=0.50 \u2014 The Atlas Phone Shell is named with Cradle to Cradle Bronze certification, but the 'Bronze' tier is not explicitly menti",
+      "search_time_ms": 1132.1079850022215,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 388,
+      "query_tokens": 14,
+      "context_tokens": 374,
+      "judge_tokens_in": 662,
+      "judge_tokens_out": 44,
+      "judge_latency_ms": 852.7362680137157
+    },
+    {
+      "task_id": "entity-recycled-content-high",
+      "query": "Which items in the catalogue use at least 50% recycled material?",
+      "answer": "# Pricing tiers across catalogue\n\nStandard: list price as shown on PDP.\nSubscription: auto-ships every N weeks, typically 15% off standard.\nBulk (B2B): tiered discount starting at MOQ 50 units, call sales@pentatonic.com.\nTake-back credit: 50% of original price as store credit when returned via take-back programme.\n---\n# Returns policy\n\nAll unused items returnable within 30 days of delivery for full refund.\nItems returned after 30 days but under 90 days: store credit only.\nTake-back programme is separate \u2014 applies to any lifetime-warrantied item at end of useful life.\nExceptions: custom-printed items (e.g. custom tote bags) and consumables (e.g. bin liners) are final sale.\n---\n# Loop Reusable Coffee Cup 8oz \u2014 SKU LP-CUP-008\n\n**Brand:** Loop\n**Category:** Drinkware / Coffee\n**Capacity:** 8oz (240ml)\n\n**Material composition:**\n- Body: 100% plant-based PLA (corn-derived)\n- Silicone sleeve: food-grade silicone (not bio-based)\n- Lid: BPA-free polypropylene (recycled post-industrial)\n\n**Price:** \u00a312.50 GBP\n**Inventory:** 2,104 units UK, 1,876 units EU\n**Dishwasher safe:** Top rack only\n**Lifespan:** ~2 years regular use, then return for closed-loop composting\n**Note:** Not",
+      "hits": [
+        {
+          "text": "# Pricing tiers across catalogue\n\nStandard: list price as shown on PDP.\nSubscription: auto-ships every N weeks, typically 15% off standard.\nBulk (B2B): tiered discount starting at MOQ 50 units, call sales@pentatonic.com.\nTake-back credit: 50% of original price as store credit when returned via take-back programme.\n",
+          "score": 0.5399,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "price-tiers-all"
+        },
+        {
+          "text": "# Returns policy\n\nAll unused items returnable within 30 days of delivery for full refund.\nItems returned after 30 days but under 90 days: store credit only.\nTake-back programme is separate \u2014 applies to any lifetime-warrantied item at end of useful life.\nExceptions: custom-printed items (e.g. custom tote bags) and consumables (e.g. bin liners) are final sale.\n",
+          "score": 0.5335,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "policy-returns-30day"
+        },
+        {
+          "text": "# Loop Reusable Coffee Cup 8oz \u2014 SKU LP-CUP-008\n\n**Brand:** Loop\n**Category:** Drinkware / Coffee\n**Capacity:** 8oz (240ml)\n\n**Material composition:**\n- Body: 100% plant-based PLA (corn-derived)\n- Silicone sleeve: food-grade silicone (not bio-based)\n- Lid: BPA-free polypropylene (recycled post-industrial)\n\n**Price:** \u00a312.50 GBP\n**Inventory:** 2,104 units UK, 1,876 units EU\n**Dishwasher safe:** Top",
+          "score": 0.5056,
+          "source": "pentatonic-baseline:L0_workspace_bm25",
+          "doc_id": "sku-coffee-cup-reusable"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "no expected_substrings set",
+      "search_time_ms": 1140.872796997428,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 321,
+      "query_tokens": 14,
+      "context_tokens": 307,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    }
+  ]
+}

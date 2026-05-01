@@ -1,0 +1,1018 @@
+{
+  "bench": "customer-support",
+  "stack": "pentatonic-memory-latest",
+  "n_tasks": 20,
+  "n_correct": 1,
+  "accuracy": 0.05,
+  "mean_score": 0.05,
+  "p50_search_ms": 31.97749049286358,
+  "p95_search_ms": 48.48551471950486,
+  "total_tokens_in": 0,
+  "total_tokens_out": 0,
+  "total_usd": 0.0,
+  "by_tag": {
+    "factoid": {
+      "n": 10,
+      "mean_score": 0.1,
+      "accuracy": 0.1
+    },
+    "customer": {
+      "n": 8,
+      "mean_score": 0.125,
+      "accuracy": 0.125
+    },
+    "multi-doc": {
+      "n": 6,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "rma": {
+      "n": 3,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "policy": {
+      "n": 5,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "escalation": {
+      "n": 4,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "rubric": {
+      "n": 3,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "multi-hop": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "entity": {
+      "n": 2,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    }
+  },
+  "extra": {
+    "ingest_ms": 42532.69734699279,
+    "grading": "substring",
+    "limit": 3,
+    "tokens": {
+      "corpus_tokens": 1227,
+      "query_tokens": 283,
+      "context_tokens": 871,
+      "retrieval_tokens": 1154,
+      "naive_tokens": 24823,
+      "saved_tokens": 23669,
+      "reduction_pct": 0.9535108568666156,
+      "mean_retrieval_tokens_per_task": 57.7,
+      "tokenizer": "cl100k_base",
+      "per_task": {
+        "order-mina-count": {
+          "query": 11,
+          "context": 44,
+          "retrieval": 55,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "order-mina-latest": {
+          "query": 13,
+          "context": 44,
+          "retrieval": 57,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "rma-mina-sleeve-reason": {
+          "query": 17,
+          "context": 43,
+          "retrieval": 60,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "rma-mina-lid-resolution": {
+          "query": 11,
+          "context": 49,
+          "retrieval": 60,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "jareth-harness-bar-followup": {
+          "query": 15,
+          "context": 35,
+          "retrieval": 50,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "jareth-second-order": {
+          "query": 11,
+          "context": 44,
+          "retrieval": 55,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "priya-custom-status": {
+          "query": 11,
+          "context": 37,
+          "retrieval": 48,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "priya-goodwill-offered": {
+          "query": 9,
+          "context": 36,
+          "retrieval": 45,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "policy-custom-return": {
+          "query": 11,
+          "context": 43,
+          "retrieval": 54,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "policy-40day-return": {
+          "query": 18,
+          "context": 44,
+          "retrieval": 62,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "escalation-400gbp-full-refund": {
+          "query": 20,
+          "context": 38,
+          "retrieval": 58,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "escalation-goodwill-20pct-tier": {
+          "query": 15,
+          "context": 29,
+          "retrieval": 44,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "mina-vip-status": {
+          "query": 10,
+          "context": 75,
+          "retrieval": 85,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "mina-preferences": {
+          "query": 11,
+          "context": 33,
+          "retrieval": 44,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "priya-agent-guidance": {
+          "query": 16,
+          "context": 44,
+          "retrieval": 60,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "rubric-mina-warranty-recommendation": {
+          "query": 18,
+          "context": 45,
+          "retrieval": 63,
+          "judge_in": 378,
+          "judge_out": 41,
+          "judge_latency_ms": 1245.5484809875488
+        },
+        "rubric-jareth-escalation": {
+          "query": 30,
+          "context": 40,
+          "retrieval": 70,
+          "judge_in": 398,
+          "judge_out": 37,
+          "judge_latency_ms": 1219.425511032343
+        },
+        "rubric-priya-delayed-custom": {
+          "query": 16,
+          "context": 49,
+          "retrieval": 65,
+          "judge_in": 360,
+          "judge_out": 31,
+          "judge_latency_ms": 577.4644939899445
+        },
+        "entity-mina-orders": {
+          "query": 10,
+          "context": 56,
+          "retrieval": 66,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "entity-all-rmas": {
+          "query": 10,
+          "context": 43,
+          "retrieval": 53,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        }
+      },
+      "judge_tokens_in": 1136,
+      "judge_tokens_out": 109,
+      "judge_calls": 3,
+      "judge_mean_latency_ms": 1014.1461620032787
+    },
+    "cost_usd": {
+      "assumed_completion_tokens_per_task": 100,
+      "rates": {
+        "input_per_1k": 0.0025,
+        "output_per_1k": 0.01,
+        "model": "gpt-4o"
+      },
+      "retrieval_usd_in": 0.0028850000000000004,
+      "retrieval_usd_out": 0.02,
+      "retrieval_usd_total": 0.022885000000000003,
+      "naive_usd_total": 0.0820575,
+      "saved_usd": 0.0591725,
+      "saved_usd_per_1k_tasks": 2.9586250000000005
+    }
+  },
+  "task_results": [
+    {
+      "task_id": "order-mina-count",
+      "query": "How many orders has Mina Okafor placed?",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\nreporting-svc consumes OrderPaid for financial reports",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7348100455668961,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.714597754640188,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        },
+        {
+          "text": "reporting-svc consumes OrderPaid for financial reports",
+          "score": 0.7145555501636411,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_778aa40d-6c20-4495-96d9-286a57b53f7a"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['2']",
+      "search_time_ms": 48.87774802045897,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 55,
+      "query_tokens": 11,
+      "context_tokens": 44,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "order-mina-latest",
+      "query": "What was in Mina Okafor's most recent order?",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\nemail-svc consumes OrderPaid for the receipt email",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7523848879261325,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7290429542492324,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        },
+        {
+          "text": "email-svc consumes OrderPaid for the receipt email",
+          "score": 0.726473237442234,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_8decb311-57b6-4b78-9dd6-3683a441963f"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['Luna', 'Loop']",
+      "search_time_ms": 31.01924099610187,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 57,
+      "query_tokens": 13,
+      "context_tokens": 44,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "rma-mina-sleeve-reason",
+      "query": "Why did Mina open an RMA on order 2026-0142?",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nemail-svc consumes OrderPaid for the receipt email",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7412810721806334,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.738627617800018,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "email-svc consumes OrderPaid for the receipt email",
+          "score": 0.7263630342430126,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_8decb311-57b6-4b78-9dd6-3683a441963f"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['wrong colour', 'Oat']",
+      "search_time_ms": 34.496553998906165,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 60,
+      "query_tokens": 17,
+      "context_tokens": 43,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "rma-mina-lid-resolution",
+      "query": "How was Mina's Luna bottle lid complaint resolved?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\norder-svc marks order as paid, emits OrderPaid on pubsub\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.6924995919896444,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.6881876638919722,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.6774820029527524,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 3/3: ['free', 'replacement', 'warranty']",
+      "search_time_ms": 30.18009799416177,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 60,
+      "query_tokens": 11,
+      "context_tokens": 49,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "jareth-harness-bar-followup",
+      "query": "Did Jareth's kite harness work with his bar out of the box?",
+      "answer": "billing-svc API keys \u2014 jordan\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\nsearch-svc API keys \u2014 alex",
+      "hits": [
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.712132003684325,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.6997367511670954,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.6991961951123548,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['Duotone', 'adapter']",
+      "search_time_ms": 35.19590600626543,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 50,
+      "query_tokens": 15,
+      "context_tokens": 35,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "jareth-second-order",
+      "query": "What did Jareth order after his initial harness purchase?",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\nemail-svc consumes OrderPaid for the receipt email",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7333830509419805,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.732984482141125,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        },
+        {
+          "text": "email-svc consumes OrderPaid for the receipt email",
+          "score": 0.719114942674962,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_8decb311-57b6-4b78-9dd6-3683a441963f"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['adapter', 'NMD-ADPT-DC']",
+      "search_time_ms": 27.49728801427409,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 55,
+      "query_tokens": 11,
+      "context_tokens": 44,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "priya-custom-status",
+      "query": "Can Priya change the text on her custom tote?",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nbilling.new_invoice_pdf",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7055909766324263,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7040487646883715,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "billing.new_invoice_pdf",
+          "score": 0.7011764727752321,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_ca8bdac3-12ca-4bae-b5a2-fb9c2d069173"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: [\"can't change\", 'production']",
+      "search_time_ms": 30.94983199844137,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 48,
+      "query_tokens": 11,
+      "context_tokens": 37,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "priya-goodwill-offered",
+      "query": "What goodwill credit did Priya get offered?",
+      "answer": "billing-svc API keys \u2014 jordan\n---\norder-svc marks order as paid, emits OrderPaid on pubsub\n---\nreporting-svc consumes OrderPaid for financial reports",
+      "hits": [
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.732138105000754,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7257386363316584,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "reporting-svc consumes OrderPaid for financial reports",
+          "score": 0.7223475822522414,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_778aa40d-6c20-4495-96d9-286a57b53f7a"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['15%']",
+      "search_time_ms": 33.91869302140549,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 45,
+      "query_tokens": 9,
+      "context_tokens": 36,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "policy-custom-return",
+      "query": "Can a custom-printed tote be returned for refund?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\norder-svc marks order as paid, emits OrderPaid on pubsub\n---\nemail-svc consumes OrderPaid for the receipt email",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7081009500798201,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7004294040289488,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "email-svc consumes OrderPaid for the receipt email",
+          "score": 0.698938157952978,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_8decb311-57b6-4b78-9dd6-3683a441963f"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['final sale']",
+      "search_time_ms": 27.65293698757887,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 54,
+      "query_tokens": 11,
+      "context_tokens": 43,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "policy-40day-return",
+      "query": "If an unused item was delivered 40 days ago, can I get a full refund?",
+      "answer": "email-svc consumes OrderPaid for the receipt email\n---\norder-svc marks order as paid, emits OrderPaid on pubsub\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+      "hits": [
+        {
+          "text": "email-svc consumes OrderPaid for the receipt email",
+          "score": 0.7123921402669716,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_8decb311-57b6-4b78-9dd6-3683a441963f"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7006719406640058,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.6996661986676126,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['store credit']",
+      "search_time_ms": 32.93573998962529,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 62,
+      "query_tokens": 18,
+      "context_tokens": 44,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "escalation-400gbp-full-refund",
+      "query": "A Tier 1 agent wants to issue a full refund on a \u00a3400 order \u2014 can they?",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nemail-svc consumes OrderPaid for the receipt email\n---\nreporting-svc consumes OrderPaid for financial reports",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7415371376891134,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "email-svc consumes OrderPaid for the receipt email",
+          "score": 0.7331214412862811,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_8decb311-57b6-4b78-9dd6-3683a441963f"
+        },
+        {
+          "text": "reporting-svc consumes OrderPaid for financial reports",
+          "score": 0.7286868615136332,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_778aa40d-6c20-4495-96d9-286a57b53f7a"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['Tier 3']",
+      "search_time_ms": 30.9724890103098,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 58,
+      "query_tokens": 20,
+      "context_tokens": 38,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "escalation-goodwill-20pct-tier",
+      "query": "What's the minimum agent tier needed to offer 20% goodwill credit?",
+      "answer": "billing-svc API keys \u2014 jordan\n---\nsearch-svc API keys \u2014 alex\n---\nreporting-svc consumes OrderPaid for financial reports",
+      "hits": [
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.7133219905624273,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7099292551016788,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        },
+        {
+          "text": "reporting-svc consumes OrderPaid for financial reports",
+          "score": 0.7080727802931086,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_778aa40d-6c20-4495-96d9-286a57b53f7a"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['Tier 2']",
+      "search_time_ms": 28.71934699942358,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 44,
+      "query_tokens": 15,
+      "context_tokens": 29,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "mina-vip-status",
+      "query": "Is Mina Okafor a VIP customer?",
+      "answer": "Customer note \u2014 Mina Okafor: VIP tier (5+ orders, \u00a3350+ lifetime spend). Preferences: matte finishes, neutrals over brights. Has flagged interest in lifetime-warranty items.\n---\norder-svc marks order as paid, emits OrderPaid on pubsub\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+      "hits": [
+        {
+          "text": "Customer note \u2014 Mina Okafor: VIP tier (5+ orders, \u00a3350+ lifetime spend). Preferences: matte finishes, neutrals over brights. Has flagged interest in lifetime-warranty items.",
+          "score": 0.7720706800424769,
+          "source": "pentatonic-memory",
+          "doc_id": "customer-note-mina-vip"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7348438938902003,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7235270502207439,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 27.80705102486536,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 85,
+      "query_tokens": 10,
+      "context_tokens": 75,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "mina-preferences",
+      "query": "What are Mina Okafor's stated preferences?",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nbilling-svc API keys \u2014 jordan\n---\nsearch-svc API keys \u2014 alex",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7055044745838214,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.7001017821797055,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.6988370568106516,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_730b4496-40b1-499f-952a-739ae3912826"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['matte', 'neutrals']",
+      "search_time_ms": 25.142928992863744,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 44,
+      "query_tokens": 11,
+      "context_tokens": 33,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "priya-agent-guidance",
+      "query": "When handling Priya's orders, what should the agent do before production starts?",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\nreporting-svc consumes OrderPaid for financial reports",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7256843616193557,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7167362886072972,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        },
+        {
+          "text": "reporting-svc consumes OrderPaid for financial reports",
+          "score": 0.7163327580212099,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_778aa40d-6c20-4495-96d9-286a57b53f7a"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['confirm', 'print text']",
+      "search_time_ms": 30.428772006416693,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 60,
+      "query_tokens": 16,
+      "context_tokens": 44,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "rubric-mina-warranty-recommendation",
+      "query": "Mina is asking for product recommendations. Based on her history, what should we suggest?",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nStripe posts a invoice.payment_succeeded webhook to billing-svc",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.6870628699890775,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.6841676093807408,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "Stripe posts a invoice.payment_succeeded webhook to billing-svc",
+          "score": 0.6829611935772381,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_76c60bf6-9327-4cd1-9f56-234d229e8c8a"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "judge=0.00 \u2014 The answer does not reference Mina's VIP status or her stated interest in lifetime-warranty items, instead discussing or",
+      "search_time_ms": 38.33310300251469,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 63,
+      "query_tokens": 18,
+      "context_tokens": 45,
+      "judge_tokens_in": 378,
+      "judge_tokens_out": 41,
+      "judge_latency_ms": 1245.5484809875488
+    },
+    {
+      "task_id": "rubric-jareth-escalation",
+      "query": "Jareth wants to return his kite harness for a full refund, claiming it 'didn't work' with his bar \u2014 how should we handle this?",
+      "answer": "billing-svc API keys \u2014 jordan\n---\nStripe posts a invoice.payment_succeeded webhook to billing-svc\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+      "hits": [
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.7109743445335438,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_80182b2e-cbba-4642-b6fd-b8d3fbd6e617"
+        },
+        {
+          "text": "Stripe posts a invoice.payment_succeeded webhook to billing-svc",
+          "score": 0.707515245905571,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_76c60bf6-9327-4cd1-9f56-234d229e8c8a"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7024184805852562,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "judge=0.00 \u2014 The answer does not address the customer's claim or provide any context about Jareth's purchase history with the adapter",
+      "search_time_ms": 41.0330820013769,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 70,
+      "query_tokens": 30,
+      "context_tokens": 40,
+      "judge_tokens_in": 398,
+      "judge_tokens_out": 37,
+      "judge_latency_ms": 1219.425511032343
+    },
+    {
+      "task_id": "rubric-priya-delayed-custom",
+      "query": "Priya is frustrated about her custom tote delay. What's the best response?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\norder-svc marks order as paid, emits OrderPaid on pubsub\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7042906586266301,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.6989621203762365,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.6970906609262577,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "judge=0.00 \u2014 The answer does not acknowledge the custom item delay or any goodwill received by Priya.",
+      "search_time_ms": 39.566906983964145,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 65,
+      "query_tokens": 16,
+      "context_tokens": 49,
+      "judge_tokens_in": 360,
+      "judge_tokens_out": 31,
+      "judge_latency_ms": 577.4644939899445
+    },
+    {
+      "task_id": "entity-mina-orders",
+      "query": "List Mina Okafor's order IDs.",
+      "answer": "order-svc marks order as paid, emits OrderPaid on pubsub\n---\nOrder #2026-0187 placed 2026-03-28 by customer Mina Okafor.\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+      "hits": [
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7574458786135378,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_f1083a75-3da4-4a35-bce4-db4a29b46034"
+        },
+        {
+          "text": "Order #2026-0187 placed 2026-03-28 by customer Mina Okafor.",
+          "score": 0.7464184718259437,
+          "source": "pentatonic-memory",
+          "doc_id": "order-2026-0187-mina"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7412049112998839,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "no expected_substrings set",
+      "search_time_ms": 36.482718016486615,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 66,
+      "query_tokens": 10,
+      "context_tokens": 56,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "entity-all-rmas",
+      "query": "List all open and closed RMA case IDs.",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nkubectl rollout restart deployment/billing-svc\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7195884243776058,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_bb06d70a-c2f5-4168-b0df-a03b1b585b29"
+        },
+        {
+          "text": "kubectl rollout restart deployment/billing-svc",
+          "score": 0.715077341559819,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_049e0812-46ed-4db7-84d8-c4a121a1d19c"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7073335588902188,
+          "source": "pentatonic-memory",
+          "doc_id": "mem_b6596977-9a91-4469-a8c5-3872edbbbf1c"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "no expected_substrings set",
+      "search_time_ms": 34.67812400776893,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 53,
+      "query_tokens": 10,
+      "context_tokens": 43,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    }
+  ]
+}

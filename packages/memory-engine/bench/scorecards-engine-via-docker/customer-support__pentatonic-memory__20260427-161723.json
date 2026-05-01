@@ -1,0 +1,1018 @@
+{
+  "bench": "customer-support",
+  "stack": "pentatonic-memory",
+  "n_tasks": 20,
+  "n_correct": 14,
+  "accuracy": 0.7,
+  "mean_score": 0.775,
+  "p50_search_ms": 108.90731599647552,
+  "p95_search_ms": 181.27995311369887,
+  "total_tokens_in": 0,
+  "total_tokens_out": 0,
+  "total_usd": 0.0,
+  "by_tag": {
+    "factoid": {
+      "n": 10,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "customer": {
+      "n": 8,
+      "mean_score": 0.75,
+      "accuracy": 0.625
+    },
+    "multi-doc": {
+      "n": 6,
+      "mean_score": 0.8333333333333334,
+      "accuracy": 0.6666666666666666
+    },
+    "rma": {
+      "n": 3,
+      "mean_score": 0.6666666666666666,
+      "accuracy": 0.6666666666666666
+    },
+    "policy": {
+      "n": 5,
+      "mean_score": 0.8,
+      "accuracy": 0.8
+    },
+    "escalation": {
+      "n": 4,
+      "mean_score": 0.875,
+      "accuracy": 0.75
+    },
+    "rubric": {
+      "n": 3,
+      "mean_score": 0.5,
+      "accuracy": 0.0
+    },
+    "multi-hop": {
+      "n": 1,
+      "mean_score": 0.5,
+      "accuracy": 0.0
+    },
+    "entity": {
+      "n": 2,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    }
+  },
+  "extra": {
+    "ingest_ms": 5886.57231599791,
+    "grading": "substring",
+    "limit": 3,
+    "tokens": {
+      "corpus_tokens": 1227,
+      "query_tokens": 283,
+      "context_tokens": 3823,
+      "retrieval_tokens": 4106,
+      "naive_tokens": 24823,
+      "saved_tokens": 20717,
+      "reduction_pct": 0.8345888893365024,
+      "mean_retrieval_tokens_per_task": 205.3,
+      "tokenizer": "cl100k_base",
+      "per_task": {
+        "order-mina-count": {
+          "query": 11,
+          "context": 222,
+          "retrieval": 233,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "order-mina-latest": {
+          "query": 13,
+          "context": 222,
+          "retrieval": 235,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "rma-mina-sleeve-reason": {
+          "query": 17,
+          "context": 187,
+          "retrieval": 204,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "rma-mina-lid-resolution": {
+          "query": 11,
+          "context": 199,
+          "retrieval": 210,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "jareth-harness-bar-followup": {
+          "query": 15,
+          "context": 170,
+          "retrieval": 185,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "jareth-second-order": {
+          "query": 11,
+          "context": 177,
+          "retrieval": 188,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "priya-custom-status": {
+          "query": 11,
+          "context": 184,
+          "retrieval": 195,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "priya-goodwill-offered": {
+          "query": 9,
+          "context": 163,
+          "retrieval": 172,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "policy-custom-return": {
+          "query": 11,
+          "context": 199,
+          "retrieval": 210,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "policy-40day-return": {
+          "query": 18,
+          "context": 154,
+          "retrieval": 172,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "escalation-400gbp-full-refund": {
+          "query": 20,
+          "context": 159,
+          "retrieval": 179,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "escalation-goodwill-20pct-tier": {
+          "query": 15,
+          "context": 194,
+          "retrieval": 209,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "mina-vip-status": {
+          "query": 10,
+          "context": 222,
+          "retrieval": 232,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "mina-preferences": {
+          "query": 11,
+          "context": 222,
+          "retrieval": 233,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "priya-agent-guidance": {
+          "query": 16,
+          "context": 184,
+          "retrieval": 200,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "rubric-mina-warranty-recommendation": {
+          "query": 18,
+          "context": 174,
+          "retrieval": 192,
+          "judge_in": 506,
+          "judge_out": 57,
+          "judge_latency_ms": 1140.9742809832096
+        },
+        "rubric-jareth-escalation": {
+          "query": 30,
+          "context": 170,
+          "retrieval": 200,
+          "judge_in": 527,
+          "judge_out": 29,
+          "judge_latency_ms": 727.1508990228176
+        },
+        "rubric-priya-delayed-custom": {
+          "query": 16,
+          "context": 184,
+          "retrieval": 200,
+          "judge_in": 494,
+          "judge_out": 38,
+          "judge_latency_ms": 767.3524660170078
+        },
+        "entity-mina-orders": {
+          "query": 10,
+          "context": 222,
+          "retrieval": 232,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "entity-all-rmas": {
+          "query": 10,
+          "context": 215,
+          "retrieval": 225,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        }
+      },
+      "judge_tokens_in": 1527,
+      "judge_tokens_out": 124,
+      "judge_calls": 3,
+      "judge_mean_latency_ms": 878.492548674345
+    },
+    "cost_usd": {
+      "assumed_completion_tokens_per_task": 100,
+      "rates": {
+        "input_per_1k": 0.0025,
+        "output_per_1k": 0.01,
+        "model": "gpt-4o"
+      },
+      "retrieval_usd_in": 0.010265,
+      "retrieval_usd_out": 0.02,
+      "retrieval_usd_total": 0.030265,
+      "naive_usd_total": 0.0820575,
+      "saved_usd": 0.051792500000000005,
+      "saved_usd_per_1k_tasks": 2.5896250000000003
+    }
+  },
+  "task_results": [
+    {
+      "task_id": "order-mina-count",
+      "query": "How many orders has Mina Okafor placed?",
+      "answer": "Customer note \u2014 Mina Okafor: VIP tier (5+ orders, \u00a3350+ lifetime spend). Preferences: matte finishes, neutrals over brights. Has flagged interest in lifetime-warranty items.\n---\nOrder #2026-0187 \u2014 placed 2026-03-28 by customer Mina Okafor.\nItems: 1\u00d7 Luna Water Bottle 500ml (Sage green), 1\u00d7 Loop Reusable Coffee Cup.\nTotal: \u00a331.00. Delivered 2026-04-01 via Royal Mail Tracked 48.\n---\nOrder #2026-0142 \u2014 placed 2026-03-14 by customer Mina Okafor (mina.okafor@example.com).\nItems: 2\u00d7 Pentatonic Crew Tee Black (M), 1\u00d7 Haven Laptop Sleeve 13\" (Charcoal).\nShipping address: 12 Heene Road, Worthing BN11 3RG, UK.\nTotal: \u00a3104.00. Payment: Visa ending 4412. Delivered 2026-03-18 via DPD.",
+      "hits": [
+        {
+          "text": "Customer note \u2014 Mina Okafor: VIP tier (5+ orders, \u00a3350+ lifetime spend). Preferences: matte finishes, neutrals over brights. Has flagged interest in lifetime-warranty items.",
+          "score": 0.506536602973938,
+          "source": "pentatonic-memory",
+          "doc_id": "customer-note-mina-vip"
+        },
+        {
+          "text": "Order #2026-0187 \u2014 placed 2026-03-28 by customer Mina Okafor.\nItems: 1\u00d7 Luna Water Bottle 500ml (Sage green), 1\u00d7 Loop Reusable Coffee Cup.\nTotal: \u00a331.00. Delivered 2026-04-01 via Royal Mail Tracked 48.",
+          "score": 0.4692591726779938,
+          "source": "pentatonic-memory",
+          "doc_id": "order-2026-0187-mina"
+        },
+        {
+          "text": "Order #2026-0142 \u2014 placed 2026-03-14 by customer Mina Okafor (mina.okafor@example.com).\nItems: 2\u00d7 Pentatonic Crew Tee Black (M), 1\u00d7 Haven Laptop Sleeve 13\" (Charcoal).\nShipping address: 12 Heene Road, Worthing BN11 3RG, UK.\nTotal: \u00a3104.00. Payment: Visa ending 4412. Delivered 2026-03-18 via DPD.",
+          "score": 0.4614717364311218,
+          "source": "pentatonic-memory",
+          "doc_id": "order-2026-0142-mina"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 108.53972099721432,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 233,
+      "query_tokens": 11,
+      "context_tokens": 222,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "order-mina-latest",
+      "query": "What was in Mina Okafor's most recent order?",
+      "answer": "Customer note \u2014 Mina Okafor: VIP tier (5+ orders, \u00a3350+ lifetime spend). Preferences: matte finishes, neutrals over brights. Has flagged interest in lifetime-warranty items.\n---\nOrder #2026-0187 \u2014 placed 2026-03-28 by customer Mina Okafor.\nItems: 1\u00d7 Luna Water Bottle 500ml (Sage green), 1\u00d7 Loop Reusable Coffee Cup.\nTotal: \u00a331.00. Delivered 2026-04-01 via Royal Mail Tracked 48.\n---\nOrder #2026-0142 \u2014 placed 2026-03-14 by customer Mina Okafor (mina.okafor@example.com).\nItems: 2\u00d7 Pentatonic Crew Tee Black (M), 1\u00d7 Haven Laptop Sleeve 13\" (Charcoal).\nShipping address: 12 Heene Road, Worthing BN11 3RG, UK.\nTotal: \u00a3104.00. Payment: Visa ending 4412. Delivered 2026-03-18 via DPD.",
+      "hits": [
+        {
+          "text": "Customer note \u2014 Mina Okafor: VIP tier (5+ orders, \u00a3350+ lifetime spend). Preferences: matte finishes, neutrals over brights. Has flagged interest in lifetime-warranty items.",
+          "score": 0.500918447971344,
+          "source": "pentatonic-memory",
+          "doc_id": "customer-note-mina-vip"
+        },
+        {
+          "text": "Order #2026-0187 \u2014 placed 2026-03-28 by customer Mina Okafor.\nItems: 1\u00d7 Luna Water Bottle 500ml (Sage green), 1\u00d7 Loop Reusable Coffee Cup.\nTotal: \u00a331.00. Delivered 2026-04-01 via Royal Mail Tracked 48.",
+          "score": 0.4980609118938446,
+          "source": "pentatonic-memory",
+          "doc_id": "order-2026-0187-mina"
+        },
+        {
+          "text": "Order #2026-0142 \u2014 placed 2026-03-14 by customer Mina Okafor (mina.okafor@example.com).\nItems: 2\u00d7 Pentatonic Crew Tee Black (M), 1\u00d7 Haven Laptop Sleeve 13\" (Charcoal).\nShipping address: 12 Heene Road, Worthing BN11 3RG, UK.\nTotal: \u00a3104.00. Payment: Visa ending 4412. Delivered 2026-03-18 via DPD.",
+          "score": 0.4663473665714264,
+          "source": "pentatonic-memory",
+          "doc_id": "order-2026-0142-mina"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 107.57715100771748,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 235,
+      "query_tokens": 13,
+      "context_tokens": 222,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "rma-mina-sleeve-reason",
+      "query": "Why did Mina open an RMA on order 2026-0142?",
+      "answer": "RMA case RMA-0187-01 opened 2026-04-10 for order #2026-0187. Reason: defective lid on Luna Water Bottle 500ml. Resolution: free replacement lid under warranty. Status: shipped 2026-04-11. Closed 2026-04-14.\n---\nRMA case RMA-0142-01 opened 2026-03-20 for order #2026-0142. Reason: wrong colour received (Charcoal, wanted Oat). Resolution: exchange, not refund. Status: Oat sleeve shipped 2026-03-23, tracking RM-9912-UK. Closed 2026-03-25.\n---\n[Chat 2026-03-22] Mina: Label received, posting the sleeve back today. Agent: Thanks \u2014 once it hits our warehouse the Oat sleeve will ship same day.",
+      "hits": [
+        {
+          "text": "RMA case RMA-0187-01 opened 2026-04-10 for order #2026-0187. Reason: defective lid on Luna Water Bottle 500ml. Resolution: free replacement lid under warranty. Status: shipped 2026-04-11. Closed 2026-04-14.",
+          "score": 0.4296145439147949,
+          "source": "pentatonic-memory",
+          "doc_id": "rma-2026-0187-lid"
+        },
+        {
+          "text": "RMA case RMA-0142-01 opened 2026-03-20 for order #2026-0142. Reason: wrong colour received (Charcoal, wanted Oat). Resolution: exchange, not refund. Status: Oat sleeve shipped 2026-03-23, tracking RM-9912-UK. Closed 2026-03-25.",
+          "score": 0.41409578919410706,
+          "source": "pentatonic-memory",
+          "doc_id": "rma-2026-0142-swap"
+        },
+        {
+          "text": "[Chat 2026-03-22] Mina: Label received, posting the sleeve back today. Agent: Thanks \u2014 once it hits our warehouse the Oat sleeve will ship same day.",
+          "score": 0.40714141726493835,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-mina-2026-03-22"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 113.96441399119794,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 204,
+      "query_tokens": 17,
+      "context_tokens": 187,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "rma-mina-lid-resolution",
+      "query": "How was Mina's Luna bottle lid complaint resolved?",
+      "answer": "[Chat 2026-04-10] Mina: Hey, the Luna bottle lid is leaking \u2014 is that covered? Agent: Yes, the lid has a 2-year warranty. I'll ship you a replacement lid free of charge. Mina: Great, thanks!\n---\nRMA case RMA-0187-01 opened 2026-04-10 for order #2026-0187. Reason: defective lid on Luna Water Bottle 500ml. Resolution: free replacement lid under warranty. Status: shipped 2026-04-11. Closed 2026-04-14.\n---\nOrder #2026-0187 \u2014 placed 2026-03-28 by customer Mina Okafor.\nItems: 1\u00d7 Luna Water Bottle 500ml (Sage green), 1\u00d7 Loop Reusable Coffee Cup.\nTotal: \u00a331.00. Delivered 2026-04-01 via Royal Mail Tracked 48.",
+      "hits": [
+        {
+          "text": "[Chat 2026-04-10] Mina: Hey, the Luna bottle lid is leaking \u2014 is that covered? Agent: Yes, the lid has a 2-year warranty. I'll ship you a replacement lid free of charge. Mina: Great, thanks!",
+          "score": 0.6011244654655457,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-mina-2026-04-10"
+        },
+        {
+          "text": "RMA case RMA-0187-01 opened 2026-04-10 for order #2026-0187. Reason: defective lid on Luna Water Bottle 500ml. Resolution: free replacement lid under warranty. Status: shipped 2026-04-11. Closed 2026-04-14.",
+          "score": 0.539427638053894,
+          "source": "pentatonic-memory",
+          "doc_id": "rma-2026-0187-lid"
+        },
+        {
+          "text": "Order #2026-0187 \u2014 placed 2026-03-28 by customer Mina Okafor.\nItems: 1\u00d7 Luna Water Bottle 500ml (Sage green), 1\u00d7 Loop Reusable Coffee Cup.\nTotal: \u00a331.00. Delivered 2026-04-01 via Royal Mail Tracked 48.",
+          "score": 0.4347590506076813,
+          "source": "pentatonic-memory",
+          "doc_id": "order-2026-0187-mina"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 109.29815997951664,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 210,
+      "query_tokens": 11,
+      "context_tokens": 199,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "jareth-harness-bar-followup",
+      "query": "Did Jareth's kite harness work with his bar out of the box?",
+      "answer": "[Chat 2026-04-08] Jareth: My kite harness arrived but I actually have a Duotone bar \u2014 will this work? Agent: You'll need the Duotone/Core adapter kit (NMD-ADPT-DC, \u00a318). Want me to add one to a new order? Jareth: Yes please.\n---\nCustomer note \u2014 Jareth Kim: kite surfer, Worthing-based. Typically orders kite-related gear. Previously flagged harness size L as correct.\n---\nOrder #2026-0201 \u2014 placed 2026-04-02 by customer Jareth Kim (jareth@example.com).\nItems: 1\u00d7 Nomad Kite Harness v3 (L).\nTotal: \u00a3145.00. Shipped 2026-04-03, delivered 2026-04-05.",
+      "hits": [
+        {
+          "text": "[Chat 2026-04-08] Jareth: My kite harness arrived but I actually have a Duotone bar \u2014 will this work? Agent: You'll need the Duotone/Core adapter kit (NMD-ADPT-DC, \u00a318). Want me to add one to a new order? Jareth: Yes please.",
+          "score": 0.5966447591781616,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-jareth-2026-04-08"
+        },
+        {
+          "text": "Customer note \u2014 Jareth Kim: kite surfer, Worthing-based. Typically orders kite-related gear. Previously flagged harness size L as correct.",
+          "score": 0.5066688656806946,
+          "source": "pentatonic-memory",
+          "doc_id": "customer-note-jareth-kiter"
+        },
+        {
+          "text": "Order #2026-0201 \u2014 placed 2026-04-02 by customer Jareth Kim (jareth@example.com).\nItems: 1\u00d7 Nomad Kite Harness v3 (L).\nTotal: \u00a3145.00. Shipped 2026-04-03, delivered 2026-04-05.",
+          "score": 0.4137082099914551,
+          "source": "pentatonic-memory",
+          "doc_id": "order-2026-0201-jareth"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 108.98454100242816,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 185,
+      "query_tokens": 15,
+      "context_tokens": 170,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "jareth-second-order",
+      "query": "What did Jareth order after his initial harness purchase?",
+      "answer": "Customer note \u2014 Jareth Kim: kite surfer, Worthing-based. Typically orders kite-related gear. Previously flagged harness size L as correct.\n---\nOrder #2026-0201 \u2014 placed 2026-04-02 by customer Jareth Kim (jareth@example.com).\nItems: 1\u00d7 Nomad Kite Harness v3 (L).\nTotal: \u00a3145.00. Shipped 2026-04-03, delivered 2026-04-05.\n---\nOrder #2026-0223 \u2014 placed 2026-04-08 by customer Jareth Kim (follow-up from chat s-jareth-01).\nItems: 1\u00d7 Duotone/Core adapter kit (NMD-ADPT-DC).\nTotal: \u00a318.00. Shipped 2026-04-09, delivered 2026-04-11.",
+      "hits": [
+        {
+          "text": "Customer note \u2014 Jareth Kim: kite surfer, Worthing-based. Typically orders kite-related gear. Previously flagged harness size L as correct.",
+          "score": 0.4756895899772644,
+          "source": "pentatonic-memory",
+          "doc_id": "customer-note-jareth-kiter"
+        },
+        {
+          "text": "Order #2026-0201 \u2014 placed 2026-04-02 by customer Jareth Kim (jareth@example.com).\nItems: 1\u00d7 Nomad Kite Harness v3 (L).\nTotal: \u00a3145.00. Shipped 2026-04-03, delivered 2026-04-05.",
+          "score": 0.4606146514415741,
+          "source": "pentatonic-memory",
+          "doc_id": "order-2026-0201-jareth"
+        },
+        {
+          "text": "Order #2026-0223 \u2014 placed 2026-04-08 by customer Jareth Kim (follow-up from chat s-jareth-01).\nItems: 1\u00d7 Duotone/Core adapter kit (NMD-ADPT-DC).\nTotal: \u00a318.00. Shipped 2026-04-09, delivered 2026-04-11.",
+          "score": 0.3701300024986267,
+          "source": "pentatonic-memory",
+          "doc_id": "order-2026-0223-jareth-adapter"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 105.26343100355007,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 188,
+      "query_tokens": 11,
+      "context_tokens": 177,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "priya-custom-status",
+      "query": "Can Priya change the text on her custom tote?",
+      "answer": "[Chat 2026-04-20] Priya: Can I change the print text? I'd prefer 'The Natarajans'. Agent: I'm sorry \u2014 the custom print started production on 2026-04-08 so we can't change the text now. I can offer 15% off your next order as goodwill. Priya: Ugh, fine \u2014 thanks.\n---\n[Chat 2026-04-14] Priya: When is my tote shipping? I ordered on the 6th. Agent: Your custom print is still in production, ETA 2026-04-18 for dispatch. Custom items have a 10-12 working day lead time. Priya: OK, thanks for confirming.\n---\nCustomer note \u2014 Priya Natarajan: orders frequently include custom-printed items. Agent should proactively confirm print text before production starts, not after.",
+      "hits": [
+        {
+          "text": "[Chat 2026-04-20] Priya: Can I change the print text? I'd prefer 'The Natarajans'. Agent: I'm sorry \u2014 the custom print started production on 2026-04-08 so we can't change the text now. I can offer 15% off your next order as goodwill. Priya: Ugh, fine \u2014 thanks.",
+          "score": 0.5468156933784485,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-priya-2026-04-20"
+        },
+        {
+          "text": "[Chat 2026-04-14] Priya: When is my tote shipping? I ordered on the 6th. Agent: Your custom print is still in production, ETA 2026-04-18 for dispatch. Custom items have a 10-12 working day lead time. Priya: OK, thanks for confirming.",
+          "score": 0.490670770406723,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-priya-2026-04-14"
+        },
+        {
+          "text": "Customer note \u2014 Priya Natarajan: orders frequently include custom-printed items. Agent should proactively confirm print text before production starts, not after.",
+          "score": 0.46206608414649963,
+          "source": "pentatonic-memory",
+          "doc_id": "customer-note-priya-custom"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 106.4420510083437,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 195,
+      "query_tokens": 11,
+      "context_tokens": 184,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "priya-goodwill-offered",
+      "query": "What goodwill credit did Priya get offered?",
+      "answer": "Goodwill credit: agents at Tier 1 may offer up to 10% off next order as goodwill. Tier 2 may offer up to 25%. Anything above 25% or any full refund outside policy requires Tier 3 approval.\n---\n[Chat 2026-04-20] Priya: Can I change the print text? I'd prefer 'The Natarajans'. Agent: I'm sorry \u2014 the custom print started production on 2026-04-08 so we can't change the text now. I can offer 15% off your next order as goodwill. Priya: Ugh, fine \u2014 thanks.\n---\nCustomer note \u2014 Priya Natarajan: orders frequently include custom-printed items. Agent should proactively confirm print text before production starts, not after.",
+      "hits": [
+        {
+          "text": "Goodwill credit: agents at Tier 1 may offer up to 10% off next order as goodwill. Tier 2 may offer up to 25%. Anything above 25% or any full refund outside policy requires Tier 3 approval.",
+          "score": 0.4352283477783203,
+          "source": "pentatonic-memory",
+          "doc_id": "policy-goodwill-credit"
+        },
+        {
+          "text": "[Chat 2026-04-20] Priya: Can I change the print text? I'd prefer 'The Natarajans'. Agent: I'm sorry \u2014 the custom print started production on 2026-04-08 so we can't change the text now. I can offer 15% off your next order as goodwill. Priya: Ugh, fine \u2014 thanks.",
+          "score": 0.33671367168426514,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-priya-2026-04-20"
+        },
+        {
+          "text": "Customer note \u2014 Priya Natarajan: orders frequently include custom-printed items. Agent should proactively confirm print text before production starts, not after.",
+          "score": 0.29916948080062866,
+          "source": "pentatonic-memory",
+          "doc_id": "customer-note-priya-custom"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 106.83125501964241,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 172,
+      "query_tokens": 9,
+      "context_tokens": 163,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "policy-custom-return",
+      "query": "Can a custom-printed tote be returned for refund?",
+      "answer": "Returns policy: unused items returnable within 30 days of delivery for full refund. After 30 days but under 90 days: store credit only. Custom-printed and consumable items are final sale and non-returnable.\n---\n[Chat 2026-04-14] Priya: When is my tote shipping? I ordered on the 6th. Agent: Your custom print is still in production, ETA 2026-04-18 for dispatch. Custom items have a 10-12 working day lead time. Priya: OK, thanks for confirming.\n---\n[Chat 2026-04-20] Priya: Can I change the print text? I'd prefer 'The Natarajans'. Agent: I'm sorry \u2014 the custom print started production on 2026-04-08 so we can't change the text now. I can offer 15% off your next order as goodwill. Priya: Ugh, fine \u2014 thanks.",
+      "hits": [
+        {
+          "text": "Returns policy: unused items returnable within 30 days of delivery for full refund. After 30 days but under 90 days: store credit only. Custom-printed and consumable items are final sale and non-returnable.",
+          "score": 0.5682638883590698,
+          "source": "pentatonic-memory",
+          "doc_id": "policy-returns-30day"
+        },
+        {
+          "text": "[Chat 2026-04-14] Priya: When is my tote shipping? I ordered on the 6th. Agent: Your custom print is still in production, ETA 2026-04-18 for dispatch. Custom items have a 10-12 working day lead time. Priya: OK, thanks for confirming.",
+          "score": 0.47565758228302,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-priya-2026-04-14"
+        },
+        {
+          "text": "[Chat 2026-04-20] Priya: Can I change the print text? I'd prefer 'The Natarajans'. Agent: I'm sorry \u2014 the custom print started production on 2026-04-08 so we can't change the text now. I can offer 15% off your next order as goodwill. Priya: Ugh, fine \u2014 thanks.",
+          "score": 0.39353087544441223,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-priya-2026-04-20"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 106.94941697875038,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 210,
+      "query_tokens": 11,
+      "context_tokens": 199,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "policy-40day-return",
+      "query": "If an unused item was delivered 40 days ago, can I get a full refund?",
+      "answer": "Returns policy: unused items returnable within 30 days of delivery for full refund. After 30 days but under 90 days: store credit only. Custom-printed and consumable items are final sale and non-returnable.\n---\n[Chat 2026-03-20] Mina: Hi, the sleeve I got is the wrong colour \u2014 I wanted Oat, not Charcoal. Can I swap? Agent: Yes, you're within the 30-day window. I'll send an exchange label.\n---\nGoodwill credit: agents at Tier 1 may offer up to 10% off next order as goodwill. Tier 2 may offer up to 25%. Anything above 25% or any full refund outside policy requires Tier 3 approval.",
+      "hits": [
+        {
+          "text": "Returns policy: unused items returnable within 30 days of delivery for full refund. After 30 days but under 90 days: store credit only. Custom-printed and consumable items are final sale and non-returnable.",
+          "score": 0.6555708646774292,
+          "source": "pentatonic-memory",
+          "doc_id": "policy-returns-30day"
+        },
+        {
+          "text": "[Chat 2026-03-20] Mina: Hi, the sleeve I got is the wrong colour \u2014 I wanted Oat, not Charcoal. Can I swap? Agent: Yes, you're within the 30-day window. I'll send an exchange label.",
+          "score": 0.3445591926574707,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-mina-2026-03-20"
+        },
+        {
+          "text": "Goodwill credit: agents at Tier 1 may offer up to 10% off next order as goodwill. Tier 2 may offer up to 25%. Anything above 25% or any full refund outside policy requires Tier 3 approval.",
+          "score": 0.27324262261390686,
+          "source": "pentatonic-memory",
+          "doc_id": "policy-goodwill-credit"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "all substrings matched; forbidden substring(s) present: ['full refund']",
+      "search_time_ms": 109.84214901691303,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 172,
+      "query_tokens": 18,
+      "context_tokens": 154,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "escalation-400gbp-full-refund",
+      "query": "A Tier 1 agent wants to issue a full refund on a \u00a3400 order \u2014 can they?",
+      "answer": "Goodwill credit: agents at Tier 1 may offer up to 10% off next order as goodwill. Tier 2 may offer up to 25%. Anything above 25% or any full refund outside policy requires Tier 3 approval.\n---\nEscalation tiers: Tier 1 (agent) resolves simple status/return requests. Tier 2 (senior agent) handles disputes, partial refunds, custom-print grievances. Tier 3 (manager) handles orders over \u00a3500, legal queries, and any request involving the take-back programme credit reconciliation.\n---\nReturns policy: unused items returnable within 30 days of delivery for full refund. After 30 days but under 90 days: store credit only. Custom-printed and consumable items are final sale and non-returnable.",
+      "hits": [
+        {
+          "text": "Goodwill credit: agents at Tier 1 may offer up to 10% off next order as goodwill. Tier 2 may offer up to 25%. Anything above 25% or any full refund outside policy requires Tier 3 approval.",
+          "score": 0.5582718253135681,
+          "source": "pentatonic-memory",
+          "doc_id": "policy-goodwill-credit"
+        },
+        {
+          "text": "Escalation tiers: Tier 1 (agent) resolves simple status/return requests. Tier 2 (senior agent) handles disputes, partial refunds, custom-print grievances. Tier 3 (manager) handles orders over \u00a3500, legal queries, and any request involving the take-back programme credit reconciliation.",
+          "score": 0.5317927598953247,
+          "source": "pentatonic-memory",
+          "doc_id": "policy-escalation-tiers"
+        },
+        {
+          "text": "Returns policy: unused items returnable within 30 days of delivery for full refund. After 30 days but under 90 days: store credit only. Custom-printed and consumable items are final sale and non-returnable.",
+          "score": 0.3208146095275879,
+          "source": "pentatonic-memory",
+          "doc_id": "policy-returns-30day"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 108.60106500331312,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 179,
+      "query_tokens": 20,
+      "context_tokens": 159,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "escalation-goodwill-20pct-tier",
+      "query": "What's the minimum agent tier needed to offer 20% goodwill credit?",
+      "answer": "Goodwill credit: agents at Tier 1 may offer up to 10% off next order as goodwill. Tier 2 may offer up to 25%. Anything above 25% or any full refund outside policy requires Tier 3 approval.\n---\nEscalation tiers: Tier 1 (agent) resolves simple status/return requests. Tier 2 (senior agent) handles disputes, partial refunds, custom-print grievances. Tier 3 (manager) handles orders over \u00a3500, legal queries, and any request involving the take-back programme credit reconciliation.\n---\n[Chat 2026-04-20] Priya: Can I change the print text? I'd prefer 'The Natarajans'. Agent: I'm sorry \u2014 the custom print started production on 2026-04-08 so we can't change the text now. I can offer 15% off your next order as goodwill. Priya: Ugh, fine \u2014 thanks.",
+      "hits": [
+        {
+          "text": "Goodwill credit: agents at Tier 1 may offer up to 10% off next order as goodwill. Tier 2 may offer up to 25%. Anything above 25% or any full refund outside policy requires Tier 3 approval.",
+          "score": 0.7269919514656067,
+          "source": "pentatonic-memory",
+          "doc_id": "policy-goodwill-credit"
+        },
+        {
+          "text": "Escalation tiers: Tier 1 (agent) resolves simple status/return requests. Tier 2 (senior agent) handles disputes, partial refunds, custom-print grievances. Tier 3 (manager) handles orders over \u00a3500, legal queries, and any request involving the take-back programme credit reconciliation.",
+          "score": 0.4651184380054474,
+          "source": "pentatonic-memory",
+          "doc_id": "policy-escalation-tiers"
+        },
+        {
+          "text": "[Chat 2026-04-20] Priya: Can I change the print text? I'd prefer 'The Natarajans'. Agent: I'm sorry \u2014 the custom print started production on 2026-04-08 so we can't change the text now. I can offer 15% off your next order as goodwill. Priya: Ugh, fine \u2014 thanks.",
+          "score": 0.29580065608024597,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-priya-2026-04-20"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 111.16078699706122,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 209,
+      "query_tokens": 15,
+      "context_tokens": 194,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "mina-vip-status",
+      "query": "Is Mina Okafor a VIP customer?",
+      "answer": "Customer note \u2014 Mina Okafor: VIP tier (5+ orders, \u00a3350+ lifetime spend). Preferences: matte finishes, neutrals over brights. Has flagged interest in lifetime-warranty items.\n---\nOrder #2026-0187 \u2014 placed 2026-03-28 by customer Mina Okafor.\nItems: 1\u00d7 Luna Water Bottle 500ml (Sage green), 1\u00d7 Loop Reusable Coffee Cup.\nTotal: \u00a331.00. Delivered 2026-04-01 via Royal Mail Tracked 48.\n---\nOrder #2026-0142 \u2014 placed 2026-03-14 by customer Mina Okafor (mina.okafor@example.com).\nItems: 2\u00d7 Pentatonic Crew Tee Black (M), 1\u00d7 Haven Laptop Sleeve 13\" (Charcoal).\nShipping address: 12 Heene Road, Worthing BN11 3RG, UK.\nTotal: \u00a3104.00. Payment: Visa ending 4412. Delivered 2026-03-18 via DPD.",
+      "hits": [
+        {
+          "text": "Customer note \u2014 Mina Okafor: VIP tier (5+ orders, \u00a3350+ lifetime spend). Preferences: matte finishes, neutrals over brights. Has flagged interest in lifetime-warranty items.",
+          "score": 0.6328712701797485,
+          "source": "pentatonic-memory",
+          "doc_id": "customer-note-mina-vip"
+        },
+        {
+          "text": "Order #2026-0187 \u2014 placed 2026-03-28 by customer Mina Okafor.\nItems: 1\u00d7 Luna Water Bottle 500ml (Sage green), 1\u00d7 Loop Reusable Coffee Cup.\nTotal: \u00a331.00. Delivered 2026-04-01 via Royal Mail Tracked 48.",
+          "score": 0.42423495650291443,
+          "source": "pentatonic-memory",
+          "doc_id": "order-2026-0187-mina"
+        },
+        {
+          "text": "Order #2026-0142 \u2014 placed 2026-03-14 by customer Mina Okafor (mina.okafor@example.com).\nItems: 2\u00d7 Pentatonic Crew Tee Black (M), 1\u00d7 Haven Laptop Sleeve 13\" (Charcoal).\nShipping address: 12 Heene Road, Worthing BN11 3RG, UK.\nTotal: \u00a3104.00. Payment: Visa ending 4412. Delivered 2026-03-18 via DPD.",
+          "score": 0.40744826197624207,
+          "source": "pentatonic-memory",
+          "doc_id": "order-2026-0142-mina"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 106.9618490000721,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 232,
+      "query_tokens": 10,
+      "context_tokens": 222,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "mina-preferences",
+      "query": "What are Mina Okafor's stated preferences?",
+      "answer": "Customer note \u2014 Mina Okafor: VIP tier (5+ orders, \u00a3350+ lifetime spend). Preferences: matte finishes, neutrals over brights. Has flagged interest in lifetime-warranty items.\n---\nOrder #2026-0187 \u2014 placed 2026-03-28 by customer Mina Okafor.\nItems: 1\u00d7 Luna Water Bottle 500ml (Sage green), 1\u00d7 Loop Reusable Coffee Cup.\nTotal: \u00a331.00. Delivered 2026-04-01 via Royal Mail Tracked 48.\n---\nOrder #2026-0142 \u2014 placed 2026-03-14 by customer Mina Okafor (mina.okafor@example.com).\nItems: 2\u00d7 Pentatonic Crew Tee Black (M), 1\u00d7 Haven Laptop Sleeve 13\" (Charcoal).\nShipping address: 12 Heene Road, Worthing BN11 3RG, UK.\nTotal: \u00a3104.00. Payment: Visa ending 4412. Delivered 2026-03-18 via DPD.",
+      "hits": [
+        {
+          "text": "Customer note \u2014 Mina Okafor: VIP tier (5+ orders, \u00a3350+ lifetime spend). Preferences: matte finishes, neutrals over brights. Has flagged interest in lifetime-warranty items.",
+          "score": 0.5033327341079712,
+          "source": "pentatonic-memory",
+          "doc_id": "customer-note-mina-vip"
+        },
+        {
+          "text": "Order #2026-0187 \u2014 placed 2026-03-28 by customer Mina Okafor.\nItems: 1\u00d7 Luna Water Bottle 500ml (Sage green), 1\u00d7 Loop Reusable Coffee Cup.\nTotal: \u00a331.00. Delivered 2026-04-01 via Royal Mail Tracked 48.",
+          "score": 0.3317295014858246,
+          "source": "pentatonic-memory",
+          "doc_id": "order-2026-0187-mina"
+        },
+        {
+          "text": "Order #2026-0142 \u2014 placed 2026-03-14 by customer Mina Okafor (mina.okafor@example.com).\nItems: 2\u00d7 Pentatonic Crew Tee Black (M), 1\u00d7 Haven Laptop Sleeve 13\" (Charcoal).\nShipping address: 12 Heene Road, Worthing BN11 3RG, UK.\nTotal: \u00a3104.00. Payment: Visa ending 4412. Delivered 2026-03-18 via DPD.",
+          "score": 0.2938464879989624,
+          "source": "pentatonic-memory",
+          "doc_id": "order-2026-0142-mina"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 109.0388449956663,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 233,
+      "query_tokens": 11,
+      "context_tokens": 222,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "priya-agent-guidance",
+      "query": "When handling Priya's orders, what should the agent do before production starts?",
+      "answer": "Customer note \u2014 Priya Natarajan: orders frequently include custom-printed items. Agent should proactively confirm print text before production starts, not after.\n---\n[Chat 2026-04-14] Priya: When is my tote shipping? I ordered on the 6th. Agent: Your custom print is still in production, ETA 2026-04-18 for dispatch. Custom items have a 10-12 working day lead time. Priya: OK, thanks for confirming.\n---\n[Chat 2026-04-20] Priya: Can I change the print text? I'd prefer 'The Natarajans'. Agent: I'm sorry \u2014 the custom print started production on 2026-04-08 so we can't change the text now. I can offer 15% off your next order as goodwill. Priya: Ugh, fine \u2014 thanks.",
+      "hits": [
+        {
+          "text": "Customer note \u2014 Priya Natarajan: orders frequently include custom-printed items. Agent should proactively confirm print text before production starts, not after.",
+          "score": 0.5809648036956787,
+          "source": "pentatonic-memory",
+          "doc_id": "customer-note-priya-custom"
+        },
+        {
+          "text": "[Chat 2026-04-14] Priya: When is my tote shipping? I ordered on the 6th. Agent: Your custom print is still in production, ETA 2026-04-18 for dispatch. Custom items have a 10-12 working day lead time. Priya: OK, thanks for confirming.",
+          "score": 0.3932722210884094,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-priya-2026-04-14"
+        },
+        {
+          "text": "[Chat 2026-04-20] Priya: Can I change the print text? I'd prefer 'The Natarajans'. Agent: I'm sorry \u2014 the custom print started production on 2026-04-08 so we can't change the text now. I can offer 15% off your next order as goodwill. Priya: Ugh, fine \u2014 thanks.",
+          "score": 0.38053300976753235,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-priya-2026-04-20"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 108.88742000679485,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 200,
+      "query_tokens": 16,
+      "context_tokens": 184,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "rubric-mina-warranty-recommendation",
+      "query": "Mina is asking for product recommendations. Based on her history, what should we suggest?",
+      "answer": "Customer note \u2014 Mina Okafor: VIP tier (5+ orders, \u00a3350+ lifetime spend). Preferences: matte finishes, neutrals over brights. Has flagged interest in lifetime-warranty items.\n---\n[Chat 2026-04-10] Mina: Hey, the Luna bottle lid is leaking \u2014 is that covered? Agent: Yes, the lid has a 2-year warranty. I'll ship you a replacement lid free of charge. Mina: Great, thanks!\n---\nOrder #2026-0187 \u2014 placed 2026-03-28 by customer Mina Okafor.\nItems: 1\u00d7 Luna Water Bottle 500ml (Sage green), 1\u00d7 Loop Reusable Coffee Cup.\nTotal: \u00a331.00. Delivered 2026-04-01 via Royal Mail Tracked 48.",
+      "hits": [
+        {
+          "text": "Customer note \u2014 Mina Okafor: VIP tier (5+ orders, \u00a3350+ lifetime spend). Preferences: matte finishes, neutrals over brights. Has flagged interest in lifetime-warranty items.",
+          "score": 0.5650956034660339,
+          "source": "pentatonic-memory",
+          "doc_id": "customer-note-mina-vip"
+        },
+        {
+          "text": "[Chat 2026-04-10] Mina: Hey, the Luna bottle lid is leaking \u2014 is that covered? Agent: Yes, the lid has a 2-year warranty. I'll ship you a replacement lid free of charge. Mina: Great, thanks!",
+          "score": 0.35196399688720703,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-mina-2026-04-10"
+        },
+        {
+          "text": "Order #2026-0187 \u2014 placed 2026-03-28 by customer Mina Okafor.\nItems: 1\u00d7 Luna Water Bottle 500ml (Sage green), 1\u00d7 Loop Reusable Coffee Cup.\nTotal: \u00a331.00. Delivered 2026-04-01 via Royal Mail Tracked 48.",
+          "score": 0.329296350479126,
+          "source": "pentatonic-memory",
+          "doc_id": "order-2026-0187-mina"
+        }
+      ],
+      "correct": false,
+      "score": 0.5,
+      "grading_notes": "judge=0.50 \u2014 The answer references Mina's VIP status and her interest in lifetime-warranty items, but only mentions a specific produc",
+      "search_time_ms": 108.92721198615618,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 192,
+      "query_tokens": 18,
+      "context_tokens": 174,
+      "judge_tokens_in": 506,
+      "judge_tokens_out": 57,
+      "judge_latency_ms": 1140.9742809832096
+    },
+    {
+      "task_id": "rubric-jareth-escalation",
+      "query": "Jareth wants to return his kite harness for a full refund, claiming it 'didn't work' with his bar \u2014 how should we handle this?",
+      "answer": "Customer note \u2014 Jareth Kim: kite surfer, Worthing-based. Typically orders kite-related gear. Previously flagged harness size L as correct.\n---\n[Chat 2026-04-08] Jareth: My kite harness arrived but I actually have a Duotone bar \u2014 will this work? Agent: You'll need the Duotone/Core adapter kit (NMD-ADPT-DC, \u00a318). Want me to add one to a new order? Jareth: Yes please.\n---\nOrder #2026-0201 \u2014 placed 2026-04-02 by customer Jareth Kim (jareth@example.com).\nItems: 1\u00d7 Nomad Kite Harness v3 (L).\nTotal: \u00a3145.00. Shipped 2026-04-03, delivered 2026-04-05.",
+      "hits": [
+        {
+          "text": "Customer note \u2014 Jareth Kim: kite surfer, Worthing-based. Typically orders kite-related gear. Previously flagged harness size L as correct.",
+          "score": 0.5262770056724548,
+          "source": "pentatonic-memory",
+          "doc_id": "customer-note-jareth-kiter"
+        },
+        {
+          "text": "[Chat 2026-04-08] Jareth: My kite harness arrived but I actually have a Duotone bar \u2014 will this work? Agent: You'll need the Duotone/Core adapter kit (NMD-ADPT-DC, \u00a318). Want me to add one to a new order? Jareth: Yes please.",
+          "score": 0.4707748591899872,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-jareth-2026-04-08"
+        },
+        {
+          "text": "Order #2026-0201 \u2014 placed 2026-04-02 by customer Jareth Kim (jareth@example.com).\nItems: 1\u00d7 Nomad Kite Harness v3 (L).\nTotal: \u00a3145.00. Shipped 2026-04-03, delivered 2026-04-05.",
+          "score": 0.4572660028934479,
+          "source": "pentatonic-memory",
+          "doc_id": "order-2026-0201-jareth"
+        }
+      ],
+      "correct": false,
+      "score": 0.5,
+      "grading_notes": "judge=0.50 \u2014 The answer mentions the adapter history but does not suggest Tier 2 escalation.",
+      "search_time_ms": 115.00100101693533,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 200,
+      "query_tokens": 30,
+      "context_tokens": 170,
+      "judge_tokens_in": 527,
+      "judge_tokens_out": 29,
+      "judge_latency_ms": 727.1508990228176
+    },
+    {
+      "task_id": "rubric-priya-delayed-custom",
+      "query": "Priya is frustrated about her custom tote delay. What's the best response?",
+      "answer": "[Chat 2026-04-14] Priya: When is my tote shipping? I ordered on the 6th. Agent: Your custom print is still in production, ETA 2026-04-18 for dispatch. Custom items have a 10-12 working day lead time. Priya: OK, thanks for confirming.\n---\nCustomer note \u2014 Priya Natarajan: orders frequently include custom-printed items. Agent should proactively confirm print text before production starts, not after.\n---\n[Chat 2026-04-20] Priya: Can I change the print text? I'd prefer 'The Natarajans'. Agent: I'm sorry \u2014 the custom print started production on 2026-04-08 so we can't change the text now. I can offer 15% off your next order as goodwill. Priya: Ugh, fine \u2014 thanks.",
+      "hits": [
+        {
+          "text": "[Chat 2026-04-14] Priya: When is my tote shipping? I ordered on the 6th. Agent: Your custom print is still in production, ETA 2026-04-18 for dispatch. Custom items have a 10-12 working day lead time. Priya: OK, thanks for confirming.",
+          "score": 0.5332370400428772,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-priya-2026-04-14"
+        },
+        {
+          "text": "Customer note \u2014 Priya Natarajan: orders frequently include custom-printed items. Agent should proactively confirm print text before production starts, not after.",
+          "score": 0.48614630103111267,
+          "source": "pentatonic-memory",
+          "doc_id": "customer-note-priya-custom"
+        },
+        {
+          "text": "[Chat 2026-04-20] Priya: Can I change the print text? I'd prefer 'The Natarajans'. Agent: I'm sorry \u2014 the custom print started production on 2026-04-08 so we can't change the text now. I can offer 15% off your next order as goodwill. Priya: Ugh, fine \u2014 thanks.",
+          "score": 0.41297996044158936,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-priya-2026-04-20"
+        }
+      ],
+      "correct": false,
+      "score": 0.5,
+      "grading_notes": "judge=0.50 \u2014 The agent acknowledges the custom item lead time and offers goodwill, but fails to proactively confirm print text before",
+      "search_time_ms": 110.9903370088432,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 200,
+      "query_tokens": 16,
+      "context_tokens": 184,
+      "judge_tokens_in": 494,
+      "judge_tokens_out": 38,
+      "judge_latency_ms": 767.3524660170078
+    },
+    {
+      "task_id": "entity-mina-orders",
+      "query": "List Mina Okafor's order IDs.",
+      "answer": "Order #2026-0142 \u2014 placed 2026-03-14 by customer Mina Okafor (mina.okafor@example.com).\nItems: 2\u00d7 Pentatonic Crew Tee Black (M), 1\u00d7 Haven Laptop Sleeve 13\" (Charcoal).\nShipping address: 12 Heene Road, Worthing BN11 3RG, UK.\nTotal: \u00a3104.00. Payment: Visa ending 4412. Delivered 2026-03-18 via DPD.\n---\nOrder #2026-0187 \u2014 placed 2026-03-28 by customer Mina Okafor.\nItems: 1\u00d7 Luna Water Bottle 500ml (Sage green), 1\u00d7 Loop Reusable Coffee Cup.\nTotal: \u00a331.00. Delivered 2026-04-01 via Royal Mail Tracked 48.\n---\nCustomer note \u2014 Mina Okafor: VIP tier (5+ orders, \u00a3350+ lifetime spend). Preferences: matte finishes, neutrals over brights. Has flagged interest in lifetime-warranty items.",
+      "hits": [
+        {
+          "text": "Order #2026-0142 \u2014 placed 2026-03-14 by customer Mina Okafor (mina.okafor@example.com).\nItems: 2\u00d7 Pentatonic Crew Tee Black (M), 1\u00d7 Haven Laptop Sleeve 13\" (Charcoal).\nShipping address: 12 Heene Road, Worthing BN11 3RG, UK.\nTotal: \u00a3104.00. Payment: Visa ending 4412. Delivered 2026-03-18 via DPD.",
+          "score": 0.5784992575645447,
+          "source": "pentatonic-memory",
+          "doc_id": "order-2026-0142-mina"
+        },
+        {
+          "text": "Order #2026-0187 \u2014 placed 2026-03-28 by customer Mina Okafor.\nItems: 1\u00d7 Luna Water Bottle 500ml (Sage green), 1\u00d7 Loop Reusable Coffee Cup.\nTotal: \u00a331.00. Delivered 2026-04-01 via Royal Mail Tracked 48.",
+          "score": 0.5401065349578857,
+          "source": "pentatonic-memory",
+          "doc_id": "order-2026-0187-mina"
+        },
+        {
+          "text": "Customer note \u2014 Mina Okafor: VIP tier (5+ orders, \u00a3350+ lifetime spend). Preferences: matte finishes, neutrals over brights. Has flagged interest in lifetime-warranty items.",
+          "score": 0.5376932621002197,
+          "source": "pentatonic-memory",
+          "doc_id": "customer-note-mina-vip"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "no expected_substrings set",
+      "search_time_ms": 184.76831901352853,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 232,
+      "query_tokens": 10,
+      "context_tokens": 222,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "entity-all-rmas",
+      "query": "List all open and closed RMA case IDs.",
+      "answer": "RMA case RMA-0187-01 opened 2026-04-10 for order #2026-0187. Reason: defective lid on Luna Water Bottle 500ml. Resolution: free replacement lid under warranty. Status: shipped 2026-04-11. Closed 2026-04-14.\n---\nRMA case RMA-0142-01 opened 2026-03-20 for order #2026-0142. Reason: wrong colour received (Charcoal, wanted Oat). Resolution: exchange, not refund. Status: Oat sleeve shipped 2026-03-23, tracking RM-9912-UK. Closed 2026-03-25.\n---\nOrder #2026-0201 \u2014 placed 2026-04-02 by customer Jareth Kim (jareth@example.com).\nItems: 1\u00d7 Nomad Kite Harness v3 (L).\nTotal: \u00a3145.00. Shipped 2026-04-03, delivered 2026-04-05.",
+      "hits": [
+        {
+          "text": "RMA case RMA-0187-01 opened 2026-04-10 for order #2026-0187. Reason: defective lid on Luna Water Bottle 500ml. Resolution: free replacement lid under warranty. Status: shipped 2026-04-11. Closed 2026-04-14.",
+          "score": 0.4559558928012848,
+          "source": "pentatonic-memory",
+          "doc_id": "rma-2026-0187-lid"
+        },
+        {
+          "text": "RMA case RMA-0142-01 opened 2026-03-20 for order #2026-0142. Reason: wrong colour received (Charcoal, wanted Oat). Resolution: exchange, not refund. Status: Oat sleeve shipped 2026-03-23, tracking RM-9912-UK. Closed 2026-03-25.",
+          "score": 0.39210593700408936,
+          "source": "pentatonic-memory",
+          "doc_id": "rma-2026-0142-swap"
+        },
+        {
+          "text": "Order #2026-0201 \u2014 placed 2026-04-02 by customer Jareth Kim (jareth@example.com).\nItems: 1\u00d7 Nomad Kite Harness v3 (L).\nTotal: \u00a3145.00. Shipped 2026-04-03, delivered 2026-04-05.",
+          "score": 0.2750712037086487,
+          "source": "pentatonic-memory",
+          "doc_id": "order-2026-0201-jareth"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "no expected_substrings set",
+      "search_time_ms": 107.30935601168312,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 225,
+      "query_tokens": 10,
+      "context_tokens": 215,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    }
+  ]
+}

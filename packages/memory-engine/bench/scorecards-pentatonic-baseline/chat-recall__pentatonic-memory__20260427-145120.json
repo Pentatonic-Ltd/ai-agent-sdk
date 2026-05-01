@@ -1,0 +1,542 @@
+{
+  "bench": "chat-recall",
+  "stack": "pentatonic-memory",
+  "n_tasks": 16,
+  "n_correct": 2,
+  "accuracy": 0.125,
+  "mean_score": 0.15625,
+  "p50_search_ms": 25.818128502578475,
+  "p95_search_ms": 31.491656991420314,
+  "total_tokens_in": 0,
+  "total_tokens_out": 0,
+  "total_usd": 0.0,
+  "by_tag": {
+    "factoid": {
+      "n": 6,
+      "mean_score": 0.16666666666666666,
+      "accuracy": 0.16666666666666666
+    },
+    "owner": {
+      "n": 4,
+      "mean_score": 0.25,
+      "accuracy": 0.25
+    },
+    "temporal": {
+      "n": 4,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "contradiction": {
+      "n": 2,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "status": {
+      "n": 4,
+      "mean_score": 0.25,
+      "accuracy": 0.25
+    },
+    "multi-hop": {
+      "n": 4,
+      "mean_score": 0.125,
+      "accuracy": 0.0
+    }
+  },
+  "extra": {
+    "ingest_ms": 16568.97608199506,
+    "grading": "substring",
+    "limit": 3,
+    "tokens": {
+      "corpus_tokens": 513,
+      "query_tokens": 140,
+      "context_tokens": 49,
+      "retrieval_tokens": 189,
+      "naive_tokens": 8348,
+      "saved_tokens": 8159,
+      "reduction_pct": 0.9773598466698611,
+      "mean_retrieval_tokens_per_task": 11.8125,
+      "tokenizer": "cl100k_base",
+      "per_task": {
+        "who-owns-atlas": {
+          "query": 5,
+          "context": 0,
+          "retrieval": 5,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "who-owns-borealis": {
+          "query": 7,
+          "context": 0,
+          "retrieval": 7,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "who-owns-cirrus": {
+          "query": 6,
+          "context": 0,
+          "retrieval": 6,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "who-owns-dune": {
+          "query": 6,
+          "context": 15,
+          "retrieval": 21,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "current-deadline-atlas": {
+          "query": 8,
+          "context": 0,
+          "retrieval": 8,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "current-deadline-borealis": {
+          "query": 10,
+          "context": 0,
+          "retrieval": 10,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "current-deadline-cirrus": {
+          "query": 9,
+          "context": 0,
+          "retrieval": 9,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "current-deadline-dune": {
+          "query": 9,
+          "context": 0,
+          "retrieval": 9,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "status-atlas": {
+          "query": 8,
+          "context": 0,
+          "retrieval": 8,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "status-borealis": {
+          "query": 10,
+          "context": 0,
+          "retrieval": 10,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "status-cirrus": {
+          "query": 9,
+          "context": 0,
+          "retrieval": 9,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "status-dune": {
+          "query": 9,
+          "context": 9,
+          "retrieval": 18,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "multihop-atlas": {
+          "query": 10,
+          "context": 0,
+          "retrieval": 10,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "multihop-borealis": {
+          "query": 12,
+          "context": 0,
+          "retrieval": 12,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "multihop-cirrus": {
+          "query": 11,
+          "context": 0,
+          "retrieval": 11,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "multihop-dune": {
+          "query": 11,
+          "context": 25,
+          "retrieval": 36,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        }
+      },
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_calls": 0,
+      "judge_mean_latency_ms": 0.0
+    },
+    "cost_usd": {
+      "assumed_completion_tokens_per_task": 100,
+      "rates": {
+        "input_per_1k": 0.0025,
+        "output_per_1k": 0.01,
+        "model": "gpt-4o"
+      },
+      "retrieval_usd_in": 0.00047250000000000005,
+      "retrieval_usd_out": 0.016,
+      "retrieval_usd_total": 0.0164725,
+      "naive_usd_total": 0.03687,
+      "saved_usd": 0.0203975,
+      "saved_usd_per_1k_tasks": 1.2748437499999998
+    }
+  },
+  "task_results": [
+    {
+      "task_id": "who-owns-atlas",
+      "query": "Who owns project Atlas?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['Alice']",
+      "search_time_ms": 31.491656991420314,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 5,
+      "query_tokens": 5,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "who-owns-borealis",
+      "query": "Who owns project Borealis?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['Clara']",
+      "search_time_ms": 23.22632700088434,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 7,
+      "query_tokens": 7,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "who-owns-cirrus",
+      "query": "Who owns project Cirrus?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['Diego']",
+      "search_time_ms": 25.621167005738243,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 6,
+      "query_tokens": 6,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "who-owns-dune",
+      "query": "Who owns project Dune?",
+      "answer": "Farid: I'll own project Dune. Kickoff this week.",
+      "hits": [
+        {
+          "text": "Farid: I'll own project Dune. Kickoff this week.",
+          "score": 0.5120010814403368,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-assign-dune"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 26.015089999418706,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 21,
+      "query_tokens": 6,
+      "context_tokens": 15,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "current-deadline-atlas",
+      "query": "What is the current deadline for Atlas?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['2026-03-17']",
+      "search_time_ms": 24.67792498646304,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 8,
+      "query_tokens": 8,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "current-deadline-borealis",
+      "query": "What is the current deadline for Borealis?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['2026-02-28']",
+      "search_time_ms": 25.36684399819933,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 10,
+      "query_tokens": 10,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "current-deadline-cirrus",
+      "query": "What is the current deadline for Cirrus?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['2026-04-08']",
+      "search_time_ms": 26.766681025037542,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 9,
+      "query_tokens": 9,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "current-deadline-dune",
+      "query": "What is the current deadline for Dune?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['2026-05-20']",
+      "search_time_ms": 26.705369004048407,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 9,
+      "query_tokens": 9,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "status-atlas",
+      "query": "What's the latest status of Atlas?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['on track']",
+      "search_time_ms": 27.433937008026987,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 8,
+      "query_tokens": 8,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "status-borealis",
+      "query": "What's the latest status of Borealis?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['blocked on vendor']",
+      "search_time_ms": 29.91680899867788,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 10,
+      "query_tokens": 10,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "status-cirrus",
+      "query": "What's the latest status of Cirrus?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['scoping']",
+      "search_time_ms": 25.178106006933376,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 9,
+      "query_tokens": 9,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "status-dune",
+      "query": "What's the latest status of Dune?",
+      "answer": "Farid: Dune status \u2014 launched.",
+      "hits": [
+        {
+          "text": "Farid: Dune status \u2014 launched.",
+          "score": 0.5271684290425744,
+          "source": "pentatonic-memory",
+          "doc_id": "status-dune-m4"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 23.801564006134868,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 18,
+      "query_tokens": 9,
+      "context_tokens": 9,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "multihop-atlas",
+      "query": "Who owns Atlas and what is its current deadline?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['Alice', '2026-03-17']",
+      "search_time_ms": 22.88174699060619,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 10,
+      "query_tokens": 10,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "multihop-borealis",
+      "query": "Who owns Borealis and what is its current deadline?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['Clara', '2026-02-28']",
+      "search_time_ms": 22.36511799856089,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 12,
+      "query_tokens": 12,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "multihop-cirrus",
+      "query": "Who owns Cirrus and what is its current deadline?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['Diego', '2026-04-08']",
+      "search_time_ms": 27.58819400332868,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 11,
+      "query_tokens": 11,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "multihop-dune",
+      "query": "Who owns Dune and what is its current deadline?",
+      "answer": "Farid: I'll own project Dune. Kickoff this week.\n---\nFarid: Dune status \u2014 launched.",
+      "hits": [
+        {
+          "text": "Farid: I'll own project Dune. Kickoff this week.",
+          "score": 0.5420836484839977,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-assign-dune"
+        },
+        {
+          "text": "Farid: Dune status \u2014 launched.",
+          "score": 0.5371697829805622,
+          "source": "pentatonic-memory",
+          "doc_id": "status-dune-m4"
+        }
+      ],
+      "correct": false,
+      "score": 0.5,
+      "grading_notes": "missing 1/2: ['2026-05-20']",
+      "search_time_ms": 26.42112597823143,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 36,
+      "query_tokens": 11,
+      "context_tokens": 25,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    }
+  ]
+}

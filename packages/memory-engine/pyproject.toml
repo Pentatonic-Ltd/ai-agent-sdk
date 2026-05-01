@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "pme-memory"
+version = "1.7.0"
+description = "Milvus-backed L5 vector store layer for Pentatonic Memory Engine"
+readme = "README.md"
+license = { text = "Pentatonic Ltd — Internal" }
+requires-python = ">=3.11"
+
+dependencies = [
+    "requests>=2.28.0",
+]
+
+[project.optional-dependencies]
+# Full L5 stack with Milvus Lite (no Docker required)
+milvus = [
+    "pymilvus>=2.4.0",
+]
+# Milvus with integrated model support (larger download)
+milvus-model = [
+    "pymilvus[model]>=2.4.0",
+]
+# Full 5-layer memory stack (L2 proxy + L3 graph + L5 comms)
+full = [
+    "fastapi>=0.100.0",
+    "uvicorn>=0.23.0",
+    "neo4j>=5.0.0",
+    "pymilvus>=2.4.0",
+    "httpx>=0.24.0",
+    "pydantic>=2.0.0",
+]
+# NV-Embed-v2 embedding service
+# transformers must stay <4.50 — newer versions break NV-Embed-v2 (removed all_tied_weights_keys)
+# Install CUDA torch separately: pip install torch>=2.0 --index-url https://download.pytorch.org/whl/cu130
+nv-embed = [
+    "torch>=2.0",
+    "transformers>=4.42,<4.50",
+    "datasets>=2.14.0",
+    "einops>=0.7.0",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.23.0",
+]
+# All extras for development
+dev = [
+    "pymilvus>=2.4.0",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.23.0",
+    "neo4j>=5.0.0",
+    "httpx>=0.24.0",
+    "pydantic>=2.0.0",
+    "pytest>=8.0",
+    "pytest-mock>=3.12",
+]
+
+[project.scripts]
+pme-memory = "pme_memory.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["pme_memory*"]
+
+[tool.setuptools.package-data]
+pme_memory = ["py.typed"]

@@ -25,6 +25,7 @@
     "src",
     "bin",
     "packages/memory",
+    "packages/memory-engine",
     "packages/doctor",
     "build.js",
     "README.md",

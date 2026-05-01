@@ -1,0 +1,680 @@
+{
+  "bench": "customer-support",
+  "stack": "pentatonic-memory",
+  "n_tasks": 20,
+  "n_correct": 5,
+  "accuracy": 0.25,
+  "mean_score": 0.25,
+  "p50_search_ms": 30.443045994616114,
+  "p95_search_ms": 37.8251028523664,
+  "total_tokens_in": 0,
+  "total_tokens_out": 0,
+  "total_usd": 0.0,
+  "by_tag": {
+    "factoid": {
+      "n": 10,
+      "mean_score": 0.3,
+      "accuracy": 0.3
+    },
+    "customer": {
+      "n": 8,
+      "mean_score": 0.375,
+      "accuracy": 0.375
+    },
+    "multi-doc": {
+      "n": 6,
+      "mean_score": 0.16666666666666666,
+      "accuracy": 0.16666666666666666
+    },
+    "rma": {
+      "n": 3,
+      "mean_score": 0.3333333333333333,
+      "accuracy": 0.3333333333333333
+    },
+    "policy": {
+      "n": 5,
+      "mean_score": 0.2,
+      "accuracy": 0.2
+    },
+    "escalation": {
+      "n": 4,
+      "mean_score": 0.25,
+      "accuracy": 0.25
+    },
+    "rubric": {
+      "n": 3,
+      "mean_score": 0.3333333333333333,
+      "accuracy": 0.3333333333333333
+    },
+    "multi-hop": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "entity": {
+      "n": 2,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    }
+  },
+  "extra": {
+    "ingest_ms": 11268.10247899266,
+    "grading": "substring",
+    "limit": 3,
+    "tokens": {
+      "corpus_tokens": 1227,
+      "query_tokens": 283,
+      "context_tokens": 278,
+      "retrieval_tokens": 561,
+      "naive_tokens": 24823,
+      "saved_tokens": 24262,
+      "reduction_pct": 0.9773999919429561,
+      "mean_retrieval_tokens_per_task": 28.05,
+      "tokenizer": "cl100k_base",
+      "per_task": {
+        "order-mina-count": {
+          "query": 11,
+          "context": 0,
+          "retrieval": 11,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "order-mina-latest": {
+          "query": 13,
+          "context": 0,
+          "retrieval": 13,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "rma-mina-sleeve-reason": {
+          "query": 17,
+          "context": 0,
+          "retrieval": 17,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "rma-mina-lid-resolution": {
+          "query": 11,
+          "context": 57,
+          "retrieval": 68,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "jareth-harness-bar-followup": {
+          "query": 15,
+          "context": 0,
+          "retrieval": 15,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "jareth-second-order": {
+          "query": 11,
+          "context": 0,
+          "retrieval": 11,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "priya-custom-status": {
+          "query": 11,
+          "context": 0,
+          "retrieval": 11,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "priya-goodwill-offered": {
+          "query": 9,
+          "context": 0,
+          "retrieval": 9,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "policy-custom-return": {
+          "query": 11,
+          "context": 0,
+          "retrieval": 11,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "policy-40day-return": {
+          "query": 18,
+          "context": 46,
+          "retrieval": 64,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "escalation-400gbp-full-refund": {
+          "query": 20,
+          "context": 0,
+          "retrieval": 20,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "escalation-goodwill-20pct-tier": {
+          "query": 15,
+          "context": 49,
+          "retrieval": 64,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "mina-vip-status": {
+          "query": 10,
+          "context": 42,
+          "retrieval": 52,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "mina-preferences": {
+          "query": 11,
+          "context": 42,
+          "retrieval": 53,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "priya-agent-guidance": {
+          "query": 16,
+          "context": 0,
+          "retrieval": 16,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "rubric-mina-warranty-recommendation": {
+          "query": 18,
+          "context": 42,
+          "retrieval": 60,
+          "judge_in": 374,
+          "judge_out": 44,
+          "judge_latency_ms": 945.222895026207
+        },
+        "rubric-jareth-escalation": {
+          "query": 30,
+          "context": 0,
+          "retrieval": 30,
+          "judge_in": 357,
+          "judge_out": 43,
+          "judge_latency_ms": 868.3296079933643
+        },
+        "rubric-priya-delayed-custom": {
+          "query": 16,
+          "context": 0,
+          "retrieval": 16,
+          "judge_in": 310,
+          "judge_out": 54,
+          "judge_latency_ms": 939.1167230010033
+        },
+        "entity-mina-orders": {
+          "query": 10,
+          "context": 0,
+          "retrieval": 10,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "entity-all-rmas": {
+          "query": 10,
+          "context": 0,
+          "retrieval": 10,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        }
+      },
+      "judge_tokens_in": 1041,
+      "judge_tokens_out": 141,
+      "judge_calls": 3,
+      "judge_mean_latency_ms": 917.5564086735249
+    },
+    "cost_usd": {
+      "assumed_completion_tokens_per_task": 100,
+      "rates": {
+        "input_per_1k": 0.0025,
+        "output_per_1k": 0.01,
+        "model": "gpt-4o"
+      },
+      "retrieval_usd_in": 0.0014025,
+      "retrieval_usd_out": 0.02,
+      "retrieval_usd_total": 0.0214025,
+      "naive_usd_total": 0.0820575,
+      "saved_usd": 0.060655,
+      "saved_usd_per_1k_tasks": 3.03275
+    }
+  },
+  "task_results": [
+    {
+      "task_id": "order-mina-count",
+      "query": "How many orders has Mina Okafor placed?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['2']",
+      "search_time_ms": 34.31391599588096,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 11,
+      "query_tokens": 11,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "order-mina-latest",
+      "query": "What was in Mina Okafor's most recent order?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['Luna', 'Loop']",
+      "search_time_ms": 29.60854201228358,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 13,
+      "query_tokens": 13,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "rma-mina-sleeve-reason",
+      "query": "Why did Mina open an RMA on order 2026-0142?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['wrong colour', 'Oat']",
+      "search_time_ms": 32.31730399420485,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 17,
+      "query_tokens": 17,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "rma-mina-lid-resolution",
+      "query": "How was Mina's Luna bottle lid complaint resolved?",
+      "answer": "[Chat 2026-04-10] Mina: Hey, the Luna bottle lid is leaking \u2014 is that covered? Agent: Yes, the lid has a 2-year warranty. I'll ship you a replacement lid free of charge. Mina: Great, thanks!",
+      "hits": [
+        {
+          "text": "[Chat 2026-04-10] Mina: Hey, the Luna bottle lid is leaking \u2014 is that covered? Agent: Yes, the lid has a 2-year warranty. I'll ship you a replacement lid free of charge. Mina: Great, thanks!",
+          "score": 0.5323119854064589,
+          "source": "pentatonic-memory",
+          "doc_id": "chat-mina-2026-04-10"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 28.685988974757493,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 68,
+      "query_tokens": 11,
+      "context_tokens": 57,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "jareth-harness-bar-followup",
+      "query": "Did Jareth's kite harness work with his bar out of the box?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['Duotone', 'adapter']",
+      "search_time_ms": 34.421516000293195,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 15,
+      "query_tokens": 15,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "jareth-second-order",
+      "query": "What did Jareth order after his initial harness purchase?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['adapter', 'NMD-ADPT-DC']",
+      "search_time_ms": 25.77133697923273,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 11,
+      "query_tokens": 11,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "priya-custom-status",
+      "query": "Can Priya change the text on her custom tote?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: [\"can't change\", 'production']",
+      "search_time_ms": 27.974719007033855,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 11,
+      "query_tokens": 11,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "priya-goodwill-offered",
+      "query": "What goodwill credit did Priya get offered?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['15%']",
+      "search_time_ms": 26.681170013034716,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 9,
+      "query_tokens": 9,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "policy-custom-return",
+      "query": "Can a custom-printed tote be returned for refund?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['final sale']",
+      "search_time_ms": 29.563406016677618,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 11,
+      "query_tokens": 11,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "policy-40day-return",
+      "query": "If an unused item was delivered 40 days ago, can I get a full refund?",
+      "answer": "Returns policy: unused items returnable within 30 days of delivery for full refund. After 30 days but under 90 days: store credit only. Custom-printed and consumable items are final sale and non-returnable.",
+      "hits": [
+        {
+          "text": "Returns policy: unused items returnable within 30 days of delivery for full refund. After 30 days but under 90 days: store credit only. Custom-printed and consumable items are final sale and non-returnable.",
+          "score": 0.5349228375664262,
+          "source": "pentatonic-memory",
+          "doc_id": "policy-returns-30day"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "all substrings matched; forbidden substring(s) present: ['full refund']",
+      "search_time_ms": 34.331914997892454,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 64,
+      "query_tokens": 18,
+      "context_tokens": 46,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "escalation-400gbp-full-refund",
+      "query": "A Tier 1 agent wants to issue a full refund on a \u00a3400 order \u2014 can they?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['Tier 3']",
+      "search_time_ms": 32.81780600082129,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 20,
+      "query_tokens": 20,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "escalation-goodwill-20pct-tier",
+      "query": "What's the minimum agent tier needed to offer 20% goodwill credit?",
+      "answer": "Goodwill credit: agents at Tier 1 may offer up to 10% off next order as goodwill. Tier 2 may offer up to 25%. Anything above 25% or any full refund outside policy requires Tier 3 approval.",
+      "hits": [
+        {
+          "text": "Goodwill credit: agents at Tier 1 may offer up to 10% off next order as goodwill. Tier 2 may offer up to 25%. Anything above 25% or any full refund outside policy requires Tier 3 approval.",
+          "score": 0.5517141571721631,
+          "source": "pentatonic-memory",
+          "doc_id": "policy-goodwill-credit"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 33.02935999818146,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 64,
+      "query_tokens": 15,
+      "context_tokens": 49,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "mina-vip-status",
+      "query": "Is Mina Okafor a VIP customer?",
+      "answer": "Customer note \u2014 Mina Okafor: VIP tier (5+ orders, \u00a3350+ lifetime spend). Preferences: matte finishes, neutrals over brights. Has flagged interest in lifetime-warranty items.",
+      "hits": [
+        {
+          "text": "Customer note \u2014 Mina Okafor: VIP tier (5+ orders, \u00a3350+ lifetime spend). Preferences: matte finishes, neutrals over brights. Has flagged interest in lifetime-warranty items.",
+          "score": 0.7720720221593629,
+          "source": "pentatonic-memory",
+          "doc_id": "customer-note-mina-vip"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 27.029798016883433,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 52,
+      "query_tokens": 10,
+      "context_tokens": 42,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "mina-preferences",
+      "query": "What are Mina Okafor's stated preferences?",
+      "answer": "Customer note \u2014 Mina Okafor: VIP tier (5+ orders, \u00a3350+ lifetime spend). Preferences: matte finishes, neutrals over brights. Has flagged interest in lifetime-warranty items.",
+      "hits": [
+        {
+          "text": "Customer note \u2014 Mina Okafor: VIP tier (5+ orders, \u00a3350+ lifetime spend). Preferences: matte finishes, neutrals over brights. Has flagged interest in lifetime-warranty items.",
+          "score": 0.5363281403698282,
+          "source": "pentatonic-memory",
+          "doc_id": "customer-note-mina-vip"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 26.91432400024496,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 53,
+      "query_tokens": 11,
+      "context_tokens": 42,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "priya-agent-guidance",
+      "query": "When handling Priya's orders, what should the agent do before production starts?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['confirm', 'print text']",
+      "search_time_ms": 31.542113021714613,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 16,
+      "query_tokens": 16,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "rubric-mina-warranty-recommendation",
+      "query": "Mina is asking for product recommendations. Based on her history, what should we suggest?",
+      "answer": "Customer note \u2014 Mina Okafor: VIP tier (5+ orders, \u00a3350+ lifetime spend). Preferences: matte finishes, neutrals over brights. Has flagged interest in lifetime-warranty items.",
+      "hits": [
+        {
+          "text": "Customer note \u2014 Mina Okafor: VIP tier (5+ orders, \u00a3350+ lifetime spend). Preferences: matte finishes, neutrals over brights. Has flagged interest in lifetime-warranty items.",
+          "score": 0.5268969216421068,
+          "source": "pentatonic-memory",
+          "doc_id": "customer-note-mina-vip"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "judge=1.00 \u2014 The answer references Mina's VIP status and her stated interest in lifetime-warranty items, meeting the criteria for a s",
+      "search_time_ms": 31.27754997694865,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 60,
+      "query_tokens": 18,
+      "context_tokens": 42,
+      "judge_tokens_in": 374,
+      "judge_tokens_out": 44,
+      "judge_latency_ms": 945.222895026207
+    },
+    {
+      "task_id": "rubric-jareth-escalation",
+      "query": "Jareth wants to return his kite harness for a full refund, claiming it 'didn't work' with his bar \u2014 how should we handle this?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "judge=0.00 \u2014 The answer fails to provide any context or resolution regarding Jareth's claim, simply processing a refund without addre",
+      "search_time_ms": 38.004239002475515,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 30,
+      "query_tokens": 30,
+      "context_tokens": 0,
+      "judge_tokens_in": 357,
+      "judge_tokens_out": 43,
+      "judge_latency_ms": 868.3296079933643
+    },
+    {
+      "task_id": "rubric-priya-delayed-custom",
+      "query": "Priya is frustrated about her custom tote delay. What's the best response?",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "judge=0.00 \u2014 The response does not acknowledge that custom items have a 10-12 working day lead time and does not mention goodwill. It",
+      "search_time_ms": 33.17419299855828,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 16,
+      "query_tokens": 16,
+      "context_tokens": 0,
+      "judge_tokens_in": 310,
+      "judge_tokens_out": 54,
+      "judge_latency_ms": 939.1167230010033
+    },
+    {
+      "task_id": "entity-mina-orders",
+      "query": "List Mina Okafor's order IDs.",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "no expected_substrings set",
+      "search_time_ms": 27.45368899195455,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 10,
+      "query_tokens": 10,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "entity-all-rmas",
+      "query": "List all open and closed RMA case IDs.",
+      "answer": "",
+      "hits": [],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "no expected_substrings set",
+      "search_time_ms": 28.635605005547404,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 10,
+      "query_tokens": 10,
+      "context_tokens": 0,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    }
+  ]
+}

@@ -1,0 +1,1038 @@
+{
+  "bench": "marketplace-ops",
+  "stack": "pentatonic-memory",
+  "n_tasks": 20,
+  "n_correct": 16,
+  "accuracy": 0.8,
+  "mean_score": 0.8400000000000001,
+  "p50_search_ms": 1129.2824639967876,
+  "p95_search_ms": 1260.350246533926,
+  "total_tokens_in": 0,
+  "total_tokens_out": 0,
+  "total_usd": 0.0,
+  "by_tag": {
+    "factoid": {
+      "n": 12,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "event-log": {
+      "n": 7,
+      "mean_score": 0.8285714285714285,
+      "accuracy": 0.7142857142857143
+    },
+    "multi-fact": {
+      "n": 1,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "agent-commerce": {
+      "n": 6,
+      "mean_score": 0.8333333333333334,
+      "accuracy": 0.8333333333333334
+    },
+    "math": {
+      "n": 1,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "seller": {
+      "n": 5,
+      "mean_score": 0.6,
+      "accuracy": 0.6
+    },
+    "buyer": {
+      "n": 3,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "multi-doc": {
+      "n": 1,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "policy": {
+      "n": 3,
+      "mean_score": 1.0,
+      "accuracy": 1.0
+    },
+    "rubric": {
+      "n": 3,
+      "mean_score": 0.6,
+      "accuracy": 0.3333333333333333
+    },
+    "multi-hop": {
+      "n": 2,
+      "mean_score": 0.4,
+      "accuracy": 0.0
+    },
+    "entity": {
+      "n": 2,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "negative": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    }
+  },
+  "extra": {
+    "ingest_ms": 10124.434534984175,
+    "grading": "substring",
+    "limit": 3,
+    "tokens": {
+      "corpus_tokens": 1388,
+      "query_tokens": 240,
+      "context_tokens": 6130,
+      "retrieval_tokens": 6370,
+      "naive_tokens": 28000,
+      "saved_tokens": 21630,
+      "reduction_pct": 0.7725,
+      "mean_retrieval_tokens_per_task": 318.5,
+      "tokenizer": "cl100k_base",
+      "per_task": {
+        "thing-lst-9001-sold-price": {
+          "query": 13,
+          "context": 331,
+          "retrieval": 344,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "thing-lst-9001-buyer": {
+          "query": 8,
+          "context": 479,
+          "retrieval": 487,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "thing-lst-9001-first-offer": {
+          "query": 17,
+          "context": 603,
+          "retrieval": 620,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "thing-lst-9014-flagged-reason": {
+          "query": 11,
+          "context": 476,
+          "retrieval": 487,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "thing-lst-9014-return-reason": {
+          "query": 11,
+          "context": 306,
+          "retrieval": 317,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "thing-lst-9030-agent-offer": {
+          "query": 15,
+          "context": 592,
+          "retrieval": 607,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "thing-lst-9030-agent-discount": {
+          "query": 15,
+          "context": 282,
+          "retrieval": 297,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "seller-mariposa-rating": {
+          "query": 11,
+          "context": 242,
+          "retrieval": 253,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "seller-rix-review-status": {
+          "query": 11,
+          "context": 411,
+          "retrieval": 422,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "seller-velocipede-agent-friendly": {
+          "query": 14,
+          "context": 182,
+          "retrieval": 196,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "buyer-sera-specialism": {
+          "query": 10,
+          "context": 150,
+          "retrieval": 160,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "buyer-ariadne-disputes": {
+          "query": 11,
+          "context": 188,
+          "retrieval": 199,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "policy-duplicate-trigger": {
+          "query": 12,
+          "context": 500,
+          "retrieval": 512,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "policy-agent-opt-out": {
+          "query": 9,
+          "context": 155,
+          "retrieval": 164,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "policy-enhanced-review-lifted": {
+          "query": 12,
+          "context": 207,
+          "retrieval": 219,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "rubric-rix-buy-decision": {
+          "query": 17,
+          "context": 198,
+          "retrieval": 215,
+          "judge_in": 524,
+          "judge_out": 38,
+          "judge_latency_ms": 1033.0775789916515
+        },
+        "rubric-lst-9014-full-story": {
+          "query": 16,
+          "context": 289,
+          "retrieval": 305,
+          "judge_in": 624,
+          "judge_out": 35,
+          "judge_latency_ms": 1018.830972969532
+        },
+        "rubric-agent-commerce-thora": {
+          "query": 8,
+          "context": 139,
+          "retrieval": 147,
+          "judge_in": 435,
+          "judge_out": 38,
+          "judge_latency_ms": 710.8789840042591
+        },
+        "entity-all-sold-things": {
+          "query": 9,
+          "context": 191,
+          "retrieval": 200,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "entity-sellers-with-disputes": {
+          "query": 10,
+          "context": 209,
+          "retrieval": 219,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        }
+      },
+      "judge_tokens_in": 1583,
+      "judge_tokens_out": 111,
+      "judge_calls": 3,
+      "judge_mean_latency_ms": 920.9291786551476
+    },
+    "cost_usd": {
+      "assumed_completion_tokens_per_task": 100,
+      "rates": {
+        "input_per_1k": 0.0025,
+        "output_per_1k": 0.01,
+        "model": "gpt-4o"
+      },
+      "retrieval_usd_in": 0.015925,
+      "retrieval_usd_out": 0.02,
+      "retrieval_usd_total": 0.035925,
+      "naive_usd_total": 0.09000000000000001,
+      "saved_usd": 0.05407500000000001,
+      "saved_usd_per_1k_tasks": 2.7037500000000003
+    }
+  },
+  "task_results": [
+    {
+      "task_id": "thing-lst-9001-sold-price",
+      "query": "What was the final sale price of LST-9001?",
+      "answer": "TES event log for LST-9001:\n2026-02-08T10:00 CREATED by @mariposa\n2026-02-08T10:02 LISTED (price \u00a32,400, marketplace UK)\n2026-02-10T14:30 OFFER_RECEIVED \u00a32,000 from @hendrik\n2026-02-10T16:12 OFFER_DECLINED by @mariposa\n2026-02-12T09:45 OFFER_RECEIVED \u00a32,250 from @sera-interiors\n2026-02-12T11:00 OFFER_ACCEPTED\n2026-02-13T08:30 PAYMENT_RECEIVED \u00a32,250\n2026-02-14T12:00 DISPATCHED (courier: Pickfords, tracking PKF-88291)\n2026-02-16T15:20 DELIVERED to @sera-interiors\n2026-02-18T10:00 BUYER_FEEDBACK_P\n---\nThing LST-9001: vintage Eames lounge chair (1970s, walnut, rosewood stain, minor wear on armrests). Created in TES 2026-02-08 by seller @mariposa. Origin: private estate clearance.\n---\nShopping agent @buyer-agent-7: autonomous agent operating on behalf of @thora (and 4 other principals). Runs AGENT_SPEC_CHECK events before offering, typically bids 90-92% of asking price. Responds to counter-offers within 30s. Registered with marketplace 2025-11.",
+      "hits": [
+        {
+          "text": "TES event log for LST-9001:\n2026-02-08T10:00 CREATED by @mariposa\n2026-02-08T10:02 LISTED (price \u00a32,400, marketplace UK)\n2026-02-10T14:30 OFFER_RECEIVED \u00a32,000 from @hendrik\n2026-02-10T16:12 OFFER_DECLINED by @mariposa\n2026-02-12T09:45 OFFER_RECEIVED \u00a32,250 from @sera-interiors\n2026-02-12T11:00 OFFER_ACCEPTED\n2026-02-13T08:30 PAYMENT_RECEIVED \u00a32,250\n2026-02-14T12:00 DISPATCHED (courier: Pickfords,",
+          "score": 0.4994,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-events-lst-9001"
+        },
+        {
+          "text": "Thing LST-9001: vintage Eames lounge chair (1970s, walnut, rosewood stain, minor wear on armrests). Created in TES 2026-02-08 by seller @mariposa. Origin: private estate clearance.",
+          "score": 0.4987,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-thing-lst-9001"
+        },
+        {
+          "text": "Shopping agent @buyer-agent-7: autonomous agent operating on behalf of @thora (and 4 other principals). Runs AGENT_SPEC_CHECK events before offering, typically bids 90-92% of asking price. Responds to counter-offers within 30s. Registered with marketplace 2025-11.",
+          "score": 0.3607,
+          "source": "pentatonic-memory",
+          "doc_id": "agent-buyer-agent-7"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1092.6160289964173,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 344,
+      "query_tokens": 13,
+      "context_tokens": 331,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "thing-lst-9001-buyer",
+      "query": "Who bought LST-9001?",
+      "answer": "Thing LST-9001: vintage Eames lounge chair (1970s, walnut, rosewood stain, minor wear on armrests). Created in TES 2026-02-08 by seller @mariposa. Origin: private estate clearance.\n---\nTES event log for LST-9001:\n2026-02-08T10:00 CREATED by @mariposa\n2026-02-08T10:02 LISTED (price \u00a32,400, marketplace UK)\n2026-02-10T14:30 OFFER_RECEIVED \u00a32,000 from @hendrik\n2026-02-10T16:12 OFFER_DECLINED by @mariposa\n2026-02-12T09:45 OFFER_RECEIVED \u00a32,250 from @sera-interiors\n2026-02-12T11:00 OFFER_ACCEPTED\n2026-02-13T08:30 PAYMENT_RECEIVED \u00a32,250\n2026-02-14T12:00 DISPATCHED (courier: Pickfords, tracking PKF-88291)\n2026-02-16T15:20 DELIVERED to @sera-interiors\n2026-02-18T10:00 BUYER_FEEDBACK_P\n---\nTES event log for LST-9001:\n2026-02-08T10:00 CREATED by @mariposa\n2026-02-08T10:02 LISTED (price \u00a32,400, marketplace UK)\n2026-02-10T14:30 OFFER_RECEIVED \u00a32,000 from @hendrik\n2026-02-10T16:12 OFFER_DECLINED by @mariposa\n2026-02-12T09:45 OFFER_RECEIVED \u00a32,250 from @sera-interiors\n2026-02-12T11:00 OFFER_ACCEPTED\n2026-02-13T08:30 PAYMENT_RECEIVED \u00a32,250\n2026-02-14T12:00 DISPATCHED (courier: Pickfords, tracking PKF-88291)\n2026-02-16T15:20 DELIVERED to @sera-interiors\n2026-02-18T10:00 BUYER_FEEDBACK_P",
+      "hits": [
+        {
+          "text": "Thing LST-9001: vintage Eames lounge chair (1970s, walnut, rosewood stain, minor wear on armrests). Created in TES 2026-02-08 by seller @mariposa. Origin: private estate clearance.",
+          "score": 0.5051,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-thing-lst-9001"
+        },
+        {
+          "text": "TES event log for LST-9001:\n2026-02-08T10:00 CREATED by @mariposa\n2026-02-08T10:02 LISTED (price \u00a32,400, marketplace UK)\n2026-02-10T14:30 OFFER_RECEIVED \u00a32,000 from @hendrik\n2026-02-10T16:12 OFFER_DECLINED by @mariposa\n2026-02-12T09:45 OFFER_RECEIVED \u00a32,250 from @sera-interiors\n2026-02-12T11:00 OFFER_ACCEPTED\n2026-02-13T08:30 PAYMENT_RECEIVED \u00a32,250\n2026-02-14T12:00 DISPATCHED (courier: Pickfords,",
+          "score": 0.4692,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-events-lst-9001"
+        },
+        {
+          "text": "TES event log for LST-9001:\n2026-02-08T10:00 CREATED by @mariposa\n2026-02-08T10:02 LISTED (price \u00a32,400, marketplace UK)\n2026-02-10T14:30 OFFER_RECEIVED \u00a32,000 from @hendrik\n2026-02-10T16:12 OFFER_DECLINED by @mariposa\n2026-02-12T09:45 OFFER_RECEIVED \u00a32,250 from @sera-interiors\n2026-02-12T11:00 OFFER_ACCEPTED\n2026-02-13T08:30 PAYMENT_RECEIVED \u00a32,250\n2026-02-14T12:00 DISPATCHED (courier: Pickfords,",
+          "score": 0.4032,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-events-lst-9001"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1055.2114220045041,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 487,
+      "query_tokens": 8,
+      "context_tokens": 479,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "thing-lst-9001-first-offer",
+      "query": "What was the first offer received on LST-9001 and was it accepted?",
+      "answer": "TES event log for LST-9001:\n2026-02-08T10:00 CREATED by @mariposa\n2026-02-08T10:02 LISTED (price \u00a32,400, marketplace UK)\n2026-02-10T14:30 OFFER_RECEIVED \u00a32,000 from @hendrik\n2026-02-10T16:12 OFFER_DECLINED by @mariposa\n2026-02-12T09:45 OFFER_RECEIVED \u00a32,250 from @sera-interiors\n2026-02-12T11:00 OFFER_ACCEPTED\n2026-02-13T08:30 PAYMENT_RECEIVED \u00a32,250\n2026-02-14T12:00 DISPATCHED (courier: Pickfords, tracking PKF-88291)\n2026-02-16T15:20 DELIVERED to @sera-interiors\n2026-02-18T10:00 BUYER_FEEDBACK_POSITIVE 5/5\n---\nTES event log for LST-9001:\n2026-02-08T10:00 CREATED by @mariposa\n2026-02-08T10:02 LISTED (price \u00a32,400, marketplace UK)\n2026-02-10T14:30 OFFER_RECEIVED \u00a32,000 from @hendrik\n2026-02-10T16:12 OFFER_DECLINED by @mariposa\n2026-02-12T09:45 OFFER_RECEIVED \u00a32,250 from @sera-interiors\n2026-02-12T11:00 OFFER_ACCEPTED\n2026-02-13T08:30 PAYMENT_RECEIVED \u00a32,250\n2026-02-14T12:00 DISPATCHED (courier: Pickfords, tracking PKF-88291)\n2026-02-16T15:20 DELIVERED to @sera-interiors\n2026-02-18T10:00 BUYER_FEEDBACK_P\n---\nTES event log for LST-9030:\n2026-03-03T08:00 CREATED\n2026-03-03T08:05 LISTED (price \u00a3420)\n2026-03-05T11:20 AGENT_INQUIRY from @buyer-agent-7 (autonomous shopping agent)\n2026-03-05T11:22 AGENT_SPEC_CHECK (agent requested frame size, gear count, original vs restored)\n2026-03-05T11:23 AGENT_SPEC_RESPONSE (frame 23\", 10-speed, restored \u2014 new cables, tyres, bar tape; original frame and wheels)\n2026-03-05T11:30 OFFER_RECEIVED \u00a3380 from @buyer-agent-7 (on behalf of @thora)\n2026-03-05T11:45 OFFER_ACCEPT",
+      "hits": [
+        {
+          "text": "TES event log for LST-9001:\n2026-02-08T10:00 CREATED by @mariposa\n2026-02-08T10:02 LISTED (price \u00a32,400, marketplace UK)\n2026-02-10T14:30 OFFER_RECEIVED \u00a32,000 from @hendrik\n2026-02-10T16:12 OFFER_DECLINED by @mariposa\n2026-02-12T09:45 OFFER_RECEIVED \u00a32,250 from @sera-interiors\n2026-02-12T11:00 OFFER_ACCEPTED\n2026-02-13T08:30 PAYMENT_RECEIVED \u00a32,250\n2026-02-14T12:00 DISPATCHED (courier: Pickfords,",
+          "score": 0.5929,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-events-lst-9001"
+        },
+        {
+          "text": "TES event log for LST-9001:\n2026-02-08T10:00 CREATED by @mariposa\n2026-02-08T10:02 LISTED (price \u00a32,400, marketplace UK)\n2026-02-10T14:30 OFFER_RECEIVED \u00a32,000 from @hendrik\n2026-02-10T16:12 OFFER_DECLINED by @mariposa\n2026-02-12T09:45 OFFER_RECEIVED \u00a32,250 from @sera-interiors\n2026-02-12T11:00 OFFER_ACCEPTED\n2026-02-13T08:30 PAYMENT_RECEIVED \u00a32,250\n2026-02-14T12:00 DISPATCHED (courier: Pickfords,",
+          "score": 0.5644,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-events-lst-9001"
+        },
+        {
+          "text": "TES event log for LST-9030:\n2026-03-03T08:00 CREATED\n2026-03-03T08:05 LISTED (price \u00a3420)\n2026-03-05T11:20 AGENT_INQUIRY from @buyer-agent-7 (autonomous shopping agent)\n2026-03-05T11:22 AGENT_SPEC_CHECK (agent requested frame size, gear count, original vs restored)\n2026-03-05T11:23 AGENT_SPEC_RESPONSE (frame 23\", 10-speed, restored \u2014 new cables, tyres, bar tape; original frame and wheels)\n2026-03-",
+          "score": 0.5326,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-events-lst-9030"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1139.789954002481,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 620,
+      "query_tokens": 17,
+      "context_tokens": 603,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "thing-lst-9014-flagged-reason",
+      "query": "Why was LST-9014 flagged as duplicate?",
+      "answer": "TES event log for LST-9014:\n2026-02-14T09:20 CREATED by @rix-digital\n2026-02-14T09:25 LISTED (price \u00a3780)\n2026-02-15T12:00 FLAGGED_DUPLICATE \u2014 matches LST-9014-DUP (different seller, same serial number detected via device fingerprint)\n2026-02-15T13:30 LISTING_HELD pending review\n2026-02-16T10:00 REVIEW_CLEARED (original seller confirmed; dup delisted)\n2026-02-16T10:05 RELISTED\n2026-02-19T11:18 SOLD for \u00a3780 to @ariadne\n2026-02-20T14:00 DISPATCHED\n2026-02-22T09:45 DELIVERED\n2026-02-24T16:00 RETURN_REQUEST (buyer claims battery health lower than advertised)\n2026-02-26T10:30 RETURN_APPROVED, refu\n---\nDuplicate-listing policy: two listings with matching device fingerprints (serial numbers, IMEI, chassis VIN) trigger an automatic FLAGGED_DUPLICATE event and LISTING_HELD status. Both sellers are contacted; the listing with earliest verifiable ownership proof is cleared. No penalty if sellers cooperate with review within 48h.\n---\nTES event log for LST-9014:\n2026-02-14T09:20 CREATED by @rix-digital\n2026-02-14T09:25 LISTED (price \u00a3780)\n2026-02-15T12:00 FLAGGED_DUPLICATE \u2014 matches LST-9014-DUP (different seller, same serial number detected via device fingerprint)\n2026-02-15T13:30 LISTING_HELD pending review\n2026-02-16T10:00 REVIEW_CLEARED (original seller confirmed; dup delisted)\n2026-02-16T10:05 RELISTED\n2026-02-19T11:18 SOLD for \u00a3780 to @ariadne\n2026-02-20T14:00 DISPATCHED\n2026-02-22T09:45 DELIVERED\n2026-02-24T16:00 RETUR",
+      "hits": [
+        {
+          "text": "TES event log for LST-9014:\n2026-02-14T09:20 CREATED by @rix-digital\n2026-02-14T09:25 LISTED (price \u00a3780)\n2026-02-15T12:00 FLAGGED_DUPLICATE \u2014 matches LST-9014-DUP (different seller, same serial number detected via device fingerprint)\n2026-02-15T13:30 LISTING_HELD pending review\n2026-02-16T10:00 REVIEW_CLEARED (original seller confirmed; dup delisted)\n2026-02-16T10:05 RELISTED\n2026-02-19T11:18 SOL",
+          "score": 0.5961,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-events-lst-9014"
+        },
+        {
+          "text": "Duplicate-listing policy: two listings with matching device fingerprints (serial numbers, IMEI, chassis VIN) trigger an automatic FLAGGED_DUPLICATE event and LISTING_HELD status. Both sellers are contacted; the listing with earliest verifiable ownership proof is cleared. No penalty if sellers cooperate with review within 48h.",
+          "score": 0.5948,
+          "source": "pentatonic-memory",
+          "doc_id": "policy-duplicate-listings"
+        },
+        {
+          "text": "TES event log for LST-9014:\n2026-02-14T09:20 CREATED by @rix-digital\n2026-02-14T09:25 LISTED (price \u00a3780)\n2026-02-15T12:00 FLAGGED_DUPLICATE \u2014 matches LST-9014-DUP (different seller, same serial number detected via device fingerprint)\n2026-02-15T13:30 LISTING_HELD pending review\n2026-02-16T10:00 REVIEW_CLEARED (original seller confirmed; dup delisted)\n2026-02-16T10:05 RELISTED\n2026-02-19T11:18 SOL",
+          "score": 0.5448,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-events-lst-9014"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1190.589114004979,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 487,
+      "query_tokens": 11,
+      "context_tokens": 476,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "thing-lst-9014-return-reason",
+      "query": "Why did the buyer return LST-9014?",
+      "answer": "TES event log for LST-9014:\n2026-02-14T09:20 CREATED by @rix-digital\n2026-02-14T09:25 LISTED (price \u00a3780)\n2026-02-15T12:00 FLAGGED_DUPLICATE \u2014 matches LST-9014-DUP (different seller, same serial number detected via device fingerprint)\n2026-02-15T13:30 LISTING_HELD pending review\n2026-02-16T10:00 REVIEW_CLEARED (original seller confirmed; dup delisted)\n2026-02-16T10:05 RELISTED\n2026-02-19T11:18 SOLD for \u00a3780 to @ariadne\n2026-02-20T14:00 DISPATCHED\n2026-02-22T09:45 DELIVERED\n2026-02-24T16:00 RETURN_REQUEST (buyer claims battery health lower than advertised)\n2026-02-26T10:30 RETURN_APPROVED, refu\n---\nBuyer @ariadne: consumer account. Purchases to date: 14. Average basket: \u00a3410. One open return (LST-9014 battery-health dispute, closed in buyer's favour).\n---\nBuyer @ariadne: consumer account. Purchases to date: 14. Average basket: \u00a3410. One open return (LST-9014 battery-health dispute, closed in buyer's favour).",
+      "hits": [
+        {
+          "text": "TES event log for LST-9014:\n2026-02-14T09:20 CREATED by @rix-digital\n2026-02-14T09:25 LISTED (price \u00a3780)\n2026-02-15T12:00 FLAGGED_DUPLICATE \u2014 matches LST-9014-DUP (different seller, same serial number detected via device fingerprint)\n2026-02-15T13:30 LISTING_HELD pending review\n2026-02-16T10:00 REVIEW_CLEARED (original seller confirmed; dup delisted)\n2026-02-16T10:05 RELISTED\n2026-02-19T11:18 SOL",
+          "score": 0.5777,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-events-lst-9014"
+        },
+        {
+          "text": "Buyer @ariadne: consumer account. Purchases to date: 14. Average basket: \u00a3410. One open return (LST-9014 battery-health dispute, closed in buyer's favour).",
+          "score": 0.5692,
+          "source": "pentatonic-memory",
+          "doc_id": "buyer-ariadne-profile"
+        },
+        {
+          "text": "Buyer @ariadne: consumer account. Purchases to date: 14. Average basket: \u00a3410. One open return (LST-9014 battery-health dispute, closed in buyer's favour).",
+          "score": 0.6857,
+          "source": "pentatonic-memory",
+          "doc_id": "buyer-ariadne-profile"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1151.4042140042875,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 317,
+      "query_tokens": 11,
+      "context_tokens": 306,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "thing-lst-9030-agent-offer",
+      "query": "Which agent made the offer on LST-9030 and for whom?",
+      "answer": "TES event log for LST-9030:\n2026-03-03T08:00 CREATED\n2026-03-03T08:05 LISTED (price \u00a3420)\n2026-03-05T11:20 AGENT_INQUIRY from @buyer-agent-7 (autonomous shopping agent)\n2026-03-05T11:22 AGENT_SPEC_CHECK (agent requested frame size, gear count, original vs restored)\n2026-03-05T11:23 AGENT_SPEC_RESPONSE (frame 23\", 10-speed, restored \u2014 new cables, tyres, bar tape; original frame and wheels)\n2026-03-05T11:30 OFFER_RECEIVED \u00a3380 from @buyer-agent-7 (on behalf of @thora)\n2026-03-05T11:45 OFFER_ACCEPTED\n2026-03-06T10:00 PAYMENT_RECEIVED\n2026-03-07T14:20 DISPATCHED\n---\nTES event log for LST-9001:\n2026-02-08T10:00 CREATED by @mariposa\n2026-02-08T10:02 LISTED (price \u00a32,400, marketplace UK)\n2026-02-10T14:30 OFFER_RECEIVED \u00a32,000 from @hendrik\n2026-02-10T16:12 OFFER_DECLINED by @mariposa\n2026-02-12T09:45 OFFER_RECEIVED \u00a32,250 from @sera-interiors\n2026-02-12T11:00 OFFER_ACCEPTED\n2026-02-13T08:30 PAYMENT_RECEIVED \u00a32,250\n2026-02-14T12:00 DISPATCHED (courier: Pickfords, tracking PKF-88291)\n2026-02-16T15:20 DELIVERED to @sera-interiors\n2026-02-18T10:00 BUYER_FEEDBACK_POSITIVE 5/5\n---\nTES event log for LST-9030:\n2026-03-03T08:00 CREATED\n2026-03-03T08:05 LISTED (price \u00a3420)\n2026-03-05T11:20 AGENT_INQUIRY from @buyer-agent-7 (autonomous shopping agent)\n2026-03-05T11:22 AGENT_SPEC_CHECK (agent requested frame size, gear count, original vs restored)\n2026-03-05T11:23 AGENT_SPEC_RESPONSE (frame 23\", 10-speed, restored \u2014 new cables, tyres, bar tape; original frame and wheels)\n2026-03-05T11:30 OFFER_RECEIVED \u00a3380 from @buyer-agent-7 (on behalf of @thora)\n2026-03-05T11:45 OFFER_ACCEPT",
+      "hits": [
+        {
+          "text": "TES event log for LST-9030:\n2026-03-03T08:00 CREATED\n2026-03-03T08:05 LISTED (price \u00a3420)\n2026-03-05T11:20 AGENT_INQUIRY from @buyer-agent-7 (autonomous shopping agent)\n2026-03-05T11:22 AGENT_SPEC_CHECK (agent requested frame size, gear count, original vs restored)\n2026-03-05T11:23 AGENT_SPEC_RESPONSE (frame 23\", 10-speed, restored \u2014 new cables, tyres, bar tape; original frame and wheels)\n2026-03-",
+          "score": 0.6091,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-events-lst-9030"
+        },
+        {
+          "text": "TES event log for LST-9001:\n2026-02-08T10:00 CREATED by @mariposa\n2026-02-08T10:02 LISTED (price \u00a32,400, marketplace UK)\n2026-02-10T14:30 OFFER_RECEIVED \u00a32,000 from @hendrik\n2026-02-10T16:12 OFFER_DECLINED by @mariposa\n2026-02-12T09:45 OFFER_RECEIVED \u00a32,250 from @sera-interiors\n2026-02-12T11:00 OFFER_ACCEPTED\n2026-02-13T08:30 PAYMENT_RECEIVED \u00a32,250\n2026-02-14T12:00 DISPATCHED (courier: Pickfords,",
+          "score": 0.5533,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-events-lst-9001"
+        },
+        {
+          "text": "TES event log for LST-9030:\n2026-03-03T08:00 CREATED\n2026-03-03T08:05 LISTED (price \u00a3420)\n2026-03-05T11:20 AGENT_INQUIRY from @buyer-agent-7 (autonomous shopping agent)\n2026-03-05T11:22 AGENT_SPEC_CHECK (agent requested frame size, gear count, original vs restored)\n2026-03-05T11:23 AGENT_SPEC_RESPONSE (frame 23\", 10-speed, restored \u2014 new cables, tyres, bar tape; original frame and wheels)\n2026-03-",
+          "score": 0.5466,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-events-lst-9030"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1175.6390430091415,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 607,
+      "query_tokens": 15,
+      "context_tokens": 592,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "thing-lst-9030-agent-discount",
+      "query": "What percentage discount did the shopping agent offer on LST-9030?",
+      "answer": "TES event log for LST-9030:\n2026-03-03T08:00 CREATED\n2026-03-03T08:05 LISTED (price \u00a3420)\n2026-03-05T11:20 AGENT_INQUIRY from @buyer-agent-7 (autonomous shopping agent)\n2026-03-05T11:22 AGENT_SPEC_CHECK (agent requested frame size, gear count, original vs restored)\n2026-03-05T11:23 AGENT_SPEC_RESPONSE (frame 23\", 10-speed, restored \u2014 new cables, tyres, bar tape; original frame and wheels)\n2026-03-05T11:30 OFFER_RECEIVED \u00a3380 from @buyer-agent-7 (on behalf of @thora)\n2026-03-05T11:45 OFFER_ACCEPT\n---\nThing LST-9030: Restored Schwinn Varsity bicycle (1982, red, original components). Created in TES 2026-03-03 by seller @velocipede-jo.\n---\nShopping agent @buyer-agent-7: autonomous agent operating on behalf of @thora (and 4 other principals). Runs AGENT_SPEC_CHECK events before offering, typically bids 90-92% of asking price. Responds to counter-offers within 30s. Registered with marketplace 2025-11.",
+      "hits": [
+        {
+          "text": "TES event log for LST-9030:\n2026-03-03T08:00 CREATED\n2026-03-03T08:05 LISTED (price \u00a3420)\n2026-03-05T11:20 AGENT_INQUIRY from @buyer-agent-7 (autonomous shopping agent)\n2026-03-05T11:22 AGENT_SPEC_CHECK (agent requested frame size, gear count, original vs restored)\n2026-03-05T11:23 AGENT_SPEC_RESPONSE (frame 23\", 10-speed, restored \u2014 new cables, tyres, bar tape; original frame and wheels)\n2026-03-",
+          "score": 0.5639,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-events-lst-9030"
+        },
+        {
+          "text": "Thing LST-9030: Restored Schwinn Varsity bicycle (1982, red, original components). Created in TES 2026-03-03 by seller @velocipede-jo.",
+          "score": 0.5071,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-thing-lst-9030"
+        },
+        {
+          "text": "Shopping agent @buyer-agent-7: autonomous agent operating on behalf of @thora (and 4 other principals). Runs AGENT_SPEC_CHECK events before offering, typically bids 90-92% of asking price. Responds to counter-offers within 30s. Registered with marketplace 2025-11.",
+          "score": 0.4989,
+          "source": "pentatonic-memory",
+          "doc_id": "agent-buyer-agent-7"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1093.1565659993794,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 297,
+      "query_tokens": 15,
+      "context_tokens": 282,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "seller-mariposa-rating",
+      "query": "What's @mariposa's average star rating?",
+      "answer": "Seller @mariposa: registered 2024-08. Category: vintage furniture and homeware. Listings to date: 47. Sell-through rate: 89%. Average star rating: 4.8/5 (based on 38 reviews). Disputes in last 12 months: 0.\n---\nSeller @velocipede-jo: registered 2025-04. Category: restored bicycles. Listings to date: 12. Sell-through rate: 100%. Average star rating: 5.0/5 (based on 11 reviews). Disputes: 0. Agent-commerce friendly: yes (responds to AGENT_SPEC_CHECK events within 5 minutes on average).\n---\nSeller @rix-digital: registered 2023-11. Category: refurbished electronics. Listings to date: 312. Sell-through rate: 72%. Average star rating: 4.3/5 (based on 201 reviews). Disputes in last 12 months: 4 (2 refunded, 1 partial, 1 dismissed). Flagged for repeated spec discrepancies 2026-02-24 \u2014 currently on 'enhanced listing review' status.",
+      "hits": [
+        {
+          "text": "Seller @mariposa: registered 2024-08. Category: vintage furniture and homeware. Listings to date: 47. Sell-through rate: 89%. Average star rating: 4.8/5 (based on 38 reviews). Disputes in last 12 months: 0.",
+          "score": 0.5965,
+          "source": "pentatonic-memory",
+          "doc_id": "seller-mariposa-profile"
+        },
+        {
+          "text": "Seller @velocipede-jo: registered 2025-04. Category: restored bicycles. Listings to date: 12. Sell-through rate: 100%. Average star rating: 5.0/5 (based on 11 reviews). Disputes: 0. Agent-commerce friendly: yes (responds to AGENT_SPEC_CHECK events within 5 minutes on average).",
+          "score": 0.4848,
+          "source": "pentatonic-memory",
+          "doc_id": "seller-velocipede-jo-profile"
+        },
+        {
+          "text": "Seller @rix-digital: registered 2023-11. Category: refurbished electronics. Listings to date: 312. Sell-through rate: 72%. Average star rating: 4.3/5 (based on 201 reviews). Disputes in last 12 months: 4 (2 refunded, 1 partial, 1 dismissed). Flagged for repeated spec discrepancies 2026-02-24 \u2014 currently on 'enhanced listing review' status.",
+          "score": 0.4689,
+          "source": "pentatonic-memory",
+          "doc_id": "seller-rix-digital-profile"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1181.1042820045259,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 253,
+      "query_tokens": 11,
+      "context_tokens": 242,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "seller-rix-review-status",
+      "query": "Is @rix-digital under any special review status?",
+      "answer": "Seller @rix-digital: registered 2023-11. Category: refurbished electronics. Listings to date: 312. Sell-through rate: 72%. Average star rating: 4.3/5 (based on 201 reviews). Disputes in last 12 months: 4 (2 refunded, 1 partial, 1 dismissed). Flagged for repeated spec discrepancies 2026-02-24 \u2014 currently on 'enhanced listing review' status.\n---\nSeller @rix-digital: registered 2023-11. Category: refurbished electronics. Listings to date: 312. Sell-through rate: 72%. Average star rating: 4.3/5 (based on 201 reviews). Disputes in last 12 months: 4 (2 refunded, 1 partial, 1 dismissed). Flagged for repeated spec discrepancies 2026-02-24 \u2014 currently on 'enhanced listing review' status.\n---\nTES event log for LST-9014:\n2026-02-14T09:20 CREATED by @rix-digital\n2026-02-14T09:25 LISTED (price \u00a3780)\n2026-02-15T12:00 FLAGGED_DUPLICATE \u2014 matches LST-9014-DUP (different seller, same serial number detected via device fingerprint)\n2026-02-15T13:30 LISTING_HELD pending review\n2026-02-16T10:00 REVIEW_CLEARED (original seller confirmed; dup delisted)\n2026-02-16T10:05 RELISTED\n2026-02-19T11:18 SOLD for \u00a3780 to @ariadne\n2026-02-20T14:00 DISPATCHED\n2026-02-22T09:45 DELIVERED\n2026-02-24T16:00 RETURN_REQUEST (buyer claims battery health lower than advertised)\n2026-02-26T10:30 RETURN_APPROVED, refu",
+      "hits": [
+        {
+          "text": "Seller @rix-digital: registered 2023-11. Category: refurbished electronics. Listings to date: 312. Sell-through rate: 72%. Average star rating: 4.3/5 (based on 201 reviews). Disputes in last 12 months: 4 (2 refunded, 1 partial, 1 dismissed). Flagged for repeated spec discrepancies 2026-02-24 \u2014 currently on 'enhanced listing review' status.",
+          "score": 0.714,
+          "source": "pentatonic-memory",
+          "doc_id": "seller-rix-digital-profile"
+        },
+        {
+          "text": "Seller @rix-digital: registered 2023-11. Category: refurbished electronics. Listings to date: 312. Sell-through rate: 72%. Average star rating: 4.3/5 (based on 201 reviews). Disputes in last 12 months: 4 (2 refunded, 1 partial, 1 dismissed). Flagged for repeated spec discrepancies 2026-02-24 \u2014 currently on 'enhanced listing review' status.",
+          "score": 0.6458,
+          "source": "pentatonic-memory",
+          "doc_id": "seller-rix-digital-profile"
+        },
+        {
+          "text": "TES event log for LST-9014:\n2026-02-14T09:20 CREATED by @rix-digital\n2026-02-14T09:25 LISTED (price \u00a3780)\n2026-02-15T12:00 FLAGGED_DUPLICATE \u2014 matches LST-9014-DUP (different seller, same serial number detected via device fingerprint)\n2026-02-15T13:30 LISTING_HELD pending review\n2026-02-16T10:00 REVIEW_CLEARED (original seller confirmed; dup delisted)\n2026-02-16T10:05 RELISTED\n2026-02-19T11:18 SOL",
+          "score": 0.5417,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-events-lst-9014"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1164.2251609882805,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 422,
+      "query_tokens": 11,
+      "context_tokens": 411,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "seller-velocipede-agent-friendly",
+      "query": "Does @velocipede-jo respond well to shopping agents?",
+      "answer": "Seller @velocipede-jo: registered 2025-04. Category: restored bicycles. Listings to date: 12. Sell-through rate: 100%. Average star rating: 5.0/5 (based on 11 reviews). Disputes: 0. Agent-commerce friendly: yes (responds to AGENT_SPEC_CHECK events within 5 minutes on average).\n---\nShopping agent @buyer-agent-7: autonomous agent operating on behalf of @thora (and 4 other principals). Runs AGENT_SPEC_CHECK events before offering, typically bids 90-92% of asking price. Responds to counter-offers within 30s. Registered with marketplace 2025-11.\n---\nBuyer @thora: consumer account. Purchases to date: 6. Uses an autonomous shopping agent (@buyer-agent-7) for most transactions. Average basket: \u00a3510.",
+      "hits": [
+        {
+          "text": "Seller @velocipede-jo: registered 2025-04. Category: restored bicycles. Listings to date: 12. Sell-through rate: 100%. Average star rating: 5.0/5 (based on 11 reviews). Disputes: 0. Agent-commerce friendly: yes (responds to AGENT_SPEC_CHECK events within 5 minutes on average).",
+          "score": 0.728,
+          "source": "pentatonic-memory",
+          "doc_id": "seller-velocipede-jo-profile"
+        },
+        {
+          "text": "Shopping agent @buyer-agent-7: autonomous agent operating on behalf of @thora (and 4 other principals). Runs AGENT_SPEC_CHECK events before offering, typically bids 90-92% of asking price. Responds to counter-offers within 30s. Registered with marketplace 2025-11.",
+          "score": 0.6094,
+          "source": "pentatonic-memory",
+          "doc_id": "agent-buyer-agent-7"
+        },
+        {
+          "text": "Buyer @thora: consumer account. Purchases to date: 6. Uses an autonomous shopping agent (@buyer-agent-7) for most transactions. Average basket: \u00a3510.",
+          "score": 0.576,
+          "source": "pentatonic-memory",
+          "doc_id": "buyer-thora-profile"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1071.412382996641,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 196,
+      "query_tokens": 14,
+      "context_tokens": 182,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "buyer-sera-specialism",
+      "query": "What does @sera-interiors typically buy?",
+      "answer": "Buyer @sera-interiors: interior design studio account. Purchases to date: 28. Average basket: \u00a31,850. Specialism: mid-century furniture. No disputes. Frequently buys from @mariposa.\n---\nBuyer @thora: consumer account. Purchases to date: 6. Uses an autonomous shopping agent (@buyer-agent-7) for most transactions. Average basket: \u00a3510.\n---\nSeller @mariposa: registered 2024-08. Category: vintage furniture and homeware. Listings to date: 47. Sell-through rate: 89%. Average star rating: 4.8/5 (based on 38 reviews). Disputes in last 12 months: 0.",
+      "hits": [
+        {
+          "text": "Buyer @sera-interiors: interior design studio account. Purchases to date: 28. Average basket: \u00a31,850. Specialism: mid-century furniture. No disputes. Frequently buys from @mariposa.",
+          "score": 0.7774,
+          "source": "pentatonic-memory",
+          "doc_id": "buyer-sera-interiors-profile"
+        },
+        {
+          "text": "Buyer @thora: consumer account. Purchases to date: 6. Uses an autonomous shopping agent (@buyer-agent-7) for most transactions. Average basket: \u00a3510.",
+          "score": 0.5648,
+          "source": "pentatonic-memory",
+          "doc_id": "buyer-thora-profile"
+        },
+        {
+          "text": "Seller @mariposa: registered 2024-08. Category: vintage furniture and homeware. Listings to date: 47. Sell-through rate: 89%. Average star rating: 4.8/5 (based on 38 reviews). Disputes in last 12 months: 0.",
+          "score": 0.541,
+          "source": "pentatonic-memory",
+          "doc_id": "seller-mariposa-profile"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1115.6747849890962,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 160,
+      "query_tokens": 10,
+      "context_tokens": 150,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "buyer-ariadne-disputes",
+      "query": "Does @ariadne have any disputes on record?",
+      "answer": "Buyer @ariadne: consumer account. Purchases to date: 14. Average basket: \u00a3410. One open return (LST-9014 battery-health dispute, closed in buyer's favour).\n---\nBuyer @sera-interiors: interior design studio account. Purchases to date: 28. Average basket: \u00a31,850. Specialism: mid-century furniture. No disputes. Frequently buys from @mariposa.\n---\nSeller @rix-digital: registered 2023-11. Category: refurbished electronics. Listings to date: 312. Sell-through rate: 72%. Average star rating: 4.3/5 (based on 201 reviews). Disputes in last 12 months: 4 (2 refunded, 1 partial, 1 dismissed). Flagged for repeated spec discrepancies 2026-02-24 \u2014 currently on 'enhanced listing review' status.",
+      "hits": [
+        {
+          "text": "Buyer @ariadne: consumer account. Purchases to date: 14. Average basket: \u00a3410. One open return (LST-9014 battery-health dispute, closed in buyer's favour).",
+          "score": 0.7115,
+          "source": "pentatonic-memory",
+          "doc_id": "buyer-ariadne-profile"
+        },
+        {
+          "text": "Buyer @sera-interiors: interior design studio account. Purchases to date: 28. Average basket: \u00a31,850. Specialism: mid-century furniture. No disputes. Frequently buys from @mariposa.",
+          "score": 0.5605,
+          "source": "pentatonic-memory",
+          "doc_id": "buyer-sera-interiors-profile"
+        },
+        {
+          "text": "Seller @rix-digital: registered 2023-11. Category: refurbished electronics. Listings to date: 312. Sell-through rate: 72%. Average star rating: 4.3/5 (based on 201 reviews). Disputes in last 12 months: 4 (2 refunded, 1 partial, 1 dismissed). Flagged for repeated spec discrepancies 2026-02-24 \u2014 currently on 'enhanced listing review' status.",
+          "score": 0.5564,
+          "source": "pentatonic-memory",
+          "doc_id": "seller-rix-digital-profile"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1159.7075799945742,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 199,
+      "query_tokens": 11,
+      "context_tokens": 188,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "policy-duplicate-trigger",
+      "query": "What triggers a FLAGGED_DUPLICATE event in TES?",
+      "answer": "TES event log for LST-9014:\n2026-02-14T09:20 CREATED by @rix-digital\n2026-02-14T09:25 LISTED (price \u00a3780)\n2026-02-15T12:00 FLAGGED_DUPLICATE \u2014 matches LST-9014-DUP (different seller, same serial number detected via device fingerprint)\n2026-02-15T13:30 LISTING_HELD pending review\n2026-02-16T10:00 REVIEW_CLEARED (original seller confirmed; dup delisted)\n2026-02-16T10:05 RELISTED\n2026-02-19T11:18 SOLD for \u00a3780 to @ariadne\n2026-02-20T14:00 DISPATCHED\n2026-02-22T09:45 DELIVERED\n2026-02-24T16:00 RETURN_REQUEST (buyer claims battery health lower than advertised)\n2026-02-26T10:30 RETURN_APPROVED, refu\n---\nDuplicate-listing policy: two listings with matching device fingerprints (serial numbers, IMEI, chassis VIN) trigger an automatic FLAGGED_DUPLICATE event and LISTING_HELD status. Both sellers are contacted; the listing with earliest verifiable ownership proof is cleared. No penalty if sellers cooperate with review within 48h.\n---\nTES event log for LST-9001:\n2026-02-08T10:00 CREATED by @mariposa\n2026-02-08T10:02 LISTED (price \u00a32,400, marketplace UK)\n2026-02-10T14:30 OFFER_RECEIVED \u00a32,000 from @hendrik\n2026-02-10T16:12 OFFER_DECLINED by @mariposa\n2026-02-12T09:45 OFFER_RECEIVED \u00a32,250 from @sera-interiors\n2026-02-12T11:00 OFFER_ACCEPTED\n2026-02-13T08:30 PAYMENT_RECEIVED \u00a32,250\n2026-02-14T12:00 DISPATCHED (courier: Pickfords, tracking PKF-88291)\n2026-02-16T15:20 DELIVERED to @sera-interiors\n2026-02-18T10:00 BUYER_FEEDBACK_POSITIVE 5/5",
+      "hits": [
+        {
+          "text": "TES event log for LST-9014:\n2026-02-14T09:20 CREATED by @rix-digital\n2026-02-14T09:25 LISTED (price \u00a3780)\n2026-02-15T12:00 FLAGGED_DUPLICATE \u2014 matches LST-9014-DUP (different seller, same serial number detected via device fingerprint)\n2026-02-15T13:30 LISTING_HELD pending review\n2026-02-16T10:00 REVIEW_CLEARED (original seller confirmed; dup delisted)\n2026-02-16T10:05 RELISTED\n2026-02-19T11:18 SOL",
+          "score": 0.6111,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-events-lst-9014"
+        },
+        {
+          "text": "Duplicate-listing policy: two listings with matching device fingerprints (serial numbers, IMEI, chassis VIN) trigger an automatic FLAGGED_DUPLICATE event and LISTING_HELD status. Both sellers are contacted; the listing with earliest verifiable ownership proof is cleared. No penalty if sellers cooperate with review within 48h.",
+          "score": 0.5883,
+          "source": "pentatonic-memory",
+          "doc_id": "policy-duplicate-listings"
+        },
+        {
+          "text": "TES event log for LST-9001:\n2026-02-08T10:00 CREATED by @mariposa\n2026-02-08T10:02 LISTED (price \u00a32,400, marketplace UK)\n2026-02-10T14:30 OFFER_RECEIVED \u00a32,000 from @hendrik\n2026-02-10T16:12 OFFER_DECLINED by @mariposa\n2026-02-12T09:45 OFFER_RECEIVED \u00a32,250 from @sera-interiors\n2026-02-12T11:00 OFFER_ACCEPTED\n2026-02-13T08:30 PAYMENT_RECEIVED \u00a32,250\n2026-02-14T12:00 DISPATCHED (courier: Pickfords,",
+          "score": 0.6421770638463984,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-events-lst-9001"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1166.4296399976593,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 512,
+      "query_tokens": 12,
+      "context_tokens": 500,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "policy-agent-opt-out",
+      "query": "Can a seller refuse offers from shopping agents?",
+      "answer": "Agent-commerce policy: autonomous shopping agents must register with the marketplace and declare principal human(s). Agent offers follow the same event flow as human offers. Sellers may opt out of agent-commerce at listing creation (AGENT_OPT_OUT flag).\n---\nShopping agent @buyer-agent-7: autonomous agent operating on behalf of @thora (and 4 other principals). Runs AGENT_SPEC_CHECK events before offering, typically bids 90-92% of asking price. Responds to counter-offers within 30s. Registered with marketplace 2025-11.\n---\nAgent-commerce policy: autonomous shopping agents must register with the marketplace and declare principal human(s). Agent offers follow the same event flow as human offers. Sellers may opt out of agent-commerce at listing creation (AGENT_OPT_OUT flag).",
+      "hits": [
+        {
+          "text": "Agent-commerce policy: autonomous shopping agents must register with the marketplace and declare principal human(s). Agent offers follow the same event flow as human offers. Sellers may opt out of agent-commerce at listing creation (AGENT_OPT_OUT flag).",
+          "score": 0.6841,
+          "source": "pentatonic-memory",
+          "doc_id": "policy-agent-commerce"
+        },
+        {
+          "text": "Shopping agent @buyer-agent-7: autonomous agent operating on behalf of @thora (and 4 other principals). Runs AGENT_SPEC_CHECK events before offering, typically bids 90-92% of asking price. Responds to counter-offers within 30s. Registered with marketplace 2025-11.",
+          "score": 0.6014,
+          "source": "pentatonic-memory",
+          "doc_id": "agent-buyer-agent-7"
+        },
+        {
+          "text": "Agent-commerce policy: autonomous shopping agents must register with the marketplace and declare principal human(s). Agent offers follow the same event flow as human offers. Sellers may opt out of agent-commerce at listing creation (AGENT_OPT_OUT flag).",
+          "score": 0.5804,
+          "source": "pentatonic-memory",
+          "doc_id": "policy-agent-commerce"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1086.0210500250105,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 164,
+      "query_tokens": 9,
+      "context_tokens": 155,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "policy-enhanced-review-lifted",
+      "query": "After how long of clean activity is enhanced listing review lifted?",
+      "answer": "Enhanced listing review: triggered when a seller accumulates 3+ spec-discrepancy disputes in a 90-day window. Listings are manually reviewed before going live. Lifted after 30 days of clean activity.\n---\nSeller @rix-digital: registered 2023-11. Category: refurbished electronics. Listings to date: 312. Sell-through rate: 72%. Average star rating: 4.3/5 (based on 201 reviews). Disputes in last 12 months: 4 (2 refunded, 1 partial, 1 dismissed). Flagged for repeated spec discrepancies 2026-02-24 \u2014 currently on 'enhanced listing review' status.\n---\nDuplicate-listing policy: two listings with matching device fingerprints (serial numbers, IMEI, chassis VIN) trigger an automatic FLAGGED_DUPLICATE event and LISTING_HELD status. Both sellers are contacted; the listing with earliest verifiable ownership proof is cleared. No penalty if sellers cooperate with review within 48h.",
+      "hits": [
+        {
+          "text": "Enhanced listing review: triggered when a seller accumulates 3+ spec-discrepancy disputes in a 90-day window. Listings are manually reviewed before going live. Lifted after 30 days of clean activity.",
+          "score": 0.625,
+          "source": "pentatonic-memory",
+          "doc_id": "policy-seller-enhanced-review"
+        },
+        {
+          "text": "Seller @rix-digital: registered 2023-11. Category: refurbished electronics. Listings to date: 312. Sell-through rate: 72%. Average star rating: 4.3/5 (based on 201 reviews). Disputes in last 12 months: 4 (2 refunded, 1 partial, 1 dismissed). Flagged for repeated spec discrepancies 2026-02-24 \u2014 currently on 'enhanced listing review' status.",
+          "score": 0.4772,
+          "source": "pentatonic-memory",
+          "doc_id": "seller-rix-digital-profile"
+        },
+        {
+          "text": "Duplicate-listing policy: two listings with matching device fingerprints (serial numbers, IMEI, chassis VIN) trigger an automatic FLAGGED_DUPLICATE event and LISTING_HELD status. Both sellers are contacted; the listing with earliest verifiable ownership proof is cleared. No penalty if sellers cooperate with review within 48h.",
+          "score": 0.4677,
+          "source": "pentatonic-memory",
+          "doc_id": "policy-duplicate-listings"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 1070.4181820037775,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 219,
+      "query_tokens": 12,
+      "context_tokens": 207,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "rubric-rix-buy-decision",
+      "query": "A shopping agent is considering buying from @rix-digital. What's your recommendation?",
+      "answer": "Seller @rix-digital: registered 2023-11. Category: refurbished electronics. Listings to date: 312. Sell-through rate: 72%. Average star rating: 4.3/5 (based on 201 reviews). Disputes in last 12 months: 4 (2 refunded, 1 partial, 1 dismissed). Flagged for repeated spec discrepancies 2026-02-24 \u2014 currently on 'enhanced listing review' status.\n---\nBuyer @thora: consumer account. Purchases to date: 6. Uses an autonomous shopping agent (@buyer-agent-7) for most transactions. Average basket: \u00a3510.\n---\nShopping agent @buyer-agent-7: autonomous agent operating on behalf of @thora (and 4 other principals). Runs AGENT_SPEC_CHECK events before offering, typically bids 90-92% of asking price. Responds to counter-offers within 30s. Registered with marketplace 2025-11.",
+      "hits": [
+        {
+          "text": "Seller @rix-digital: registered 2023-11. Category: refurbished electronics. Listings to date: 312. Sell-through rate: 72%. Average star rating: 4.3/5 (based on 201 reviews). Disputes in last 12 months: 4 (2 refunded, 1 partial, 1 dismissed). Flagged for repeated spec discrepancies 2026-02-24 \u2014 currently on 'enhanced listing review' status.",
+          "score": 0.6972,
+          "source": "pentatonic-memory",
+          "doc_id": "seller-rix-digital-profile"
+        },
+        {
+          "text": "Buyer @thora: consumer account. Purchases to date: 6. Uses an autonomous shopping agent (@buyer-agent-7) for most transactions. Average basket: \u00a3510.",
+          "score": 0.5828,
+          "source": "pentatonic-memory",
+          "doc_id": "buyer-thora-profile"
+        },
+        {
+          "text": "Shopping agent @buyer-agent-7: autonomous agent operating on behalf of @thora (and 4 other principals). Runs AGENT_SPEC_CHECK events before offering, typically bids 90-92% of asking price. Responds to counter-offers within 30s. Registered with marketplace 2025-11.",
+          "score": 0.6979757266615307,
+          "source": "pentatonic-memory",
+          "doc_id": "agent-buyer-agent-7"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "judge=0.00 \u2014 The answer does not mention the enhanced listing review status or dispute history, treating @rix-digital as uncontrovers",
+      "search_time_ms": 1115.6625689764041,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 215,
+      "query_tokens": 17,
+      "context_tokens": 198,
+      "judge_tokens_in": 524,
+      "judge_tokens_out": 38,
+      "judge_latency_ms": 1033.0775789916515
+    },
+    {
+      "task_id": "rubric-lst-9014-full-story",
+      "query": "Tell me the full story of LST-9014 from creation to resolution.",
+      "answer": "Thing LST-9014: second-hand MacBook Air M2 13\" 256GB (condition: very good, battery cycle count 112). Created in TES 2026-02-14 by seller @rix-digital.\n---\nTES event log for LST-9014:\n2026-02-14T09:20 CREATED by @rix-digital\n2026-02-14T09:25 LISTED (price \u00a3780)\n2026-02-15T12:00 FLAGGED_DUPLICATE \u2014 matches LST-9014-DUP (different seller, same serial number detected via device fingerprint)\n2026-02-15T13:30 LISTING_HELD pending review\n2026-02-16T10:00 REVIEW_CLEARED (original seller confirmed; dup delisted)\n2026-02-16T10:05 RELISTED\n2026-02-19T11:18 SOLD for \u00a3780 to @ariadne\n2026-02-20T14:00 DISPATCHED\n2026-02-22T09:45 DELIVERED\n2026-02-24T16:00 RETUR\n---\nAgent-commerce policy: autonomous shopping agents must register with the marketplace and declare principal human(s). Agent offers follow the same event flow as human offers. Sellers may opt out of agent-commerce at listing creation (AGENT_OPT_OUT flag).",
+      "hits": [
+        {
+          "text": "Thing LST-9014: second-hand MacBook Air M2 13\" 256GB (condition: very good, battery cycle count 112). Created in TES 2026-02-14 by seller @rix-digital.",
+          "score": 0.5062,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-thing-lst-9014"
+        },
+        {
+          "text": "TES event log for LST-9014:\n2026-02-14T09:20 CREATED by @rix-digital\n2026-02-14T09:25 LISTED (price \u00a3780)\n2026-02-15T12:00 FLAGGED_DUPLICATE \u2014 matches LST-9014-DUP (different seller, same serial number detected via device fingerprint)\n2026-02-15T13:30 LISTING_HELD pending review\n2026-02-16T10:00 REVIEW_CLEARED (original seller confirmed; dup delisted)\n2026-02-16T10:05 RELISTED\n2026-02-19T11:18 SOL",
+          "score": 0.4848,
+          "source": "pentatonic-memory",
+          "doc_id": "tes-events-lst-9014"
+        },
+        {
+          "text": "Agent-commerce policy: autonomous shopping agents must register with the marketplace and declare principal human(s). Agent offers follow the same event flow as human offers. Sellers may opt out of agent-commerce at listing creation (AGENT_OPT_OUT flag).",
+          "score": 0.4418,
+          "source": "pentatonic-memory",
+          "doc_id": "policy-agent-commerce"
+        }
+      ],
+      "correct": false,
+      "score": 0.8,
+      "grading_notes": "judge=0.80 \u2014 The answer covers stages 1-4 but misses stage 5, 'relisted with accurate spec.'",
+      "search_time_ms": 1118.7749739910942,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 305,
+      "query_tokens": 16,
+      "context_tokens": 289,
+      "judge_tokens_in": 624,
+      "judge_tokens_out": 35,
+      "judge_latency_ms": 1018.830972969532
+    },
+    {
+      "task_id": "rubric-agent-commerce-thora",
+      "query": "Describe how @thora uses the marketplace.",
+      "answer": "Buyer @thora: consumer account. Purchases to date: 6. Uses an autonomous shopping agent (@buyer-agent-7) for most transactions. Average basket: \u00a3510.\n---\nBuyer @thora: consumer account. Purchases to date: 6. Uses an autonomous shopping agent (@buyer-agent-7) for most transactions. Average basket: \u00a3510.\n---\nShopping agent @buyer-agent-7: autonomous agent operating on behalf of @thora (and 4 other principals). Runs AGENT_SPEC_CHECK events before offering, typically bids 90-92% of asking price. Responds to counter-offers within 30s. Registered with marketplace 2025-11.",
+      "hits": [
+        {
+          "text": "Buyer @thora: consumer account. Purchases to date: 6. Uses an autonomous shopping agent (@buyer-agent-7) for most transactions. Average basket: \u00a3510.",
+          "score": 0.7235,
+          "source": "pentatonic-memory",
+          "doc_id": "buyer-thora-profile"
+        },
+        {
+          "text": "Buyer @thora: consumer account. Purchases to date: 6. Uses an autonomous shopping agent (@buyer-agent-7) for most transactions. Average basket: \u00a3510.",
+          "score": 0.65,
+          "source": "pentatonic-memory",
+          "doc_id": "buyer-thora-profile"
+        },
+        {
+          "text": "Shopping agent @buyer-agent-7: autonomous agent operating on behalf of @thora (and 4 other principals). Runs AGENT_SPEC_CHECK events before offering, typically bids 90-92% of asking price. Responds to counter-offers within 30s. Registered with marketplace 2025-11.",
+          "score": 0.6434,
+          "source": "pentatonic-memory",
+          "doc_id": "agent-buyer-agent-7"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "judge=1.00 \u2014 The agent's usage is clearly stated in the answer, and additional details about her purchase count and average basket ar",
+      "search_time_ms": 1263.7077609833796,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 147,
+      "query_tokens": 8,
+      "context_tokens": 139,
+      "judge_tokens_in": 435,
+      "judge_tokens_out": 38,
+      "judge_latency_ms": 710.8789840042591
+    },
+    {
+      "task_id": "entity-all-sold-things",
+      "query": "List the thing IDs of all completed sales.",
+      "answer": "Seller @velocipede-jo: registered 2025-04. Category: restored bicycles. Listings to date: 12. Sell-through rate: 100%. Average star rating: 5.0/5 (based on 11 reviews). Disputes: 0. Agent-commerce friendly: yes (responds to AGENT_SPEC_CHECK events within 5 minutes on average).\n---\nEnhanced listing review: triggered when a seller accumulates 3+ spec-discrepancy disputes in a 90-day window. Listings are manually reviewed before going live. Lifted after 30 days of clean activity.\n---\nDuplicate-listing policy: two listings with matching device fingerprints (serial numbers, IMEI, chassis VIN) trigger an automatic FLAGGED_DUPLICATE event and LISTING_HELD status. Both sellers are contacted; the listing with earliest verifiable ownership proof is cleared. No penalty if sellers cooperate with review within 48h.",
+      "hits": [
+        {
+          "text": "Seller @velocipede-jo: registered 2025-04. Category: restored bicycles. Listings to date: 12. Sell-through rate: 100%. Average star rating: 5.0/5 (based on 11 reviews). Disputes: 0. Agent-commerce friendly: yes (responds to AGENT_SPEC_CHECK events within 5 minutes on average).",
+          "score": 0.57,
+          "source": "pentatonic-memory",
+          "doc_id": "seller-velocipede-jo-profile"
+        },
+        {
+          "text": "Enhanced listing review: triggered when a seller accumulates 3+ spec-discrepancy disputes in a 90-day window. Listings are manually reviewed before going live. Lifted after 30 days of clean activity.",
+          "score": 0.4973,
+          "source": "pentatonic-memory",
+          "doc_id": "policy-seller-enhanced-review"
+        },
+        {
+          "text": "Duplicate-listing policy: two listings with matching device fingerprints (serial numbers, IMEI, chassis VIN) trigger an automatic FLAGGED_DUPLICATE event and LISTING_HELD status. Both sellers are contacted; the listing with earliest verifiable ownership proof is cleared. No penalty if sellers cooperate with review within 48h.",
+          "score": 0.6647811042826868,
+          "source": "pentatonic-memory",
+          "doc_id": "policy-duplicate-listings"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "no expected_substrings set",
+      "search_time_ms": 1196.5574719943106,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 200,
+      "query_tokens": 9,
+      "context_tokens": 191,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "entity-sellers-with-disputes",
+      "query": "Which sellers in this corpus have disputes on record?",
+      "answer": "Seller @rix-digital: registered 2023-11. Category: refurbished electronics. Listings to date: 312. Sell-through rate: 72%. Average star rating: 4.3/5 (based on 201 reviews). Disputes in last 12 months: 4 (2 refunded, 1 partial, 1 dismissed). Flagged for repeated spec discrepancies 2026-02-24 \u2014 currently on 'enhanced listing review' status.\n---\nSeller @mariposa: registered 2024-08. Category: vintage furniture and homeware. Listings to date: 47. Sell-through rate: 89%. Average star rating: 4.8/5 (based on 38 reviews). Disputes in last 12 months: 0.\n---\nBuyer @sera-interiors: interior design studio account. Purchases to date: 28. Average basket: \u00a31,850. Specialism: mid-century furniture. No disputes. Frequently buys from @mariposa.",
+      "hits": [
+        {
+          "text": "Seller @rix-digital: registered 2023-11. Category: refurbished electronics. Listings to date: 312. Sell-through rate: 72%. Average star rating: 4.3/5 (based on 201 reviews). Disputes in last 12 months: 4 (2 refunded, 1 partial, 1 dismissed). Flagged for repeated spec discrepancies 2026-02-24 \u2014 currently on 'enhanced listing review' status.",
+          "score": 0.6422,
+          "source": "pentatonic-memory",
+          "doc_id": "seller-rix-digital-profile"
+        },
+        {
+          "text": "Seller @mariposa: registered 2024-08. Category: vintage furniture and homeware. Listings to date: 47. Sell-through rate: 89%. Average star rating: 4.8/5 (based on 38 reviews). Disputes in last 12 months: 0.",
+          "score": 0.6211,
+          "source": "pentatonic-memory",
+          "doc_id": "seller-mariposa-profile"
+        },
+        {
+          "text": "Buyer @sera-interiors: interior design studio account. Purchases to date: 28. Average basket: \u00a31,850. Specialism: mid-century furniture. No disputes. Frequently buys from @mariposa.",
+          "score": 0.6086,
+          "source": "pentatonic-memory",
+          "doc_id": "buyer-sera-interiors-profile"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "no positive criteria (negative-only task); forbidden substring(s) present: ['@mariposa']",
+      "search_time_ms": 1092.5496139971074,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 219,
+      "query_tokens": 10,
+      "context_tokens": 209,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    }
+  ]
+}

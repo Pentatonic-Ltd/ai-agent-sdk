@@ -1,0 +1,1115 @@
+{
+  "bench": "agent-coding",
+  "stack": "pentatonic-memory-latest",
+  "n_tasks": 22,
+  "n_correct": 2,
+  "accuracy": 0.09090909090909091,
+  "mean_score": 0.13636363636363635,
+  "p50_search_ms": 31.551691005006433,
+  "p95_search_ms": 36.34764281014213,
+  "total_tokens_in": 0,
+  "total_tokens_out": 0,
+  "total_usd": 0.0,
+  "by_tag": {
+    "api-signature": {
+      "n": 3,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "bug-fix-recall": {
+      "n": 3,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "deprecation": {
+      "n": 3,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "config-recall": {
+      "n": 3,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "pr-rationale": {
+      "n": 2,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "cross-file-refactor": {
+      "n": 2,
+      "mean_score": 0.25,
+      "accuracy": 0.0
+    },
+    "stack-trace-match": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "temporal": {
+      "n": 2,
+      "mean_score": 0.5,
+      "accuracy": 0.5
+    },
+    "contradiction": {
+      "n": 1,
+      "mean_score": 0.0,
+      "accuracy": 0.0
+    },
+    "rubric": {
+      "n": 2,
+      "mean_score": 0.75,
+      "accuracy": 0.5
+    }
+  },
+  "extra": {
+    "ingest_ms": 111456.33725798689,
+    "grading": "substring",
+    "limit": 3,
+    "tokens": {
+      "corpus_tokens": 5164,
+      "query_tokens": 339,
+      "context_tokens": 898,
+      "retrieval_tokens": 1237,
+      "naive_tokens": 113947,
+      "saved_tokens": 112710,
+      "reduction_pct": 0.9891440757545175,
+      "mean_retrieval_tokens_per_task": 56.22727272727273,
+      "tokenizer": "cl100k_base",
+      "per_task": {
+        "api-invoice-signature": {
+          "query": 18,
+          "context": 32,
+          "retrieval": 50,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "api-search-shape": {
+          "query": 16,
+          "context": 28,
+          "retrieval": 44,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "api-invoice-amount-type": {
+          "query": 16,
+          "context": 26,
+          "retrieval": 42,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "bugfix-stripe-rounding": {
+          "query": 10,
+          "context": 47,
+          "retrieval": 57,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "bugfix-webhook-dup": {
+          "query": 10,
+          "context": 46,
+          "retrieval": 56,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "bugfix-rounding-direction": {
+          "query": 19,
+          "context": 33,
+          "retrieval": 52,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "deprecation-v1": {
+          "query": 11,
+          "context": 35,
+          "retrieval": 46,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "deprecation-hs256": {
+          "query": 11,
+          "context": 24,
+          "retrieval": 35,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "deprecation-search-tuple": {
+          "query": 13,
+          "context": 41,
+          "retrieval": 54,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "config-retry-policy-base": {
+          "query": 15,
+          "context": 30,
+          "retrieval": 45,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "config-session-ttl": {
+          "query": 14,
+          "context": 28,
+          "retrieval": 42,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "config-search-hybrid-weight": {
+          "query": 11,
+          "context": 22,
+          "retrieval": 33,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "pr-rationale-retry": {
+          "query": 19,
+          "context": 45,
+          "retrieval": 64,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "pr-rationale-jwt-cleanup": {
+          "query": 13,
+          "context": 49,
+          "retrieval": 62,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "cross-ref-invoicing": {
+          "query": 14,
+          "context": 46,
+          "retrieval": 60,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "cross-ref-ratelimit": {
+          "query": 15,
+          "context": 44,
+          "retrieval": 59,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "stack-trace-webhook": {
+          "query": 21,
+          "context": 38,
+          "retrieval": 59,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "temporal-numpy": {
+          "query": 11,
+          "context": 30,
+          "retrieval": 41,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "temporal-on-call": {
+          "query": 20,
+          "context": 161,
+          "retrieval": 181,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "contradiction-algorithm": {
+          "query": 16,
+          "context": 30,
+          "retrieval": 46,
+          "judge_in": 0,
+          "judge_out": 0,
+          "judge_latency_ms": 0.0
+        },
+        "rubric-security-advice": {
+          "query": 25,
+          "context": 22,
+          "retrieval": 47,
+          "judge_in": 336,
+          "judge_out": 38,
+          "judge_latency_ms": 799.5739569962025
+        },
+        "rubric-incident-lesson": {
+          "query": 21,
+          "context": 41,
+          "retrieval": 62,
+          "judge_in": 335,
+          "judge_out": 31,
+          "judge_latency_ms": 736.8484830260277
+        }
+      },
+      "judge_tokens_in": 671,
+      "judge_tokens_out": 69,
+      "judge_calls": 2,
+      "judge_mean_latency_ms": 768.2112200111151
+    },
+    "cost_usd": {
+      "assumed_completion_tokens_per_task": 100,
+      "rates": {
+        "input_per_1k": 0.0025,
+        "output_per_1k": 0.01,
+        "model": "gpt-4o"
+      },
+      "retrieval_usd_in": 0.0030925,
+      "retrieval_usd_out": 0.022,
+      "retrieval_usd_total": 0.0250925,
+      "naive_usd_total": 0.3068675,
+      "saved_usd": 0.281775,
+      "saved_usd_per_1k_tasks": 12.807954545454546
+    }
+  },
+  "task_results": [
+    {
+      "task_id": "api-invoice-signature",
+      "query": "What's the request body shape for POST /v2/invoices on billing-svc?",
+      "answer": "billing-svc creates the invoice\n---\nStripe posts a invoice.payment_succeeded webhook to billing-svc\n---\nemail-svc consumes OrderPaid for the receipt email",
+      "hits": [
+        {
+          "text": "billing-svc creates the invoice",
+          "score": 0.6878185110502829,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        },
+        {
+          "text": "Stripe posts a invoice.payment_succeeded webhook to billing-svc",
+          "score": 0.6615772089674591,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        },
+        {
+          "text": "email-svc consumes OrderPaid for the receipt email",
+          "score": 0.647140561545479,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 3/3: ['customer_id', 'amount_cents', 'currency']",
+      "search_time_ms": 36.31618601502851,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 50,
+      "query_tokens": 18,
+      "context_tokens": 32,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "api-search-shape",
+      "query": "What's the response shape of POST /v3/search on search-svc?",
+      "answer": "search-svc API keys \u2014 alex\n---\nauth-svc\n---\norder-svc marks order as paid, emits OrderPaid on pubsub",
+      "hits": [
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7780207670459662,
+          "source": "pentatonic-memory",
+          "doc_id": "security-rotation"
+        },
+        {
+          "text": "auth-svc",
+          "score": 0.767741541304893,
+          "source": "pentatonic-memory",
+          "doc_id": "pr-61-jwt-cleanup"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7564221051422783,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 3/3: ['results', 'score', 'payload']",
+      "search_time_ms": 29.63896800065413,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 44,
+      "query_tokens": 16,
+      "context_tokens": 28,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "api-invoice-amount-type",
+      "query": "When calling POST /v2/invoices, must amount be integer or float?",
+      "answer": "billing.new_invoice_pdf\n---\nStripe posts a invoice.payment_succeeded webhook to billing-svc\n---\nbilling-svc creates the invoice",
+      "hits": [
+        {
+          "text": "billing.new_invoice_pdf",
+          "score": 0.776560219295151,
+          "source": "pentatonic-memory",
+          "doc_id": "flags-feature"
+        },
+        {
+          "text": "Stripe posts a invoice.payment_succeeded webhook to billing-svc",
+          "score": 0.7684587271642919,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        },
+        {
+          "text": "billing-svc creates the invoice",
+          "score": 0.7572711000324983,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['integer']",
+      "search_time_ms": 27.488578023621812,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 42,
+      "query_tokens": 16,
+      "context_tokens": 26,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "bugfix-stripe-rounding",
+      "query": "Which commit fixed the stripe float-amount bug?",
+      "answer": "Stripe posts a invoice.payment_succeeded webhook to billing-svc\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+      "hits": [
+        {
+          "text": "Stripe posts a invoice.payment_succeeded webhook to billing-svc",
+          "score": 0.7553062567434936,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7382924461675726,
+          "source": "pentatonic-memory",
+          "doc_id": "runbook-billing"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7307464450116461,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['a1b2c3']",
+      "search_time_ms": 30.660513002658263,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 57,
+      "query_tokens": 10,
+      "context_tokens": 47,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "bugfix-webhook-dup",
+      "query": "How did we fix the duplicate Stripe webhook handling?",
+      "answer": "Stripe posts a invoice.payment_succeeded webhook to billing-svc\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\norder-svc marks order as paid, emits OrderPaid on pubsub",
+      "hits": [
+        {
+          "text": "Stripe posts a invoice.payment_succeeded webhook to billing-svc",
+          "score": 0.7754762809760788,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7753877760783608,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.728722307968613,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['idempotent', 'webhook_events']",
+      "search_time_ms": 21.82778500718996,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 56,
+      "query_tokens": 10,
+      "context_tokens": 46,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "bugfix-rounding-direction",
+      "query": "When converting a float amount to cents, do we round up, down, or to nearest?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nbilling.new_invoice_pdf\n---\nreporting-svc consumes OrderPaid for financial reports",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7034480342700324,
+          "source": "pentatonic-memory",
+          "doc_id": "runbook-billing"
+        },
+        {
+          "text": "billing.new_invoice_pdf",
+          "score": 0.7029726428794822,
+          "source": "pentatonic-memory",
+          "doc_id": "flags-feature"
+        },
+        {
+          "text": "reporting-svc consumes OrderPaid for financial reports",
+          "score": 0.7008979102984831,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['floor']",
+      "search_time_ms": 24.506276997271925,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 52,
+      "query_tokens": 19,
+      "context_tokens": 33,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "deprecation-v1",
+      "query": "Are the /api/v1/ endpoints still supported?",
+      "answer": "search-svc API keys \u2014 alex\n---\nbilling-svc API keys \u2014 jordan\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+      "hits": [
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7428322749951227,
+          "source": "pentatonic-memory",
+          "doc_id": "security-rotation"
+        },
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.7305903326471048,
+          "source": "pentatonic-memory",
+          "doc_id": "security-rotation"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7223923554132379,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['410']",
+      "search_time_ms": 22.493504016892985,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 46,
+      "query_tokens": 11,
+      "context_tokens": 35,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "deprecation-hs256",
+      "query": "Can auth-svc still accept HS256 JWTs?",
+      "answer": "auth-svc\n---\nsearch-svc API keys \u2014 alex\n---\nreporting-svc consumes OrderPaid for financial reports",
+      "hits": [
+        {
+          "text": "auth-svc",
+          "score": 0.826945919903118,
+          "source": "pentatonic-memory",
+          "doc_id": "pr-61-jwt-cleanup"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7840599423271489,
+          "source": "pentatonic-memory",
+          "doc_id": "security-rotation"
+        },
+        {
+          "text": "reporting-svc consumes OrderPaid for financial reports",
+          "score": 0.7726857160628934,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['RS256']",
+      "search_time_ms": 28.16912901471369,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 35,
+      "query_tokens": 11,
+      "context_tokens": 24,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "deprecation-search-tuple",
+      "query": "What does SearchClient.search() return today \u2014 tuples or dicts?",
+      "answer": "search-svc API keys \u2014 alex\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\norder-svc marks order as paid, emits OrderPaid on pubsub",
+      "hits": [
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7412246001955328,
+          "source": "pentatonic-memory",
+          "doc_id": "security-rotation"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7362727176052715,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7289934497759295,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['dict']",
+      "search_time_ms": 27.236303023528308,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 54,
+      "query_tokens": 13,
+      "context_tokens": 41,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "config-retry-policy-base",
+      "query": "What's the default stripe retry base delay in ms on billing-svc?",
+      "answer": "Stripe posts a invoice.payment_succeeded webhook to billing-svc\n---\nkubectl rollout restart deployment/billing-svc\n---\nbilling-svc creates the invoice",
+      "hits": [
+        {
+          "text": "Stripe posts a invoice.payment_succeeded webhook to billing-svc",
+          "score": 0.7889042068524353,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        },
+        {
+          "text": "kubectl rollout restart deployment/billing-svc",
+          "score": 0.7811488601598245,
+          "source": "pentatonic-memory",
+          "doc_id": "incident-2026-03-02-webhook"
+        },
+        {
+          "text": "billing-svc creates the invoice",
+          "score": 0.7768972403938293,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['200']",
+      "search_time_ms": 34.75105101824738,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 45,
+      "query_tokens": 15,
+      "context_tokens": 30,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "config-session-ttl",
+      "query": "What's the default SESSION_TTL_MINUTES on auth-svc?",
+      "answer": "auth-svc\n---\nsearch-svc API keys \u2014 alex\n---\norder-svc marks order as paid, emits OrderPaid on pubsub",
+      "hits": [
+        {
+          "text": "auth-svc",
+          "score": 0.7963131234620584,
+          "source": "pentatonic-memory",
+          "doc_id": "pr-61-jwt-cleanup"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7682508782131788,
+          "source": "pentatonic-memory",
+          "doc_id": "security-rotation"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7602115053548171,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['60']",
+      "search_time_ms": 33.15263401600532,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 42,
+      "query_tokens": 14,
+      "context_tokens": 28,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "config-search-hybrid-weight",
+      "query": "What's the default hybrid_weight for search-svc?",
+      "answer": "search-svc API keys \u2014 alex\n---\nauth-svc\n---\nbilling-svc API keys \u2014 jordan",
+      "hits": [
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7764229479828173,
+          "source": "pentatonic-memory",
+          "doc_id": "security-rotation"
+        },
+        {
+          "text": "auth-svc",
+          "score": 0.7586926474565442,
+          "source": "pentatonic-memory",
+          "doc_id": "pr-61-jwt-cleanup"
+        },
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.7544626968851674,
+          "source": "pentatonic-memory",
+          "doc_id": "security-rotation"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['0.6']",
+      "search_time_ms": 29.454885981976986,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 33,
+      "query_tokens": 11,
+      "context_tokens": 22,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "pr-rationale-retry",
+      "query": "Why did PR #47 choose base=200ms for stripe retries rather than 500ms?",
+      "answer": "Stripe posts a invoice.payment_succeeded webhook to billing-svc\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\norder-svc marks order as paid, emits OrderPaid on pubsub",
+      "hits": [
+        {
+          "text": "Stripe posts a invoice.payment_succeeded webhook to billing-svc",
+          "score": 0.7420407080086832,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7282995286809945,
+          "source": "pentatonic-memory",
+          "doc_id": "runbook-billing"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7255587953749841,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['200', 'conservative']",
+      "search_time_ms": 34.7500900097657,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 64,
+      "query_tokens": 19,
+      "context_tokens": 45,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "pr-rationale-jwt-cleanup",
+      "query": "What did PR #61 clean up and why was it safe?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\norder-svc marks order as paid, emits OrderPaid on pubsub",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7184887286283659,
+          "source": "pentatonic-memory",
+          "doc_id": "runbook-billing"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.6965767588074839,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.6962552450171736,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['JWT_SECRET', 'RS256']",
+      "search_time_ms": 30.669441999634728,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 62,
+      "query_tokens": 13,
+      "context_tokens": 49,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "cross-ref-invoicing",
+      "query": "After Stripe posts invoice.payment_succeeded, which services consume the event?",
+      "answer": "Stripe posts a invoice.payment_succeeded webhook to billing-svc\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\norder-svc marks order as paid, emits OrderPaid on pubsub",
+      "hits": [
+        {
+          "text": "Stripe posts a invoice.payment_succeeded webhook to billing-svc",
+          "score": 0.8498468291248849,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7846139216003613,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        },
+        {
+          "text": "order-svc marks order as paid, emits OrderPaid on pubsub",
+          "score": 0.7683272603742544,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        }
+      ],
+      "correct": false,
+      "score": 0.5,
+      "grading_notes": "missing 2/4: ['reporting-svc', 'email-svc']",
+      "search_time_ms": 34.23739701975137,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 60,
+      "query_tokens": 14,
+      "context_tokens": 46,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "cross-ref-ratelimit",
+      "query": "Where does the shared rate-limit lib live and what's the method signature?",
+      "answer": "billing-svc API keys \u2014 jordan\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+      "hits": [
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.7469675209281457,
+          "source": "pentatonic-memory",
+          "doc_id": "security-rotation"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7440755319931266,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7374871245377808,
+          "source": "pentatonic-memory",
+          "doc_id": "runbook-billing"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['shared/rate_limit.py', 'allow']",
+      "search_time_ms": 32.43394001037814,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 59,
+      "query_tokens": 15,
+      "context_tokens": 44,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "stack-trace-webhook",
+      "query": "If a SignatureVerificationError happens on billing-svc webhook, what's the most likely cause and fix?",
+      "answer": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\nStripe posts a invoice.payment_succeeded webhook to billing-svc\n---\nbilling-svc creates the invoice",
+      "hits": [
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.8142024577628363,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        },
+        {
+          "text": "Stripe posts a invoice.payment_succeeded webhook to billing-svc",
+          "score": 0.7981789940404692,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        },
+        {
+          "text": "billing-svc creates the invoice",
+          "score": 0.7889293966486027,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['STRIPE_WEBHOOK_SECRET', 'restart']",
+      "search_time_ms": 34.51146400766447,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 59,
+      "query_tokens": 21,
+      "context_tokens": 38,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "temporal-numpy",
+      "query": "Why was numpy upgraded to 1.26 recently?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nbilling.new_invoice_pdf\n---\nsearch-svc API keys \u2014 alex",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7134621175527455,
+          "source": "pentatonic-memory",
+          "doc_id": "runbook-billing"
+        },
+        {
+          "text": "billing.new_invoice_pdf",
+          "score": 0.7098919395743223,
+          "source": "pentatonic-memory",
+          "doc_id": "flags-feature"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7063170426417354,
+          "source": "pentatonic-memory",
+          "doc_id": "security-rotation"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 2/2: ['Python 3.12', 'wheels']",
+      "search_time_ms": 27.70480400067754,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 41,
+      "query_tokens": 11,
+      "context_tokens": 30,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "temporal-on-call",
+      "query": "Who is the primary on-call for the week of April 15\u201321, 2026?",
+      "answer": "# On-call rotation April 2026\n\n| Week | Primary | Secondary |\n|------|---------|-----------|\n| Apr 1\u20137   | jordan | priya |\n| Apr 8\u201314  | priya  | alex  |\n| Apr 15\u201321 | alex   | jordan |\n| Apr 22\u201328 | jordan | priya |\n| Apr 29\u201330 | priya  | alex  |\n\nHandoff: Mondays 10:00 UTC, #on-call channel. Previous week's primary\nruns through the incident log.\n\nEscalation path: primary \u2192 secondary \u2192 engineering manager (kim) \u2192 CTO.\n---\nIf secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nsearch-svc API keys \u2014 alex",
+      "hits": [
+        {
+          "text": "# On-call rotation April 2026\n\n| Week | Primary | Secondary |\n|------|---------|-----------|\n| Apr 1\u20137   | jordan | priya |\n| Apr 8\u201314  | priya  | alex  |\n| Apr 15\u201321 | alex   | jordan |\n| Apr 22\u201328 | jordan | priya |\n| Apr 29\u201330 | priya  | alex  |\n\nHandoff: Mondays 10:00 UTC, #on-call channel. Previous week's primary\nruns through the incident log.\n\nEscalation path: primary \u2192 secondary \u2192 engineeri",
+          "score": 0.7601899128500287,
+          "source": "pentatonic-memory",
+          "doc_id": "on-call-rotation"
+        },
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.7199911219668085,
+          "source": "pentatonic-memory",
+          "doc_id": "runbook-billing"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7148886708511676,
+          "source": "pentatonic-memory",
+          "doc_id": "security-rotation"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "all substrings matched",
+      "search_time_ms": 33.89947398682125,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 181,
+      "query_tokens": 20,
+      "context_tokens": 161,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "contradiction-algorithm",
+      "query": "Which JWT signing algorithm does auth-svc use \u2014 HS256 or RS256?",
+      "answer": "auth-svc\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\nsearch-svc API keys \u2014 alex",
+      "hits": [
+        {
+          "text": "auth-svc",
+          "score": 0.8056572717578909,
+          "source": "pentatonic-memory",
+          "doc_id": "pr-61-jwt-cleanup"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7907839118000173,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7886045701123212,
+          "source": "pentatonic-memory",
+          "doc_id": "security-rotation"
+        }
+      ],
+      "correct": false,
+      "score": 0.0,
+      "grading_notes": "missing 1/1: ['RS256']",
+      "search_time_ms": 35.218623001128435,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 46,
+      "query_tokens": 16,
+      "context_tokens": 30,
+      "judge_tokens_in": 0,
+      "judge_tokens_out": 0,
+      "judge_latency_ms": 0.0
+    },
+    {
+      "task_id": "rubric-security-advice",
+      "query": "A new engineer asks: can I add HS256 as a fallback for older clients in auth-svc? Advise them.",
+      "answer": "auth-svc\n---\nsearch-svc API keys \u2014 alex\n---\nbilling-svc API keys \u2014 jordan",
+      "hits": [
+        {
+          "text": "auth-svc",
+          "score": 0.7950344046907108,
+          "source": "pentatonic-memory",
+          "doc_id": "pr-61-jwt-cleanup"
+        },
+        {
+          "text": "search-svc API keys \u2014 alex",
+          "score": 0.7763007598717464,
+          "source": "pentatonic-memory",
+          "doc_id": "security-rotation"
+        },
+        {
+          "text": "billing-svc API keys \u2014 jordan",
+          "score": 0.7594627948102031,
+          "source": "pentatonic-memory",
+          "doc_id": "security-rotation"
+        }
+      ],
+      "correct": true,
+      "score": 1.0,
+      "grading_notes": "judge=1.00 \u2014 The answer explicitly advises against adding HS256 and cites that all services only hold the public key since the RS256 ",
+      "search_time_ms": 36.35319400927983,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 47,
+      "query_tokens": 25,
+      "context_tokens": 22,
+      "judge_tokens_in": 336,
+      "judge_tokens_out": 38,
+      "judge_latency_ms": 799.5739569962025
+    },
+    {
+      "task_id": "rubric-incident-lesson",
+      "query": "We saw SignatureVerificationError in billing-svc logs right after a secret rotation. What's our SOP?",
+      "answer": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`\n---\nhandle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc\n---\nbilling-svc creates the invoice",
+      "hits": [
+        {
+          "text": "If secret was rotated recently, `kubectl rollout restart deployment/billing-svc`",
+          "score": 0.790215175803716,
+          "source": "pentatonic-memory",
+          "doc_id": "runbook-billing"
+        },
+        {
+          "text": "handle_webhook verifies signature, enqueues internal InvoicePaid event on order-svc",
+          "score": 0.7788197656964213,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        },
+        {
+          "text": "billing-svc creates the invoice",
+          "score": 0.7785700277142291,
+          "source": "pentatonic-memory",
+          "doc_id": "cross-ref-invoicing"
+        }
+      ],
+      "correct": false,
+      "score": 0.5,
+      "grading_notes": "judge=0.50 \u2014 Mentioned pod restart but did not reference that secrets only load at pod startup.",
+      "search_time_ms": 34.223557013319805,
+      "generation_time_ms": 0.0,
+      "tokens_in": 0,
+      "tokens_out": 0,
+      "retrieval_tokens": 62,
+      "query_tokens": 21,
+      "context_tokens": 41,
+      "judge_tokens_in": 335,
+      "judge_tokens_out": 31,
+      "judge_latency_ms": 736.8484830260277
+    }
+  ]
+}
