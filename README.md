@@ -68,19 +68,20 @@ Both products are sold separately, but you can use either, both, or neither. Plu
 You only need a TES account if you're using **hosted memory** or **observability** (observability always sends events to TES). **Local memory** runs entirely on your machine and needs no TES account.
 
 ```bash
-# One-time: create a TES account, verify email, get API keys
-npx @pentatonic-ai/ai-agent-sdk init
+# One-time: open browser, sign in or sign up, get API keys
+npx @pentatonic-ai/ai-agent-sdk login
 ```
 
-This writes credentials to `~/.config/tes/credentials.json` and sets up env vars:
+`login` opens your browser at the hosted sign-in page. New users click "Sign up" to create a tenant (clientId + region + email + password). After verification the CLI writes credentials to `~/.config/tes/credentials.json` (mode 0600). The Claude Code plugin, OpenClaw plugin, hooks, and corpus CLI all auto-discover this file — no manual paste step.
 
 ```
-TES_ENDPOINT=https://your-company.api.pentatonic.com
-TES_CLIENT_ID=your-company
-TES_API_KEY=tes_your-company_xxxxx
+✓ Connected as you@example.com on tenant `your-clientid`
+✓ Credentials written to ~/.config/tes/credentials.json
 ```
 
-You can also point at a local TES dev instance with `TES_ENDPOINT=http://localhost:8788`.
+To check connection state later: `npx @pentatonic-ai/ai-agent-sdk whoami`. To point at a local TES dev instance: `npx @pentatonic-ai/ai-agent-sdk login --endpoint http://localhost:8788`.
+
+(`init` still works as a one-major-release deprecation alias for `login`.)
 
 ---
 
@@ -96,7 +97,7 @@ Run on Pentatonic's infrastructure. Higher-dimensional embeddings (NV-Embed-v2, 
 
 ```bash
 # 1. Get a TES account (see [TES — the platform](#tes--the-platform))
-npx @pentatonic-ai/ai-agent-sdk init
+npx @pentatonic-ai/ai-agent-sdk login
 
 # 2. Install the SDK
 npm install @pentatonic-ai/ai-agent-sdk
@@ -215,10 +216,7 @@ Works with both local and hosted memory. Install once, switch modes via config.
 /plugin install tes-memory@pentatonic-ai
 ```
 
-For hosted TES:
-```
-/tes-memory:tes-setup
-```
+For hosted TES, run `npx @pentatonic-ai/ai-agent-sdk login` once in your terminal — the plugin's MCP server, hooks, and tools all auto-discover the credentials written to `~/.config/tes/credentials.json`. To verify the connection later, ask Claude `/tes-memory:tes-status`.
 
 For local memory:
 ```bash
@@ -314,7 +312,7 @@ npx @pentatonic-ai/ai-agent-sdk corpus remove ~/code/old-project
 npx @pentatonic-ai/ai-agent-sdk corpus reset
 ```
 
-Tenant credentials come from env vars (`TES_ENDPOINT`, `TES_CLIENT_ID`, `TES_API_KEY`) or `~/.config/tes/credentials.json` if you used `npx @pentatonic-ai/ai-agent-sdk init`. To point at a TES instance running on `localhost`, set `TES_ENDPOINT=http://localhost:8788`.
+Tenant credentials come from env vars (`TES_ENDPOINT`, `TES_CLIENT_ID`, `TES_API_KEY`) or `~/.config/tes/credentials.json` if you used `npx @pentatonic-ai/ai-agent-sdk login`. To point at a TES instance running on `localhost`, set `TES_ENDPOINT=http://localhost:8788`.
 
 ### What gets stored: references, not content
 
