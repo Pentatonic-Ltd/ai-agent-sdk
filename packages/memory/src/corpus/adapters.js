@@ -292,3 +292,107 @@ export function hostedAdapter(config, opts = {}) {
     },
   };
 }
+
+/**
+ * Engine adapter — talks directly to the memory engine's HTTP API
+ * (`/store`, `/store-batch`, `/forget`) at `engineUrl`. Used for the
+ * local-OSS path where no TES is involved, and for any case where the
+ * caller wants to ingest straight into a Pentatonic-managed engine
+ * without going through the TES GraphQL surface.
+ *
+ * Wire format matches the engine's compat shim. References-mode
+ * metadata (kind: "code_reference") and arbitrary metadata pass
+ * through as JSONB on the engine side.
+ *
+ * @param {object} config
+ * @param {string} config.engineUrl - e.g. "http://localhost:8099"
+ * @param {string} [config.arena] - tenant scope; defaults to "default"
+ * @param {string} [config.apiKey] - optional Authorization: Bearer
+ * @param {object} [opts]
+ * @param {number} [opts.timeoutMs=30000]
+ * @returns {{ingestChunk, deleteByCorpusFile, init}}
+ */
+export function engineAdapter(config, opts = {}) {
+  const engineUrl = (config.engineUrl || "").replace(/\/$/, "");
+  if (!engineUrl) {
+    throw new Error("engineAdapter: engineUrl is required");
+  }
+  const arena = config.arena || "default";
+  const apiKey = config.apiKey || null;
+  const timeoutMs = opts.timeoutMs ?? 30000;
+
+  function headers() {
+    const h = { "content-type": "application/json" };
+    if (apiKey) h["authorization"] = `Bearer ${apiKey}`;
+    return h;
+  }
+
+  async function http(path, body) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const res = await fetch(`${engineUrl}${path}`, {
+        method: "POST",
+        headers: headers(),
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+      clearTimeout(timer);
+      if (!res.ok) return { error: `engine_http_${res.status}` };
+      return { data: await res.json() };
+    } catch (err) {
+      clearTimeout(timer);
+      return {
+        error: err.name === "AbortError" ? "engine_timeout" : "engine_unreachable",
+      };
+    }
+  }
+
+  return {
+    /**
+     * Verify the engine is reachable before kicking off ingest.
+     * Engine /health returns 200 even when individual layers are
+     * "degraded"; we just check the HTTP path works.
+     */
+    async init() {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        const res = await fetch(`${engineUrl}/health`, {
+          headers: headers(),
+          signal: controller.signal,
+        });
+        clearTimeout(timer);
+        if (!res.ok) {
+          throw new Error(`engineAdapter: /health returned ${res.status}`);
+        }
+      } catch (err) {
+        clearTimeout(timer);
+        throw new Error(
+          `engineAdapter: engine at ${engineUrl} unreachable (${err.message})`
+        );
+      }
+    },
+
+    async ingestChunk(content, metadata) {
+      // Engine ingests via /store; one chunk per call. The corpus
+      // pipeline batches at the file level, but each chunk is its own
+      // /store call so we get a per-chunk id back. /store-batch is
+      // available for future bulk ingest if/when the pipeline rewires.
+      const body = { content, metadata: { ...metadata, arena } };
+      const result = await http("/store", body);
+      if (result.error) return { skipped: result.error };
+      return { id: result.data?.id };
+    },
+
+    async deleteByCorpusFile(repoAbs, relPath) {
+      const key = `${repoAbs}::${relPath}`;
+      const result = await http("/forget", {
+        metadata_contains: { corpus_file_key: key },
+        arena,
+      });
+      if (result.error) return 0;
+      return result.data?.deleted ?? 0;
+    },
+  };
+}

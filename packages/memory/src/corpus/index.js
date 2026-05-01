@@ -27,7 +27,7 @@
 export { discover, isPathEligible } from "./discover.js";
 export { chunkFile } from "./chunkers.js";
 export { ingestCorpus, syncCorpus, ingestPaths } from "./ingest.js";
-export { localAdapter, hostedAdapter } from "./adapters.js";
+export { localAdapter, hostedAdapter, engineAdapter } from "./adapters.js";
 export {
   loadState,
   saveState,
