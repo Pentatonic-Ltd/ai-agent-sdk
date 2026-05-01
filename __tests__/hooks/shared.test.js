@@ -129,13 +129,23 @@ tes_api_key: devkey
     expect(config.tes_endpoint).toBe("http://localhost:8788");
   });
 
-  it("returns null for file without frontmatter", () => {
+  it("returns null for file without frontmatter (no fallback creds)", () => {
     writeFileSync(configPath, "Just some plain text, no frontmatter.");
     process.env.CLAUDE_CONFIG_DIR = testDir;
-
-    const config = loadConfig();
-    expect(config).toBeNull();
+    // Isolate from any real ~/.config/tes/credentials.json on the host —
+    // the fallback path would otherwise pick it up and the test's
+    // intent ("no frontmatter → null") would be obscured.
+    const prevXdg = process.env.XDG_CONFIG_HOME;
+    process.env.XDG_CONFIG_HOME = join(tmpdir(), `xdg-empty-${Date.now()}`);
+    try {
+      const config = loadConfig();
+      expect(config).toBeNull();
+    } finally {
+      if (prevXdg === undefined) delete process.env.XDG_CONFIG_HOME;
+      else process.env.XDG_CONFIG_HOME = prevXdg;
+    }
   });
+
 });
 
 describe("emitModuleEvent", () => {

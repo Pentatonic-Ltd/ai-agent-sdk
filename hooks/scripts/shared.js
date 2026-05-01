@@ -24,19 +24,51 @@ export function loadConfig() {
     );
   }
   const configPath = candidates.find((p) => existsSync(p));
-  if (!configPath) return null;
 
-  const content = readFileSync(configPath, "utf-8");
-  const match = content.match(/^---\n([\s\S]*?)\n---/);
-  if (!match) return null;
-
-  const config = {};
-  for (const line of match[1].split("\n")) {
-    const [key, ...rest] = line.split(":");
-    if (key && rest.length) {
-      config[key.trim()] = rest.join(":").trim();
+  let config = null;
+  if (configPath) {
+    const content = readFileSync(configPath, "utf-8");
+    const match = content.match(/^---\n([\s\S]*?)\n---/);
+    if (match) {
+      config = {};
+      for (const line of match[1].split("\n")) {
+        const [key, ...rest] = line.split(":");
+        if (key && rest.length) {
+          config[key.trim()] = rest.join(":").trim();
+        }
+      }
     }
   }
+
+  // Fall back to ~/.config/tes/credentials.json (written by `tes login`)
+  // when the .local.md is absent or doesn't carry tes_* keys. Mirrors
+  // the fallback in servers/tes-memory.js — keep them in sync. Lets a
+  // user who's run `tes login` get the hooks working without ALSO
+  // populating tes-memory.local.md.
+  if (!config?.tes_endpoint || !config?.tes_api_key || !config?.tes_client_id) {
+    const credPath = join(
+      process.env.XDG_CONFIG_HOME || join(homedir(), ".config"),
+      "tes",
+      "credentials.json"
+    );
+    if (existsSync(credPath)) {
+      try {
+        const creds = JSON.parse(readFileSync(credPath, "utf-8"));
+        if (creds?.endpoint && creds?.clientId && creds?.apiKey) {
+          config = {
+            ...(config || {}),
+            tes_endpoint: config?.tes_endpoint || creds.endpoint,
+            tes_client_id: config?.tes_client_id || creds.clientId,
+            tes_api_key: config?.tes_api_key || creds.apiKey,
+          };
+        }
+      } catch {
+        // Malformed credentials.json — hooks will see "not configured"
+        // and silently no-op (their existing behaviour).
+      }
+    }
+  }
+
   return config;
 }
 
