@@ -116,7 +116,27 @@ npx @pentatonic-ai/ai-agent-sdk memory
 
 This starts Postgres + pgvector, Ollama, and the memory server. It pulls embedding and chat models, and writes the local config.
 
-Change models:
+### 2. Install the Claude Code plugin
+
+```
+/plugin marketplace add Pentatonic-Ltd/ai-agent-sdk
+/plugin install tes-memory@pentatonic-ai
+```
+
+That's it. The plugin hooks automatically search memories on every prompt and store every conversation turn. Fully local, fully private.
+
+### What you get
+
+- **Automatic memory** -- every conversation turn is stored with embeddings and HyDE query expansion
+- **Semantic search** -- multi-signal retrieval combining vector similarity, BM25 full-text, recency decay, and access frequency
+- **Memory layers** -- episodic (recent), semantic (consolidated), procedural (how-to), working (temporary)
+- **Distilled memory** -- a background LLM pass extracts atomic facts from each raw turn and stores each as its own node in the semantic layer, linked back to the source. A query like *"what does Phil drink?"* matches *"Phil drinks cortado"* more reliably than a mixed paragraph covering food, drinks, and hobbies. Default-on; the raw turn is still preserved.
+- **Cross-source retrieval** -- when memories carry source metadata (from `slack-ingest`, `gmail-ingest`, `calendar-ingest`, `corpus-ingest`, etc.), retrieved hits render grouped by source in the prompt and the visibility footer shows a per-source breakdown — `🧠 Matched 5 memories from Pentatonic Memory: 2 code · 2 slack · 1 meeting`. Single-source competitors can't render this because they only ingest one surface. Backwards-compatible: untyped memories render as a flat list.
+- **Decay and consolidation** -- memories fade over time; frequently accessed ones get promoted
+
+> **Store latency note (v0.5.4+):** on the local memory server, `store_memory` now awaits distillation before returning instead of running it fire-and-forget. This fixed a bug where distillation was being killed mid-flight (atoms never got embeddings, so they were unreachable by semantic search), but it means stores now take as long as your configured LLM takes to produce atoms — typically 5–30s on `llama3.2:3b`, up to the `chat()` timeout ceiling (60s default, overridable via `opts.timeout`). Cloudflare Worker deployments pass `ctx.waitUntil` and still return fast. Set `opts.distill: false` on the ingest call if you want the old fast-return behaviour at the cost of no atoms.
+
+### Change models
 
 ```bash
 EMBEDDING_MODEL=mxbai-embed-large LLM_MODEL=qwen2.5:7b npx @pentatonic-ai/ai-agent-sdk memory
