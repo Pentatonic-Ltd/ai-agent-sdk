@@ -1,7 +1,10 @@
 import { startCallbackServer } from "../lib/callback-server.js";
 
 async function fetchCallback(port, qs) {
-  const url = `http://localhost:${port}/callback?${qs}`;
+  // Use 127.0.0.1 not "localhost" — undici (Node 18+) resolves localhost to
+  // ::1 first, but the server binds to 127.0.0.1 only, so on IPv6-preferring
+  // hosts (GitHub Actions runners) the IPv6 attempt ECONNREFUSEs.
+  const url = `http://127.0.0.1:${port}/callback?${qs}`;
   const res = await fetch(url);
   return { status: res.status, text: await res.text() };
 }
