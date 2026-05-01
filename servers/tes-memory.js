@@ -182,7 +182,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       content: [
         {
           type: "text",
-          text: "TES memory is not configured. Run /tes-setup to connect your account.",
+          text:
+            "TES memory is not configured. In your terminal, run:\n\n" +
+            "    npx @pentatonic-ai/ai-agent-sdk login\n\n" +
+            "This opens a browser, signs you in (or signs you up), and writes " +
+            "credentials to ~/.config/tes/credentials.json. Restart Claude Code " +
+            "afterwards and the plugin will pick them up automatically.",
         },
       ],
     };

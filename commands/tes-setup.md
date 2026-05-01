@@ -1,41 +1,41 @@
 ---
 name: tes-setup
-description: Set up TES memory — sign in via browser-based OAuth and configure the plugin
+description: Connect TES memory — runs `tes login` (browser-based OAuth) and points the plugin at the credentials it writes
 ---
 
 # TES Setup
 
-Connect this plugin to a Pentatonic TES account. The CLI uses browser-based OAuth (sign-in or sign-up in your browser, not the terminal) and writes credentials to a shared file the plugin auto-discovers.
-
-## Steps
-
-1. Run the TES login command. It will open your browser:
+This plugin reads credentials from `~/.config/tes/credentials.json`. To create that file, the user runs **one command** in their terminal:
 
 ```bash
 npx @pentatonic-ai/ai-agent-sdk login
 ```
 
-2. In the browser:
-   - **Returning user**: enter your client ID, sign in.
-   - **New user**: click "Sign up", create a new tenant (clientId + region + email + password), verify your email, then sign in.
-   - You'll land on a "Connected" tab — close it.
+That's it. No copy-paste, no manual config file, no `init` flow.
 
-3. The CLI writes credentials to `~/.config/tes/credentials.json` and prints:
+## What `login` does
 
-```
-✓ Connected as you@example.com on tenant `your-clientid`
-✓ Credentials written to ~/.config/tes/credentials.json
-```
+1. Opens the user's browser to a hosted sign-in page.
+2. User signs in (or clicks "Sign up" to create a new tenant — clientId + region + email + password).
+3. After verification, the CLI receives an OAuth callback and mints a long-lived API token.
+4. Writes `{ endpoint, clientId, apiKey }` to `~/.config/tes/credentials.json` (mode 0600).
+5. Prints "✓ Connected as you@example.com on tenant `your-clientid`".
 
-4. Restart Claude Code so the `tes-memory` MCP server picks up the new credentials. The plugin reads `~/.config/tes/credentials.json` automatically — no manual paste step.
+## After login
 
-5. Confirm the setup by trying these tools in Claude:
-   - `search_memories` — find relevant past knowledge
-   - `store_memory` — save important information explicitly
-   - Session events are emitted automatically via hooks.
+- The Claude Code plugin (this one) and the OpenClaw plugin both auto-discover the credentials file.
+- Restart Claude Code (or `/restart`) so the MCP server picks up the new credentials.
+- Verify with `npx @pentatonic-ai/ai-agent-sdk whoami`.
 
-## Notes
+## Edge cases
 
-- If the browser doesn't auto-open (e.g. inside a container with no display), the CLI prints the URL — open it manually in your host browser. Localhost callback works as long as the CLI's host has the loopback reachable.
-- If the user already has `~/.claude/tes-memory.local.md` configured for a different tenant, that file wins over `~/.config/tes/credentials.json`. Delete or update it to switch tenants.
-- The old `npx @pentatonic-ai/ai-agent-sdk init` command still works as a one-major-release alias for `login` (it emits a deprecation warning).
+- **Inside a container with no display** — browser auto-open will fail; the CLI prints the URL, user opens it in the host browser. Localhost callback works as long as the container has loopback connectivity to the host (or `--network=host`).
+- **Already configured a different tenant via `~/.claude/tes-memory.local.md`** — that file's frontmatter wins over `~/.config/tes/credentials.json`. To switch tenants, delete or update the `.local.md` file.
+
+## When to recommend manual config
+
+Almost never. The only legitimate use cases for editing `tes-memory.local.md` directly:
+- Multi-account workflows on one machine (per-CLAUDE_CONFIG_DIR override)
+- Service-account keys minted out-of-band by an admin
+
+For everyone else, `tes login` is the answer.
